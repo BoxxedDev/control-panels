@@ -1,0 +1,9 @@
+{
+  "block.panels.control_panel": "Control Panel",
+  "item.panels.switch": "Switch",
+  "itemGroup.control_panel": "Control Panel",
+  "itemGroup.control_panel_modules": "Control Panel Modules",
+  "widget.panels.panel.edit_box.module_name": "Module Name",
+  "widget.panels.panel.exit": "Exit",
+  "widget.panels.panel.save": "Save"
+}

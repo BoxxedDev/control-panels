@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "panels:block/control_panel",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "panels:block/control_panel"
+    },
+    "facing=south": {
+      "model": "panels:block/control_panel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "panels:block/control_panel",
+      "y": 270
+    }
+  }
+}

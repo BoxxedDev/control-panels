@@ -3,9 +3,7 @@ Control Panels
 
 Mod for modular control panels for more compact redstone
 
-## This mod is very indev.
-
-Compat list
+### Compat list
 | mod | status |
 | --- | ------ |
 | Create | WIP |

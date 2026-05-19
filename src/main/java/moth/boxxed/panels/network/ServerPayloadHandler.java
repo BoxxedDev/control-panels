@@ -1,6 +1,5 @@
 package moth.boxxed.panels.network;
 
-import moth.boxxed.panels.ControlPanels;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 

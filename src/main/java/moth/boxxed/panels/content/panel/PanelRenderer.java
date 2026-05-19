@@ -6,13 +6,8 @@ import moth.boxxed.panels.api.module.Module;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
-import org.checkerframework.checker.units.qual.Angle;
-import org.joml.Vector2d;
-import org.joml.Vector2f;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
     @Override

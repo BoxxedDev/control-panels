@@ -1,7 +1,6 @@
 package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -9,7 +8,6 @@ import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

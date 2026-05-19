@@ -1,12 +1,8 @@
 package moth.boxxed.panels.api.module;
 
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 public class ModuleType<T extends Module> {
     public ModuleSupplier<T> factory;

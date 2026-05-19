@@ -1,7 +1,6 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.ControlPanels;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;

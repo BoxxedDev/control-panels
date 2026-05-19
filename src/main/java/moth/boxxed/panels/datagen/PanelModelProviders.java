@@ -2,7 +2,6 @@ package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.index.PanelBlocks;
-import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;

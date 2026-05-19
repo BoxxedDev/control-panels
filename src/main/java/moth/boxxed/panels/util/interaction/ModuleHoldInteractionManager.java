@@ -2,7 +2,6 @@ package moth.boxxed.panels.util.interaction;
 
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
 
 public class ModuleHoldInteractionManager {
     private static ModuleHoldInteraction active = null;

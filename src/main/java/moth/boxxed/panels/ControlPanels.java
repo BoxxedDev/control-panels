@@ -1,30 +1,22 @@
 package moth.boxxed.panels;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.logging.LogUtils;
 import moth.boxxed.panels.index.*;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.server.command.ConfigCommand;
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.neoforged.neoforge.server.command.ConfigCommand;
+import org.slf4j.Logger;
 
 //TODO: Add javadocs to everything
 @Mod(ControlPanels.MOD_ID)

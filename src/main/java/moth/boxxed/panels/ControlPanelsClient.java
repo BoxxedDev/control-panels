@@ -4,7 +4,6 @@ import moth.boxxed.panels.content.panel.PanelRenderer;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PreLoadedModelHandler;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;

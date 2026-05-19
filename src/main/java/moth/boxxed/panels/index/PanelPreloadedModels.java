@@ -1,7 +1,6 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.ControlPanels;
-import moth.boxxed.panels.ControlPanelsClient;
 import moth.boxxed.panels.util.PreLoadedModel;
 
 public class PanelPreloadedModels {

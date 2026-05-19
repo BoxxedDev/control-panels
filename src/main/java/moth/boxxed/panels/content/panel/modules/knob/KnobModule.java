@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.panel.modules.knob;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;

@@ -11,5 +11,6 @@
     "requireAnnotations": true
   },
   "client": [
+    "MouseHandlerMixin"
   ]
 }

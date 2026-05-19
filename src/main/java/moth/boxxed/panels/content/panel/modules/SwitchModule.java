@@ -9,15 +9,19 @@ import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 public class SwitchModule extends moth.boxxed.panels.api.module.Module {
-    public boolean switchState;
+    private boolean switchState;
 
     public SwitchModule(int x, int y) {
         super(PanelModules.SWITCH.get(),  x, y, 2,3);
@@ -25,10 +29,11 @@ public class SwitchModule extends moth.boxxed.panels.api.module.Module {
     }
 
     @Override
-    public InteractionResult onRightClick(Level level) {
+    public InteractionResult onUse(Level level, Player player) {
         this.switchState = !this.switchState;
+        this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, this.switchState ? 0.6f : 0.5f);
 
-        return super.onRightClick(level);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

@@ -4,10 +4,10 @@ Control Panels
 Mod for modular control panels for more compact redstone
 
 ### Compat list
-| mod | status |
-| --- | ------ |
-| Create | WIP |
-| Sable | WIP |
-| ComputerCraft | WIP |
+| mod           | status |
+|---------------|--------|
+| Create        | WIP    |
+| Sable         | WIP    |
+| ComputerCraft | WIP    |
 
 #### Started May 10th, 2026

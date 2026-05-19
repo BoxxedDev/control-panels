@@ -1,0 +1,23 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "panels:block/control_lever",
+		"particle": "panels:block/control_lever"
+	},
+	"elements": [
+		{
+			"from": [0, -0.5, 0],
+			"to": [3, 0.5, 5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, -0.5, 0]},
+			"faces": {
+				"north": {"uv": [3, 8, 6, 9], "texture": "#0"},
+				"east": {"uv": [6, 9, 7, 14], "rotation": 270, "texture": "#0"},
+				"south": {"uv": [3, 14, 6, 15], "texture": "#0"},
+				"west": {"uv": [2, 9, 3, 14], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [3, 9, 6, 14], "texture": "#0"},
+				"down": {"uv": [7, 9, 10, 14], "texture": "#0"}
+			}
+		}
+	]
+}

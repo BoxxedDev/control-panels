@@ -1,28 +1,35 @@
 package moth.boxxed.panels.content.panel.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.network.SavePanelModulesPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import oshi.util.tuples.Pair;
 
 import java.util.HashMap;
@@ -101,9 +108,17 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         super.render(graphics, mouseX, mouseY, partialTick);
 
         this.renderTooltip(graphics, mouseX, mouseY);
+        this.renderBackdrop(graphics);
         this.renderDraggingModule(graphics, mouseX, mouseY);
         this.renderModules(graphics, mouseX, mouseY);
         this.handleEditBox();
+    }
+
+    private float backdropPulse = 0;
+    private void renderBackdrop(GuiGraphics graphics) {
+        backdropPulse += 0.01f;
+        if (this.draggingModule != null)
+            graphics.fill(this.leftPos + 24, this.topPos + 32, this.leftPos + 152, this.topPos + 128, FastColor.ARGB32.color((int) (Math.abs(Math.sin(this.backdropPulse))*40), 0xFFFFFF));
     }
 
     @Override
@@ -145,7 +160,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             graphics.setColor(1,0.5f,0.5f,1);
         }
         graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-        graphics.renderItem(new ItemStack((ItemLike) this.draggingModule.getB().type.associatedItem), posX, posY);
+        graphics.renderItem(new ItemStack((ItemLike) this.draggingModule.getB().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
         graphics.setColor(1,1,1,1);
         this.draggingModule.getB().setPos(localPosX, localPosY);
     }
@@ -159,13 +174,16 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             if (entry.getKey().equals(this.selectedModule))
                 graphics.setColor(0.5f, 1, 0.5f, 1f);
             graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-            graphics.renderItem(new ItemStack((ItemLike) entry.getValue().type.associatedItem), posX, posY);
+            graphics.renderItem(new ItemStack((ItemLike) entry.getValue().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
             graphics.setColor(1,1,1,1);
         }
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == InputConstants.KEY_E)
+            return true;
+
         if (keyCode == 256 && this.draggingModule != null) {
             this.modulesToSave.remove(this.draggingModule.getA());
             this.draggingModule = null;
@@ -302,10 +320,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         for (Map.Entry<String, Module> entry : PanelScreen.this.modulesToSave.entrySet()) {
             moduleInfoMap.put(
                     entry.getKey(),
-                    new Module.ModuleInfo(
-                            ModulesRegistry.MODULE_REGISTRY.getKey(entry.getValue().type),
-                            entry.getValue().getPos().x, entry.getValue().getPos().y
-                    )
+                    Module.ModuleInfo.fromModule(entry.getValue())
             );
         }
         PacketDistributor.sendToServer(new SavePanelModulesPacket(moduleInfoMap, be.getBlockPos(), updateOnly));

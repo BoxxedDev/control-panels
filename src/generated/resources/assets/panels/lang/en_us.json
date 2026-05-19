@@ -1,9 +1,12 @@
 {
   "block.panels.control_panel": "Control Panel",
+  "item.panels.control_lever": "Control Lever",
+  "item.panels.knob": "Knob",
   "item.panels.switch": "Switch",
   "itemGroup.control_panel": "Control Panel",
   "itemGroup.control_panel_modules": "Control Panel Modules",
   "widget.panels.panel.edit_box.module_name": "Module Name",
   "widget.panels.panel.exit": "Exit",
-  "widget.panels.panel.save": "Save"
+  "widget.panels.panel.save": "Save",
+  "widget.panels.panel.write_name": "Write Name"
 }

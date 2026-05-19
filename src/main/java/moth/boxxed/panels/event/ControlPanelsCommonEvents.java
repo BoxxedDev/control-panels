@@ -1,5 +1,6 @@
-package moth.boxxed.panels;
+package moth.boxxed.panels.event;
 
+import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelScreen;
@@ -8,12 +9,12 @@ import moth.boxxed.panels.datagen.PanelLangProvider;
 import moth.boxxed.panels.datagen.PanelModelProviders;
 import moth.boxxed.panels.datagen.PanelTagProviders;
 import moth.boxxed.panels.index.*;
+import moth.boxxed.panels.network.DefaultModuleUpdatePacket;
 import moth.boxxed.panels.network.SavePanelModulesPacket;
 import moth.boxxed.panels.network.ServerPayloadHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -28,7 +29,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = ControlPanels.MOD_ID)
-public class ControlPanelsModEvents {
+public class ControlPanelsCommonEvents {
     @SubscribeEvent
     public static void registerRegistries(NewRegistryEvent event) {
         event.register(ModulesRegistry.MODULE_REGISTRY);
@@ -41,6 +42,11 @@ public class ControlPanelsModEvents {
                 SavePanelModulesPacket.TYPE,
                 SavePanelModulesPacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSavePanelModules
+        );
+        registrar.playToServer(
+                DefaultModuleUpdatePacket.TYPE,
+                DefaultModuleUpdatePacket.STREAM_CODEC,
+                ServerPayloadHandler::handleDefaultUpdate
         );
     }
 

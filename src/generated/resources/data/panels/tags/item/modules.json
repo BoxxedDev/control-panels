@@ -1,5 +1,7 @@
 {
   "values": [
-    "panels:switch"
+    "panels:switch",
+    "panels:knob",
+    "panels:control_lever"
   ]
 }

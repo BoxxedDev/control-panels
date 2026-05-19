@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.panel;
 
-import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
@@ -10,7 +9,6 @@ import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -29,11 +27,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class PanelBlockEntity extends BlockEntity implements MenuProvider {
     private Map<String, Module> modules;
@@ -53,6 +49,8 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
                 return false;
         }
 
+        module.name = string;
+        module.parentBlockEntity = this;
         this.addModule(string, module);
         return true;
     }
@@ -63,6 +61,14 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
 
     public Map<String, Module> getModules() {
         return this.modules;
+    }
+
+    public void clearModules() {
+        this.modules.clear();
+    }
+
+    public Module getModule(String moduleName) {
+        return this.modules.get(moduleName);
     }
 
     @Override
@@ -89,7 +95,7 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
             ResourceLocation typeId = ResourceLocation.parse(subTag.getString("type"));
             Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
             module.loadData(subTag);
-            this.modules.put(subTag.getString("name"), module);
+            this.tryAddModule(subTag.getString("name"), module);
         }
         super.loadAdditional(tag, registries);
     }
@@ -117,7 +123,7 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
                 this.setChanged();
                 if (level instanceof ServerLevel serverLevel)
                     serverLevel.getChunkSource().blockChanged(this.getBlockPos());
-                return entry.getValue().onRightClick(level);
+                return entry.getValue().onUse(level, player);
             }
         }
 
@@ -139,10 +145,6 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
         CompoundTag tag = new CompoundTag();
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
-    }
-
-    public void clearModules() {
-        this.modules.clear();
     }
 
     @Override

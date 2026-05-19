@@ -30,6 +30,9 @@ public class ConnectingPanelsNetwork {
 
             }
         }
-        return new ConnectingPanelsNetwork();
+
+        ConnectingPanelsNetwork ret = new ConnectingPanelsNetwork();
+        ALL.add(ret);
+        return ret;
     }
 }

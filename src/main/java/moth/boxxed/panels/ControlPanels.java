@@ -23,6 +23,10 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
+//TODO: Add javadocs to everything
 @Mod(ControlPanels.MOD_ID)
 public class ControlPanels {
     public static final String MOD_ID = "panels";

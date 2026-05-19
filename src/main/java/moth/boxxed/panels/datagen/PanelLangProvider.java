@@ -16,6 +16,9 @@ public class PanelLangProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         addItem(PanelItems.SWITCH_MODULE, "Switch");
+        addItem(PanelItems.KNOB_MODULE, "Knob");
+        addItem(PanelItems.CONTROL_LEVER_MODULE, "Control Lever");
+
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
 
         addWidget("panel.exit", "Exit");

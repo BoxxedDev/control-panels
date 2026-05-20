@@ -2,6 +2,8 @@ package moth.boxxed.panels;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
+import moth.boxxed.panels.compat.PanelCompat;
+import moth.boxxed.panels.compat.computercraft.CCPeripherals;
 import moth.boxxed.panels.index.*;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -9,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -35,8 +38,12 @@ public class ControlPanels {
         PanelCreativeTabs.register(modEventBus);
 
         PanelTags.init();
+        PanelCompat.loadAll();
 
         NeoForge.EVENT_BUS.register(this);
+        if (ModList.get().isLoaded("computercraft")) {
+            modEventBus.register(CCPeripherals.class);
+        }
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 

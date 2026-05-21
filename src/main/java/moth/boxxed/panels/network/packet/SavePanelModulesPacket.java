@@ -1,4 +1,4 @@
-package moth.boxxed.panels.network;
+package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;

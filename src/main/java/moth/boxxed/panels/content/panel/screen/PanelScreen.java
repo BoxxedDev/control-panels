@@ -6,7 +6,7 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
-import moth.boxxed.panels.network.SavePanelModulesPacket;
+import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.EditBox;

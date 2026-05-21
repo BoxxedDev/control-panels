@@ -5,8 +5,11 @@ import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
+import moth.boxxed.panels.network.connecting_panels.ConnectingModulesNetwork;
+import moth.boxxed.panels.network.connecting_panels.IConnectingModules;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -33,8 +36,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class PanelBlockEntity extends BlockEntity implements MenuProvider {
+public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConnectingModules {
     private Map<String, Module> modules;
+    private ConnectingModulesNetwork network;
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
@@ -61,6 +65,7 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
         this.modules.put(string, module);
     }
 
+    @Override
     public Map<String, Module> getModules() {
         return this.modules;
     }
@@ -107,6 +112,9 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+        if (this.getNetwork() == null)
+            this.setNetwork(ConnectingModulesNetwork.getOrMake(level, blockPos));
+
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
@@ -170,5 +178,25 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public ConnectingModulesNetwork getNetwork() {
+        return this.network;
+    }
+
+    @Override
+    public void setNetwork(ConnectingModulesNetwork network) {
+        this.network = network;
+    }
+
+    @Override
+    public boolean isConnecting(Direction direction) {
+        Direction blockDirection = this.getBlockState().getValue(PanelBlock.FACING);
+        if (blockDirection.getClockWise()==direction || this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getClockWise())).getValue(PanelBlock.FACING)==blockDirection)
+            return true;
+        if (blockDirection.getCounterClockWise()==direction || this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getCounterClockWise())).getValue(PanelBlock.FACING)==blockDirection)
+            return true;
+        return false;
     }
 }

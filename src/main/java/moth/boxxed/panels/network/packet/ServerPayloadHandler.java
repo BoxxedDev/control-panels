@@ -1,4 +1,4 @@
-package moth.boxxed.panels.network;
+package moth.boxxed.panels.network.packet;
 
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;

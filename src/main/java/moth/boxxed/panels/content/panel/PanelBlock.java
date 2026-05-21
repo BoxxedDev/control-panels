@@ -51,6 +51,12 @@ public class PanelBlock extends Block implements EntityBlock {
     }
 
     @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        this.getBlockEntity(level, pos).getNetwork().removeMember(level, pos);
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }

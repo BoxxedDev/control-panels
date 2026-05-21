@@ -1,6 +1,6 @@
 package moth.boxxed.panels.content.panel.modules.control_lever;
 
-import moth.boxxed.panels.network.DefaultModuleUpdatePacket;
+import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import moth.boxxed.panels.util.interaction.ModuleHoldInteraction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;

@@ -16,7 +16,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector2i;
@@ -96,6 +98,8 @@ public abstract class Module {
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
 
     }
+
+    public abstract VoxelShape getShape();
 
     public String getName() {
         return this.name;

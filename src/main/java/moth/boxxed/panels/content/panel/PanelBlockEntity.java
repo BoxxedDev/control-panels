@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.panel;
 
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
@@ -32,17 +33,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConnectingModules {
-    private Map<String, Module> modules;
+    private final ModuleMap modules;
     private ConnectingModulesNetwork network;
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
-        this.modules = new HashMap<>();
+        this.modules = new ModuleMap();
     }
 
     public boolean tryAddModule(String string, Module module) {
@@ -54,7 +54,6 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
             if (existingModule.getValue().inside(module.rect) && existingModule.getKey().equals(string))
                 return false;
         }
-
         module.name = string;
         module.parentBlockEntity = this;
         this.addModule(string, module);
@@ -63,14 +62,22 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
 
     public void addModule(String string, Module module) {
         this.modules.put(string, module);
+        if (this.network != null)
+            this.network.addModule(string, module);
+    }
+
+    public void removeModule(String module) {
+        this.modules.remove(module);
     }
 
     @Override
-    public Map<String, Module> getModules() {
+    public ModuleMap getModules() {
         return this.modules;
     }
 
     public void clearModules() {
+        if (this.network != null)
+            this.network.removeAllModules(this.modules);
         this.modules.clear();
     }
 
@@ -95,7 +102,7 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         int size = tag.getInt("modules_size");
-        modules = new HashMap<>();
+        this.clearModules();
         for (int i=0; i<size; i++) {
             CompoundTag subTag = (CompoundTag) tag.get("module_%d".formatted(i));
             if (subTag == null) continue;
@@ -193,10 +200,14 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
     @Override
     public boolean isConnecting(Direction direction) {
         Direction blockDirection = this.getBlockState().getValue(PanelBlock.FACING);
-        if (blockDirection.getClockWise()==direction || this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getClockWise())).getValue(PanelBlock.FACING)==blockDirection)
-            return true;
-        if (blockDirection.getCounterClockWise()==direction || this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getCounterClockWise())).getValue(PanelBlock.FACING)==blockDirection)
-            return true;
-        return false;
+//        if (blockDirection.getClockWise()==direction &&
+//                (this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getClockWise())).getBlock() instanceof PanelBlock) &&
+//                this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getClockWise())).getValue(PanelBlock.FACING)==blockDirection)
+//            return true;
+//        if (blockDirection.getCounterClockWise()==direction &&
+//                (this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getCounterClockWise())).getBlock() instanceof PanelBlock) &&
+//                this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getCounterClockWise())).getValue(PanelBlock.FACING)==blockDirection)
+//            return true;
+        return (blockDirection.getClockWise()==direction || blockDirection.getCounterClockWise()==direction || blockDirection.getOpposite() == direction);
     }
 }

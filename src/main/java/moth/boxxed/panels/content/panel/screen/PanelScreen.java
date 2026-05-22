@@ -3,6 +3,7 @@ package moth.boxxed.panels.content.panel.screen;
 import com.mojang.blaze3d.platform.InputConstants;
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
@@ -41,7 +42,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private static final ResourceLocation WRITE_NAME_HOVERED = ControlPanels.path("container/panel/write_name_highlighted");
     private static final ResourceLocation MODULE_OUTLINE = ControlPanels.path("container/panel/module_outline");
 
-    private Map<String, Module> modulesToSave;
+    private ModuleMap modulesToSave;
     private Rect2i contentArea;
 
     private Pair<String, Module> draggingModule;
@@ -64,7 +65,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 128, 96
         );
 
-        this.modulesToSave = new HashMap<>();
+        this.modulesToSave = new ModuleMap();
         this.modulesToSave.putAll(this.menu.holder.getModules());
 
         this.addRenderableWidget(
@@ -292,10 +293,8 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     }
 
     private void writeName() {
-        String toSet = this.nameEditBox.getValue();
-        Module module = this.modulesToSave.remove(this.selectedModule);
-        this.modulesToSave.put(toSet, module);
-        this.selectedModule = toSet;
+        this.modulesToSave.rename(this.selectedModule, this.nameEditBox.getValue());
+        this.selectedModule = this.nameEditBox.getValue();
     }
 
     @Override
@@ -311,7 +310,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     public void onClose(boolean updateOnly) {
         PanelBlockEntity be = PanelScreen.this.getMenu().holder;
         Map<String, Module.ModuleInfo> moduleInfoMap = new HashMap<>();
-        for (Map.Entry<String, Module> entry : PanelScreen.this.modulesToSave.entrySet()) {
+        for (Map.Entry<String, Module> entry : PanelScreen.this.modulesToSave) {
             moduleInfoMap.put(
                     entry.getKey(),
                     Module.ModuleInfo.fromModule(entry.getValue())

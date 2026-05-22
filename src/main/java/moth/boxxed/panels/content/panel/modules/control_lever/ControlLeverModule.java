@@ -16,7 +16,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
 public class ControlLeverModule extends Module implements IExternalUpdatable {
@@ -55,6 +57,11 @@ public class ControlLeverModule extends Module implements IExternalUpdatable {
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         this.renderSignal = Math.lerp(this.renderSignal, ((float) this.signal)*0.0125f, 0.75f);
+    }
+
+    @Override
+    public VoxelShape getShape() {
+        return Block.box(0, 0, 0, 3, 0.5, 5);
     }
 
     @Override

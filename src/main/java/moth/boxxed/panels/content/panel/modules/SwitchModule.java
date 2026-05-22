@@ -14,7 +14,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -56,5 +58,10 @@ public class SwitchModule extends moth.boxxed.panels.api.module.Module {
         BlockPos pos = panelBlockEntity.getBlockPos();
 
         model.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+    }
+
+    @Override
+    public VoxelShape getShape() {
+        return Block.box(0, 0, 0, 2, 1, 3);
     }
 }

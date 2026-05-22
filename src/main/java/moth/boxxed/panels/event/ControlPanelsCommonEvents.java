@@ -75,6 +75,10 @@ public class ControlPanelsCommonEvents {
         );
         generator.addProvider(
                 event.includeClient(),
+                new PanelModelProviders.Block(output, existingFileHelper)
+        );
+        generator.addProvider(
+                event.includeClient(),
                 new PanelLangProvider(output)
         );
         generator.addProvider(
@@ -87,6 +91,7 @@ public class ControlPanelsCommonEvents {
     public static void tabContents(BuildCreativeModeTabContentsEvent event) {
         if (event.getTab() == PanelCreativeTabs.PANEL_TAB.get()) {
             event.accept(PanelBlocks.CONTROL_PANEL);
+            event.accept(PanelBlocks.CABLE);
         }
         if (event.getTab() == PanelCreativeTabs.MODULES_TAB.get()) {
             for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {

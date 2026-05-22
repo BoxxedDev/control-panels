@@ -12,13 +12,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, BlockPos pos, boolean updateOnly) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SavePanelModulesPacket> TYPE = new CustomPacketPayload.Type<SavePanelModulesPacket>(ControlPanels.path("control_panel_save"));
+    public static final CustomPacketPayload.Type<SavePanelModulesPacket> TYPE = new CustomPacketPayload.Type<>(ControlPanels.path("control_panel_save"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SavePanelModulesPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, Module.ModuleInfo.STREAM_CODEC), SavePanelModulesPacket::modules,
@@ -27,6 +28,7 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
             SavePanelModulesPacket::new
     );
 
+    @SuppressWarnings("all")
     public void handle(ServerPayloadContext context) {
         Level level = context.player().level();
 
@@ -35,7 +37,11 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
             if (!updateOnly) {
                 pbe.clearModules();
                 for (Map.Entry<String, Module.ModuleInfo> entry : this.modules.entrySet()) {
-                    pbe.tryAddModule(entry.getKey(), Objects.requireNonNull(entry.getValue().create()));
+                    String name = entry.getKey();
+                    Module module = Objects.requireNonNull(entry.getValue().create());
+                    if (!pbe.getNetwork().validateName(name))
+                        name=pbe.getNetwork().generateNewName(module.type);
+                    pbe.tryAddModule(name, module);
                 }
             }
 
@@ -46,7 +52,7 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

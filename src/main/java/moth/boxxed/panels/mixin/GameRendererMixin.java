@@ -25,6 +25,6 @@ public class GameRendererMixin {
         if (player == null) return;
 
         HitResult hitResult = this.minecraft.hitResult;
-//        double minDist = hitResult != null && hitResult.getType() != HitResult.Type.MISS ?
+
     }
 }

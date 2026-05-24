@@ -12,9 +12,11 @@ import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import moth.boxxed.panels.index.PanelModules;
+import moth.boxxed.panels.network.handler.ClientPayloadHandler;
+import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
+import moth.boxxed.panels.network.packet.NameValidationPacket;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
-import moth.boxxed.panels.network.packet.ServerPayloadHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -25,6 +27,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -50,6 +53,14 @@ public class ControlPanelsCommonEvents {
                 DefaultModuleUpdatePacket.TYPE,
                 DefaultModuleUpdatePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleDefaultUpdate
+        );
+        registrar.playBidirectional(
+                NameValidationPacket.TYPE,
+                NameValidationPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientPayloadHandler::handleNameValidation,
+                        ServerPayloadHandler::handleNameValidation
+                )
         );
     }
 

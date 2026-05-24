@@ -2,8 +2,8 @@ package moth.boxxed.panels.content.panel.modules.knob;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
-import moth.boxxed.panels.util.interaction.ModuleHoldInteraction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;

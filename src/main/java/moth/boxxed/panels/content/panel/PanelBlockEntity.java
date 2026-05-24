@@ -6,11 +6,8 @@ import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
-import moth.boxxed.panels.network.connecting_panels.ConnectingModulesNetwork;
-import moth.boxxed.panels.network.connecting_panels.IConnectingModules;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -36,48 +33,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
-public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConnectingModules {
-    private final ModuleMap modules;
-    private ConnectingModulesNetwork network;
+public class PanelBlockEntity extends BlockEntity implements MenuProvider {
+    public ModuleMap modules;
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
         this.modules = new ModuleMap();
     }
 
-    public boolean tryAddModule(String string, Module module) {
+    public void tryAddModule(String string, Module module) {
         Rect2d tempRect = new Rect2d(0,0,16,16);
         if (!tempRect.contains(module.rect))
-            return false;
+            return;
 
         for (Map.Entry<String, Module> existingModule : this.modules.entrySet()) {
             if (existingModule.getValue().inside(module.rect) && existingModule.getKey().equals(string))
-                return false;
+                return;
         }
         module.name = string;
         module.parentBlockEntity = this;
         this.addModule(string, module);
-        return true;
     }
 
     public void addModule(String string, Module module) {
         this.modules.put(string, module);
-        if (this.network != null)
-            this.network.addModule(string, module);
-    }
-
-    public void removeModule(String module) {
-        this.modules.remove(module);
-    }
-
-    @Override
-    public ModuleMap getModules() {
-        return this.modules;
     }
 
     public void clearModules() {
-        if (this.network != null)
-            this.network.removeAllModules(this.modules);
         this.modules.clear();
     }
 
@@ -85,8 +67,13 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
         return this.modules.get(moduleName);
     }
 
+    public ModuleMap getModules() {
+        return this.modules;
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putInt("modules_size", this.modules.size());
         for (int i=0; i<this.modules.size(); i++) {
             Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
@@ -96,11 +83,11 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
                 tag.put("module_%d".formatted(i), subTag);
             }
         }
-        super.saveAdditional(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         int size = tag.getInt("modules_size");
         this.clearModules();
         for (int i=0; i<size; i++) {
@@ -111,7 +98,6 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
             module.loadData(subTag);
             this.tryAddModule(subTag.getString("name"), module);
         }
-        super.loadAdditional(tag, registries);
     }
 
     public void loadClient(CompoundTag tag, HolderLookup.Provider registries) {
@@ -119,9 +105,6 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        if (this.getNetwork() == null)
-            this.setNetwork(ConnectingModulesNetwork.getOrMake(level, blockPos));
-
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
@@ -185,29 +168,5 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, IConn
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public ConnectingModulesNetwork getNetwork() {
-        return this.network;
-    }
-
-    @Override
-    public void setNetwork(ConnectingModulesNetwork network) {
-        this.network = network;
-    }
-
-    @Override
-    public boolean isConnecting(Direction direction) {
-        Direction blockDirection = this.getBlockState().getValue(PanelBlock.FACING);
-//        if (blockDirection.getClockWise()==direction &&
-//                (this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getClockWise())).getBlock() instanceof PanelBlock) &&
-//                this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getClockWise())).getValue(PanelBlock.FACING)==blockDirection)
-//            return true;
-//        if (blockDirection.getCounterClockWise()==direction &&
-//                (this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getCounterClockWise())).getBlock() instanceof PanelBlock) &&
-//                this.getLevel().getBlockState(this.getBlockPos().relative(blockDirection.getCounterClockWise())).getValue(PanelBlock.FACING)==blockDirection)
-//            return true;
-        return (blockDirection.getClockWise()==direction || blockDirection.getCounterClockWise()==direction || blockDirection.getOpposite() == direction);
     }
 }

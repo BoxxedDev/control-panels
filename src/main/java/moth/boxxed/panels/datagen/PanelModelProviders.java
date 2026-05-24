@@ -1,17 +1,10 @@
 package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.ControlPanels;
-import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.models.ModelProvider;
-import net.minecraft.data.models.blockstates.Condition;
-import net.minecraft.data.models.blockstates.MultiPartGenerator;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.model.generators.*;
-import net.neoforged.neoforge.client.model.generators.loaders.CompositeModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
-import java.util.function.Function;
 
 public class PanelModelProviders {
     public static class Item extends ItemModelProvider {
@@ -21,7 +14,7 @@ public class PanelModelProviders {
 
         @Override
         protected void registerModels() {
-            simpleBlockItem(PanelBlocks.CONTROL_PANEL.get());
+            withExistingParent("control_panel", ControlPanels.path("block/control_panel/single"));
         }
     }
 

@@ -31,7 +31,6 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
     @SuppressWarnings("all")
     public void handle(ServerPayloadContext context) {
         Level level = context.player().level();
-
         BlockEntity be = level.getBlockEntity(this.pos);
         if (be instanceof PanelBlockEntity pbe) {
             if (!updateOnly) {
@@ -39,8 +38,6 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
                 for (Map.Entry<String, Module.ModuleInfo> entry : this.modules.entrySet()) {
                     String name = entry.getKey();
                     Module module = Objects.requireNonNull(entry.getValue().create());
-                    if (!pbe.getNetwork().validateName(name))
-                        name=pbe.getNetwork().generateNewName(module.type);
                     pbe.tryAddModule(name, module);
                 }
             }

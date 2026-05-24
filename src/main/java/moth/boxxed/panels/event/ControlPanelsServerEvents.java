@@ -1,7 +1,6 @@
 package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.ControlPanels;
-import moth.boxxed.panels.network.connecting_panels.ConnectingModulesNetwork;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -23,16 +24,18 @@ import org.joml.Math;
 
 public class ControlLeverModule extends Module implements IExternalUpdatable {
     private float renderSignal = 0;
+    private float indicatorRender = 0;
     private int signal = 0;
 
     public ControlLeverModule(int x, int y) {
-        super(PanelModules.CONTROL_LEVER.get(), x, y, 4, 5);
+        super(PanelModules.CONTROL_LEVER.get(), x, y, 3, 5);
     }
 
     @Override
     public boolean saveData(CompoundTag tag) {
         tag.putInt("signal", this.signal);
         tag.putFloat("render_signal", this.renderSignal);
+        tag.putFloat("indicator_render", this.indicatorRender);
 
         return super.saveData(tag);
     }
@@ -41,6 +44,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable {
     public boolean loadData(CompoundTag tag) {
         this.signal = tag.getInt("signal");
         this.renderSignal = tag.getFloat("render_signal");
+        this.indicatorRender = tag.getFloat("indicator_render");
 
         return super.loadData(tag);
     }
@@ -56,7 +60,16 @@ public class ControlLeverModule extends Module implements IExternalUpdatable {
 
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        this.renderSignal = Math.lerp(this.renderSignal, ((float) this.signal)*0.0125f, 0.75f);
+        this.renderSignal = Math.lerp(this.renderSignal, Mth.map((float) this.signal, 0, 15, 0, 0.25f), 0.5f);
+        this.indicatorRender = Math.lerp(this.indicatorRender, Mth.map((float) this.signal, 0, 15, 0,0.25f), 0.15f);
+    }
+
+    private static float bounce(float a, float b, float t) {
+        final float c1 = 1.7f;
+        final float c2 = c1 + 1;
+        final float c3 = (float) (1f + c2 * java.lang.Math.pow(t-1, 3) + c1 * java.lang.Math.pow(t-1, 2));
+
+        return Math.lerp(a, b, c3);
     }
 
     @Override
@@ -70,13 +83,14 @@ public class ControlLeverModule extends Module implements IExternalUpdatable {
         BlockState state = panelBlockEntity.getBlockState();
         BlockPos pos = panelBlockEntity.getBlockPos();
 
-        poseStack.pushPose();
-        poseStack.translate(0.03125, 0, 0);
         PanelPreloadedModels.CONTROL_LEVER_BASE.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
-        poseStack.translate(0.09375,0,0.0625+this.renderSignal);
-        PanelPreloadedModels.CONTROL_LEVER.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+        poseStack.translate(0, 0, this.renderSignal);
+        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
+        poseStack.pushPose();
+        poseStack.translate(0, 0, this.indicatorRender);
+        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 

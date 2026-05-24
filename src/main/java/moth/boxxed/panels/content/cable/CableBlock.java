@@ -1,9 +1,6 @@
 package moth.boxxed.panels.content.cable;
 
-import moth.boxxed.panels.ControlPanels;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
-import moth.boxxed.panels.network.connecting_panels.ConnectingModulesNetwork;
-import moth.boxxed.panels.network.connecting_panels.IConnectingModules;
+import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -11,11 +8,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -80,52 +74,43 @@ public class CableBlock extends Block implements EntityBlock {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState ret = this.defaultBlockState();
-        for (Direction otherDir : Direction.Plane.HORIZONTAL) {
-            BlockEntity other = context.getLevel().getBlockEntity(context.getClickedPos().relative(otherDir));
-            if (other instanceof IConnectingModules) {
-                ret = ret.setValue(directionPropertyMap.get(otherDir), true);
-            } else {
-                ret = ret.setValue(directionPropertyMap.get(otherDir), false);
-            }
+
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos neighborPos = context.getClickedPos().relative(direction);
+            BlockState neighborState = context.getLevel().getBlockState(neighborPos);
+
+            boolean check1 = neighborState.getBlock() instanceof CableBlock && neighborState.getBlock() instanceof CableBlock;
+            boolean check2 = neighborState.hasBlockEntity() && state.hasBlockEntity();
+            boolean check3 = neighborState.getBlock() instanceof PanelBlock && neighborState.getValue(PanelBlock.FACING)==direction;
+
+            ret = ret.setValue(directionPropertyMap.get(direction), (check1 && check2)||check3);
         }
+
         return ret;
     }
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        this.getBlockEntity(level, pos).getNetwork().removeMember(pos);
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (level.isClientSide() || direction.getAxis() == Direction.Axis.Y) return state;
-        BlockState ret = state;
-        for (Direction otherDir : Direction.Plane.HORIZONTAL) {
-            BlockEntity other = level.getBlockEntity(pos.relative(otherDir));
-            if (other instanceof IConnectingModules) {
-                ret = ret.setValue(directionPropertyMap.get(otherDir), true);
-            } else {
-                ret = ret.setValue(directionPropertyMap.get(otherDir), false);
-            }
-        }
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos p3) {
+        if (direction.getAxis().isVertical()) return state;
 
-        return ret;
-    }
+        boolean check1 = neighborState.getBlock() instanceof CableBlock && neighborState.getBlock() instanceof CableBlock;
+        boolean check2 = neighborState.hasBlockEntity() && state.hasBlockEntity();
+        boolean check3 = neighborState.getBlock() instanceof PanelBlock && neighborState.getValue(PanelBlock.FACING)==direction;
 
-    public CableBlockEntity getBlockEntity(Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof CableBlockEntity blockEntity)
-            return blockEntity;
-        return null;
+        return state.setValue(
+                directionPropertyMap.get(direction),
+                (check1 && check2) || check3
+        );
     }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CableBlockEntity(pos, state);
-    }
-
-    @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return (level1, blockPos, blockState, t) -> ((CableBlockEntity)t).tick(level1, blockPos, blockState);
     }
 }

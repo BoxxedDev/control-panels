@@ -10,9 +10,9 @@ public class PanelPreloadedModels {
 
             KNOB = regular("knob"),
 
-            CONTROL_LEVER = regular("control_lever/lever"),
-            CONTROL_LEVER_BASE = regular("control_lever/base")
-                    ;
+            CONTROL_LEVER_BASE = regular("control_lever/base"),
+            CONTROL_LEVER_HANDLE = regular("control_lever/handle"),
+            CONTROL_LEVER_INDICATOR = regular("control_lever/indicator");
 
     private static PreLoadedModel regular(String name) {
         return PreLoadedModel.create(ControlPanels.path("block/" + name));

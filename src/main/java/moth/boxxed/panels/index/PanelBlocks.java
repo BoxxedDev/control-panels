@@ -2,6 +2,7 @@ package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.content.cable.CableBlock;
+import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
@@ -26,6 +27,14 @@ public class PanelBlocks {
     public static final DeferredBlock<CableBlock> CABLE =
             registerBlock("cable",
                     () -> new CableBlock(
+                            BlockBehaviour.Properties.of()
+                                    .noOcclusion()
+                    )
+            );
+
+    public static final DeferredBlock<StrippedCableBlock> STRIPPED_CABLE =
+            registerBlock("stripped_cable",
+                    () -> new StrippedCableBlock(
                             BlockBehaviour.Properties.of()
                                     .noOcclusion()
                     )

@@ -2,6 +2,7 @@ package moth.boxxed.panels;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
+import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
 import moth.boxxed.panels.compat.PanelCompat;
 import moth.boxxed.panels.compat.computercraft.CCPeripherals;
 import moth.boxxed.panels.index.*;
@@ -41,9 +42,12 @@ public class ControlPanels {
         PanelCompat.loadAll();
 
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(ConnectingModulesNetworkManager.class);
+
         if (ModList.get().isLoaded("computercraft")) {
             modEventBus.register(CCPeripherals.class);
         }
+
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 

@@ -1,7 +1,7 @@
 package moth.boxxed.panels.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import moth.boxxed.panels.util.interaction.ModuleHoldInteractionManager;
+import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Mixin;

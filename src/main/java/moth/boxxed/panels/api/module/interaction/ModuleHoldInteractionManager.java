@@ -1,4 +1,4 @@
-package moth.boxxed.panels.util.interaction;
+package moth.boxxed.panels.api.module.interaction;
 
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import net.minecraft.client.Minecraft;

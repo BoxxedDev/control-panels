@@ -1,8 +1,8 @@
 package moth.boxxed.panels.index;
 
+import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.content.panel.modules.control_lever.ControlLeverHoldInteraction;
 import moth.boxxed.panels.content.panel.modules.knob.KnobHoldInteraction;
-import moth.boxxed.panels.util.interaction.ModuleHoldInteraction;
 
 import java.util.HashSet;
 import java.util.Set;

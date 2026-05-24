@@ -20,6 +20,8 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.CONTROL_LEVER_MODULE, "Control Lever");
 
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
+        addBlock(PanelBlocks.CABLE, "Control Cable");
+        addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
 
         addWidget("panel.exit", "Exit");
         addWidget("panel.save", "Save");

@@ -2,15 +2,13 @@ package moth.boxxed.panels.api.module;
 
 import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ModuleMap extends HashMap<String, Module> implements Iterable<Map.Entry<String, Module>> {
     public static ModuleMap Empty() {
         return new ModuleMap();
-    }
-
-    public void rename(Map.Entry<String, Module> entry, String newName) {
-        this.rename(entry.getKey(), newName);
     }
 
     public void rename(String oldName, String newName) {

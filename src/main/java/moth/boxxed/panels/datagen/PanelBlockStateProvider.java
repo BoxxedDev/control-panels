@@ -2,12 +2,11 @@ package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.content.cable.CableBlock;
+import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.blockstates.MultiPartGenerator;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -19,15 +18,26 @@ public class PanelBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        horizontalBlock(PanelBlocks.CONTROL_PANEL.get(), models().getExistingFile(ControlPanels.path("control_panel")));
-
+        controlPanel();
         cable();
     }
 
+    private void controlPanel() {
+        ModelFile single = models().getExistingFile(ControlPanels.path("block/control_panel/single"));
+        ModelFile center = models().getExistingFile(ControlPanels.path("block/control_panel/center"));
+        ModelFile left = models().getExistingFile(ControlPanels.path("block/control_panel/left"));
+        ModelFile right = models().getExistingFile(ControlPanels.path("block/control_panel/right"));
+
+        horizontalBlock(PanelBlocks.CONTROL_PANEL.get(), (blockState) ->
+                switch (blockState.getValue(PanelBlock.SHAPE)) {
+                    case SINGLE -> single;
+                    case LEFT -> left;
+                    case CENTER -> center;
+                    case RIGHT -> right;
+                });
+    }
+
     private void cable() {
-
-        MultiPartGenerator generator = MultiPartGenerator.multiPart(PanelBlocks.CABLE.get());
-
         ModelFile.ExistingModelFile coreFile = models().getExistingFile(ControlPanels.path("block/cable/core"));
         ModelFile.ExistingModelFile facingFile = models().getExistingFile(ControlPanels.path("block/cable/facing"));
 

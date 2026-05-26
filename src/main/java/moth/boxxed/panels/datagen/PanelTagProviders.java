@@ -13,14 +13,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class PanelTagProviders {
-    public static class Item extends TagsProvider<net.minecraft.world.item.Item> {
-        public Item(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+    public static class Items extends TagsProvider<net.minecraft.world.item.Item> {
+        public Items(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(output, Registries.ITEM, lookupProvider, ControlPanels.MOD_ID, existingFileHelper);
         }
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(PanelTags.Item.MODULE)
+            tag(PanelTags.Items.MODULE)
                     .add(PanelItems.SWITCH_MODULE.getKey())
                     .add(PanelItems.KNOB_MODULE.getKey())
                     .add(PanelItems.CONTROL_LEVER_MODULE.getKey());

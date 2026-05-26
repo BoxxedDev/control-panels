@@ -1,6 +1,7 @@
 package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
@@ -15,6 +16,7 @@ public class PanelModelProviders {
         @Override
         protected void registerModels() {
             withExistingParent("control_panel", ControlPanels.path("block/control_panel/single"));
+            basicItem(PanelItems.CABLE_STRIPPER.get());
         }
     }
 

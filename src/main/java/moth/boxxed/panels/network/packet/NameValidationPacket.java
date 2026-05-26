@@ -2,8 +2,6 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.ModuleType;
-import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetwork;
-import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;

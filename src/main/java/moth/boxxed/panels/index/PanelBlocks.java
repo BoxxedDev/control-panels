@@ -23,7 +23,6 @@ public class PanelBlocks {
                                     .noOcclusion()
                     )
             );
-
     public static final DeferredBlock<CableBlock> CABLE =
             registerBlock("cable",
                     () -> new CableBlock(
@@ -33,13 +32,17 @@ public class PanelBlocks {
             );
 
     public static final DeferredBlock<StrippedCableBlock> STRIPPED_CABLE =
-            registerBlock("stripped_cable",
+            registerBlockWithoutItem("stripped_cable",
                     () -> new StrippedCableBlock(
                             BlockBehaviour.Properties.of()
+                                    .lootFrom(CABLE)
                                     .noOcclusion()
                     )
             );
 
+    private static <T extends Block> DeferredBlock<T> registerBlockWithoutItem(String name, Supplier<T> block) {
+        return BLOCKS.register(name, block);
+    }
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> ret = BLOCKS.register(name, block);
         PanelItems.blockItem(name, ret);

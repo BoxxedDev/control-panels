@@ -1,6 +1,7 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.content.cable.stripper.CableStripperItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -14,9 +15,15 @@ import java.util.function.Supplier;
 public class PanelItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ControlPanels.MOD_ID);
 
-    public static final DeferredItem<Item> SWITCH_MODULE = ITEMS.register("switch", () -> new Item(new Item.Properties()));
-    public static final DeferredItem<Item> KNOB_MODULE = ITEMS.register("knob", () -> new Item(new Item.Properties()));
-    public static final DeferredItem<Item> CONTROL_LEVER_MODULE = ITEMS.register("control_lever", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CABLE_STRIPPER = ITEMS.register("cable_stripper",
+            () -> new CableStripperItem(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredItem<Item> SWITCH_MODULE = ITEMS.register("switch",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> KNOB_MODULE = ITEMS.register("knob",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CONTROL_LEVER_MODULE = ITEMS.register("control_lever",
+            () -> new Item(new Item.Properties()));
 
     public static <T extends Block> Supplier<BlockItem> blockItem(String name, DeferredBlock<T> block) {
         return blockItem(name, block, new Item.Properties());

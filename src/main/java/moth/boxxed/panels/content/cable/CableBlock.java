@@ -1,5 +1,7 @@
 package moth.boxxed.panels.content.cable;
 
+import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
+import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,7 +36,7 @@ public class CableBlock extends Block implements EntityBlock {
     private static final VoxelShape WEST_SHAPE = Block.box(0, 0, 5, 5, 3, 11);
     private static final VoxelShape CORE_SHAPE = Block.box(5, 0, 5, 11, 3, 11);
 
-    private static final Map<Direction, BooleanProperty> directionPropertyMap = new HashMap<>();
+    public static final Map<Direction, BooleanProperty> directionPropertyMap = new HashMap<>();
     private static final Map<Direction, VoxelShape> directionShapeMap = new HashMap<>();
     static {
         directionPropertyMap.put(Direction.NORTH, CableBlock.NORTH);
@@ -81,31 +83,31 @@ public class CableBlock extends Block implements EntityBlock {
             BlockState neighborState = context.getLevel().getBlockState(neighborPos);
 
             boolean check1 = neighborState.getBlock() instanceof CableBlock && neighborState.getBlock() instanceof CableBlock;
-            boolean check2 = neighborState.hasBlockEntity() && state.hasBlockEntity();
-            boolean check3 = neighborState.getBlock() instanceof PanelBlock && neighborState.getValue(PanelBlock.FACING)==direction;
+            boolean check2 = neighborState.getBlock() instanceof PanelBlock && neighborState.getValue(PanelBlock.FACING)==direction;
+            boolean check3 = neighborState.getBlock() instanceof StrippedCableBlock && neighborState.getValue(StrippedCableBlock.FACING)==direction;
 
-            ret = ret.setValue(directionPropertyMap.get(direction), (check1 && check2)||check3);
+            ret = ret.setValue(
+                    directionPropertyMap.get(direction),
+                    check1 || check2 || check3
+            );
         }
 
         return ret;
     }
 
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos p3) {
         if (direction.getAxis().isVertical()) return state;
 
-        boolean check1 = neighborState.getBlock() instanceof CableBlock && neighborState.getBlock() instanceof CableBlock;
-        boolean check2 = neighborState.hasBlockEntity() && state.hasBlockEntity();
+        boolean check1 = neighborState.hasBlockEntity() && state.hasBlockEntity();
+        boolean check2 = neighborState.getBlock() instanceof CableBlock && neighborState.getBlock() instanceof CableBlock;
         boolean check3 = neighborState.getBlock() instanceof PanelBlock && neighborState.getValue(PanelBlock.FACING)==direction;
+        boolean check4 = neighborState.getBlock() instanceof StrippedCableBlock && neighborState.getValue(StrippedCableBlock.FACING)==direction;
 
         return state.setValue(
                 directionPropertyMap.get(direction),
-                (check1 && check2) || check3
+                check1 && (check2 || check3 || check4)
         );
     }
 

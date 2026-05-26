@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.panel;
 
+import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -128,6 +129,7 @@ public class PanelBlock extends Block implements EntityBlock {
             return blockEntity;
         return null;
     }
+
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {

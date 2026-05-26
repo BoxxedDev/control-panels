@@ -2,6 +2,9 @@ package moth.boxxed.panels.content.panel;
 
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
+import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetwork;
+import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
+import moth.boxxed.panels.api.network.connecting_panels.INetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
@@ -32,9 +35,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
-public class PanelBlockEntity extends BlockEntity implements MenuProvider {
+public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetworkMember {
     public ModuleMap modules;
+    public UUID network;
+    private boolean chunkUnloaded;
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
@@ -74,6 +80,8 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        if (this.network != null)
+            tag.putUUID("network", this.network);
         tag.putInt("modules_size", this.modules.size());
         for (int i=0; i<this.modules.size(); i++) {
             Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
@@ -88,6 +96,9 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        if (tag.hasUUID("network"))
+            this.network = tag.getUUID("network");
+        ConnectingModulesNetworkManager.getOrCreate(this);
         int size = tag.getInt("modules_size");
         this.clearModules();
         for (int i=0; i<size; i++) {
@@ -97,6 +108,22 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
             Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
             module.loadData(subTag);
             this.tryAddModule(subTag.getString("name"), module);
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        this.chunkUnloaded = true;
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (!this.chunkUnloaded) {
+            ConnectingModulesNetwork gottenNetwork = ConnectingModulesNetworkManager.getOrCreate(this);
+            if (gottenNetwork != null)
+                gottenNetwork.removeMember(this.getBlockPos());
         }
     }
 
@@ -168,5 +195,15 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider {
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public UUID getNetwork() {
+        return this.network;
+    }
+
+    @Override
+    public void setNetwork(UUID network) {
+        this.network = network;
     }
 }

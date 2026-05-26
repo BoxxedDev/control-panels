@@ -4,14 +4,8 @@ import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelScreen;
-import moth.boxxed.panels.datagen.PanelBlockStateProvider;
-import moth.boxxed.panels.datagen.PanelLangProvider;
-import moth.boxxed.panels.datagen.PanelModelProviders;
-import moth.boxxed.panels.datagen.PanelTagProviders;
-import moth.boxxed.panels.index.PanelBlocks;
-import moth.boxxed.panels.index.PanelCreativeTabs;
-import moth.boxxed.panels.index.PanelMenuTypes;
-import moth.boxxed.panels.index.PanelModules;
+import moth.boxxed.panels.datagen.*;
+import moth.boxxed.panels.index.*;
 import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
@@ -76,6 +70,7 @@ public class ControlPanelsCommonEvents {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
+        //Client
         generator.addProvider(
                 event.includeClient(),
                 new PanelBlockStateProvider(output, existingFileHelper)
@@ -92,9 +87,15 @@ public class ControlPanelsCommonEvents {
                 event.includeClient(),
                 new PanelLangProvider(output)
         );
+
+        //Server
         generator.addProvider(
                 event.includeServer(),
-                new PanelTagProviders.Item(output, lookupProvider, existingFileHelper)
+                new PanelTagProviders.Items(output, lookupProvider, existingFileHelper)
+        );
+        generator.addProvider(
+                event.includeServer(),
+                new PanelLootProvider(output, lookupProvider)
         );
     }
 
@@ -103,6 +104,7 @@ public class ControlPanelsCommonEvents {
         if (event.getTab() == PanelCreativeTabs.PANEL_TAB.get()) {
             event.accept(PanelBlocks.CONTROL_PANEL);
             event.accept(PanelBlocks.CABLE);
+            event.accept(PanelItems.CABLE_STRIPPER);
         }
         if (event.getTab() == PanelCreativeTabs.MODULES_TAB.get()) {
             for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {

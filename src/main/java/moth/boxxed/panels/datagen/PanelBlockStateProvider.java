@@ -5,7 +5,6 @@ import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.models.blockstates.MultiPartGenerator;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -20,6 +19,7 @@ public class PanelBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         controlPanel();
         cable();
+        horizontalBlock(PanelBlocks.STRIPPED_CABLE.get(), models().getExistingFile(ControlPanels.path("block/cable/stripped")));
     }
 
     private void controlPanel() {

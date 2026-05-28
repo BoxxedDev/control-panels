@@ -1,16 +1,14 @@
 package moth.boxxed.panels.content.cable;
 
-import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
+import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -24,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CableBlock extends Block implements EntityBlock {
+public class CableBlock extends BaseEntityBlock {
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
@@ -77,7 +75,6 @@ public class CableBlock extends Block implements EntityBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState ret = this.defaultBlockState();
 
-        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = context.getClickedPos().relative(direction);
             BlockState neighborState = context.getLevel().getBlockState(neighborPos);

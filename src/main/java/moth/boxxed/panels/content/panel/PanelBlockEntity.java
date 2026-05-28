@@ -2,15 +2,15 @@ package moth.boxxed.panels.content.panel;
 
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
-import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetwork;
-import moth.boxxed.panels.api.network.connecting_panels.ConnectingModulesNetworkManager;
-import moth.boxxed.panels.api.network.connecting_panels.INetworkMember;
+import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -27,7 +27,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -35,12 +34,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
-public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetworkMember {
+public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider {
     public ModuleMap modules;
-    public UUID network;
-    private boolean chunkUnloaded;
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
@@ -73,6 +69,7 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetw
         return this.modules.get(moduleName);
     }
 
+    @Override
     public ModuleMap getModules() {
         return this.modules;
     }
@@ -80,8 +77,6 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetw
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        if (this.network != null)
-            tag.putUUID("network", this.network);
         tag.putInt("modules_size", this.modules.size());
         for (int i=0; i<this.modules.size(); i++) {
             Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
@@ -96,9 +91,6 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetw
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.hasUUID("network"))
-            this.network = tag.getUUID("network");
-        ConnectingModulesNetworkManager.getOrCreate(this);
         int size = tag.getInt("modules_size");
         this.clearModules();
         for (int i=0; i<size; i++) {
@@ -112,26 +104,31 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetw
     }
 
     @Override
-    public void onChunkUnloaded() {
-        super.onChunkUnloaded();
-        this.chunkUnloaded = true;
-    }
+    public boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to) {
+        if (!(from.getBlock() instanceof PanelBlock)) return false;
 
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-        if (!this.chunkUnloaded) {
-            ConnectingModulesNetwork gottenNetwork = ConnectingModulesNetworkManager.getOrCreate(this);
-            if (gottenNetwork != null)
-                gottenNetwork.removeMember(this.getBlockPos());
-        }
+        BlockPos otherPos = other.getBlockPos();
+        BlockPos pos = getBlockPos();
+        BlockPos delta = otherPos.subtract(pos);
+        Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
+        Direction fromDirection = from.getValue(PanelBlock.FACING);
+
+        if (direction.getAxis().isVertical())
+            return false;
+        if (fromDirection.getOpposite()==direction && to.getBlock() instanceof CableBlock)
+            return true;
+        return (fromDirection.getClockWise()==direction || fromDirection.getCounterClockWise()==direction) &&
+                to.getBlock() instanceof PanelBlock &&
+                from.getValue(PanelBlock.FACING) == to.getValue(PanelBlock.FACING);
     }
 
     public void loadClient(CompoundTag tag, HolderLookup.Provider registries) {
         this.loadAdditional(tag, registries);
     }
 
+    @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+        super.tick(level, blockPos, blockState);
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
@@ -195,15 +192,5 @@ public class PanelBlockEntity extends BlockEntity implements MenuProvider, INetw
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public UUID getNetwork() {
-        return this.network;
-    }
-
-    @Override
-    public void setNetwork(UUID network) {
-        this.network = network;
     }
 }

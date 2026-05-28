@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class ModuleMap extends HashMap<String, Module> implements Iterable<Map.Entry<String, Module>> {
-    public static ModuleMap Empty() {
+    public static ModuleMap empty() {
         return new ModuleMap();
     }
 

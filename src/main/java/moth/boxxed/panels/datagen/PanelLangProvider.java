@@ -33,9 +33,9 @@ public class PanelLangProvider extends LanguageProvider {
 
         addTooltip("shift_to_expand", "§bHold §3[Shift] §r§bfor more info");
 
-        addTooltip("cable_stripper_info_1", "§3Right-click a normal cable to strip it");
-        addTooltip("cable_stripper_info_2", "§3Right-click a stripped cable to change \n   its configured input or output module");
-        addTooltip("cable_stripper_info_3", "§3Crouch Right-click to pick up normal cables \n   or stripped cables");
+        addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
+        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change \n   its configured input or output module");
+        addTooltip("cable_stripper_info_3", "§bCrouch Right-click §3to pick up normal cables \n   or stripped cables");
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Control Panel");
         addCreativeTab(PanelCreativeTabs.MODULES_TAB.get(), "Control Panel Modules");

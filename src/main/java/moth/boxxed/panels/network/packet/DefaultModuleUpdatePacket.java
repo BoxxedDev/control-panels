@@ -34,8 +34,7 @@ public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, int num
             if (pbe.getModule(this.moduleName) instanceof IExternalUpdatable updatable) {
                 updatable.setNum(this.num);
                 pbe.setChanged();
-                if (level instanceof ServerLevel serverLevel)
-                    serverLevel.getChunkSource().blockChanged(this.pos);
+                pbe.blockChanged();
             }
         }
     }

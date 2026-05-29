@@ -28,11 +28,13 @@ public class ModulesNetworkManager {
     public static ModulesNetwork getNetwork(ModulesNetworkMember member) {
         UUID id = member.network;
         Map<UUID, ModulesNetwork> map = ALL.computeIfAbsent(member.getLevel(), $ -> new HashMap<>());
+        ControlPanels.LOGGER.debug(map.entrySet().stream().toList().toString());
         if (id != null) {
             if (!map.containsKey(id)) {
                 ModulesNetwork network = new ModulesNetwork();
                 network.id = id;
                 map.put(id, network);
+                network.addMember(member);
                 return network;
             }
             return map.get(id);
@@ -41,7 +43,7 @@ public class ModulesNetworkManager {
     }
 
     public static void removeNetwork(Level level, ModulesNetwork network) {
-        ControlPanels.LOGGER.debug("Removed network {}", network.id);
+//        ControlPanels.LOGGER.debug("Removed network {}", network.id);
         ModulesNetworkManager.ALL.get(level).remove(network.id);
     }
 
@@ -55,21 +57,21 @@ public class ModulesNetworkManager {
 
         List<ModulesNetwork> surroundingNetworks = new ArrayList<>();
         for (ModulesNetworkMember neighbor : getNeighbors(member)) {
+            if (!neighbor.init)
+                continue;
             ModulesNetwork network = getNetwork(neighbor);
-            ControlPanels.LOGGER.debug(String.valueOf(network==null));
             if (network == null)
                 continue;
             surroundingNetworks.add(network);
         }
 
-        ControlPanels.LOGGER.debug(String.valueOf(surroundingNetworks.size()));
-
         ModulesNetwork network;
         if (surroundingNetworks.isEmpty()) {
             network = new ModulesNetwork();
             network.id = UUID.randomUUID();
-            network.addMember(member);
-            network.syncMemberIds();
+            if (member.hasNetwork())
+                network.id = member.network;
+            member.setNetwork(network.id);
         } else {
             network = surroundingNetworks.getFirst();
             if (surroundingNetworks.size() > 1) {
@@ -78,9 +80,9 @@ public class ModulesNetworkManager {
                 for (ModulesNetwork neighborNetwork : surroundingNetworks)
                     removeNetwork(level, neighborNetwork);
             }
-            network.addMember(member);
-            network.syncMemberIds();
+            member.setNetwork(network.id);
         }
+        member.networkUpdate(member.getOrCreate());
     }
 
     public static Set<ModulesNetworkMember> getNeighbors(ModulesNetworkMember member) {
@@ -91,8 +93,9 @@ public class ModulesNetworkManager {
             BlockEntity other = level.getBlockEntity(pos.relative(direction));
             if (!(other instanceof ModulesNetworkMember otherMember))
                 continue;
-            if (isConnected(member, otherMember))
+            if (isConnected(member, otherMember)) {
                 ret.add(otherMember);
+            }
         }
         return ret;
     }

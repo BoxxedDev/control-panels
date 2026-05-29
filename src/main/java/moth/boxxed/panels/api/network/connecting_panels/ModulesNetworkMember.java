@@ -22,14 +22,14 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         if (hasNetwork())
-            tag.putUUID("network", this.network);
+            tag.putString("network", this.network.toString());
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains("network"))
-            this.network = tag.getUUID("network");
+            this.network = UUID.fromString(tag.getString("network"));
     }
 
     public ModulesNetwork getOrCreate() {
@@ -43,6 +43,7 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
     public abstract boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to);
 
     public void networkUpdate(ModulesNetwork modulesNetwork) {
+        setChanged();
     }
 
     public ModuleMap getModules() {
@@ -60,5 +61,14 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
         if ((!getLevel().isClientSide) && hasNetwork()) {
             this.getOrCreate().removeMember(this);
         }
+    }
+
+    public void setNetwork(UUID uuid) {
+        if (uuid == this.network) return;
+        if (this.network != null) getOrCreate().removeMember(this);
+
+        this.network = uuid;
+        getOrCreate().addMember(this);
+        networkUpdate(getOrCreate());
     }
 }

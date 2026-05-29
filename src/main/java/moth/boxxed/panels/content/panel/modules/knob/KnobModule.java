@@ -3,6 +3,7 @@ package moth.boxxed.panels.content.panel.modules.knob;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
+import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -14,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -22,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
-public class KnobModule extends Module implements IExternalUpdatable {
+public class KnobModule extends Module implements IExternalUpdatable, IInput {
     private float renderAngle = 0;
     private int angle = 0;
 
@@ -86,5 +88,10 @@ public class KnobModule extends Module implements IExternalUpdatable {
         this.angle = num;
         float f = (angle+360)/360f;
         this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, f);
+    }
+
+    @Override
+    public int getAnalog() {
+        return Math.round(Mth.clampedMap(java.lang.Math.floorMod(this.angle, 360), 0, 360, 0, 15));
     }
 }

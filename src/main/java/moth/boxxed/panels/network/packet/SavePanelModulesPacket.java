@@ -2,6 +2,7 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.network.connecting_panels.ModulesNetwork;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -35,16 +36,17 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
         if (be instanceof PanelBlockEntity pbe) {
             if (!updateOnly) {
                 pbe.clearModules();
+                ModulesNetwork network = pbe.getOrCreate();
                 for (Map.Entry<String, Module.ModuleInfo> entry : this.modules.entrySet()) {
-                    String name = entry.getKey();
+                    String name = network.validateName(entry.getKey(), entry.getValue());
                     Module module = Objects.requireNonNull(entry.getValue().create());
+                    module.name = name;
                     pbe.tryAddModule(name, module);
                 }
             }
 
             pbe.setChanged();
-            if (level instanceof ServerLevel serverLevel)
-                serverLevel.getChunkSource().blockChanged(this.pos);
+            pbe.blockChanged();
         }
     }
 

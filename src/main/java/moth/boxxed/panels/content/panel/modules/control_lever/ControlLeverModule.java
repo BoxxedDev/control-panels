@@ -2,6 +2,7 @@ package moth.boxxed.panels.content.panel.modules.control_lever;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
+import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -22,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
-public class ControlLeverModule extends Module implements IExternalUpdatable {
+public class ControlLeverModule extends Module implements IExternalUpdatable, IInput {
     private float renderSignal = 0;
     private float indicatorRender = 0;
     private int signal = 0;
@@ -102,6 +103,11 @@ public class ControlLeverModule extends Module implements IExternalUpdatable {
     }
 
     public int getSignal() {
+        return this.signal;
+    }
+
+    @Override
+    public int getAnalog() {
         return this.signal;
     }
 }

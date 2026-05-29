@@ -1,6 +1,8 @@
 package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import moth.boxxed.panels.api.module.IInput;
+import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -20,7 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-public class SwitchModule extends moth.boxxed.panels.api.module.Module {
+public class SwitchModule extends Module implements IInput {
     private boolean switchState;
 
     public SwitchModule(int x, int y) {
@@ -63,5 +65,10 @@ public class SwitchModule extends moth.boxxed.panels.api.module.Module {
     @Override
     public VoxelShape getShape() {
         return Block.box(0, 0, 0, 2, 1, 3);
+    }
+
+    @Override
+    public int getAnalog() {
+        return this.switchState ? 0 : 15;
     }
 }

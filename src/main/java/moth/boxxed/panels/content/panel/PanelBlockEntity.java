@@ -170,27 +170,4 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
     }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-        this.loadAdditional(tag, lookupProvider);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag compoundTag = new CompoundTag();
-        this.saveAdditional(compoundTag, registries);
-        return compoundTag;
-    }
-
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        CompoundTag tag = pkt.getTag();
-        this.loadAdditional(tag == null ? new CompoundTag() : tag, lookupProvider);
-    }
-
-    @Override
-    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 }

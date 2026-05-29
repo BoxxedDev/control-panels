@@ -33,4 +33,10 @@ A json for a custom module type could look something like this:
 ```
 </details>
 
+<details>
+<summary>More modules</summary>
+* Terminal screen
+* Terminal keyboard
+</details>
+
 #### Started May 10th, 2026

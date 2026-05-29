@@ -1,5 +1,7 @@
 package moth.boxxed.panels.content.panel.modules.knob;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
@@ -7,6 +9,7 @@ import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -47,14 +50,22 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
 
     @Override
     public void renderGui(GuiGraphics graphics, float partialTick) {
-        int section = Math.floorMod(Math.round(angle/22.5f), 16);
+        int section = Math.round(Mth.map(angle, 0, 360, 0, 15));
 
         int centerX = graphics.guiWidth()/2;
         int centerY = graphics.guiHeight()/2;
-        int x = centerX-8;
-        int y = centerY+16;
+        int x = centerX-9;
+        int y = centerY-8;
 
-        graphics.blitSprite(KNOB_SPRITE, 256, 16, section*16, 0, x, y, 16, 16);
-        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), centerX, centerY+36, 0xFFFFFFFF);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(
+                GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+        );
+        graphics.blitSprite(KNOB_SPRITE, 272, 17, section*17, 0, x, y, 17, 17);
+        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), centerX, centerY+12, 0xFFFFFFFF);
+        RenderSystem.disableBlend();
     }
 }

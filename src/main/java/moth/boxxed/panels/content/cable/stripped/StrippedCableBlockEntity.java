@@ -43,11 +43,9 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember {
         Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
         Direction fromDirection = from.getValue(PanelBlock.FACING);
 
-        ControlPanels.LOGGER.debug("");
-
         if (direction.getAxis().isVertical())
             return false;
-        return to.getBlock() instanceof CableBlock && fromDirection.equals(direction);
+        return to.getBlock() instanceof CableBlock && fromDirection.getOpposite().equals(direction);
     }
 
     public void configureStripped() {

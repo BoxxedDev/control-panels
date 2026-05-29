@@ -44,6 +44,7 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
 
     public void networkUpdate(ModulesNetwork modulesNetwork) {
         setChanged();
+        blockChanged();
     }
 
     public ModuleMap getModules() {

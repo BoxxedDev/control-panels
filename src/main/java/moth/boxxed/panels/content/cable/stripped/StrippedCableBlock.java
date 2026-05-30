@@ -8,6 +8,7 @@ import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -89,6 +90,21 @@ public class StrippedCableBlock extends BaseEntityBlock {
             return input.getAnalog();
         }
         return 0;
+    }
+
+    @Override
+    protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return super.getDirectSignal(state, level, pos, direction);
+    }
+
+    @Override
+    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return super.getSignal(state, level, pos, direction);
+    }
+
+    @Override
+    protected boolean isSignalSource(BlockState state) {
+        return true;
     }
 
     @Override

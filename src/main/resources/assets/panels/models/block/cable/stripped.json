@@ -5,7 +5,7 @@
 	"textures": {
 		"0": "panels:block/cable",
 		"1": "panels:block/stripped_cable",
-		"particle": "panels:block/purple_metal"
+		"particle": "panels:block/metal"
 	},
 	"elements": [
 		{

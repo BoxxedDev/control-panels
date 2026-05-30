@@ -25,6 +25,7 @@ public class PanelLangProvider extends LanguageProvider {
         addBlock(PanelBlocks.CABLE, "Control Cable");
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
+        addItem(PanelItems.COPPER_WIRE, "Copper Wire");
 
         addWidget("panel.exit", "Exit");
         addWidget("panel.save", "Save");

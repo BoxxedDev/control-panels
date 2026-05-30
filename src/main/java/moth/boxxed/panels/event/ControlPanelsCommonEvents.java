@@ -95,7 +95,15 @@ public class ControlPanelsCommonEvents {
         );
         generator.addProvider(
                 event.includeServer(),
+                new PanelTagProviders.Blocks(output, lookupProvider, existingFileHelper)
+        );
+        generator.addProvider(
+                event.includeServer(),
                 new PanelLootProvider(output, lookupProvider)
+        );
+        generator.addProvider(
+                event.includeServer(),
+                new PanelRecipeProvider(output, lookupProvider)
         );
     }
 
@@ -105,6 +113,7 @@ public class ControlPanelsCommonEvents {
             event.accept(PanelBlocks.CONTROL_PANEL);
             event.accept(PanelBlocks.CABLE);
             event.accept(PanelItems.CABLE_STRIPPER);
+            event.accept(PanelItems.COPPER_WIRE);
         }
         if (event.getTab() == PanelCreativeTabs.MODULES_TAB.get()) {
             for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {

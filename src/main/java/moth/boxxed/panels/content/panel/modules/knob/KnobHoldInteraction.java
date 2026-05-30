@@ -50,7 +50,7 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
 
     @Override
     public void renderGui(GuiGraphics graphics, float partialTick) {
-        int section = Math.round(Mth.map(angle, 0, 360, 0, 15));
+        int section = Math.round(Mth.map(angle, 0, 360, 0, 16));
 
         int centerX = graphics.guiWidth()/2;
         int centerY = graphics.guiHeight()/2;
@@ -64,7 +64,7 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
                 GlStateManager.SourceFactor.ONE,
                 GlStateManager.DestFactor.ZERO
         );
-        graphics.blitSprite(KNOB_SPRITE, 272, 17, section*17, 0, x, y, 17, 17);
+        graphics.blitSprite(KNOB_SPRITE, 289, 17, section*17, 0, x, y, 17, 17);
         graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), centerX, centerY+12, 0xFFFFFFFF);
         RenderSystem.disableBlend();
     }

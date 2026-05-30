@@ -17,6 +17,7 @@ public class PanelModelProviders {
         protected void registerModels() {
             withExistingParent("control_panel", ControlPanels.path("block/control_panel/single"));
             basicItem(PanelItems.CABLE_STRIPPER.get());
+            basicItem(PanelItems.COPPER_WIRE.get());
         }
     }
 

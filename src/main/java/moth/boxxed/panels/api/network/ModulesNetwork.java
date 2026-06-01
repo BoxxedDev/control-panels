@@ -1,12 +1,8 @@
-package moth.boxxed.panels.api.network.connecting_panels;
+package moth.boxxed.panels.api.network;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
-import moth.boxxed.panels.api.module.ModuleType;
-import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.index.PanelModules;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -14,6 +10,7 @@ import java.util.*;
 public class ModulesNetwork {
     public UUID id;
     public Set<ModulesNetworkMember> members;
+    public ModuleMap compiledModules;
 
     public ModulesNetwork() {
         this.members = new HashSet<>();
@@ -115,7 +112,7 @@ public class ModulesNetwork {
         });
     }
 
-    public ModuleMap getCollectiveModules() {
+    private ModuleMap getCollectiveModules() {
         ModuleMap collective = new ModuleMap();
         for (ModulesNetworkMember member : this.members) {
             if (member.getModules() == null)
@@ -123,6 +120,18 @@ public class ModulesNetwork {
             collective.putAll(member.getModules());
         }
         return collective;
+    }
+
+    public void compileModules() {
+        this.compiledModules = this.getCollectiveModules();
+    }
+
+    public ModuleMap getCompiledModules() {
+        return this.compiledModules;
+    }
+
+    public boolean hasModule(String module) {
+        return this.compiledModules.containsKey(module);
     }
 
     public String validateName(String name, Module.ModuleInfo module) {

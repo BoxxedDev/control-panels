@@ -69,6 +69,6 @@ public class SwitchModule extends Module implements IInput {
 
     @Override
     public int getAnalog() {
-        return this.switchState ? 0 : 15;
+        return this.switchState ? 15 : 0;
     }
 }

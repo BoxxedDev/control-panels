@@ -6,6 +6,7 @@ import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -20,6 +21,8 @@ public class PanelBlocks {
             registerBlock("control_panel",
                     () -> new PanelBlock(
                             BlockBehaviour.Properties.of()
+                                    .strength(1f, 20f)
+                                    .sound(SoundType.NETHERITE_BLOCK)
                                     .noOcclusion()
                     )
             );
@@ -27,6 +30,8 @@ public class PanelBlocks {
             registerBlock("cable",
                     () -> new CableBlock(
                             BlockBehaviour.Properties.of()
+                                    .strength(0.5f, 10f)
+                                    .sound(SoundType.COPPER)
                                     .noOcclusion()
                     )
             );
@@ -35,6 +40,8 @@ public class PanelBlocks {
             registerBlockWithoutItem("stripped_cable",
                     () -> new StrippedCableBlock(
                             BlockBehaviour.Properties.of()
+                                    .strength(0.5f, 10f)
+                                    .sound(SoundType.COPPER)
                                     .lootFrom(CABLE)
                                     .noOcclusion()
                     )

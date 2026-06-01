@@ -29,7 +29,7 @@ public abstract class Module {
     public Rect2d rect;
     public PanelBlockEntity parentBlockEntity;
     public ModuleType<?> type;
-    public String name;
+    public String name = "";
 
     public Module(ModuleType<?> type, int x, int y, int sizeX, int sizeY) {
         this.type = type;
@@ -76,6 +76,7 @@ public abstract class Module {
 
     public boolean loadData(CompoundTag tag) {
         this.setPos(tag.getInt("pos_x"), tag.getInt("pos_y"));
+        this.name = tag.getString("name");
         return true;
     }
 
@@ -87,6 +88,7 @@ public abstract class Module {
         tag.putInt("pos_x", this.pos.x);
         tag.putInt("pos_y", this.pos.y);
         tag.putString("type", type.toString());
+        tag.putString("name", this.name);
 
         return true;
     }

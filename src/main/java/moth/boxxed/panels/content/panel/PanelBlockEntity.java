@@ -2,7 +2,7 @@ package moth.boxxed.panels.content.panel;
 
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkMember;
+import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
@@ -13,12 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -82,7 +78,6 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
             Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
             CompoundTag subTag = new CompoundTag();
             if (moduleEntry.getValue().saveData(subTag)) {
-                subTag.putString("name", moduleEntry.getKey());
                 tag.put("module_%d".formatted(i), subTag);
             }
         }
@@ -99,7 +94,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
             ResourceLocation typeId = ResourceLocation.parse(subTag.getString("type"));
             Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
             module.loadData(subTag);
-            this.tryAddModule(subTag.getString("name"), module);
+            this.tryAddModule(module.getName(), module);
         }
     }
 

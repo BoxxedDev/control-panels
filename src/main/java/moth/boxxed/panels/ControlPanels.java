@@ -2,7 +2,7 @@ package moth.boxxed.panels;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkManager;
+import moth.boxxed.panels.api.network.ModulesNetworkManager;
 import moth.boxxed.panels.compat.PanelCompat;
 import moth.boxxed.panels.compat.computercraft.CCPeripherals;
 import moth.boxxed.panels.index.*;

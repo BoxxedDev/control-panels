@@ -1,19 +1,28 @@
 package moth.boxxed.panels.content.cable.stripped;
 
-import moth.boxxed.panels.ControlPanels;
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkMember;
+import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.content.cable.CableBlock;
+import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
+import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
-public class StrippedCableBlockEntity extends ModulesNetworkMember {
-    public String boundModule;
+public class StrippedCableBlockEntity extends ModulesNetworkMember implements MenuProvider {
+    public String boundModule = "";
 
     public StrippedCableBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.STRIPPED_CABLE.get(), pos, blockState);
@@ -48,13 +57,33 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember {
         return to.getBlock() instanceof CableBlock && fromDirection.getOpposite().equals(direction);
     }
 
-    public void configureStripped() {
-
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable(PanelBlocks.CONTROL_PANEL.get().getDescriptionId());
     }
 
     @Override
-    public void init() {
-        super.init();
-        ControlPanels.LOGGER.debug("Stripped Cable BE");
+    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        return new StrippedConfigMenu(containerId, getOrCreate().getCompiledModules(), this.getBlockPos(), this.boundModule);
+    }
+
+    public void sendToMenu(RegistryFriendlyByteBuf buf) {
+        CompoundTag tag = getOrCreate().getCompiledModules().asTag();
+        buf.writeNbt(tag);
+        buf.writeBlockPos(this.getBlockPos());
+        buf.writeUtf(this.boundModule);
+    }
+
+    public void setConfig(String module) {
+        if (getOrCreate().hasModule(module))
+            this.boundModule = module;
+        setChanged();
+        blockChanged();
+    }
+
+    @Override
+    public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+        level.updateNeighborsAt(blockPos, blockState.getBlock());
+        super.tick(level, blockPos, blockState);
     }
 }

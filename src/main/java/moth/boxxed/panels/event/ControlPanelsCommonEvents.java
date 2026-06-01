@@ -3,11 +3,13 @@ package moth.boxxed.panels.event;
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
 import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.*;
 import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
+import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import moth.boxxed.panels.network.packet.NameValidationPacket;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
@@ -56,11 +58,17 @@ public class ControlPanelsCommonEvents {
                         ServerPayloadHandler::handleNameValidation
                 )
         );
+        registrar.playBidirectional(
+                ConfigureStrippedCablePacket.TYPE,
+                ConfigureStrippedCablePacket.STREAM_CODEC,
+                ServerPayloadHandler::handleStrippedConfig
+        );
     }
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(PanelMenuTypes.PANEL.get(), PanelScreen::new);
+        event.register(PanelMenuTypes.STRIPPED_CONFIG.get(), StrippedCableScreen::new);
     }
 
     @SubscribeEvent

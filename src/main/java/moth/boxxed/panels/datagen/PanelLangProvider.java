@@ -31,6 +31,7 @@ public class PanelLangProvider extends LanguageProvider {
         addWidget("panel.save", "Save");
         addWidget("panel.write_name", "Write Name");
         addWidget("panel.edit_box.module_name", "Module Name");
+        addWidget("stripped_cable.scrollbar", "Scroll Bar");
 
         addTooltip("shift_to_expand", "§bHold §3[Shift] §r§bfor more info");
 

@@ -8,10 +8,12 @@ import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
+import moth.boxxed.panels.util.BasicButtonWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -69,7 +71,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.modulesToSave.putAll(this.menu.holder.getModules());
 
         this.addRenderableWidget(
-                new BasicButton(
+                new BasicButtonWidget(
                         SAVE, SAVE_HOVERED,
                         this.leftPos + 176, this.topPos + 141, 18, 18,
                         Component.translatable("widget.panels.panel.save"),
@@ -77,7 +79,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                         )
         );
         this.addRenderableWidget(
-                new BasicButton(
+                new BasicButtonWidget(
                         EXIT, EXIT_HOVERED,
                         this.leftPos + 176, this.topPos + 163, 18, 18,
                         Component.translatable("widget.panels.panel.exit"),
@@ -85,7 +87,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 )
         );
         this.addRenderableWidget(
-                new BasicButton(
+                new BasicButtonWidget(
                         WRITE_NAME, WRITE_NAME_HOVERED,
                         this.leftPos+105, this.topPos+13, 16, 16,
                         Component.translatable("widget.panels.panel.write_name"),
@@ -99,7 +101,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTick);
+//        this.renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
 
         this.renderTooltip(graphics, mouseX, mouseY);
@@ -220,6 +222,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
         if (this.draggingModule != null && this.contentArea.contains((int) mouseX, (int) mouseY)) {
             if (!this.draggingModuleIntersecting()) {
+                this.draggingModule.getB().name = this.draggingModule.getA();
                 this.modulesToSave.put(this.draggingModule.getA(), this.draggingModule.getB());
                 this.draggingModule = null;
                 return true;
@@ -318,38 +321,5 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         }
         PacketDistributor.sendToServer(new SavePanelModulesPacket(moduleInfoMap, be.getBlockPos(), updateOnly));
         PanelScreen.this.minecraft.player.closeContainer();
-    }
-
-    public static class BasicButton extends AbstractButton {
-        public ButtonFunction function;
-        public Pair<ResourceLocation, ResourceLocation> spritePair;
-        public BasicButton(ResourceLocation sprite, ResourceLocation hoverSprite, int x, int y, int width, int height, Component message, ButtonFunction function) {
-            super(x, y, width, height, message);
-            this.function = function;
-            this.spritePair = new Pair<>(sprite, hoverSprite);
-        }
-
-        @Override
-        public void onPress() {
-            this.function.perform();
-        }
-
-        @Override
-        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-            ResourceLocation location = this.spritePair.getA();
-            if (this.isHovered())
-                location = this.spritePair.getB();
-
-            graphics.blitSprite(location, this.getX(), this.getY(), this.width, this.height);
-        }
-
-        @Override
-        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
-        }
-
-        public interface ButtonFunction {
-            void perform();
-        }
     }
 }

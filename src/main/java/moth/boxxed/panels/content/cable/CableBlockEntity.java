@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.cable;
 
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkMember;
+import moth.boxxed.panels.api.network.ModulesNetworkMember;
+import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,8 @@ public class CableBlockEntity extends ModulesNetworkMember {
             return false;
         if (to.getBlock() instanceof CableBlock)
             return true;
-        return to.getBlock() instanceof PanelBlock && to.getValue(PanelBlock.FACING) == direction;
+        boolean isPanel = to.getBlock() instanceof PanelBlock && to.getValue(PanelBlock.FACING) == direction;
+        boolean isStripped = to.getBlock() instanceof StrippedCableBlock && to.getValue(StrippedCableBlock.FACING) == direction;
+        return isStripped || isPanel;
     }
 }

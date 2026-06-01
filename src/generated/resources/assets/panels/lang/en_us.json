@@ -16,5 +16,6 @@
   "widget.panels.panel.edit_box.module_name": "Module Name",
   "widget.panels.panel.exit": "Exit",
   "widget.panels.panel.save": "Save",
-  "widget.panels.panel.write_name": "Write Name"
+  "widget.panels.panel.write_name": "Write Name",
+  "widget.panels.stripped_cable.scrollbar": "Scroll Bar"
 }

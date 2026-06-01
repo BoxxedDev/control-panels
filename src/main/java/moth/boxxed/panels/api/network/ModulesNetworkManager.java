@@ -1,6 +1,5 @@
-package moth.boxxed.panels.api.network.connecting_panels;
+package moth.boxxed.panels.api.network;
 
-import moth.boxxed.panels.ControlPanels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -28,7 +27,6 @@ public class ModulesNetworkManager {
     public static ModulesNetwork getNetwork(ModulesNetworkMember member) {
         UUID id = member.network;
         Map<UUID, ModulesNetwork> map = ALL.computeIfAbsent(member.getLevel(), $ -> new HashMap<>());
-        ControlPanels.LOGGER.debug(map.entrySet().stream().toList().toString());
         if (id != null) {
             if (!map.containsKey(id)) {
                 ModulesNetwork network = new ModulesNetwork();
@@ -54,6 +52,10 @@ public class ModulesNetworkManager {
             return;
         if (!level.isLoaded(pos))
             return;
+
+        if (member.hasNetwork()) {
+
+        }
 
         List<ModulesNetwork> surroundingNetworks = new ArrayList<>();
         for (ModulesNetworkMember neighbor : getNeighbors(member)) {
@@ -82,6 +84,7 @@ public class ModulesNetworkManager {
             }
             member.setNetwork(network.id);
         }
+        member.getOrCreate().compileModules();
         member.networkUpdate(member.getOrCreate());
     }
 

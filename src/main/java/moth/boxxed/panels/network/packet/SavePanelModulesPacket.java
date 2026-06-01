@@ -2,14 +2,13 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetwork;
+import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
@@ -43,6 +42,7 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
                     module.name = name;
                     pbe.tryAddModule(name, module);
                 }
+                pbe.networkUpdate(network);
             }
 
             pbe.setChanged();

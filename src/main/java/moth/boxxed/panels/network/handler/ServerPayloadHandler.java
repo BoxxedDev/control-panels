@@ -1,5 +1,6 @@
 package moth.boxxed.panels.network.handler;
 
+import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import moth.boxxed.panels.network.packet.NameValidationPacket;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
@@ -17,5 +18,9 @@ public class ServerPayloadHandler {
 
     public static void handleNameValidation(NameValidationPacket nameValidationPacket, IPayloadContext context) {
         nameValidationPacket.handleServer((ServerPayloadContext) context);
+    }
+
+    public static void handleStrippedConfig(ConfigureStrippedCablePacket packet, IPayloadContext context) {
+        packet.handle((ServerPayloadContext) context);
     }
 }

@@ -2,8 +2,7 @@ package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkManager;
-import moth.boxxed.panels.api.network.connecting_panels.ModulesNetworkMember;
+import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

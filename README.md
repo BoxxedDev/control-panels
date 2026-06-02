@@ -1,6 +1,10 @@
 Control Panels
 =======
 
+## DISCLAIMER:
+### This mod if very indev and is made by one mediocre modder, report any bugs to https://github.com/BoxxedDev/control-panels/issues
+
+<br>
 Mod for modular control panels for more compact redstone
 
 ### Compat list
@@ -35,8 +39,12 @@ A json for a custom module type could look something like this:
 
 <details>
 <summary>More modules</summary>
-* Terminal screen
-* Terminal keyboard
+<ul>
+<li>Terminal Keyboard
+<li>Terminal Screen
+<li>7 Segment display
+<li>Indicator Light
+</ul>
 </details>
 
 #### Started May 10th, 2026

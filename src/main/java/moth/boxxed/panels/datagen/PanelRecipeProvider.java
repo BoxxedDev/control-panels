@@ -1,5 +1,8 @@
 package moth.boxxed.panels.datagen;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.core.HolderLookup;
@@ -8,9 +11,11 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
@@ -26,6 +31,18 @@ public class PanelRecipeProvider extends RecipeProvider {
         cable().save(output);
         wire().save(output);
         wireStripper().save(output);
+        if (ModList.get().isLoaded("create"))
+            panelLink().save(output);
+    }
+
+    private static ShapedRecipeBuilder panelLink() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelCreateRegistries.PANEL_LINK.get(), 1)
+                .define('L', AllBlocks.REDSTONE_LINK)
+                .define('T', AllItems.TRANSMITTER)
+                .define('C', PanelBlocks.CABLE)
+                .pattern("TLT")
+                .pattern("CCC")
+                .unlockedBy("has_link", has(AllBlocks.REDSTONE_LINK));
     }
 
     private static ShapedRecipeBuilder controlPanel() {
@@ -56,10 +73,10 @@ public class PanelRecipeProvider extends RecipeProvider {
     private static ShapedRecipeBuilder wireStripper() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CABLE_STRIPPER.get(), 1)
                 .define('I', Tags.Items.INGOTS_IRON)
-                .define('H', Items.HONEYCOMB)
+                .define('H', ItemTags.WOOL)
                 .pattern("I I")
                 .pattern(" I ")
                 .pattern("H H")
-                .unlockedBy("has_honeycomb", has(Items.HONEYCOMB));
+                .unlockedBy("has_wool", has(ItemTags.WOOL));
     }
 }

@@ -1,32 +1,32 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "panels:cable_stripper"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    },
-    "has_wool": {
+    "has_link": {
       "conditions": {
         "items": [
           {
-            "items": "#minecraft:wool"
+            "items": "create:redstone_link"
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "panels:panel_link"
+      },
+      "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
-      "has_wool"
+      "has_link"
     ]
   ],
   "rewards": {
     "recipes": [
-      "panels:cable_stripper"
+      "panels:panel_link"
     ]
   }
 }

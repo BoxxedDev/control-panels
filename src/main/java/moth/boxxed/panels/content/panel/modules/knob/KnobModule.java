@@ -111,5 +111,6 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
         consumer.accept("getAngle", args -> this.getAngle());
+        consumer.accept("getValue", args -> this.getAnalog());
     }
 }

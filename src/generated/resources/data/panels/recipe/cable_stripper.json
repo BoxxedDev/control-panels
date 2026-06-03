@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "H": {
-      "item": "minecraft:honeycomb"
+      "tag": "minecraft:wool"
     },
     "I": {
       "tag": "c:ingots/iron"

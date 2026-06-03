@@ -48,6 +48,7 @@ A json for a custom module type could look something like this:
 <li>Terminal Screen
 <li>7 Segment display
 <li>Indicator Light
+<li>Navball (sable exclusive)
 </ul>
 </details>
 

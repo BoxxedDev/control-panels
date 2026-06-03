@@ -134,9 +134,6 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
-
-        if (level.isClientSide)
-            PanelClientHandler.tick(this);
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {

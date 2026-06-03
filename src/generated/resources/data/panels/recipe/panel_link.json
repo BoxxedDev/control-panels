@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "panels:cable"
+    },
+    "L": {
+      "item": "create:redstone_link"
+    },
+    "T": {
+      "item": "create:transmitter"
+    }
+  },
+  "pattern": [
+    "TLT",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "panels:panel_link"
+  }
+}

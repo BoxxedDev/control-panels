@@ -4,16 +4,23 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.Module;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
     @Override
     public void render(PanelBlockEntity panelBlockEntity, float partialTick, PoseStack poseStack,  MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        boolean spectator = false;
+        boolean guiHidden = Minecraft.getInstance().options.hideGui;
+        if (player != null)
+            spectator = player.isSpectator();
         boolean hit = Minecraft.getInstance().hitResult instanceof BlockHitResult hitResult && hitResult.getBlockPos().equals(panelBlockEntity.getBlockPos());
 
         poseStack.pushPose();
@@ -27,7 +34,7 @@ public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
             poseStack.translate(0, 0, -0.25f);
             entry.getValue().render(panelBlockEntity, poseStack, partialTick, bufferSource, packedLight, packedOverlay);
-            if (hit)
+            if (hit && !spectator && !guiHidden)
                 entry.getValue().renderOutline(poseStack, bufferSource);
             poseStack.popPose();
             poseStack.popPose();

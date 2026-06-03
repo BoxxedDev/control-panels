@@ -41,7 +41,7 @@ public class ControlPanelPeripheral implements IPeripheral {
         this.blockEntity.getOrCreate().compileModules();
         Map<String, IModuleLuaObject> filteredMap = this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaMap();
         if (!filteredMap.containsKey(moduleName))
-            throw new LuaException("Network does not contain module %s".formatted(moduleName));
+            throw new LuaException("Attached network does not contain module %s".formatted(moduleName));
         return fromModuleLuaObject(filteredMap.get(moduleName));
     }
 

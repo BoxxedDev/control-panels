@@ -1,6 +1,7 @@
 package moth.boxxed.panels.compat.computercraft;
 
 import dan200.computercraft.api.lua.*;
+import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -42,11 +43,7 @@ public interface IModuleLuaObject {
         }
         consumer.accept(
                 "getMethods",
-                args -> {
-                    List<String> ret = new ArrayList<>(methodNames);
-                    ret.removeIf(string -> string.equals("getType") || string.equals("getMethods"));
-                    return ret;
-                }
+                args -> new ArrayList<>(methodNames)
         );
     }
 

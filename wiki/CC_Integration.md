@@ -1,0 +1,21 @@
+## Base Peripherals and Functions
+* Panel
+    * `getNetwork()` - returns the network Id of the panel
+    * `getModules()` - returns a table of all the modules in the network
+    * `getModulesOfType(string)` - returns a table of all modules of a certain type in the network, will return empty if none of the type are in the network or type does not exist
+    * `getModule(string)` - returns a module if it's in the network, throws an exception if it it's not in the network
+    * `getALlModuleTypes()` - returns a string table all registered module types
+* Base module
+    * `getMethods()` - returns a string table of all available methods for this module
+    * `getType()` - returns a string of the module type
+    * `getName()` - returns a string of the name of the module
+    * `getX()`, `getY()` - returns a number of the panel position of the module (Note: currently only the position of the module it's on, not a global position)
+    * `getSizeX()`, `getSizeY()` - returns a number of the size of the module e.g. the size of the switch is 2x3
+---
+## Extra Functions
+* Switch
+    * `getState()` - returns a boolean if the switch is on or off
+* Control Lever
+    * `getValue()` - returns a value between 0-15 of the lever signal
+* Knob
+    * `getAngle()` - returns the angle of the knob between 0-360

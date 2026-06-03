@@ -31,6 +31,8 @@ public class ControlPanels {
     public ControlPanels(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
+        PanelCompat.loadAll();
+
         PanelItems.register(modEventBus);
         PanelBlocks.register(modEventBus);
         PanelBlockEntities.register(modEventBus);
@@ -39,7 +41,6 @@ public class ControlPanels {
         PanelCreativeTabs.register(modEventBus);
 
         PanelTags.init();
-        PanelCompat.loadAll();
 
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(ModulesNetworkManager.class);

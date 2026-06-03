@@ -4,9 +4,11 @@ import moth.boxxed.panels.ControlPanels;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.*;
 import java.util.function.Supplier;
 
 public class PanelCreativeTabs {
@@ -26,6 +28,12 @@ public class PanelCreativeTabs {
                     .icon(PanelItems.SWITCH_MODULE::toStack)
                     .build()
     );
+
+    public static final Map<Supplier<CreativeModeTab>, Set<ItemLike>> creativeItemMap = new HashMap<>();
+    public static void addContentTo(Supplier<CreativeModeTab> tab, ItemLike item) {
+        Set<ItemLike> set = creativeItemMap.computeIfAbsent(tab, $ -> new LinkedHashSet<>());
+        set.add(item);
+    }
 
     public static void register(IEventBus eventBus) {
         TABS.register(eventBus);

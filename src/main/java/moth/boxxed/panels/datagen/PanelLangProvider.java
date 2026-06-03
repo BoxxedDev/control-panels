@@ -1,11 +1,13 @@
 package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
@@ -26,6 +28,8 @@ public class PanelLangProvider extends LanguageProvider {
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
         addItem(PanelItems.COPPER_WIRE, "Copper Wire");
+        if (ModList.get().isLoaded("create"))
+            addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
 
         addWidget("panel.exit", "Exit");
         addWidget("panel.save", "Save");

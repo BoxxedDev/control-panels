@@ -1,5 +1,9 @@
 package moth.boxxed.panels.content.panel;
 
+import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
@@ -9,6 +13,8 @@ import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -27,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 
 import java.util.Map;
 import java.util.Objects;
@@ -127,6 +134,9 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
+
+        if (level.isClientSide)
+            PanelClientHandler.tick(this);
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
@@ -134,7 +144,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
         Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
         Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
-        boolean isInPanel = (localHitCoordinates.y==0.75f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
+        boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
         if (!isInPanel) return InteractionResult.PASS;
 
         for (Map.Entry<String, Module> entry : this.modules.entrySet()) {

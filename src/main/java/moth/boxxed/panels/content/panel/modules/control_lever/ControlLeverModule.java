@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
@@ -23,7 +24,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
-public class ControlLeverModule extends Module implements IExternalUpdatable, IInput {
+import java.util.function.BiConsumer;
+
+public class ControlLeverModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
     private float renderSignal = 0;
     private float indicatorRender = 0;
     private int signal = 0;
@@ -75,7 +78,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
 
     @Override
     public VoxelShape getShape() {
-        return Block.box(0, 0, 0, 3, 0.5, 5);
+        return Block.box(0, 0, 0, 3, 1, 5);
     }
 
     @Override
@@ -109,5 +112,10 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     @Override
     public int getAnalog() {
         return this.signal;
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("getValue", args -> this.getSignal());
     }
 }

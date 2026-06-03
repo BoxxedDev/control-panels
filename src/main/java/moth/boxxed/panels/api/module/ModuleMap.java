@@ -1,13 +1,14 @@
 package moth.boxxed.panels.api.module;
 
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-public class ModuleMap extends TreeMap<String, Module> implements Iterable<Map.Entry<String, Module>> {
+public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable<Map.Entry<String, Module>> {
     public static ModuleMap empty() {
         return new ModuleMap();
     }
@@ -54,6 +55,15 @@ public class ModuleMap extends TreeMap<String, Module> implements Iterable<Map.E
         for (Map.Entry<String, Module> entry : this) {
             if (entry.getValue() instanceof IInput || entry.getValue() instanceof IOutput)
                 ret.put(entry.getKey(), entry.getValue());
+        }
+        return ret;
+    }
+
+    public Map<String, IModuleLuaObject> asGenericLuaMap() {
+        Map<String, IModuleLuaObject> ret = new HashMap<>();
+        for (Map.Entry<String, Module> entry : this) {
+            if (entry.getValue() instanceof IModuleLuaObject luaObject)
+                ret.put(entry.getKey(), luaObject);
         }
         return ret;
     }

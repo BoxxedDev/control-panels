@@ -54,7 +54,8 @@ public class ModulesNetworkManager {
             return;
 
         if (member.hasNetwork()) {
-
+            member.setNetwork(member.network);
+            return;
         }
 
         List<ModulesNetwork> surroundingNetworks = new ArrayList<>();

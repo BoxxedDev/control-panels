@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "panels:block/cable/core"
+        "model": "panels:block/control_link"
       }
     },
     {
@@ -38,14 +38,6 @@
       },
       "when": {
         "west": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "panels:block/cable/top"
-      },
-      "when": {
-        "up": "true"
       }
     }
   ]

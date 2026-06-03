@@ -3,6 +3,7 @@ package moth.boxxed.panels.content.panel.modules;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -22,7 +23,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-public class SwitchModule extends Module implements IInput {
+import java.util.function.BiConsumer;
+
+public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     private boolean switchState;
 
     public SwitchModule(int x, int y) {
@@ -70,5 +73,10 @@ public class SwitchModule extends Module implements IInput {
     @Override
     public int getAnalog() {
         return this.switchState ? 15 : 0;
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("getState", args -> this.switchState);
     }
 }

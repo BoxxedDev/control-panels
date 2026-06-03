@@ -1,6 +1,7 @@
 {
   "block.panels.cable": "Control Cable",
   "block.panels.control_panel": "Control Panel",
+  "block.panels.panel_link": "Panel Link",
   "block.panels.stripped_cable": "Stripped Cable",
   "item.panels.cable_stripper": "Cable Stripper",
   "item.panels.control_lever": "Control Lever",

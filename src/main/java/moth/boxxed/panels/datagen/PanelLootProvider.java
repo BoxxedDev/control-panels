@@ -1,5 +1,6 @@
 package moth.boxxed.panels.datagen;
 
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -7,6 +8,7 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.fml.ModList;
 
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,8 @@ public class PanelLootProvider extends LootTableProvider {
             dropSelf(PanelBlocks.CABLE.get());
             dropSelf(PanelBlocks.CONTROL_PANEL.get());
             dropOther(PanelBlocks.STRIPPED_CABLE.get(), PanelBlocks.CABLE.get());
+            if (ModList.get().isLoaded("create"))
+                dropSelf(PanelCreateRegistries.PANEL_LINK.get());
         }
     }
 }

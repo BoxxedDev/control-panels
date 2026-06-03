@@ -1,8 +1,11 @@
 package moth.boxxed.panels.content.panel.modules.control_lever;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -55,13 +58,26 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
 
     @Override
     public void renderGui(GuiGraphics graphics, float partialTick) {
+        int section = this.signal;
+
         int centerX = graphics.guiWidth()/2;
         int centerY = graphics.guiHeight()/2;
-        int x = centerX - 128;
-        int y = centerY - 64;
+        int x = centerX-9;
+        int y = centerY-8;
 
-        graphics.blitSprite(LEVER_SPRITE, 128, 128, 0, 0, x, y, 0, 48, 128);
-        graphics.blitSprite(LEVER_SPRITE, 128, 128, 48, 0, x, y+112-(Math.round(this.renderSignal)), 1, 32, 16);
-        graphics.blitSprite(LEVER_SPRITE, 128, 128, 48, 16, x+33, y+116-(Math.round(this.indicatorRender)), 1, 14, 8);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(
+                GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+        );
+        graphics.blitSprite(LEVER_SPRITE, 272, 17, section*17, 0, x, y, 17, 17);
+        graphics.pose().pushPose();
+        graphics.pose().translate(centerX, centerY+12, 0);
+        graphics.pose().scale(0.5f,0.5f,0.5f);
+        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.signal), 0, 0, 0xAAFFFFFF);
+        graphics.pose().pushPose();
+        RenderSystem.disableBlend();
     }
 }

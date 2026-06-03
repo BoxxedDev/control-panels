@@ -1,12 +1,15 @@
 package moth.boxxed.panels.api.module;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.util.Rect2d;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -95,6 +98,20 @@ public abstract class Module {
 
     @OnlyIn(Dist.CLIENT)
     public abstract void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
+
+    @OnlyIn(Dist.CLIENT)
+    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource) {
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
+
+        poseStack.pushPose();
+        LevelRenderer.renderShape(
+                poseStack,
+                consumer,
+                this.getShape(),
+                0, 0, 0, 0, 0, 0, 0.4f
+        );
+        poseStack.popPose();
+    }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
 

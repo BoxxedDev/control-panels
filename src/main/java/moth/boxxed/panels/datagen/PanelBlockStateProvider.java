@@ -1,10 +1,12 @@
 package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.data.PackOutput;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -20,6 +22,7 @@ public class PanelBlockStateProvider extends BlockStateProvider {
         controlPanel();
         cable();
         horizontalBlock(PanelBlocks.STRIPPED_CABLE.get(), models().getExistingFile(ControlPanels.path("block/cable/stripped")));
+        panelLink();
     }
 
     private void controlPanel() {
@@ -37,18 +40,51 @@ public class PanelBlockStateProvider extends BlockStateProvider {
                 });
     }
 
+    private void panelLink() {
+        if (ModList.get().isLoaded("create")) {
+            ModelFile.ExistingModelFile facingFile = models().getExistingFile(ControlPanels.path("block/cable/facing"));
+            ModelFile.ExistingModelFile linkMain = models().getExistingFile(ControlPanels.path("block/control_link"));
+
+            MultiPartBlockStateBuilder builder = getMultipartBuilder(PanelCreateRegistries.PANEL_LINK.get());
+            builder.part()
+                    .modelFile(linkMain)
+                    .addModel()
+                    .end();
+            builder.part()
+                    .modelFile(facingFile)
+                    .addModel()
+                    .condition(CableBlock.NORTH, true)
+                    .end();
+            builder.part()
+                    .modelFile(facingFile)
+                    .rotationY(90)
+                    .addModel()
+                    .condition(CableBlock.EAST, true)
+                    .end();
+            builder.part()
+                    .modelFile(facingFile)
+                    .rotationY(180)
+                    .addModel()
+                    .condition(CableBlock.SOUTH, true)
+                    .end();
+            builder.part()
+                    .modelFile(facingFile)
+                    .rotationY(270)
+                    .addModel()
+                    .condition(CableBlock.WEST, true)
+                    .end();
+        }
+    }
+
     private void cable() {
         ModelFile.ExistingModelFile coreFile = models().getExistingFile(ControlPanels.path("block/cable/core"));
         ModelFile.ExistingModelFile facingFile = models().getExistingFile(ControlPanels.path("block/cable/facing"));
+        ModelFile.ExistingModelFile topFile = models().getExistingFile(ControlPanels.path("block/cable/top"));
 
         MultiPartBlockStateBuilder builder = getMultipartBuilder(PanelBlocks.CABLE.get());
         builder.part()
                 .modelFile(coreFile)
                 .addModel()
-                .condition(CableBlock.NORTH, true, false)
-                .condition(CableBlock.SOUTH, true, false)
-                .condition(CableBlock.EAST, true, false)
-                .condition(CableBlock.WEST, true, false)
                 .end();
         builder.part()
                 .modelFile(facingFile)
@@ -72,6 +108,11 @@ public class PanelBlockStateProvider extends BlockStateProvider {
                 .rotationY(270)
                 .addModel()
                 .condition(CableBlock.WEST, true)
+                .end();
+        builder.part()
+                .modelFile(topFile)
+                .addModel()
+                .condition(CableBlock.UP, true)
                 .end();
     }
 }

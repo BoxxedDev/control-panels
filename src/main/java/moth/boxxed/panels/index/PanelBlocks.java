@@ -56,10 +56,6 @@ public class PanelBlocks {
         return ret;
     }
 
-    public static class DeferredBlockAndItem<B extends Block, I extends BlockItem> {
-
-    }
-
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }

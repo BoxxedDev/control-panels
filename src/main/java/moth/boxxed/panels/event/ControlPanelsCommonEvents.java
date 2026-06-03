@@ -3,6 +3,7 @@ package moth.boxxed.panels.event;
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.compat.computercraft.CCPeripherals;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
 import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
@@ -16,6 +17,8 @@ import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -28,7 +31,11 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = ControlPanels.MOD_ID)
 public class ControlPanelsCommonEvents {
@@ -127,6 +134,15 @@ public class ControlPanelsCommonEvents {
             for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {
                 event.accept(holder.get().associatedItem);
             }
+        }
+
+        Set<ItemLike> itemLikesToAdd = new LinkedHashSet<>();
+        for (Map.Entry<Supplier<CreativeModeTab>, Set<ItemLike>> entry : PanelCreativeTabs.creativeItemMap.entrySet()) {
+            if (entry.getKey().get() == event.getTab())
+                itemLikesToAdd.addAll(entry.getValue());
+        }
+        for (ItemLike itemLike : itemLikesToAdd) {
+            event.accept(itemLike);
         }
     }
 }

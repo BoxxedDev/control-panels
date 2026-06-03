@@ -2,8 +2,10 @@ package moth.boxxed.panels.content.cable.stripped;
 
 import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.IInput;
+import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetwork;
+import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
@@ -18,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -26,7 +29,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -95,6 +100,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
         if (be == null) return 0;
         ModulesNetwork network = be.getOrCreate();
         if (network == null) return 0;
+        network.compileModules();
         ModuleMap map = network.getCompiledModules();
         if (map.get(be.boundModule) instanceof IInput input) {
             return input.getAnalog();
@@ -105,6 +111,19 @@ public class StrippedCableBlock extends BaseEntityBlock {
     @Override
     protected boolean isSignalSource(BlockState state) {
         return true;
+    }
+
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (!level.isClientSide()) {
+            StrippedCableBlockEntity be = getBlockEntity(level, pos);
+            if (be == null) return;
+            ModulesNetwork network = be.getOrCreate();
+            if (network == null) return;
+            ModuleMap map = network.getCompiledModules();
+            if (map.get(be.boundModule) instanceof IOutput output && level.hasNeighborSignal(pos))
+                output.setAnalog(level.getBestNeighborSignal(pos));
+        }
     }
 
     @Override
@@ -126,11 +145,6 @@ public class StrippedCableBlock extends BaseEntityBlock {
         super.tick(state, level, pos, random);
     }
 
-    @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
-    }
-
     public StrippedCableBlockEntity getBlockEntity(BlockGetter level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof StrippedCableBlockEntity blockEntity)
             return blockEntity;
@@ -139,5 +153,15 @@ public class StrippedCableBlock extends BaseEntityBlock {
 
     private void openMenu(ServerPlayer player, StrippedCableBlockEntity be) {
         player.openMenu(be, be::sendToMenu);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        return PanelBlocks.CABLE.toStack();
+    }
+
+    @Override
+    public @org.jetbrains.annotations.Nullable PushReaction getPistonPushReaction(BlockState state) {
+        return PushReaction.IGNORE;
     }
 }

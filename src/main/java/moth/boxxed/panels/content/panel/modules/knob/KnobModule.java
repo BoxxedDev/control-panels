@@ -2,9 +2,11 @@ package moth.boxxed.panels.content.panel.modules.knob;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import dan200.computercraft.api.lua.*;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
@@ -24,7 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
-public class KnobModule extends Module implements IExternalUpdatable, IInput {
+import java.util.function.BiConsumer;
+
+//TODO: Maybe make it so you can use this while hovering it with a scroll wheel
+public class KnobModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
     private float renderAngle = 0;
     private int angle = 0;
 
@@ -79,6 +84,14 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput {
         poseStack.popPose();
     }
 
+    @Override
+    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource) {
+        poseStack.pushPose();
+        poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
+        super.renderOutline(poseStack, bufferSource);
+        poseStack.popPose();
+    }
+
     public int getAngle() {
         return this.angle;
     }
@@ -92,6 +105,11 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput {
 
     @Override
     public int getAnalog() {
-        return Math.round(Mth.clampedMap(java.lang.Math.floorMod(this.angle, 360), 0, 360, 0, 15));
+        return Math.round(Mth.map(this.angle, 0, 360, 0, 15));
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("getAngle", args -> this.getAngle());
     }
 }

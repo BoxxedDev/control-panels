@@ -65,7 +65,11 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
                 GlStateManager.DestFactor.ZERO
         );
         graphics.blitSprite(KNOB_SPRITE, 289, 17, section*17, 0, x, y, 17, 17);
-        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), centerX, centerY+12, 0xFFFFFFFF);
+        graphics.pose().pushPose();
+        graphics.pose().translate(centerX, centerY+12, 0);
+        graphics.pose().scale(0.5f,0.5f,0.5f);
+        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), 0, 0, 0xAAFFFFFF);
+        graphics.pose().pushPose();
         RenderSystem.disableBlend();
     }
 }

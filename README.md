@@ -1,11 +1,13 @@
 Control Panels
 =======
+Mod for modular control panels for more compact redstone
+
+---
 
 ## DISCLAIMER:
 ### This mod if very indev and is made by one mediocre modder, report any bugs to https://github.com/BoxxedDev/control-panels/issues
 
-<br>
-Mod for modular control panels for more compact redstone
+---
 
 ### Compat list
 | mod           | status |
@@ -13,6 +15,8 @@ Mod for modular control panels for more compact redstone
 | Create        | WIP    |
 | Sable         | WIP    |
 | ComputerCraft | WIP    |
+
+---
 
 ### Roadmap
 
@@ -46,5 +50,7 @@ A json for a custom module type could look something like this:
 <li>Indicator Light
 </ul>
 </details>
+
+---
 
 #### Started May 10th, 2026

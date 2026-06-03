@@ -22,10 +22,10 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.server.command.ConfigCommand;
 import org.slf4j.Logger;
 
-//TODO: Add javadocs to everything
+//TODO: Add javadocs to everything, and refactor everything to the new name of "dashpanels"
 @Mod(ControlPanels.MOD_ID)
 public class ControlPanels {
-    public static final String MOD_ID = "panels";
+    public static final String MOD_ID = "dashpanels";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public ControlPanels(IEventBus modEventBus, ModContainer modContainer) {

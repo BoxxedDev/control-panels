@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "dashpanels:block/cable/stripped",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "dashpanels:block/cable/stripped"
+    },
+    "facing=south": {
+      "model": "dashpanels:block/cable/stripped",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "dashpanels:block/cable/stripped",
+      "y": 270
+    }
+  }
+}

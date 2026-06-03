@@ -34,6 +34,7 @@ public class PreLoadedModel {
         return this.model;
     }
 
+    //TODO: fix flat looking lighting
     public void render(Level level, BlockState state, BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
         if (!level.isClientSide()) return;
 

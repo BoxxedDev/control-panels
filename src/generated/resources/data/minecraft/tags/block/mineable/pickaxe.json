@@ -1,7 +1,7 @@
 {
   "values": [
-    "panels:control_panel",
-    "panels:cable",
-    "panels:stripped_cable"
+    "dashpanels:control_panel",
+    "dashpanels:cable",
+    "dashpanels:stripped_cable"
   ]
 }

@@ -1,0 +1,52 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "dashpanels:block/cable/core"
+      }
+    },
+    {
+      "apply": {
+        "model": "dashpanels:block/cable/facing"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "dashpanels:block/cable/facing",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "dashpanels:block/cable/facing",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "dashpanels:block/cable/facing",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "dashpanels:block/cable/top"
+      },
+      "when": {
+        "up": "true"
+      }
+    }
+  ]
+}

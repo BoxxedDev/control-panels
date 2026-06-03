@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    }
+  },
+  "pattern": [
+    "CC"
+  ],
+  "result": {
+    "count": 4,
+    "id": "dashpanels:copper_wire"
+  }
+}

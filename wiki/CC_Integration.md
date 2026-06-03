@@ -19,3 +19,31 @@
     * `getValue()` - returns a value between 0-15 of the lever signal
 * Knob
     * `getAngle()` - returns the angle of the knob between 0-360
+---
+## Example code
+```lua
+local panel = peripheral.wrap("back")
+local monitor = peripheral.wrap("top")
+
+while true do
+    monitor.clear()
+
+    offset = 1
+    for i, v in ipairs(panel.getModulesOfType("switch")) do
+        monitor.setCursorPos(1, offset)
+        monitor.write(string.format("%s : %s", v.getName(), tostring(v.getState())))
+        offset = offset + 1
+    end
+    for i, v in ipairs(panel.getModulesOfType("knob")) do
+        monitor.setCursorPos(1, offset)
+        monitor.write(string.format("%s : %s", v.getName(), tostring(v.getAngle())))
+        offset = offset + 1
+    end
+    for i, v in ipairs(panel.getModulesOfType("control_lever")) do
+        monitor.setCursorPos(1, offset)
+        monitor.write(string.format("%s : %s", v.getName(), tostring(v.getValue())))
+        offset = offset + 1
+    end
+    os.sleep(0.01)
+end
+```

@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.cable.stripped.screen;
 
-import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import net.minecraft.core.BlockPos;
@@ -9,8 +8,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Objects;
 
 public class StrippedConfigMenu extends AbstractContainerMenu {
     public ModuleMap map;

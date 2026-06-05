@@ -13,7 +13,7 @@ Mod for modular control panels for more compact redstone
 | mod           | status                                                                                           |
 |---------------|--------------------------------------------------------------------------------------------------|
 | Create        | [:white_check_mark:](https://github.com/BoxxedDev/control-panels/wiki/ComputerCraft-Integration) |
-| Sable         | WIP                                                                                              |
+| Sable         | :white_check_mark:                                                                               |
 | ComputerCraft | WIP                                                                                              |
 
 ---

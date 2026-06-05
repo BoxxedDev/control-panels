@@ -1,6 +1,6 @@
 package moth.boxxed.panels.event;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
-@EventBusSubscriber(modid = ControlPanels.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Dashpanels.MOD_ID, value = Dist.CLIENT)
 public class ControlPanelsClientEvents {
     @SubscribeEvent
     public static void guiRenderPost(RenderGuiEvent.Post event) {

@@ -5,8 +5,8 @@
 	"render_type": "cutout",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "panels:block/control_panel",
-		"particle": "panels:block/metal"
+		"1": "dashpanels:block/control_panel",
+		"particle": "dashpanels:block/metal"
 	},
 	"elements": [
 		{

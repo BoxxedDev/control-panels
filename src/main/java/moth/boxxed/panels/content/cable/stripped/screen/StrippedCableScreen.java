@@ -1,24 +1,16 @@
 package moth.boxxed.panels.content.cable.stripped.screen;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
-import moth.boxxed.panels.util.BasicButtonWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractScrollWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -27,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigMenu> {
-    public static final ResourceLocation GUI = ControlPanels.path("textures/gui/container/stripped_cable_config.png");
+    public static final ResourceLocation GUI = Dashpanels.path("textures/gui/container/stripped_cable_config.png");
 
     public List<Map.Entry<String, Module>> list;
 

@@ -1,10 +1,9 @@
 package moth.boxxed.panels.index;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -15,7 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class PanelBlocks {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ControlPanels.MOD_ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Dashpanels.MOD_ID);
 
     public static final DeferredBlock<PanelBlock> CONTROL_PANEL =
             registerBlock("control_panel",

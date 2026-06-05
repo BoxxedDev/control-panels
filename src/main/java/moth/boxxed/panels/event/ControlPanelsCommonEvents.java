@@ -1,25 +1,24 @@
 package moth.boxxed.panels.event;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.compat.computercraft.CCPeripherals;
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
 import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.*;
 import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
-import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
-import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
-import moth.boxxed.panels.network.packet.NameValidationPacket;
-import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
+import moth.boxxed.panels.network.packet.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -37,7 +36,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = ControlPanels.MOD_ID)
+@EventBusSubscriber(modid = Dashpanels.MOD_ID)
 public class ControlPanelsCommonEvents {
     @SubscribeEvent
     public static void registerRegistries(NewRegistryEvent event) {
@@ -70,12 +69,20 @@ public class ControlPanelsCommonEvents {
                 ConfigureStrippedCablePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleStrippedConfig
         );
+        if (ModList.get().isLoaded("create"))
+            registrar.playToServer(
+                    PanelLinkSaveEntriesPacket.TYPE,
+                    PanelLinkSaveEntriesPacket.STREAM_CODEC,
+                    ServerPayloadHandler::handleSavePanelLink
+            );
     }
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(PanelMenuTypes.PANEL.get(), PanelScreen::new);
         event.register(PanelMenuTypes.STRIPPED_CONFIG.get(), StrippedCableScreen::new);
+        if (ModList.get().isLoaded("create"))
+            event.register(PanelCreateRegistries.PANEL_LINK_MENU.get(), PanelLinkScreen::new);
     }
 
     @SubscribeEvent
@@ -128,7 +135,6 @@ public class ControlPanelsCommonEvents {
             event.accept(PanelBlocks.CONTROL_PANEL);
             event.accept(PanelBlocks.CABLE);
             event.accept(PanelItems.CABLE_STRIPPER);
-            event.accept(PanelItems.COPPER_WIRE);
         }
         if (event.getTab() == PanelCreativeTabs.MODULES_TAB.get()) {
             for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {

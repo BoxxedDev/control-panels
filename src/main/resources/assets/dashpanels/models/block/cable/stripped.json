@@ -3,9 +3,9 @@
 	"credit": "Made with Blockbench",
 	"render_type": "cutout",
 	"textures": {
-		"0": "panels:block/cable",
-		"1": "panels:block/stripped_cable",
-		"particle": "panels:block/metal"
+		"0": "dashpanels:block/cable",
+		"1": "dashpanels:block/stripped_cable",
+		"particle": "dashpanels:block/metal"
 	},
 	"elements": [
 		{

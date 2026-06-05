@@ -2,7 +2,7 @@ package moth.boxxed.panels.content.panel.modules.knob;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
-    private static final ResourceLocation KNOB_SPRITE = ControlPanels.path("module/knob");
+    private static final ResourceLocation KNOB_SPRITE = Dashpanels.path("module/knob");
 
     private float val = 0;
 
@@ -69,7 +69,7 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
         graphics.pose().translate(centerX, centerY+12, 0);
         graphics.pose().scale(0.5f,0.5f,0.5f);
         graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), 0, 0, 0xAAFFFFFF);
-        graphics.pose().pushPose();
+        graphics.pose().popPose();
         RenderSystem.disableBlend();
     }
 }

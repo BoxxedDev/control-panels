@@ -1,7 +1,6 @@
 package moth.boxxed.panels.network.packet;
 
-import moth.boxxed.panels.ControlPanels;
-import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -9,13 +8,10 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
-import java.util.HashMap;
-
 public record ConfigureStrippedCablePacket(String module, BlockPos pos) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ConfigureStrippedCablePacket> TYPE = new CustomPacketPayload.Type<>(ControlPanels.path("configure_stripped"));
+    public static final CustomPacketPayload.Type<ConfigureStrippedCablePacket> TYPE = new CustomPacketPayload.Type<>(Dashpanels.path("configure_stripped"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ConfigureStrippedCablePacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, ConfigureStrippedCablePacket::module,

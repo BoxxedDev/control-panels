@@ -1,6 +1,6 @@
 package moth.boxxed.panels.network.packet;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import net.minecraft.core.UUIDUtil;
@@ -25,7 +25,7 @@ import java.util.UUID;
  * @param returnName
  */
 public record NameValidationPacket(ResourceLocation moduleType, String toName, UUID networkId, String returnName) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<NameValidationPacket> TYPE = new CustomPacketPayload.Type<>(ControlPanels.path("module_name_validation"));
+    public static final CustomPacketPayload.Type<NameValidationPacket> TYPE = new CustomPacketPayload.Type<>(Dashpanels.path("module_name_validation"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, NameValidationPacket> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, NameValidationPacket::moduleType,

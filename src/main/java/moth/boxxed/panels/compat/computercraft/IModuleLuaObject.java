@@ -1,7 +1,5 @@
 package moth.boxxed.panels.compat.computercraft;
 
-import dan200.computercraft.api.lua.*;
-import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import net.minecraft.resources.ResourceLocation;

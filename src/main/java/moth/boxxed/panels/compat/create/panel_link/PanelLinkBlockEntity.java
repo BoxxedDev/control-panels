@@ -1,29 +1,37 @@
 package moth.boxxed.panels.compat.create.panel_link;
 
-import com.simibubi.create.content.redstone.link.IRedstoneLinkable;
-import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
 import moth.boxxed.panels.content.cable.CableBlock;
-import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
-import moth.boxxed.panels.content.panel.PanelBlock;
-import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+//Much of this was inspired by the linked typewriter from create: simulated, a lot of concepts I didn't think about until looking at their codebase
+public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuProvider {
+    private ModuleLinkEntries entries = new ModuleLinkEntries();
 
-public class PanelLinkBlockEntity extends ModulesNetworkMember implements IRedstoneLinkable {
     public PanelLinkBlockEntity(BlockPos pos, BlockState state) {
         super(PanelCreateRegistries.PANEL_LINK_BE.get(), pos, state);
     }
 
     @Override
     public boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to) {
-        if (!(from.getBlock() instanceof CableBlock)) return false;
+        if (!(from.getBlock() instanceof PanelLinkBlock)) return false;
 
         BlockPos otherPos = other.getBlockPos();
         BlockPos pos = getBlockPos();
@@ -34,32 +42,57 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements IRedst
     }
 
     @Override
-    public int getTransmittedStrength() {
-        return 0;
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.entries = ModuleLinkEntries.fromTag(tag.getList("module_entries", 10), registries, this);
+        for (ModuleLinkEntries.ModuleEntry entry : this.entries.getMap().values()) {
+            entry.setPos(this.getBlockPos());
+            entry.setBe(this);
+        }
     }
 
     @Override
-    public void setReceivedStrength(int power) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("module_entries", this.entries.asTag(registries));
+    }
 
+    public void loadClient(CompoundTag tag, RegistryAccess registryAccess) {
+        this.loadAdditional(tag, registryAccess);
     }
 
     @Override
-    public boolean isListening() {
-        return false;
+    public Component getDisplayName() {
+        return Component.translatable(PanelCreateRegistries.PANEL_LINK.get().getDescriptionId());
     }
 
     @Override
-    public boolean isAlive() {
-        return false;
+    public void networkUpdate(ModulesNetwork modulesNetwork) {
+        super.networkUpdate(modulesNetwork);
+        this.entries.validate(modulesNetwork);
     }
 
     @Override
-    public Couple<RedstoneLinkNetworkHandler.Frequency> getNetworkKey() {
-        return null;
+    public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+        this.entries.updateNetworks(level);
     }
 
     @Override
-    public BlockPos getLocation() {
-        return this.getBlockPos();
+    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        this.networkUpdate(this.getOrCreate());
+        return new PanelLinkMenu(containerId, playerInventory, this);
+    }
+
+    public void sendToMenu(RegistryFriendlyByteBuf buf) {
+        buf.writeBlockPos(this.getBlockPos());
+        CompoundTag tag = new CompoundTag();
+        this.saveAdditional(tag, buf.registryAccess());
+        buf.writeNbt(tag);
+        this.getOrCreate().compileModules();
+        buf.writeCollection(this.getOrCreate().getCompiledModules().keySet(), ByteBufCodecs.STRING_UTF8);
+    }
+
+    public ModuleLinkEntries getModuleEntries() {
+        return this.entries;
     }
 }

@@ -1,9 +1,6 @@
 package moth.boxxed.panels.network.handler;
 
-import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
-import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
-import moth.boxxed.panels.network.packet.NameValidationPacket;
-import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
+import moth.boxxed.panels.network.packet.*;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
@@ -21,6 +18,10 @@ public class ServerPayloadHandler {
     }
 
     public static void handleStrippedConfig(ConfigureStrippedCablePacket packet, IPayloadContext context) {
+        packet.handle((ServerPayloadContext) context);
+    }
+
+    public static void handleSavePanelLink(PanelLinkSaveEntriesPacket packet, IPayloadContext context) {
         packet.handle((ServerPayloadContext) context);
     }
 }

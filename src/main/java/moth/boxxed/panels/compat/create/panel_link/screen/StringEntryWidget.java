@@ -1,0 +1,83 @@
+package moth.boxxed.panels.compat.create.panel_link.screen;
+
+import com.simibubi.create.AllSoundEvents;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class StringEntryWidget extends AbstractSimiWidget {
+    private List<String> available;
+    private int currentIndex = 0;
+    private int priorIndex = 0;
+
+    public StringEntryWidget(int x, int y, int width, int height, Set<String> available, Component message) {
+        super(x, y, width, height, message);
+        this.setAvailable(available);
+    }
+
+    public void setAvailable(Set<String> available) {
+        this.available = new ArrayList<>(available);
+        this.available.sort(null);
+    }
+
+    public void setCurrentString(String string) {
+        if (this.available.contains(string)) {
+            this.currentIndex = this.available.indexOf(string);
+            return;
+        }
+        this.currentIndex = -1;
+    }
+
+    public String getCurrent() {
+        if (this.currentIndex == -1) {
+            return null;
+        }
+        if (this.available.isEmpty())
+            return "";
+        if (this.available.get(this.currentIndex) != null)
+            return this.available.get(this.currentIndex);
+        return "";
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        priorIndex = currentIndex;
+        this.currentIndex = Math.max(0, Math.min((int) (this.currentIndex-scrollY), this.available.size()-1));
+
+        if (priorIndex != currentIndex)
+            Minecraft.getInstance()
+                    .getSoundManager()
+                    .play(SimpleSoundInstance.forUI(AllSoundEvents.SCROLL_VALUE.getMainEvent(),
+                            1.5f + 0.1f * (this.currentIndex) / (this.available.size())));
+
+        return priorIndex != currentIndex;
+    }
+
+    @Override
+    protected void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        Font font = Minecraft.getInstance().font;
+        int y = this.getY()+(this.getHeight()/2)-(font.lineHeight);
+        if (this.currentIndex >= 0)
+            graphics.drawString(font, this.getCurrent(), this.getX()+2, y, 0xFFFFFF);
+    }
+
+    @Override
+    public List<Component> getToolTip() {
+        List<Component> list = new ArrayList<>();
+        list.add(Component.translatable("widget.dashpanels.panel_link.module_select"));
+        for (String string : this.available) {
+            String prefix = this.available.indexOf(string) == this.currentIndex ? "-> " : "   ";
+            ChatFormatting formatting = this.available.indexOf(string) == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
+            list.add(Component.literal(prefix.concat(string)).withStyle(formatting));
+        }
+        return list;
+    }
+}

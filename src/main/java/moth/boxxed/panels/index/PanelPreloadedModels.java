@@ -1,6 +1,6 @@
 package moth.boxxed.panels.index;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.util.PreLoadedModel;
 
 public class PanelPreloadedModels {
@@ -15,7 +15,7 @@ public class PanelPreloadedModels {
             CONTROL_LEVER_INDICATOR = regular("control_lever/indicator");
 
     private static PreLoadedModel regular(String name) {
-        return PreLoadedModel.create(ControlPanels.path("block/" + name));
+        return PreLoadedModel.create(Dashpanels.path("block/" + name));
     }
 
     public static void init() {}

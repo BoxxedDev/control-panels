@@ -1,6 +1,6 @@
 package moth.boxxed.panels.datagen;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
     public PanelLangProvider(PackOutput output) {
-        super(output, ControlPanels.MOD_ID, "en_us");
+        super(output, Dashpanels.MOD_ID, "en_us");
     }
 
     @Override
@@ -27,7 +27,6 @@ public class PanelLangProvider extends LanguageProvider {
         addBlock(PanelBlocks.CABLE, "Control Cable");
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
-        addItem(PanelItems.COPPER_WIRE, "Copper Wire");
         if (ModList.get().isLoaded("create"))
             addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
 
@@ -36,15 +35,16 @@ public class PanelLangProvider extends LanguageProvider {
         addWidget("panel.write_name", "Write Name");
         addWidget("panel.edit_box.module_name", "Module Name");
         addWidget("stripped_cable.scrollbar", "Scroll Bar");
+        addWidget("panel_link.module_select", "Scroll to select module");
 
-        addTooltip("shift_to_expand", "§bHold §3[Shift] §r§bfor more info");
+        addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
 
         addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
         addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change \n   its configured input or output module");
         addTooltip("cable_stripper_info_3", "§bCrouch Right-click §3to pick up normal cables \n   or stripped cables");
 
-        addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Control Panel");
-        addCreativeTab(PanelCreativeTabs.MODULES_TAB.get(), "Control Panel Modules");
+        addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
+        addCreativeTab(PanelCreativeTabs.MODULES_TAB.get(), "Dashpanels Modules");
     }
 
     private void addWidget(String key, String string) {
@@ -52,7 +52,7 @@ public class PanelLangProvider extends LanguageProvider {
     }
 
     private void addCustom(String start, String key, String string) {
-        add("%s.%s.%s".formatted(start, ControlPanels.MOD_ID, key), string);
+        add("%s.%s.%s".formatted(start, Dashpanels.MOD_ID, key), string);
     }
 
     private void addTooltip(String key, String string) {

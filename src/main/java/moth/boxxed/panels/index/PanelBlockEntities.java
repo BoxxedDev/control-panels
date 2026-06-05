@@ -1,6 +1,6 @@
 package moth.boxxed.panels.index;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.cable.CableBlockEntity;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class PanelBlockEntities {
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ControlPanels.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Dashpanels.MOD_ID);
 
     public static final Supplier<BlockEntityType<PanelBlockEntity>> PANEL =
             BLOCK_ENTITY_TYPES.register("panel", () -> BlockEntityType.Builder.of(

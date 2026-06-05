@@ -1,6 +1,6 @@
 package moth.boxxed.panels.index;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -8,21 +8,24 @@ import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class PanelCreativeTabs {
-    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, ControlPanels.MOD_ID);
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, Dashpanels.MOD_ID);
 
     public static final Supplier<CreativeModeTab> PANEL_TAB = TABS.register(
-            "control_panel",
+            "dashpanels",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.control_panel"))
                     .icon(PanelBlocks.CONTROL_PANEL::toStack)
                     .build()
     );
     public static final Supplier<CreativeModeTab> MODULES_TAB = TABS.register(
-            "control_panel_modules",
+            "dashpanels_module",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.control_panel_modules"))
                     .icon(PanelItems.SWITCH_MODULE::toStack)

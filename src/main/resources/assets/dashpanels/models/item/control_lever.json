@@ -2,8 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "panels:block/control_lever",
-		"particle": "panels:block/control_lever"
+		"0": "dashpanels:block/control_lever"
 	},
 	"elements": [
 		{

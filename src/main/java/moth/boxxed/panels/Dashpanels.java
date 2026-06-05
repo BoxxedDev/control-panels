@@ -23,12 +23,12 @@ import net.neoforged.neoforge.server.command.ConfigCommand;
 import org.slf4j.Logger;
 
 //TODO: Add javadocs to everything, and refactor everything to the new name of "dashpanels"
-@Mod(ControlPanels.MOD_ID)
-public class ControlPanels {
+@Mod(Dashpanels.MOD_ID)
+public class Dashpanels {
     public static final String MOD_ID = "dashpanels";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public ControlPanels(IEventBus modEventBus, ModContainer modContainer) {
+    public Dashpanels(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
         PanelCompat.loadAll();

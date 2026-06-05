@@ -1,6 +1,6 @@
 package moth.boxxed.panels.datagen;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.panel.PanelBlock;
@@ -14,22 +14,22 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class PanelBlockStateProvider extends BlockStateProvider {
     public PanelBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, ControlPanels.MOD_ID, exFileHelper);
+        super(output, Dashpanels.MOD_ID, exFileHelper);
     }
 
     @Override
     protected void registerStatesAndModels() {
         controlPanel();
         cable();
-        horizontalBlock(PanelBlocks.STRIPPED_CABLE.get(), models().getExistingFile(ControlPanels.path("block/cable/stripped")));
+        horizontalBlock(PanelBlocks.STRIPPED_CABLE.get(), models().getExistingFile(Dashpanels.path("block/cable/stripped")));
         panelLink();
     }
 
     private void controlPanel() {
-        ModelFile single = models().getExistingFile(ControlPanels.path("block/control_panel/single"));
-        ModelFile center = models().getExistingFile(ControlPanels.path("block/control_panel/center"));
-        ModelFile left = models().getExistingFile(ControlPanels.path("block/control_panel/left"));
-        ModelFile right = models().getExistingFile(ControlPanels.path("block/control_panel/right"));
+        ModelFile single = models().getExistingFile(Dashpanels.path("block/control_panel/single"));
+        ModelFile center = models().getExistingFile(Dashpanels.path("block/control_panel/center"));
+        ModelFile left = models().getExistingFile(Dashpanels.path("block/control_panel/left"));
+        ModelFile right = models().getExistingFile(Dashpanels.path("block/control_panel/right"));
 
         horizontalBlock(PanelBlocks.CONTROL_PANEL.get(), (blockState) ->
                 switch (blockState.getValue(PanelBlock.SHAPE)) {
@@ -42,8 +42,8 @@ public class PanelBlockStateProvider extends BlockStateProvider {
 
     private void panelLink() {
         if (ModList.get().isLoaded("create")) {
-            ModelFile.ExistingModelFile facingFile = models().getExistingFile(ControlPanels.path("block/cable/facing"));
-            ModelFile.ExistingModelFile linkMain = models().getExistingFile(ControlPanels.path("block/control_link"));
+            ModelFile.ExistingModelFile facingFile = models().getExistingFile(Dashpanels.path("block/cable/facing"));
+            ModelFile.ExistingModelFile linkMain = models().getExistingFile(Dashpanels.path("block/control_link"));
 
             MultiPartBlockStateBuilder builder = getMultipartBuilder(PanelCreateRegistries.PANEL_LINK.get());
             builder.part()
@@ -77,9 +77,9 @@ public class PanelBlockStateProvider extends BlockStateProvider {
     }
 
     private void cable() {
-        ModelFile.ExistingModelFile coreFile = models().getExistingFile(ControlPanels.path("block/cable/core"));
-        ModelFile.ExistingModelFile facingFile = models().getExistingFile(ControlPanels.path("block/cable/facing"));
-        ModelFile.ExistingModelFile topFile = models().getExistingFile(ControlPanels.path("block/cable/top"));
+        ModelFile.ExistingModelFile coreFile = models().getExistingFile(Dashpanels.path("block/cable/core"));
+        ModelFile.ExistingModelFile facingFile = models().getExistingFile(Dashpanels.path("block/cable/facing"));
+        ModelFile.ExistingModelFile topFile = models().getExistingFile(Dashpanels.path("block/cable/top"));
 
         MultiPartBlockStateBuilder builder = getMultipartBuilder(PanelBlocks.CABLE.get());
         builder.part()

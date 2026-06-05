@@ -1,6 +1,5 @@
 package moth.boxxed.panels.util;
 
-import moth.boxxed.panels.ControlPanels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

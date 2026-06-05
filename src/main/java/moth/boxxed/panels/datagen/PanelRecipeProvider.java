@@ -11,10 +11,8 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 
@@ -29,7 +27,6 @@ public class PanelRecipeProvider extends RecipeProvider {
     protected void buildRecipes(RecipeOutput output) {
         controlPanel().save(output);
         cable().save(output);
-        wire().save(output);
         wireStripper().save(output);
         if (ModList.get().isLoaded("create"))
             panelLink().save(output);
@@ -59,16 +56,10 @@ public class PanelRecipeProvider extends RecipeProvider {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelBlocks.CABLE.get(), 6)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('R', Items.DRIED_KELP)
-                .define('C', PanelItems.COPPER_WIRE)
+                .define('C', Tags.Items.INGOTS_COPPER)
                 .pattern("RRR")
                 .pattern("ICI")
-                .unlockedBy("has_wire", has(PanelItems.COPPER_WIRE));
-    }
-    private static ShapedRecipeBuilder wire() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.COPPER_WIRE.get(), 4)
-                .define('C', Tags.Items.INGOTS_COPPER)
-                .pattern("CC")
-                .unlockedBy("has_copper", has(Items.COPPER_INGOT));
+                .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER));
     }
     private static ShapedRecipeBuilder wireStripper() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CABLE_STRIPPER.get(), 1)

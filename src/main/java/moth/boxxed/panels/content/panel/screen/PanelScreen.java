@@ -1,7 +1,7 @@
 package moth.boxxed.panels.content.panel.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.ModuleType;
@@ -10,11 +10,8 @@ import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
 import moth.boxxed.panels.util.BasicButtonWidget;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.narration.NarratedElementType;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -34,15 +31,15 @@ import java.util.Map;
 
 //TODO: potentially like, bring some components of this into different widgets/renderables
 public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
-    private static final ResourceLocation SPRITE = ControlPanels.path("textures/gui/container/panel.png");
+    private static final ResourceLocation SPRITE = Dashpanels.path("textures/gui/container/panel.png");
 
-    private static final ResourceLocation SAVE = ControlPanels.path("container/panel/save");
-    private static final ResourceLocation SAVE_HOVERED = ControlPanels.path("container/panel/save_highlighted");
-    private static final ResourceLocation EXIT = ControlPanels.path("container/panel/exit");
-    private static final ResourceLocation EXIT_HOVERED = ControlPanels.path("container/panel/exit_highlighted");
-    private static final ResourceLocation WRITE_NAME = ControlPanels.path("container/panel/write_name");
-    private static final ResourceLocation WRITE_NAME_HOVERED = ControlPanels.path("container/panel/write_name_highlighted");
-    private static final ResourceLocation MODULE_OUTLINE = ControlPanels.path("container/panel/module_outline");
+    private static final ResourceLocation SAVE = Dashpanels.path("container/panel/save");
+    private static final ResourceLocation SAVE_HOVERED = Dashpanels.path("container/panel/save_highlighted");
+    private static final ResourceLocation EXIT = Dashpanels.path("container/panel/exit");
+    private static final ResourceLocation EXIT_HOVERED = Dashpanels.path("container/panel/exit_highlighted");
+    private static final ResourceLocation WRITE_NAME = Dashpanels.path("container/panel/write_name");
+    private static final ResourceLocation WRITE_NAME_HOVERED = Dashpanels.path("container/panel/write_name_highlighted");
+    private static final ResourceLocation MODULE_OUTLINE = Dashpanels.path("container/panel/module_outline");
 
     private ModuleMap modulesToSave;
     private Rect2i contentArea;
@@ -74,7 +71,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 new BasicButtonWidget(
                         SAVE, SAVE_HOVERED,
                         this.leftPos + 176, this.topPos + 141, 18, 18,
-                        Component.translatable("widget.panels.panel.save"),
+                        Component.translatable("widget.dashpanels.panel.save"),
                         () -> this.onClose(false)
                         )
         );
@@ -82,7 +79,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 new BasicButtonWidget(
                         EXIT, EXIT_HOVERED,
                         this.leftPos + 176, this.topPos + 163, 18, 18,
-                        Component.translatable("widget.panels.panel.exit"),
+                        Component.translatable("widget.dashpanels.panel.exit"),
                         () -> this.onClose(true)
                 )
         );
@@ -90,7 +87,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 new BasicButtonWidget(
                         WRITE_NAME, WRITE_NAME_HOVERED,
                         this.leftPos+105, this.topPos+13, 16, 16,
-                        Component.translatable("widget.panels.panel.write_name"),
+                        Component.translatable("widget.dashpanels.panel.write_name"),
                         this::writeName
                 )
         );
@@ -320,6 +317,6 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             );
         }
         PacketDistributor.sendToServer(new SavePanelModulesPacket(moduleInfoMap, be.getBlockPos(), updateOnly));
-        PanelScreen.this.minecraft.player.closeContainer();
+        this.minecraft.player.closeContainer();
     }
 }

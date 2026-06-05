@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "C": {
-      "item": "dashpanels:copper_wire"
+      "tag": "c:ingots/copper"
     },
     "I": {
       "tag": "c:ingots/iron"

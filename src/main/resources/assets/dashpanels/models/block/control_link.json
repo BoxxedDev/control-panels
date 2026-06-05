@@ -5,9 +5,9 @@
 	"render_type": "cutout",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "panels:block/control_link",
-		"1": "panels:block/metal",
-		"particle": "panels:block/metal"
+		"0": "dashpanels:block/control_link",
+		"1": "dashpanels:block/metal",
+		"particle": "dashpanels:block/metal"
 	},
 	"elements": [
 		{

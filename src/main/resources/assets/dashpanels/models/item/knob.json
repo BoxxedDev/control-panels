@@ -2,8 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "panels:block/knob",
-		"particle": "panels:block/knob"
+		"0": "dashpanels:block/knob"
 	},
 	"elements": [
 		{

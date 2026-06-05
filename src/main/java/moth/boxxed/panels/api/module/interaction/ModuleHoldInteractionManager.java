@@ -31,31 +31,22 @@ public class ModuleHoldInteractionManager {
     }
 
     public static boolean onMouseMove(double yaw, double pitch) {
-        if (Minecraft.getInstance().screen != null) {
-            return false;
-        }
-
+        if (Minecraft.getInstance().screen != null) return false;
         for (ModuleHoldInteraction<?> interaction : PanelHoldInteractions.INTERACTIONS) {
             if (interaction.onMouseMove(yaw, pitch)) {
                 return true;
             }
         }
-
         return false;
     }
 
     public static boolean beforeMouseInput(int button, int action) {
         if (Minecraft.getInstance().screen != null) return false;
-
-
         for (ModuleHoldInteraction<?> interaction : PanelHoldInteractions.INTERACTIONS) {
             if (interaction.chooseInput(button, action)) {
                 return true;
             }
         }
-
         return false;
     }
-
-
 }

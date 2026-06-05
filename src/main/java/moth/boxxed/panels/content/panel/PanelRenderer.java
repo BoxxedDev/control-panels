@@ -2,6 +2,7 @@ package moth.boxxed.panels.content.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -9,9 +10,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
     @Override
@@ -27,15 +28,44 @@ public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
         poseStack.translate(0, 0.75f, 0);
         Direction direction = panelBlockEntity.getBlockState().getValue(PanelBlock.FACING);
         poseStack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
-        for (Map.Entry<String, Module> entry : panelBlockEntity.getModules().entrySet()) {
+
+        Module hitModule = null;
+        double hitDistance = Double.MAX_EXPONENT;
+        if (hit) {
+            for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {
+                Module module = entry.getValue();
+                Vec3 eyePos = SableCompanion.INSTANCE.getEyePositionInterpolated(player, partialTick);
+                Double result = Module.clipModule(
+                        panelBlockEntity,
+                        module,
+                        new Vec3(module.getPos().x/16f, 0.75, module.getPos().y/16f),
+                        eyePos,
+                        player.getViewVector(partialTick),
+                        partialTick
+                );
+                if (result != null && result < hitDistance) {
+                    hitDistance = result;
+                    hitModule = module;
+                }
+            }
+        }
+
+        for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {
             poseStack.pushPose();
-            poseStack.translate(entry.getValue().getPos().x/16f+entry.getValue().getSize().x/16f, 0, entry.getValue().getPos().y/16f+entry.getValue().getSize().y/16f);
+            Module module = entry.getValue();
+            float offsetX = 0;
+            if (module.getPos().x == 0) {
+                offsetX = 0.0001f;
+            } else if (module.getPos().x+module.getSize().x == 16) {
+                offsetX = -0.0001f;
+            }
+            poseStack.translate(module.getPos().x/16f+module.getSize().x/16f+offsetX, 0, module.getPos().y/16f+module.getSize().y/16f);
             poseStack.pushPose();
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
             poseStack.translate(0, 0, -0.25f);
-            entry.getValue().render(panelBlockEntity, poseStack, partialTick, bufferSource, packedLight, packedOverlay);
+            module.render(panelBlockEntity, poseStack, partialTick, bufferSource, packedLight, packedOverlay);
             if (hit && !spectator && !guiHidden)
-                entry.getValue().renderOutline(poseStack, bufferSource);
+                module.renderOutline(poseStack, bufferSource, partialTick, hitModule == module ? 0xFFFFFF : 0x000000);
             poseStack.popPose();
             poseStack.popPose();
         }

@@ -2,7 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "panels:block/switch"
+		"1": "dashpanels:block/switch"
 	},
 	"elements": [
 		{

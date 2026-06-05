@@ -2,15 +2,26 @@ package moth.boxxed.panels.api.module;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.SubLevelAccess;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.util.Rect2d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -20,10 +31,18 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+
+import java.awt.*;
 
 public abstract class Module {
     private Vector2i pos;
@@ -100,17 +119,73 @@ public abstract class Module {
     public abstract void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
 
     @OnlyIn(Dist.CLIENT)
-    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource) {
+    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
 
+        Color rgb = new Color(color);
         poseStack.pushPose();
         LevelRenderer.renderShape(
                 poseStack,
                 consumer,
                 this.getShape(),
-                0, 0, 0, 0, 0, 0, 0.4f
+                0, 0, 0, rgb.getRed()/255f, rgb.getGreen()/255f, rgb.getBlue()/255f, 0.4f
         );
         poseStack.popPose();
+    }
+
+    public static Double clipModule(PanelBlockEntity pbe, Module module, Vec3 shapeOffset, Vec3 eyePosMoj, Vec3 viewVectorMoj, float partialTick) {
+        LocalPlayer player = Minecraft.getInstance().player;
+
+        Vector3d eyePos = JOMLConversion.toJOML(eyePosMoj);
+        Vector3d viewVector = JOMLConversion.toJOML(viewVectorMoj);
+
+        if (pbe.getLevel().isClientSide) {
+            ClientSubLevelAccess subLevel = SableCompanion.INSTANCE.getContainingClient(pbe);
+            if (subLevel != null) {
+                Pose3dc pose = subLevel.renderPose(partialTick);
+
+                pose.transformPositionInverse(eyePos);
+                pose.transformNormalInverse(viewVector);
+            }
+        } else {
+            SubLevelAccess subLevel = SableCompanion.INSTANCE.getContaining(pbe);
+            if (subLevel != null) {
+                Pose3dc pose = subLevel.lastPose();
+
+                pose.transformPositionInverse(eyePos);
+                pose.transformNormalInverse(viewVector);
+            }
+        }
+
+        BlockPos blockPos = pbe.getBlockPos();
+
+        PoseStack stack = new PoseStack();
+        stack.pushPose();
+        stack.translate(blockPos.getX()-eyePos.x, blockPos.getY()-eyePos.y, blockPos.getZ()-eyePos.z);
+
+        Direction direction = pbe.getBlockState().getValue(PanelBlock.FACING);
+        stack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
+        stack.translate(0, 0, 0.25f);
+
+        Matrix4f pose = stack.last().pose();
+        pose.invert();
+        stack.popPose();
+
+        Vector3f localViewPos = pose.transformPosition(new Vector3f());
+        Vector3f localViewDir = pose.transformDirection(new Vector3f((float) viewVector.x, (float) viewVector.y, (float) viewVector.z));
+
+        VoxelShape shape = module.getShape().move(shapeOffset.x, shapeOffset.y, shapeOffset.z);
+
+        eyePos.set(localViewPos);
+        viewVector.set(localViewDir).mul(player.blockInteractionRange()).add(eyePos);
+
+        BlockHitResult result = shape.clip(JOMLConversion.toMojang(eyePos), JOMLConversion.toMojang(viewVector), BlockPos.ZERO);
+
+        if (result == null || result.getType() == HitResult.Type.MISS)
+            return null;
+
+        Vec3 location = result.getLocation();
+        return eyePos.distanceSquared(location.x, location.y, location.z);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {

@@ -2,20 +2,16 @@ package moth.boxxed.panels.compat.computercraft.peripherals;
 
 import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import moth.boxxed.panels.ControlPanels;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleArguments;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;

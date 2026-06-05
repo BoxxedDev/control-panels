@@ -8,8 +8,6 @@ import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -79,13 +77,13 @@ public class CableStripperItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!tooltipFlag.hasShiftDown()) {
-            tooltipComponents.add(Component.translatable("tooltip.panels.shift_to_expand"));
+            tooltipComponents.add(Component.translatable("tooltip.dashpanels.shift_to_expand"));
         } else {
-            tooltipComponents.add(Component.translatable("tooltip.panels.cable_stripper_info_1"));
+            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_1"));
             tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.panels.cable_stripper_info_2"));
+            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_2"));
             tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.panels.cable_stripper_info_3"));
+            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_3"));
         }
     }
 }

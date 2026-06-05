@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.panel.modules.knob;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dan200.computercraft.api.lua.*;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
@@ -85,10 +84,10 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource) {
+    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int rgb) {
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
-        super.renderOutline(poseStack, bufferSource);
+        super.renderOutline(poseStack, bufferSource, partialTick, rgb);
         poseStack.popPose();
     }
 

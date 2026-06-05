@@ -1,9 +1,6 @@
 package moth.boxxed.panels.content.panel;
 
-import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
 import dev.ryanhcode.sable.companion.SableCompanion;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
@@ -13,8 +10,6 @@ import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -33,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
 
 import java.util.Map;
 import java.util.Objects;
@@ -144,13 +138,28 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
         if (!isInPanel) return InteractionResult.PASS;
 
+        Module hitModule = null;
+        double hitDistance = Double.MAX_EXPONENT;
         for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
-            if (entry.getValue().inside((int) ((localHitCoordinates.x+0.5)*16), (int) ((localHitCoordinates.z+0.5)*16d))) {
-                this.setChanged();
-                if (level instanceof ServerLevel serverLevel)
-                    serverLevel.getChunkSource().blockChanged(this.getBlockPos());
-                return entry.getValue().onUse(level, player);
+            Module module = entry.getValue();
+            Vec3 eyePos = player.getEyePosition();
+            Double result = Module.clipModule(
+                    this,
+                    module,
+                    new Vec3(module.getPos().x/16f, 0.75, module.getPos().y/16f),
+                    eyePos,
+                    player.getViewVector(1),
+                    1
+            );
+            if (result != null && result < hitDistance) {
+                hitDistance = result;
+                hitModule = module;
             }
+        }
+        if (hitModule != null) {
+            if (!level.isClientSide)
+                this.blockChanged();
+            return hitModule.onUse(level, player);
         }
 
         return InteractionResult.PASS;

@@ -15,10 +15,10 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-@Mod(value = ControlPanels.MOD_ID, dist = Dist.CLIENT)
-@EventBusSubscriber(modid = ControlPanels.MOD_ID, value = Dist.CLIENT)
-public class ControlPanelsClient {
-    public ControlPanelsClient(ModContainer container, IEventBus modEventBus) {
+@Mod(value = Dashpanels.MOD_ID, dist = Dist.CLIENT)
+@EventBusSubscriber(modid = Dashpanels.MOD_ID, value = Dist.CLIENT)
+public class DashpanelsClient {
+    public DashpanelsClient(ModContainer container, IEventBus modEventBus) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
         PanelPreloadedModels.init();

@@ -1,6 +1,6 @@
 package moth.boxxed.panels.network.packet;
 
-import moth.boxxed.panels.ControlPanels;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, BlockPos pos, boolean updateOnly) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SavePanelModulesPacket> TYPE = new CustomPacketPayload.Type<>(ControlPanels.path("control_panel_save"));
+    public static final CustomPacketPayload.Type<SavePanelModulesPacket> TYPE = new CustomPacketPayload.Type<>(Dashpanels.path("control_panel_save"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SavePanelModulesPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, Module.ModuleInfo.STREAM_CODEC), SavePanelModulesPacket::modules,

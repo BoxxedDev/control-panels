@@ -2,6 +2,7 @@
   "values": [
     "dashpanels:control_panel",
     "dashpanels:cable",
-    "dashpanels:stripped_cable"
+    "dashpanels:stripped_cable",
+    "dashpanels:panel_link"
   ]
 }

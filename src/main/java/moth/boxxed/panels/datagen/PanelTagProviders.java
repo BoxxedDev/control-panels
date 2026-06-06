@@ -1,6 +1,7 @@
 package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
@@ -10,6 +11,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,12 @@ public class PanelTagProviders {
                     .add(PanelBlocks.CONTROL_PANEL.getKey())
                     .add(PanelBlocks.CABLE.getKey())
                     .add(PanelBlocks.STRIPPED_CABLE.getKey());
+            if (ModList.get().isLoaded("create")) {
+                tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                        .add(PanelCreateRegistries.PANEL_LINK.getKey());
+                tag(BlockTags.MINEABLE_WITH_AXE)
+                        .add(PanelCreateRegistries.PANEL_LINK.getKey());
+            }
         }
     }
 }

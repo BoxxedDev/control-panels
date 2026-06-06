@@ -7,6 +7,7 @@ import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -22,6 +23,7 @@ public class PanelBlocks {
                             BlockBehaviour.Properties.of()
                                     .strength(1f, 20f)
                                     .sound(SoundType.NETHERITE_BLOCK)
+                                    .mapColor(MapColor.COLOR_GRAY)
                                     .noOcclusion()
                     )
             );
@@ -31,6 +33,7 @@ public class PanelBlocks {
                             BlockBehaviour.Properties.of()
                                     .strength(0.5f, 10f)
                                     .sound(SoundType.COPPER)
+                                    .mapColor(MapColor.COLOR_BLACK)
                                     .noOcclusion()
                     )
             );
@@ -42,6 +45,7 @@ public class PanelBlocks {
                                     .strength(0.5f, 10f)
                                     .sound(SoundType.COPPER)
                                     .lootFrom(CABLE)
+                                    .mapColor(MapColor.COLOR_ORANGE)
                                     .noOcclusion()
                     )
             );

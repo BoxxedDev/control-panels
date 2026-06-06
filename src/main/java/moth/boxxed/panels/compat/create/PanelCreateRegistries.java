@@ -6,8 +6,10 @@ import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
 import moth.boxxed.panels.index.*;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
@@ -25,6 +27,9 @@ public class PanelCreateRegistries implements PanelCompat {
                         () -> new PanelLinkBlock(
                                 BlockBehaviour.Properties.of()
                                         .noOcclusion()
+                                        .destroyTime(1f)
+                                        .sound(SoundType.WOOD)
+                                        .mapColor(MapColor.WOOD)
                         )
                 );
         PanelItems.blockItem("panel_link", PANEL_LINK);

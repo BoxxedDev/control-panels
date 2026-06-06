@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.panel.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
@@ -18,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -40,6 +42,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private static final ResourceLocation WRITE_NAME = Dashpanels.path("container/panel/write_name");
     private static final ResourceLocation WRITE_NAME_HOVERED = Dashpanels.path("container/panel/write_name_highlighted");
     private static final ResourceLocation MODULE_OUTLINE = Dashpanels.path("container/panel/module_outline");
+    private static final ResourceLocation BACKDROP = Dashpanels.path("container/panel/backdrop");
 
     private ModuleMap modulesToSave;
     private Rect2i contentArea;
@@ -60,7 +63,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.topPos = (this.height - this.imageHeight) / 2;
 
         this.contentArea = new Rect2i(
-                this.leftPos+24, this.topPos+32,
+                this.leftPos+24, this.topPos+37,
                 128, 96
         );
 
@@ -70,7 +73,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.addRenderableWidget(
                 new BasicButtonWidget(
                         SAVE, SAVE_HOVERED,
-                        this.leftPos + 176, this.topPos + 141, 18, 18,
+                        this.leftPos + 114, this.topPos + 9, 18, 18,
                         Component.translatable("widget.dashpanels.panel.save"),
                         () -> this.onClose(false)
                         )
@@ -78,7 +81,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.addRenderableWidget(
                 new BasicButtonWidget(
                         EXIT, EXIT_HOVERED,
-                        this.leftPos + 176, this.topPos + 163, 18, 18,
+                        this.leftPos + 133, this.topPos + 9, 18, 18,
                         Component.translatable("widget.dashpanels.panel.exit"),
                         () -> this.onClose(true)
                 )
@@ -86,13 +89,18 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.addRenderableWidget(
                 new BasicButtonWidget(
                         WRITE_NAME, WRITE_NAME_HOVERED,
-                        this.leftPos+105, this.topPos+13, 16, 16,
+                        this.leftPos+95, this.topPos+9, 18, 18,
                         Component.translatable("widget.dashpanels.panel.write_name"),
                         this::writeName
                 )
         );
 
-        this.nameEditBox = new EditBox(this.font, this.leftPos+22, this.topPos+15,80, 12, Component.translatable("widget.panels.panel.edit_box.module_name"));
+        this.nameEditBox = new EditBox(
+                this.font,
+                this.leftPos+20, this.topPos+12,71, 12,
+                Component.translatable("widget.dashpanels.panel.edit_box.module_name")
+        );
+        this.nameEditBox.setBordered(false);
         this.addRenderableWidget(this.nameEditBox);
     }
 
@@ -111,8 +119,17 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private float backdropPulse = 0;
     private void renderBackdrop(GuiGraphics graphics) {
         backdropPulse += 0.01f;
-        if (this.draggingModule != null)
-            graphics.fill(this.leftPos + 24, this.topPos + 32, this.leftPos + 152, this.topPos + 128, FastColor.ARGB32.color((int) (Math.abs(Math.sin(this.backdropPulse))*40), 0xFFFFFF));
+        RenderSystem.enableBlend();
+        graphics.setColor(1f,1f,1f, Mth.map((float) Math.sin(backdropPulse), -1, 1, 0.05f, 0.2f));
+        graphics.blitSprite(
+                BACKDROP,
+                this.contentArea.getX(),
+                this.contentArea.getY(),
+                this.contentArea.getWidth(),
+                this.contentArea.getHeight()
+        );
+        graphics.setColor(1f, 1f, 1f, 1f);
+        RenderSystem.disableBlend();
     }
 
     @Override
@@ -131,7 +148,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.title, 22, 5, 0x35324e);
+//        guiGraphics.drawString(this.font, this.title, 22, 5, 0x35324e);
     }
 
     private void renderDraggingModule(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -151,12 +168,14 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         int posY = Math.clamp(localPosY*8+this.contentArea.getY(),
                 this.contentArea.getY(), this.contentArea.getY()+this.contentArea.getHeight()-sizeY);
         if (this.draggingModuleIntersecting()){
-            graphics.setColor(1,0.5f,0.5f,1);
+            graphics.setColor(1,0.5f,0.5f,0.9f);
         }
+        RenderSystem.enableBlend();
         graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-        graphics.renderItem(new ItemStack((ItemLike) this.draggingModule.getB().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
-        graphics.setColor(1,1,1,1);
+        graphics.renderItem(new ItemStack(this.draggingModule.getB().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+        RenderSystem.disableBlend();
         this.draggingModule.getB().setPos(localPosX, localPosY);
+        graphics.setColor(1f, 1, 1f, 1f);
     }
 
     private void renderModules(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -166,10 +185,12 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             int posX = this.contentArea.getX()+entry.getValue().getPos().x*8;
             int posY = this.contentArea.getY()+entry.getValue().getPos().y*8;
             if (entry.getKey().equals(this.selectedModule))
-                graphics.setColor(0.5f, 1, 0.5f, 1f);
+                graphics.setColor(0.5f, 1, 0.5f, 0.9f);
+            RenderSystem.enableBlend();
             graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-            graphics.renderItem(new ItemStack((ItemLike) entry.getValue().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
-            graphics.setColor(1,1,1,1);
+            graphics.renderItem(new ItemStack(entry.getValue().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+            RenderSystem.disableBlend();
+            graphics.setColor(1f, 1, 1f, 1f);
         }
     }
 

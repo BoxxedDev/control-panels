@@ -69,6 +69,11 @@ public class ControlPanelsCommonEvents {
                 ConfigureStrippedCablePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleStrippedConfig
         );
+        registrar.playToServer(
+                SetPlayerSlotPacket.TYPE,
+                SetPlayerSlotPacket.STREAM_CODEC,
+                ServerPayloadHandler::handleSetPlayerSlot
+        );
         if (ModList.get().isLoaded("create"))
             registrar.playToServer(
                     PanelLinkSaveEntriesPacket.TYPE,

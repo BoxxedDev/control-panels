@@ -116,7 +116,7 @@ public class ModulesNetwork {
         for (ModulesNetworkMember member : this.members) {
             if (member.getModules() == null)
                 continue;
-            collective.putAll(member.getModules());
+            collective.putAll(new HashMap<>(member.getModules()));
         }
         return collective;
     }

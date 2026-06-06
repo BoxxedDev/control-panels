@@ -24,4 +24,8 @@ public class ServerPayloadHandler {
     public static void handleSavePanelLink(PanelLinkSaveEntriesPacket packet, IPayloadContext context) {
         packet.handle((ServerPayloadContext) context);
     }
+
+    public static void handleSetPlayerSlot(SetPlayerSlotPacket packet, IPayloadContext context) {
+        packet.handle((ServerPayloadContext) context);
+    }
 }

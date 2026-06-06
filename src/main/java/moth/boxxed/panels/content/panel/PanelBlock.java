@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -154,6 +155,14 @@ public class PanelBlock extends BaseEntityBlock {
     @Override
     public @org.jetbrains.annotations.Nullable PushReaction getPistonPushReaction(BlockState state) {
         return PushReaction.IGNORE;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (newState.getBlock() != state.getBlock())
+            this.getBlockEntity(level, pos).reconstructItems();
+        Containers.dropContents(level, pos, this.getBlockEntity(level, pos).container);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     public enum Shape implements StringRepresentable {

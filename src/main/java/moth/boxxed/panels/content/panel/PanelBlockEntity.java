@@ -14,16 +14,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,31 +34,47 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider {
     public ModuleMap modules;
+    public SimpleContainer container;
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
         this.modules = new ModuleMap();
+        //12*16 is 192 so like, I think that would be the max size.
+        this.container = new SimpleContainer(192);
     }
 
-    public void tryAddModule(String string, Module module) {
+    public boolean tryAddModule(String string, Module module) {
         Rect2d tempRect = new Rect2d(0,0,16,16);
         if (!tempRect.contains(module.rect))
-            return;
+            return false;
 
         for (Map.Entry<String, Module> existingModule : this.modules.entrySet()) {
             if (existingModule.getValue().inside(module.rect) && existingModule.getKey().equals(string))
-                return;
+                return false;
         }
         module.name = string;
         module.parentBlockEntity = this;
         this.addModule(string, module);
+        return true;
     }
 
     public void addModule(String string, Module module) {
+        this.reconstructItems();
         this.modules.put(string, module);
+    }
+
+    public void reconstructItems() {
+        this.container.clearContent();
+        for (Map.Entry<String, Module> entry : this.modules) {
+            Module module = entry.getValue();
+            this.container.addItem(
+                    new ItemStack(module.type.associatedItem)
+            );
+        }
     }
 
     public void clearModules() {
@@ -84,6 +101,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
                 tag.put("module_%d".formatted(i), subTag);
             }
         }
+        tag.put("container", this.container.createTag(registries));
     }
 
     @Override
@@ -98,6 +116,11 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
             Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
             module.loadData(subTag);
             this.tryAddModule(module.getName(), module);
+        }
+        this.container.clearContent();
+        ListTag items = tag.getList("container", 10);
+        for (Tag itemTag : items) {
+            this.container.addItem(ItemStack.parse(registries, itemTag).orElse(ItemStack.EMPTY));
         }
     }
 

@@ -2,6 +2,7 @@ package moth.boxxed.panels.content.panel.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
@@ -9,6 +10,7 @@ import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
+import moth.boxxed.panels.network.packet.SetPlayerSlotPacket;
 import moth.boxxed.panels.util.BasicButtonWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -18,17 +20,15 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import oshi.util.tuples.Pair;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //TODO: potentially like, bring some components of this into different widgets/renderables
@@ -45,9 +45,10 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private static final ResourceLocation BACKDROP = Dashpanels.path("container/panel/backdrop");
 
     private ModuleMap modulesToSave;
+
     private Rect2i contentArea;
 
-    private Pair<String, Module> draggingModule;
+    private PseudoModule draggingModule;
     private String selectedModule = "";
 
     private EditBox nameEditBox;
@@ -72,32 +73,32 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
         this.addRenderableWidget(
                 new BasicButtonWidget(
-                        SAVE, SAVE_HOVERED,
-                        this.leftPos + 114, this.topPos + 9, 18, 18,
-                        Component.translatable("widget.dashpanels.panel.save"),
-                        () -> this.onClose(false)
-                        )
-        );
-        this.addRenderableWidget(
-                new BasicButtonWidget(
-                        EXIT, EXIT_HOVERED,
-                        this.leftPos + 133, this.topPos + 9, 18, 18,
-                        Component.translatable("widget.dashpanels.panel.exit"),
-                        () -> this.onClose(true)
-                )
-        );
-        this.addRenderableWidget(
-                new BasicButtonWidget(
                         WRITE_NAME, WRITE_NAME_HOVERED,
-                        this.leftPos+95, this.topPos+9, 18, 18,
+                        this.leftPos+123, this.topPos+9, 18, 18,
                         Component.translatable("widget.dashpanels.panel.write_name"),
                         this::writeName
                 )
         );
+        this.addRenderableWidget(
+                new BasicButtonWidget(
+                        SAVE, SAVE_HOVERED,
+                        this.leftPos + 142, this.topPos + 9, 18, 18,
+                        Component.translatable("widget.dashpanels.panel.save"),
+                        this::onClose
+                        )
+        );
+//        this.addRenderableWidget(
+//                new BasicButtonWidget(
+//                        EXIT, EXIT_HOVERED,
+//                        this.leftPos + 133, this.topPos + 9, 18, 18,
+//                        Component.translatable("widget.dashpanels.panel.exit"),
+//                        () -> this.onClose(true)
+//                )
+//        );
 
         this.nameEditBox = new EditBox(
                 this.font,
-                this.leftPos+20, this.topPos+12,71, 12,
+                this.leftPos+20, this.topPos+14,99, 12,
                 Component.translatable("widget.dashpanels.panel.edit_box.module_name")
         );
         this.nameEditBox.setBordered(false);
@@ -155,13 +156,13 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         if (this.draggingModule == null)
             return;
 
-        int sizeX = Math.max(this.draggingModule.getB().getSize().x*8, 8);
-        int sizeY = Math.max(this.draggingModule.getB().getSize().y*8, 8);
+        int sizeX = Math.max(this.draggingModule.module.getSize().x*8, 8);
+        int sizeY = Math.max(this.draggingModule.module.getSize().y*8, 8);
 
         int localPosX = Math.clamp((mouseX-(sizeX/2))-this.contentArea.getX(), 0, this.contentArea.getWidth());
         int localPosY = Math.clamp((mouseY-(sizeY/2))-this.contentArea.getY(), 0, this.contentArea.getHeight());
-        localPosX = Math.clamp(Math.divideExact(localPosX, 8), 0, 16-this.draggingModule.getB().getSize().x);
-        localPosY = Math.clamp(Math.divideExact(localPosY, 8), 0, 12-this.draggingModule.getB().getSize().y);
+        localPosX = Math.clamp(Math.divideExact(localPosX, 8), 0, 16-this.draggingModule.module.getSize().x);
+        localPosY = Math.clamp(Math.divideExact(localPosY, 8), 0, 12-this.draggingModule.module.getSize().y);
 
         int posX = Math.clamp(localPosX*8+this.contentArea.getX(),
                 this.contentArea.getX(), this.contentArea.getX()+this.contentArea.getWidth()-sizeX);
@@ -172,9 +173,9 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         }
         RenderSystem.enableBlend();
         graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-        graphics.renderItem(new ItemStack(this.draggingModule.getB().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+        graphics.renderItem(new ItemStack(this.draggingModule.module.type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
         RenderSystem.disableBlend();
-        this.draggingModule.getB().setPos(localPosX, localPosY);
+        this.draggingModule.module.setPos(localPosX, localPosY);
         graphics.setColor(1f, 1, 1f, 1f);
     }
 
@@ -200,18 +201,36 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             return true;
 
         if (keyCode == 256 && this.draggingModule != null) {
-            this.modulesToSave.remove(this.draggingModule.getA());
+            Module module = this.modulesToSave.remove(this.draggingModule.getName());
+            addItemToInv(module);
             this.draggingModule = null;
             return true;
         }
 
         if (keyCode == InputConstants.KEY_DELETE && !this.selectedModule.isEmpty()) {
-            this.modulesToSave.remove(this.selectedModule);
+            Module module = this.modulesToSave.remove(this.selectedModule);
+            addItemToInv(module);
             this.selectedModule = "";
             this.nameEditBox.setValue("");
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private void addItemToInv(Module module) {
+        if (!this.getMenu().inventory.player.isCreative()) {
+            int slotExisting = this.getMenu().inventory.getSlotWithRemainingSpace(new ItemStack(module.type.associatedItem));
+            if (slotExisting == -1) {
+                slotExisting = this.getMenu().inventory.getFreeSlot();
+            }
+            ItemStack existingStack = this.getMenu().inventory.getItem(slotExisting);
+            if (existingStack != ItemStack.EMPTY) {
+                existingStack.setCount(existingStack.getCount() + 1);
+                PacketDistributor.sendToServer(new SetPlayerSlotPacket(slotExisting, existingStack, existingStack.getCount()));
+            } else {
+                this.getMenu().inventory.setItem(slotExisting, new ItemStack(module.type.associatedItem));
+            }
+        }
     }
 
     @Override
@@ -231,7 +250,9 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                             i++;
                             name = (location+"_%d").formatted(i);
                         }
-                        this.draggingModule = new Pair<>(name, entry.getValue().create(0, 0));
+                        Module module = entry.getValue().create(0, 0);
+                        module.name = name;
+                        this.draggingModule = new PseudoModule(module, slot);
                         return true;
                     }
                 }
@@ -240,8 +261,16 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
         if (this.draggingModule != null && this.contentArea.contains((int) mouseX, (int) mouseY)) {
             if (!this.draggingModuleIntersecting()) {
-                this.draggingModule.getB().name = this.draggingModule.getA();
-                this.modulesToSave.put(this.draggingModule.getA(), this.draggingModule.getB());
+                this.modulesToSave.put(this.draggingModule.getName(), this.draggingModule.module);
+                if (!this.getMenu().inventory.player.isCreative()) {
+                    this.draggingModule.boundSlot.remove(1);
+                    ItemStack slotStack = this.draggingModule.boundSlot.getItem();
+                    PacketDistributor.sendToServer(new SetPlayerSlotPacket(
+                            this.draggingModule.boundSlot.getSlotIndex(),
+                            slotStack,
+                            slotStack.getCount()
+                    ));
+                }
                 this.draggingModule = null;
                 return true;
             }
@@ -255,7 +284,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                     this.selectedModule = "";
                     this.nameEditBox.setValue("");
                 }
-                this.draggingModule = new Pair<>(entry.getKey(), entry.getValue());
+                this.draggingModule = new PseudoModule(entry.getValue(), null);
                 this.modulesToSave.remove(entry.getKey());
                 return true;
             }
@@ -280,7 +309,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     private boolean draggingModuleIntersecting() {
         if (this.draggingModule == null) return false;
         for (Map.Entry<String, Module> entry : this.modulesToSave.entrySet())
-            if (entry.getValue().rect.intersects(this.draggingModule.getB().rect))
+            if (entry.getValue().rect.intersects(this.draggingModule.module.rect))
                 return true;
         return false;
     }
@@ -328,7 +357,8 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         graphics.blit(SPRITE, this.leftPos, this.topPos, 0, 0, this.imageWidth+25, this.imageHeight);
     }
 
-    public void onClose(boolean updateOnly) {
+    @Override
+    public void onClose() {
         PanelBlockEntity be = PanelScreen.this.getMenu().holder;
         Map<String, Module.ModuleInfo> moduleInfoMap = new HashMap<>();
         for (Map.Entry<String, Module> entry : PanelScreen.this.modulesToSave) {
@@ -337,7 +367,21 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                     Module.ModuleInfo.fromModule(entry.getValue())
             );
         }
-        PacketDistributor.sendToServer(new SavePanelModulesPacket(moduleInfoMap, be.getBlockPos(), updateOnly));
-        this.minecraft.player.closeContainer();
+        PacketDistributor.sendToServer(new SavePanelModulesPacket(moduleInfoMap, be.getBlockPos()));
+        super.onClose();
+    }
+
+    public static class PseudoModule {
+        public Module module;
+        public Slot boundSlot;
+
+        public PseudoModule(Module module, Slot boundSlot) {
+            this.module = module;
+            this.boundSlot = boundSlot;
+        }
+
+        public String getName() {
+            return this.module.name;
+        }
     }
 }

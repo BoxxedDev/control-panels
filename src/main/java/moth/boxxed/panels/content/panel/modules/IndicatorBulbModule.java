@@ -1,6 +1,8 @@
 package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.Module;
@@ -15,7 +17,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +33,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaObject {
@@ -58,17 +64,17 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     }
 
     @Override
-    public boolean loadData(CompoundTag tag) {
-        this.color = DyeColor.byName(tag.getString("color"), DyeColor.WHITE);
+    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
+        this.color = DyeColor.byId(tag.getInt("color"));
         this.lit = tag.getBoolean("lit");
-        return super.loadData(tag);
+        return super.loadData(tag, registries);
     }
 
     @Override
-    public boolean saveData(CompoundTag tag) {
-        tag.putString("color", this.color.getSerializedName());
+    public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putInt("color", this.color.getId());
         tag.putBoolean("lit", this.lit);
-        return super.saveData(tag);
+        return super.saveData(tag, registries);
     }
 
     @Override

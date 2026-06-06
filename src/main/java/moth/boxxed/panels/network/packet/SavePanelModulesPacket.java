@@ -39,7 +39,7 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
             ModulesNetwork network = pbe.getOrCreate();
             for (Map.Entry<String, Module.ModuleInfo> entry : this.modules.entrySet()) {
                 String name = network.validateName(entry.getKey(), entry.getValue());
-                Module module = Objects.requireNonNull(entry.getValue().create());
+                Module module = Objects.requireNonNull(entry.getValue().create(level.registryAccess()));
                 module.name = name;
                 pbe.tryAddModule(module.name, module);
             }

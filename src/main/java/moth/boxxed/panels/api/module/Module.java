@@ -20,12 +20,12 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -45,6 +45,8 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.awt.*;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public abstract class Module {
     private Vector2i pos;
@@ -98,13 +100,13 @@ public abstract class Module {
         return InteractionResult.PASS;
     }
 
-    public boolean loadData(CompoundTag tag) {
+    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.setPos(tag.getInt("pos_x"), tag.getInt("pos_y"));
         this.name = tag.getString("name");
         return true;
     }
 
-    public boolean saveData(CompoundTag tag) {
+    public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         ResourceLocation type = ModuleType.getKey(this.type);
         if (type == null)
             return false;
@@ -221,17 +223,17 @@ public abstract class Module {
                 ModuleInfo::new
         );
 
-        public static ModuleInfo fromModule(Module module) {
+        public static ModuleInfo fromModule(Module module, HolderLookup.Provider registries) {
             CompoundTag compoundTag = new CompoundTag();
-            module.saveData(compoundTag);
+            module.saveData(compoundTag, registries);
             return new ModuleInfo(ModulesRegistry.MODULE_REGISTRY.getKey(module.type), module.pos.x, module.pos.y, compoundTag);
         }
 
-        public Module create() {
+        public Module create(HolderLookup.Provider registries) {
             ModuleType<?> moduleType = ModulesRegistry.MODULE_REGISTRY.get(this.type);
             if (moduleType == null) return null;
             Module module = moduleType.create(this.x, this.y);
-            module.loadData(this.moduleData);
+            module.loadData(this.moduleData, registries);
             return module;
         }
     }

@@ -67,7 +67,7 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
     }
 
     public void sendToMenu(RegistryFriendlyByteBuf buf) {
-        CompoundTag tag = getOrCreate().getCompiledModules().asTag();
+        CompoundTag tag = getOrCreate().getCompiledModules().asTag(buf.registryAccess());
         buf.writeNbt(tag);
         buf.writeBlockPos(this.getBlockPos());
         buf.writeUtf(this.boundModule);

@@ -16,7 +16,7 @@ public class StrippedConfigMenu extends AbstractContainerMenu {
 
     public StrippedConfigMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf extraData) {
         super(PanelMenuTypes.STRIPPED_CONFIG.get(), containerId);
-        init(ModuleMap.fromTag(extraData.readNbt()), extraData.readBlockPos(), extraData.readUtf());
+        init(ModuleMap.fromTag(extraData.readNbt(), inv.player.registryAccess()), extraData.readBlockPos(), extraData.readUtf());
     }
 
     public StrippedConfigMenu(int containerId, ModuleMap map, BlockPos pos, String initialConfig) {

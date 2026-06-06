@@ -13,11 +13,13 @@ import moth.boxxed.panels.index.PanelPreloadedModels;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -56,19 +58,19 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public boolean saveData(CompoundTag tag) {
+    public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("num", this.angle);
         tag.putFloat("render_angle", this.renderAngle);
 
-        return super.saveData(tag);
+        return super.saveData(tag, registries);
     }
 
     @Override
-    public boolean loadData(CompoundTag tag) {
+    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.angle = tag.getInt("num");
         this.renderAngle = tag.getFloat("render_angle");
 
-        return super.loadData(tag);
+        return super.loadData(tag, registries);
     }
 
     @Override

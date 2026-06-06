@@ -108,7 +108,8 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
-            PacketDistributor.sendToServer(new ConfigureStrippedCablePacket(this.list.get((int) Math.round(this.scroll)).getKey(), this.menu.pos));
+            if (!this.list.isEmpty())
+                PacketDistributor.sendToServer(new ConfigureStrippedCablePacket(this.list.get((int) Math.round(this.scroll)).getKey(), this.menu.pos));
             this.playClickSound(1f);
             this.onClose();
         }

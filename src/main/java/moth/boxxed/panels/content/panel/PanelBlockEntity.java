@@ -97,7 +97,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (int i=0; i<this.modules.size(); i++) {
             Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
             CompoundTag subTag = new CompoundTag();
-            if (moduleEntry.getValue().saveData(subTag)) {
+            if (moduleEntry.getValue().saveData(subTag, registries)) {
                 tag.put("module_%d".formatted(i), subTag);
             }
         }
@@ -114,7 +114,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
             if (subTag == null) continue;
             ResourceLocation typeId = ResourceLocation.parse(subTag.getString("type"));
             Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
-            module.loadData(subTag);
+            module.loadData(subTag, registries);
             this.tryAddModule(module.getName(), module);
         }
         this.container.clearContent();

@@ -11,6 +11,7 @@ import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -42,15 +43,15 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     }
 
     @Override
-    public boolean saveData(CompoundTag tag) {
+    public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putBoolean("state", this.switchState);
-        return super.saveData(tag);
+        return super.saveData(tag, registries);
     }
 
     @Override
-    public boolean loadData(CompoundTag tag) {
+    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.switchState = tag.getBoolean("state");
-        return super.loadData(tag);
+        return super.loadData(tag, registries);
     }
 
     @OnlyIn(Dist.CLIENT)

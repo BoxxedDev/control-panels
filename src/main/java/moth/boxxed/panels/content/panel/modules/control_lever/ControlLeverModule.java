@@ -12,6 +12,8 @@ import moth.boxxed.panels.index.PanelPreloadedModels;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -36,21 +38,21 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     }
 
     @Override
-    public boolean saveData(CompoundTag tag) {
+    public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("signal", this.signal);
         tag.putFloat("render_signal", this.renderSignal);
         tag.putFloat("indicator_render", this.indicatorRender);
 
-        return super.saveData(tag);
+        return super.saveData(tag, registries);
     }
 
     @Override
-    public boolean loadData(CompoundTag tag) {
+    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.signal = tag.getInt("signal");
         this.renderSignal = tag.getFloat("render_signal");
         this.indicatorRender = tag.getFloat("indicator_render");
 
-        return super.loadData(tag);
+        return super.loadData(tag, registries);
     }
 
     @Override

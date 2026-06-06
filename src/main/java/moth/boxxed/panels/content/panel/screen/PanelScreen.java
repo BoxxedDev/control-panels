@@ -364,7 +364,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         for (Map.Entry<String, Module> entry : PanelScreen.this.modulesToSave) {
             moduleInfoMap.put(
                     entry.getKey(),
-                    Module.ModuleInfo.fromModule(entry.getValue())
+                    Module.ModuleInfo.fromModule(entry.getValue(), be.getLevel().registryAccess())
             );
         }
         PacketDistributor.sendToServer(new SavePanelModulesPacket(moduleInfoMap, be.getBlockPos()));

@@ -87,14 +87,14 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
         BlockState state = panelBlockEntity.getBlockState();
         BlockPos pos = panelBlockEntity.getBlockPos();
 
-        PanelPreloadedModels.CONTROL_LEVER_BASE.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_BASE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0, this.renderSignal);
-        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(0, 0, this.indicatorRender);
-        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 

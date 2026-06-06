@@ -11,6 +11,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.ModList;
@@ -30,6 +31,38 @@ public class PanelRecipeProvider extends RecipeProvider {
         wireStripper().save(output);
         if (ModList.get().isLoaded("create"))
             panelLink().save(output);
+        modules(output);
+    }
+
+    private static void modules(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.SWITCH_MODULE.get(), 4)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('N', Tags.Items.NUGGETS_IRON)
+                .pattern("N")
+                .pattern("I")
+                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.KNOB_MODULE.get(), 4)
+                .define('W', ItemTags.WOOL)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .pattern("W")
+                .pattern("I")
+                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CONTROL_LEVER_MODULE.get(), 2)
+                .define('W', ItemTags.WOOL)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .pattern(" W")
+                .pattern("II")
+                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.INDICATOR_BULB_MODULE.get(), 2)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('I', Tags.Items.NUGGETS_IRON)
+                .pattern("G")
+                .pattern("I")
+                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
+                .save(output);
     }
 
     private static ShapedRecipeBuilder panelLink() {

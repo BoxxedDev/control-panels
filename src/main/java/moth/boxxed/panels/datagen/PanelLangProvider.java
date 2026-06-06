@@ -21,6 +21,7 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.SWITCH_MODULE, "Switch");
         addItem(PanelItems.KNOB_MODULE, "Knob");
         addItem(PanelItems.CONTROL_LEVER_MODULE, "Control Lever");
+        addItem(PanelItems.INDICATOR_BULB_MODULE, "Indicator Bulb");
 
         //Non module stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");

@@ -79,7 +79,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
 
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
-        PanelPreloadedModels.KNOB.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.KNOB.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 

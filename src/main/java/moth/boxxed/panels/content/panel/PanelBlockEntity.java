@@ -19,10 +19,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -138,6 +140,41 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
         if (!isInPanel) return InteractionResult.PASS;
 
+        Module hitModule = getHitModule(player);
+        if (hitModule != null) {
+            if (!level.isClientSide)
+                this.blockChanged();
+            InteractionResult result = hitModule.onUse(level, player);
+            if (!level.isClientSide)
+                this.blockChanged();
+            return result;
+        }
+
+        return InteractionResult.PASS;
+    }
+
+    public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (level.isClientSide()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
+        Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
+        boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
+        if (!isInPanel) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        Module hitModule = getHitModule(player);
+        if (hitModule != null) {
+            if (!level.isClientSide)
+                this.blockChanged();
+            ItemInteractionResult result = hitModule.onItemUse(stack, level, player);
+            if (!level.isClientSide)
+                this.blockChanged();
+            return result;
+        }
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    private Module getHitModule(Player player) {
         Module hitModule = null;
         double hitDistance = Double.MAX_EXPONENT;
         for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
@@ -156,13 +193,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
                 hitModule = module;
             }
         }
-        if (hitModule != null) {
-            if (!level.isClientSide)
-                this.blockChanged();
-            return hitModule.onUse(level, player);
-        }
-
-        return InteractionResult.PASS;
+        return hitModule;
     }
 
     @Override

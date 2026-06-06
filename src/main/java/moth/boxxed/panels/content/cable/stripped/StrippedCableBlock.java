@@ -1,7 +1,9 @@
 package moth.boxxed.panels.content.cable.stripped;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.IOutput;
+import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.index.PanelBlocks;
@@ -117,8 +119,15 @@ public class StrippedCableBlock extends BaseEntityBlock {
             ModulesNetwork network = be.getOrCreate();
             if (network == null) return;
             ModuleMap map = network.getCompiledModules();
-            if (map.get(be.boundModule) instanceof IOutput output && level.hasNeighborSignal(pos))
-                output.setAnalog(level.getBestNeighborSignal(pos));
+            Module module = map.get(be.boundModule);
+            if (module instanceof IOutput output) {
+                if (level.hasNeighborSignal(pos)) {
+                    output.setAnalog(level.getBestNeighborSignal(pos));
+                } else {
+                    output.setAnalog(0);
+                }
+                module.parentBlockEntity.networkUpdate(module.parentBlockEntity.getOrCreate());
+            }
         }
     }
 

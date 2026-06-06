@@ -26,7 +26,9 @@ public class PanelTagProviders {
             tag(PanelTags.Items.MODULE)
                     .add(PanelItems.SWITCH_MODULE.getKey())
                     .add(PanelItems.KNOB_MODULE.getKey())
-                    .add(PanelItems.CONTROL_LEVER_MODULE.getKey());
+                    .add(PanelItems.CONTROL_LEVER_MODULE.getKey())
+                    .add(PanelItems.INDICATOR_BULB_MODULE.getKey())
+            ;
         }
     }
 

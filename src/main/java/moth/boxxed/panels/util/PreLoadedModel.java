@@ -1,6 +1,7 @@
 package moth.boxxed.panels.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import moth.boxxed.panels.Dashpanels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public class PreLoadedModel {
     }
 
     //TODO: fix flat looking lighting
-    public void render(Level level, BlockState state, BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
+    public void render(Level level, BlockState state, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
         if (!level.isClientSide()) return;
 
         ModelBlockRenderer renderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
@@ -45,6 +47,24 @@ public class PreLoadedModel {
                 state,
                 this.model,
                 1, 1, 1,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                ModelData.EMPTY,
+                renderType
+        );
+    }
+
+    public void render(Level level, BlockState state, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight, int colorPacked) {
+        if (!level.isClientSide()) return;
+
+        Color color = new Color(colorPacked);
+        ModelBlockRenderer renderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
+        renderer.renderModel(
+                poseStack.last(),
+                bufferSource.getBuffer(renderType),
+                state,
+                this.model,
+                color.getRed(), color.getGreen(), color.getBlue(),
                 packedLight,
                 OverlayTexture.NO_OVERLAY,
                 ModelData.EMPTY,

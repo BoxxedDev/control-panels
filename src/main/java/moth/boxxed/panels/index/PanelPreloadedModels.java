@@ -1,7 +1,9 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.util.ColoredPreloadedModel;
 import moth.boxxed.panels.util.PreLoadedModel;
+import org.checkerframework.checker.units.qual.C;
 
 public class PanelPreloadedModels {
     public static final PreLoadedModel
@@ -12,10 +14,20 @@ public class PanelPreloadedModels {
 
             CONTROL_LEVER_BASE = regular("control_lever/base"),
             CONTROL_LEVER_HANDLE = regular("control_lever/handle"),
-            CONTROL_LEVER_INDICATOR = regular("control_lever/indicator");
+            CONTROL_LEVER_INDICATOR = regular("control_lever/indicator"),
+
+            INDICATOR_BULB_BASE = regular("indicator_bulb/base");
+    //Too lazy rn to find a way to change the texture automatically on render
+    public static final ColoredPreloadedModel
+            INDICATOR_BULB_ON = regularColored("indicator_bulb/bulb_on"),
+            INDICATOR_BULB_OFF = regularColored("indicator_bulb/bulb_off");
 
     private static PreLoadedModel regular(String name) {
         return PreLoadedModel.create(Dashpanels.path("block/" + name));
+    }
+
+    private static ColoredPreloadedModel regularColored(String name) {
+        return new ColoredPreloadedModel(Dashpanels.path("block/" + name));
     }
 
     public static void init() {}

@@ -10,6 +10,7 @@ import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.IOutput;
+import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
@@ -153,8 +154,11 @@ public class ModuleLinkEntries {
         public void setReceivedStrength(int power) {
             if (this.parentalBE == null)
                 return;
-            if (this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IOutput output)
+            if (!this.parentalBE.getLevel().isClientSide && this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IOutput output) {
+                Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
                 output.setAnalog(power);
+                actualModule.parentBlockEntity.networkUpdate(actualModule.parentBlockEntity.getOrCreate());
+            }
         }
 
         @Override

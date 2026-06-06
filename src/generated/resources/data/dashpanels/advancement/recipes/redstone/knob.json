@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_panel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dashpanels:control_panel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "dashpanels:knob"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_panel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "dashpanels:knob"
+    ]
+  }
+}

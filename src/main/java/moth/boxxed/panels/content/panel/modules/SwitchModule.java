@@ -62,7 +62,7 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
         BlockState state = panelBlockEntity.getBlockState();
         BlockPos pos = panelBlockEntity.getBlockPos();
 
-        model.render(level, state, pos, poseStack, bufferSource, RenderType.solid(), packedLight);
+        model.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
     }
 
     @Override

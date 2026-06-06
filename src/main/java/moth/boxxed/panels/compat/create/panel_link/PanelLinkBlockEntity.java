@@ -89,7 +89,7 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
         this.getOrCreate().compileModules();
-        buf.writeCollection(this.getOrCreate().getCompiledModules().keySet(), ByteBufCodecs.STRING_UTF8);
+        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules().keySet(), ByteBufCodecs.STRING_UTF8);
     }
 
     public ModuleLinkEntries getModuleEntries() {

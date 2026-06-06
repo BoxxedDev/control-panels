@@ -3,6 +3,7 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.content.panel.modules.IndicatorBulbModule;
 import moth.boxxed.panels.content.panel.modules.SwitchModule;
 import moth.boxxed.panels.content.panel.modules.control_lever.ControlLeverModule;
 import moth.boxxed.panels.content.panel.modules.knob.KnobModule;
@@ -20,6 +21,9 @@ public class PanelModules {
             MODULES.register("knob", () -> new ModuleType<>(KnobModule::new, PanelItems.KNOB_MODULE.get()));
     public static final Supplier<ModuleType<ControlLeverModule>> CONTROL_LEVER =
             MODULES.register("control_lever", () -> new ModuleType<>(ControlLeverModule::new, PanelItems.CONTROL_LEVER_MODULE.get()));
+    public static final Supplier<ModuleType<IndicatorBulbModule>> INDICATOR_BULB =
+            MODULES.register("indicator_bulb", () -> new ModuleType<>(IndicatorBulbModule::new, PanelItems.INDICATOR_BULB_MODULE.get()));
+
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

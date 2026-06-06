@@ -12,9 +12,9 @@ Mod for modular control panels for more compact redstone
 ### Compat list
 | mod           | status                                                                                           |
 |---------------|--------------------------------------------------------------------------------------------------|
-| Create        | [:white_check_mark:](https://github.com/BoxxedDev/control-panels/wiki/ComputerCraft-Integration) |
-| Sable         | :white_check_mark:                                                                               |
-| ComputerCraft | WIP                                                                                              |
+| ComputerCraft | [:white_check_mark:](https://github.com/BoxxedDev/control-panels/wiki/ComputerCraft-Integration) |
+| Create        | :white_check_mark:                                                                               |
+| Sable         | Custom module in progress                                                                        |
 
 ---
 
@@ -47,7 +47,6 @@ A json for a custom module type could look something like this:
 <li>Terminal Keyboard
 <li>Terminal Screen
 <li>7 Segment display
-<li>Indicator Light
 <li>Navball (sable exclusive)
 </ul>
 </details>

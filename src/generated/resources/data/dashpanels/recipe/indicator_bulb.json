@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "I": {
+      "tag": "c:nuggets/iron"
+    }
+  },
+  "pattern": [
+    "G",
+    "I"
+  ],
+  "result": {
+    "count": 2,
+    "id": "dashpanels:indicator_bulb"
+  }
+}

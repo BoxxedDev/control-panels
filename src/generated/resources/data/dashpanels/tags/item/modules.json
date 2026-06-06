@@ -2,6 +2,7 @@
   "values": [
     "dashpanels:switch",
     "dashpanels:knob",
-    "dashpanels:control_lever"
+    "dashpanels:control_lever",
+    "dashpanels:indicator_bulb"
   ]
 }

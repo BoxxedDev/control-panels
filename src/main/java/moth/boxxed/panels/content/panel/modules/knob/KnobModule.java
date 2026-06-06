@@ -40,10 +40,11 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
 
     @Override
     public InteractionResult onUse(Level level, Player player) {
-        if (!PanelHoldInteractions.KNOB.isActive()) {
-            PanelHoldInteractions.KNOB.startHold(level, player, this);
-            return InteractionResult.SUCCESS;
-        }
+        if (level.isClientSide && player.isLocalPlayer())
+            if (!PanelHoldInteractions.KNOB.isActive()) {
+                PanelHoldInteractions.KNOB.startHold(level, player, this);
+                return InteractionResult.SUCCESS;
+            }
         return super.onUse(level, player);
     }
 

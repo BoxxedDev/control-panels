@@ -41,7 +41,7 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     public boolean lit;
 
     public IndicatorBulbModule(int x, int y) {
-        super(PanelModules.INDICATOR_BULB.get(), x, y, 1,1);
+        super(PanelModules.INDICATOR_BULB.get(), x, y, 1,2);
         this.color = DyeColor.WHITE;
         this.lit = false;
     }

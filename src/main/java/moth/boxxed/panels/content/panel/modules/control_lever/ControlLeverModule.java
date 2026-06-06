@@ -57,10 +57,11 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
 
     @Override
     public InteractionResult onUse(Level level, Player player) {
-        if (!PanelHoldInteractions.CONTROL_LEVER.isActive()) {
-            PanelHoldInteractions.CONTROL_LEVER.startHold(level, player, this);
-            return InteractionResult.SUCCESS;
-        }
+        if (level.isClientSide && player.isLocalPlayer())
+            if (!PanelHoldInteractions.CONTROL_LEVER.isActive()) {
+                PanelHoldInteractions.CONTROL_LEVER.startHold(level, player, this);
+                return InteractionResult.SUCCESS;
+            }
         return super.onUse(level, player);
     }
 

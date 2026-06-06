@@ -36,9 +36,10 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
 
     @Override
     public InteractionResult onUse(Level level, Player player) {
-        this.switchState = !this.switchState;
-        this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, this.switchState ? 0.6f : 0.5f);
-
+        if (!level.isClientSide) {
+            this.switchState = !this.switchState;
+            this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, this.switchState ? 0.6f : 0.5f);
+        }
         return InteractionResult.SUCCESS;
     }
 

@@ -343,13 +343,10 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     }
 
     private void writeName() {
-        this.modulesToSave.rename(this.selectedModule, this.nameEditBox.getValue());
-        this.selectedModule = this.nameEditBox.getValue();
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        if (!this.modulesToSave.containsKey(this.nameEditBox.getValue())) {
+            this.modulesToSave.rename(this.selectedModule, this.nameEditBox.getValue());
+            this.selectedModule = this.nameEditBox.getValue();
+        }
     }
 
     @Override

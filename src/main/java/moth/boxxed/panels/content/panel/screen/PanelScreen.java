@@ -244,14 +244,8 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 for (Map.Entry<ResourceKey<ModuleType<?>>, ModuleType<?>> entry : ModulesRegistry.MODULE_REGISTRY.entrySet()) {
                     if (slot.getItem().getItem() == entry.getValue().associatedItem) {
                         String location = entry.getKey().location().getPath();
-                        String name = location+"_0";
-                        int i=0;
-                        while (this.modulesToSave.containsKey(name)) {
-                            i++;
-                            name = (location+"_%d").formatted(i);
-                        }
                         Module module = entry.getValue().create(0, 0);
-                        module.name = name;
+                        module.name = validateName(location+"_0");
                         this.draggingModule = new PseudoModule(module, slot);
                         return true;
                     }
@@ -343,10 +337,23 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     }
 
     private void writeName() {
-        if (!this.modulesToSave.containsKey(this.nameEditBox.getValue())) {
-            this.modulesToSave.rename(this.selectedModule, this.nameEditBox.getValue());
-            this.selectedModule = this.nameEditBox.getValue();
+        String nameToSet = validateName(this.nameEditBox.getValue());
+        this.modulesToSave.rename(this.selectedModule, nameToSet);
+        this.selectedModule = nameToSet;
+        this.nameEditBox.setValue("");
+    }
+
+    private String validateName(String tryName) {
+        String name = tryName;
+        if (!(this.modulesToSave.containsKey(name) || this.getMenu().takenNames.contains(name)))
+            return name;
+        name = tryName+"_0";
+        int i=0;
+        while (this.modulesToSave.containsKey(name) || this.getMenu().takenNames.contains(name)) {
+            i++;
+            name = (tryName+"_%d").formatted(i);
         }
+        return name;
     }
 
     @Override

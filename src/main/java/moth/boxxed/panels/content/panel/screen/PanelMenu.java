@@ -1,10 +1,12 @@
 package moth.boxxed.panels.content.panel.screen;
 
+import com.google.common.collect.Sets;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -14,18 +16,22 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PanelMenu extends AbstractContainerMenu {
     public Inventory inventory;
     public PanelBlockEntity holder;
+    public Set<String> takenNames;
 
     public PanelMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf extraData) {
         super(PanelMenuTypes.PANEL.get(), containerId);
-        init(inv, createOnClient(extraData));
+        init(inv, createOnClient(extraData), extraData.readCollection(Sets::newHashSetWithExpectedSize, ByteBufCodecs.STRING_UTF8));
     }
 
     public PanelMenu(int containerId, Inventory inv, PanelBlockEntity be) {
         super(PanelMenuTypes.PANEL.get(), containerId);
-        init(inv, be);
+        init(inv, be, new HashSet<>(be.getOrCreate().getCompiledModules().keySet()));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -40,9 +46,10 @@ public class PanelMenu extends AbstractContainerMenu {
         return null;
     }
 
-    private void init(Inventory inv, PanelBlockEntity be) {
+    private void init(Inventory inv, PanelBlockEntity be, Set<String> takenNames) {
         this.inventory = inv;
         this.holder = be;
+        this.takenNames = takenNames;
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {

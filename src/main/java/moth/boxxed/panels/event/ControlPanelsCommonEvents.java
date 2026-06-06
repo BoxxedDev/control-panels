@@ -9,7 +9,6 @@ import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
 import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.*;
-import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.*;
 import net.minecraft.core.HolderLookup;
@@ -57,14 +56,6 @@ public class ControlPanelsCommonEvents {
                 ServerPayloadHandler::handleDefaultUpdate
         );
         registrar.playBidirectional(
-                NameValidationPacket.TYPE,
-                NameValidationPacket.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        ClientPayloadHandler::handleNameValidation,
-                        ServerPayloadHandler::handleNameValidation
-                )
-        );
-        registrar.playBidirectional(
                 ConfigureStrippedCablePacket.TYPE,
                 ConfigureStrippedCablePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleStrippedConfig
@@ -74,6 +65,8 @@ public class ControlPanelsCommonEvents {
                 SetPlayerSlotPacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSetPlayerSlot
         );
+
+        //Compat packet
         if (ModList.get().isLoaded("create"))
             registrar.playToServer(
                     PanelLinkSaveEntriesPacket.TYPE,

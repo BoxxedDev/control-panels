@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -69,7 +70,10 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
 
     @Override
     public VoxelShape getShape() {
-        return Block.box(0, 0, 0, 2, 1, 3);
+        return Shapes.or(
+                Block.box(0, 0, 1, 2, 1, 3),
+                Block.box(0.5, 0, 0, 1.5, 1, 1)
+        );
     }
 
     @Override

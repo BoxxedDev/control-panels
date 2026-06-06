@@ -63,10 +63,6 @@ public class PanelBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (this.getBlockEntity(level, pos) != null) {
-            if (player.isShiftKeyDown() && !level.isClientSide()) {
-                this.openMenu(player, this.getBlockEntity(level, pos));
-                return ItemInteractionResult.SUCCESS;
-            }
             ItemInteractionResult result = this.getBlockEntity(level, pos).onItemUse(stack, state, level, pos, player, hitResult);
             if (result != null)
                 return result;
@@ -159,9 +155,10 @@ public class PanelBlock extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (newState.getBlock() != state.getBlock())
+        if (newState.getBlock() != state.getBlock()) {
             this.getBlockEntity(level, pos).reconstructItems();
-        Containers.dropContents(level, pos, this.getBlockEntity(level, pos).container);
+            Containers.dropContents(level, pos, this.getBlockEntity(level, pos).container);
+        }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 

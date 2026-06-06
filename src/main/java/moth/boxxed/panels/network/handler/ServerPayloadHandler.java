@@ -13,10 +13,6 @@ public class ServerPayloadHandler {
         packet.handle((ServerPayloadContext) context);
     }
 
-    public static void handleNameValidation(NameValidationPacket nameValidationPacket, IPayloadContext context) {
-        nameValidationPacket.handleServer((ServerPayloadContext) context);
-    }
-
     public static void handleStrippedConfig(ConfigureStrippedCablePacket packet, IPayloadContext context) {
         packet.handle((ServerPayloadContext) context);
     }

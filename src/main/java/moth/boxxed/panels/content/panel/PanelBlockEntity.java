@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.panel;
 
 import dev.ryanhcode.sable.companion.SableCompanion;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.*;
@@ -35,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider {
     public ModuleMap modules;
@@ -156,8 +159,6 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (level.isClientSide()) return InteractionResult.PASS;
-
         Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
         Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
         boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
@@ -232,5 +233,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         CompoundTag tag = new CompoundTag();
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
+        Set<String> takenNames = this.getOrCreate().compiledModules.keySet();
+        buf.writeCollection(takenNames, ByteBufCodecs.STRING_UTF8);
     }
 }

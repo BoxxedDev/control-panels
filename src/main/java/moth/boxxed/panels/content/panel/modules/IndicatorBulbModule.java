@@ -59,8 +59,12 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
         BlockState state = panelBlockEntity.getBlockState();
 
         int bulbLight = this.lit ? LightTexture.FULL_BRIGHT : packedLight;
+
+        poseStack.pushPose();
+        poseStack.translate(0, 0, 0.5/16f);
         PanelPreloadedModels.INDICATOR_BULB_BASE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         bulbModel.render(level, state, poseStack, bufferSource, RenderType.translucent(), bulbLight);
+        poseStack.popPose();
     }
 
     @Override
@@ -88,7 +92,7 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
 
     @Override
     public VoxelShape getShape() {
-        return Block.box(0, 0, 0, 1, 1.5, 1);
+        return Block.box(0, 0, 0.5, 1, 1.5, 1.5);
     }
 
     @Override

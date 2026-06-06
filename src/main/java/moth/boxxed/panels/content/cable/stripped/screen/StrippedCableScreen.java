@@ -42,6 +42,7 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
         this.centerY = this.height/2;
 
         this.list = this.menu.map.filterIOModules().asEntryList();
+        this.list.sort(null);
         String initConfig = this.menu.initialConfig;
         for (int i=0; i<this.list.size(); i++) {
             if (Objects.equals(this.list.get(i).getKey(), initConfig)) {

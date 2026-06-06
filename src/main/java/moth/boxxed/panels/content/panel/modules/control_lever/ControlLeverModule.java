@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.panel.modules.control_lever;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;

@@ -141,22 +141,28 @@ configurations {
 }
 
 dependencies {
+    //Create
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     implementation("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
 
+    //Computercraft
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$computercraft_tweaked_version")
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$computercraft_tweaked_version")
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$computercraft_tweaked_version")
     runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$computercraft_tweaked_version")
 
+    //Sable companion
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:[${sable_companion_version},)")) {
         version {
             prefer sable_companion_version
         }
     }
+
+    //JEI
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

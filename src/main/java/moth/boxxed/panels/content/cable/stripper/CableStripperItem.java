@@ -4,6 +4,7 @@ import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.CableBlockEntity;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
+import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -65,6 +66,11 @@ public class CableStripperItem extends Item {
             BlockEntity be = level.getBlockEntity(clickedPos.relative(replaceDir.getOpposite()));
             if (be instanceof CableBlockEntity cableBE) {
                 UUID network = cableBE.network;
+                be = level.getBlockEntity(clickedPos);
+                if (be instanceof StrippedCableBlockEntity strippedBE) strippedBE.setNetwork(network);
+            }
+            if (be instanceof PanelBlockEntity panelBE) {
+                UUID network = panelBE.network;
                 be = level.getBlockEntity(clickedPos);
                 if (be instanceof StrippedCableBlockEntity strippedBE) strippedBE.setNetwork(network);
             }

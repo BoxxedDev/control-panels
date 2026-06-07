@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.cable.stripped;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;
@@ -49,11 +50,14 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
         BlockPos pos = getBlockPos();
         BlockPos delta = otherPos.subtract(pos);
         Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
-        Direction fromDirection = from.getValue(PanelBlock.FACING);
+        Direction fromDirection = from.getValue(StrippedCableBlock.FACING);
 
         if (direction.getAxis().isVertical())
             return false;
-        return to.getBlock() instanceof CableBlock && fromDirection.getOpposite().equals(direction);
+        if (!fromDirection.getOpposite().equals(direction))
+            return false;
+        return (to.getBlock() instanceof CableBlock) ||
+                (to.getBlock() instanceof PanelBlock && fromDirection.getOpposite().equals(to.getValue(PanelBlock.FACING)));
     }
 
     @Override

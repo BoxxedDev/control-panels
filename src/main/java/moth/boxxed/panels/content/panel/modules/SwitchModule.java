@@ -84,5 +84,15 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
         consumer.accept("getState", args -> this.switchState);
+        consumer.accept("setState", args -> {
+            if (args.count() != 1)
+                return false;
+            if (args.get(0) instanceof Boolean bool) {
+                this.switchState = bool;
+                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
+                return true;
+            }
+            return false;
+        });
     }
 }

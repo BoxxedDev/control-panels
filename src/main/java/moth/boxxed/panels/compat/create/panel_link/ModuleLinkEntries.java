@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.redstone.link.IRedstoneLinkable;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.Module;

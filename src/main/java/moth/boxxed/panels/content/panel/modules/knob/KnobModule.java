@@ -19,7 +19,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -114,5 +113,15 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
         consumer.accept("getAngle", args -> this.getAngle());
         consumer.accept("getValue", args -> this.getAnalog());
+        consumer.accept("setAngle", args -> {
+            if (args.count() != 1)
+                return false;
+            if (args.get(0) instanceof Number number) {
+                this.angle = number.intValue();
+                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
+                return true;
+            }
+            return false;
+        });
     }
 }

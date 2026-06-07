@@ -1,10 +1,6 @@
 package moth.boxxed.panels.content.panel.modules.momentary_switch;
 
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
-import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class MomentarySwitchHoldInteraction extends ModuleHoldInteraction<MomentarySwitchModule> {
     @Override

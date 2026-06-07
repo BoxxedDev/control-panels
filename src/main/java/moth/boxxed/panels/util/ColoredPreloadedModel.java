@@ -3,9 +3,7 @@ package moth.boxxed.panels.util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ColoredPreloadedModel {

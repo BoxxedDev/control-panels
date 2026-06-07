@@ -4,14 +4,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
-import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLeverModule> {
     private static final ResourceLocation LEVER_SPRITE = Dashpanels.path("module/control_lever");

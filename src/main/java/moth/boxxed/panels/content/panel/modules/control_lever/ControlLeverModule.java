@@ -1,7 +1,6 @@
 package moth.boxxed.panels.content.panel.modules.control_lever;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
@@ -13,7 +12,6 @@ import moth.boxxed.panels.index.PanelPreloadedModels;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -121,5 +119,15 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
         consumer.accept("getValue", args -> this.getSignal());
+        consumer.accept("setValue", args -> {
+            if (args.count() != 1)
+                return false;
+            if (args.get(0) instanceof Number number) {
+                this.signal = number.intValue();
+                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
+                return true;
+            }
+            return false;
+        });
     }
 }

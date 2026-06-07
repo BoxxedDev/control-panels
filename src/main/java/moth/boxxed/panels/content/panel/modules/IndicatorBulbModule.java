@@ -1,12 +1,8 @@
 package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
@@ -15,25 +11,18 @@ import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.UUID;
 import java.util.function.BiConsumer;
 
 public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaObject {
@@ -108,8 +97,10 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
             return false;
         });
         consumer.accept("setColor", args -> {
-            if (args.getType(0).equals("string")) {
-                this.color = DyeColor.byName((String) args.get(0), DyeColor.WHITE);
+            if (args.count() != 1)
+                return false;
+            if (args.get(0) instanceof String string) {
+                this.color = DyeColor.byName(string, DyeColor.WHITE);
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }

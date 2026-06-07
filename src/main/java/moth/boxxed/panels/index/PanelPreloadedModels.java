@@ -3,7 +3,6 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.util.ColoredPreloadedModel;
 import moth.boxxed.panels.util.PreLoadedModel;
-import org.checkerframework.checker.units.qual.C;
 
 public class PanelPreloadedModels {
     public static final PreLoadedModel

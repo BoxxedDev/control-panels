@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.panel;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

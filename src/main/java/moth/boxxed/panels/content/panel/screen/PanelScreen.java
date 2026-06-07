@@ -243,7 +243,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                     if (slot.getItem().getItem() == entry.getValue().associatedItem) {
                         String location = entry.getKey().location().getPath();
                         Module module = entry.getValue().create(0, 0);
-                        module.name = validateName(location+"_0");
+                        module.name = validateName(location);
                         this.draggingModule = new PseudoModule(module, slot);
                         return true;
                     }
@@ -335,6 +335,8 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     }
 
     private void writeName() {
+        if (this.nameEditBox.getValue().isEmpty())
+            return;
         String nameToSet = validateName(this.nameEditBox.getValue());
         this.modulesToSave.rename(this.selectedModule, nameToSet);
         this.selectedModule = nameToSet;

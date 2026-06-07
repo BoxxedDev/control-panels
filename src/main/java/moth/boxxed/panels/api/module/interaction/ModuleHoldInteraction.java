@@ -60,10 +60,14 @@ public abstract class ModuleHoldInteraction<T extends Module> {
     }
 
     public boolean pick(int action) {
+        if (this.isActive())
+            return true;
         return false;
     }
 
     public boolean attack(int action) {
+        if (this.isActive())
+            return true;
         return false;
     }
 

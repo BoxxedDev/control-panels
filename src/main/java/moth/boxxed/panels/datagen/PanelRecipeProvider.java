@@ -5,14 +5,20 @@ import com.simibubi.create.AllItems;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.StonecutterRecipe;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 
@@ -34,6 +40,32 @@ public class PanelRecipeProvider extends RecipeProvider {
     }
 
     private static void modules(RecipeOutput output) {
+        module(PanelItems.SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+        module(PanelItems.KNOB_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+        module(PanelItems.CONTROL_LEVER_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
+        module(PanelItems.INDICATOR_BULB_MODULE.get(), Ingredient.of(Tags.Items.GLASS_BLOCKS), 4, output);
+        module(PanelItems.MOMENTARY_SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+    }
+
+    private static void module(ItemLike item, Ingredient ingredient, int count, RecipeOutput output) {
+        ResourceLocation id = RecipeBuilder.getDefaultRecipeId(item);
+        Advancement.Builder builder = output.advancement()
+                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+                .rewards(AdvancementRewards.Builder.recipe(id))
+                .requirements(AdvancementRequirements.Strategy.OR);
+        StonecutterRecipe recipe = new StonecutterRecipe(
+            "",
+                ingredient,
+                new ItemStack(item, count)
+        );
+        output.accept(
+                id,
+                recipe,
+                builder.build(id.withPrefix("recipes/" + RecipeCategory.REDSTONE.getFolderName() + "/"))
+        );
+    }
+
+    private static void modulesOld(RecipeOutput output) {
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.SWITCH_MODULE.get(), 4)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('N', Tags.Items.NUGGETS_IRON)

@@ -1,18 +1,8 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "redstone",
-  "key": {
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "W": {
-      "tag": "minecraft:wool"
-    }
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "c:ingots/iron"
   },
-  "pattern": [
-    "W",
-    "I"
-  ],
   "result": {
     "count": 4,
     "id": "dashpanels:knob"

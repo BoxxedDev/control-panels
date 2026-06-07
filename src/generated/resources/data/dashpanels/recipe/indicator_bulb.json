@@ -1,20 +1,10 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "redstone",
-  "key": {
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "I": {
-      "tag": "c:nuggets/iron"
-    }
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "c:glass_blocks"
   },
-  "pattern": [
-    "G",
-    "I"
-  ],
   "result": {
-    "count": 2,
+    "count": 4,
     "id": "dashpanels:indicator_bulb"
   }
 }

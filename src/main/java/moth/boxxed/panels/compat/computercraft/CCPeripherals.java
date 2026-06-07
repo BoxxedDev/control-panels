@@ -3,7 +3,7 @@ package moth.boxxed.panels.compat.computercraft;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
 import moth.boxxed.panels.compat.PanelCompat;
-import moth.boxxed.panels.compat.computercraft.peripherals.ControlPanelPeripheral;
+import moth.boxxed.panels.compat.computercraft.peripherals.NetworkMemberPeripheral;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,7 +19,8 @@ public class CCPeripherals implements PanelCompat {
 
     @Override
     public void init() {
-        this.addPeripheral(PanelBlockEntities.PANEL, ControlPanelPeripheral::new);
+        this.addPeripheral(PanelBlockEntities.PANEL, NetworkMemberPeripheral::new);
+        this.addPeripheral(PanelBlockEntities.CABLE, NetworkMemberPeripheral::new);
     }
 
     @SuppressWarnings("unchecked")

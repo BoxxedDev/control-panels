@@ -3,6 +3,7 @@ package moth.boxxed.panels.compat.computercraft.peripherals;
 import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleArguments;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
@@ -16,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class ControlPanelPeripheral implements IPeripheral {
-    private final PanelBlockEntity blockEntity;
-    public ControlPanelPeripheral(BlockEntity blockEntity) {
-        this.blockEntity = (PanelBlockEntity) blockEntity;
+public class NetworkMemberPeripheral implements IPeripheral {
+    private final ModulesNetworkMember blockEntity;
+    public NetworkMemberPeripheral(BlockEntity blockEntity) {
+        this.blockEntity = (ModulesNetworkMember) blockEntity;
     }
 
     @Override

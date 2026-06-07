@@ -23,16 +23,10 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
     private float renderSignal = 0;
     private float indicatorRender = 0;
 
-    private ControlLeverModule leverModule;
-    private Level level;
-
     @Override
-    public void startHold(Level level, Player player, ControlLeverModule module) {
-        super.startHold(level, player, module);
+    public void start() {
         this.signal = module.getSignal();
         this.val = this.signal/15f;
-        this.leverModule = module;
-        this.level = level;
 
         this.renderSignal = Mth.map((float) this.signal, 0, 15, 0, 112);
         this.indicatorRender = Mth.map((float) this.signal, 0, 15, 0, 112);
@@ -44,7 +38,7 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
         this.val = Math.clamp(this.val, 0, 1);
         this.signal = Math.clamp(Math.round(this.val*15), 0, 15);
         if (this.oldSignal != this.signal) {
-            PacketDistributor.sendToServer(new DefaultModuleUpdatePacket(this.leverModule.getParentPos(), this.leverModule.getName(), this.signal));
+            this.update(this.signal);
         }
         this.oldSignal = this.signal;
         return true;

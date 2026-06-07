@@ -6,9 +6,9 @@
 	},
 	"elements": [
 		{
-			"from": [7, 0, 8],
-			"to": [9, 1, 10],
-			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 8]},
+			"from": [7, 6, 7.5],
+			"to": [9, 7, 9.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 6, 8]},
 			"faces": {
 				"north": {"uv": [2, 2, 4, 3], "texture": "#1"},
 				"east": {"uv": [0, 2, 2, 3], "texture": "#1"},
@@ -19,9 +19,9 @@
 			}
 		},
 		{
-			"from": [7.5, 0.75, 8.5],
-			"to": [8.5, 2.75, 9.5],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 0.75, 9]},
+			"from": [7.5, 6.50157, 8.24895],
+			"to": [8.5, 8.50157, 9.24895],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 6, 8]},
 			"faces": {
 				"north": {"uv": [9, 2, 10, 0], "texture": "#1"},
 				"east": {"uv": [12, 2, 13, 0], "texture": "#1"},
@@ -32,9 +32,9 @@
 			}
 		},
 		{
-			"from": [7.5, 0, 7],
-			"to": [8.5, 1, 8],
-			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"from": [7.5, 6, 6.5],
+			"to": [8.5, 7, 7.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 6, 8]},
 			"faces": {
 				"north": {"uv": [2, 7, 3, 8], "texture": "#1"},
 				"east": {"uv": [4, 7, 5, 8], "texture": "#1"},
@@ -48,31 +48,23 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [75, 45, 0],
-			"translation": [0, 5, 15],
-			"scale": [2, 2, 2]
+			"translation": [0, 1.5, 0]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [75, 45, 0],
-			"translation": [0, 5, 15],
-			"scale": [2, 2, 2]
+			"translation": [0, 1.5, 0]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, 45, 0],
-			"translation": [0, 15, 0],
-			"scale": [2, 2, 2]
+			"translation": [0, 1.5, 0]
 		},
 		"firstperson_lefthand": {
 			"rotation": [0, -135, 0],
-			"translation": [0, 15, 0],
-			"scale": [2, 2, 2]
-		},
-		"ground": {
-			"translation": [0, 5, 0]
+			"translation": [0, 1.5, 0]
 		},
 		"gui": {
 			"rotation": [30, -135, 0],
-			"translation": [1.5, 17, 0],
-			"scale": [3, 3, 3]
+			"scale": [2, 2, 2]
 		},
 		"head": {
 			"rotation": [0, -180, 0],
@@ -80,9 +72,8 @@
 			"scale": [2, 2, 2]
 		},
 		"fixed": {
-			"rotation": [0, 90, 0],
-			"translation": [-1.5, 13.5, 0],
-			"scale": [2, 2, 2]
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, 1]
 		}
 	}
 }

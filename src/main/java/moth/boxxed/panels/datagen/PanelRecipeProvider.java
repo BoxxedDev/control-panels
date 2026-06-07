@@ -63,6 +63,13 @@ public class PanelRecipeProvider extends RecipeProvider {
                 .pattern("I")
                 .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
                 .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.MOMENTARY_SWITCH_MODULE.get(), 2)
+                .define('B', ItemTags.STONE_BUTTONS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .pattern("B")
+                .pattern("I")
+                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
+                .save(output);
     }
 
     private static ShapedRecipeBuilder panelLink() {

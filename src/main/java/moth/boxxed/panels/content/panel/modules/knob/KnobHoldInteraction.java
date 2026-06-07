@@ -22,18 +22,10 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
     private int oldAngle = 0;
     private int angle = 0;
 
-    private Module knobModule;
-    private Level level;
-    private Player player;
-
     @Override
-    public void startHold(Level level, Player player, KnobModule module) {
-        super.startHold(level, player, module);
+    public void start() {
         this.angle = module.getAngle();
         this.val = this.angle/360f;
-        this.knobModule = module;
-        this.level = level;
-        this.player = player;
     }
 
     @Override
@@ -42,7 +34,7 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
         this.val = Math.clamp(this.val, 0, 1);
         this.angle = Math.clamp(Math.round(this.val*360), 0, 360);
         if (this.oldAngle != angle) {
-            PacketDistributor.sendToServer(new DefaultModuleUpdatePacket(this.knobModule.getParentPos(), this.knobModule.getName(), this.angle));
+            this.update(this.angle);
         }
         this.oldAngle = angle;
         return true;

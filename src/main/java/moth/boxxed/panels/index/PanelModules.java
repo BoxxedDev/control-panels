@@ -7,6 +7,7 @@ import moth.boxxed.panels.content.panel.modules.IndicatorBulbModule;
 import moth.boxxed.panels.content.panel.modules.SwitchModule;
 import moth.boxxed.panels.content.panel.modules.control_lever.ControlLeverModule;
 import moth.boxxed.panels.content.panel.modules.knob.KnobModule;
+import moth.boxxed.panels.content.panel.modules.momentary_switch.MomentarySwitchModule;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -23,7 +24,8 @@ public class PanelModules {
             MODULES.register("control_lever", () -> new ModuleType<>(ControlLeverModule::new, PanelItems.CONTROL_LEVER_MODULE.get()));
     public static final Supplier<ModuleType<IndicatorBulbModule>> INDICATOR_BULB =
             MODULES.register("indicator_bulb", () -> new ModuleType<>(IndicatorBulbModule::new, PanelItems.INDICATOR_BULB_MODULE.get()));
-
+    public static final Supplier<ModuleType<MomentarySwitchModule>> MOMENTARY_SWITCH =
+            MODULES.register("momentary_switch", () -> new ModuleType<>(MomentarySwitchModule::new, PanelItems.MOMENTARY_SWITCH_MODULE.get()));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

@@ -16,7 +16,10 @@ public class PanelPreloadedModels {
             CONTROL_LEVER_HANDLE = regular("control_lever/handle"),
             CONTROL_LEVER_INDICATOR = regular("control_lever/indicator"),
 
-            INDICATOR_BULB_BASE = regular("indicator_bulb/base");
+            INDICATOR_BULB_BASE = regular("indicator_bulb/base"),
+
+            MOMENTARY_SWITCH_BASE = regular("momentary_switch/base"),
+            MOMENTARY_SWITCH_BUTTON = regular("momentary_switch/button");
     //Too lazy rn to find a way to change the texture automatically on render
     public static final ColoredPreloadedModel
             INDICATOR_BULB_ON = regularColored("indicator_bulb/bulb_on"),

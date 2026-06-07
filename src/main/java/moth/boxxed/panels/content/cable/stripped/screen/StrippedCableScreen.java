@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +22,7 @@ import java.util.Objects;
 public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigMenu> {
     public static final ResourceLocation GUI = Dashpanels.path("textures/gui/container/stripped_cable_config.png");
 
-    public List<Map.Entry<String, Module>> list;
+    public List<String> list;
 
     private int centerX;
     private int centerY;
@@ -41,11 +42,11 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
         this.centerX = this.width/2;
         this.centerY = this.height/2;
 
-        this.list = this.menu.map.filterIOModules().asEntryList();
+        this.list = new ArrayList<>(this.menu.map.filterIOModules().keySet());
         this.list.sort(null);
         String initConfig = this.menu.initialConfig;
         for (int i=0; i<this.list.size(); i++) {
-            if (Objects.equals(this.list.get(i).getKey(), initConfig)) {
+            if (Objects.equals(this.list.get(i), initConfig)) {
                 this.scroll = i;
                 break;
             }
@@ -85,7 +86,7 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
             RenderSystem.enableBlend();
             guiGraphics.setColor(1,1,1,1-(distance*0.33f));
             guiGraphics.pose().translate(0, y, 0);
-            guiGraphics.drawCenteredString(this.font, list.get(i).getKey(), 0, 0, 0xFFFFFF);
+            guiGraphics.drawCenteredString(this.font, list.get(i), 0, 0, 0xFFFFFF);
             guiGraphics.setColor(1,1,1,1);
             RenderSystem.disableBlend();
             guiGraphics.pose().popPose();
@@ -110,7 +111,7 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             if (!this.list.isEmpty())
-                PacketDistributor.sendToServer(new ConfigureStrippedCablePacket(this.list.get((int) Math.round(this.scroll)).getKey(), this.menu.pos));
+                PacketDistributor.sendToServer(new ConfigureStrippedCablePacket(this.list.get((int) Math.round(this.scroll)), this.menu.pos));
             this.playClickSound(1f);
             this.onClose();
         }

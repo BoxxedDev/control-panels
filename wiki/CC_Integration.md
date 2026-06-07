@@ -1,5 +1,5 @@
 ## Base Peripherals and Functions
-* Panel
+* Panel/Cable
   * `getNetwork()` - returns the network Id of the panel
   * `getModules()` - returns a table of all the modules in the network
   * `getModulesOfType(string)` - returns a table of all modules of a certain type in the network, will return empty if none of the type are in the network or type does not exist
@@ -14,17 +14,19 @@
 ---
 ## Module specific functions
 * Switch
-  * `getState()` - returns a boolean if the switch is on or off
+  * `getState()` - returns true if the switch is on, false if otherwise
 * Control Lever
   * `getValue()` - returns a value between 0-15 of the lever signal
 * Knob
   * `getAngle()` - returns the angle of the knob between 0-360
   * `getValue()` - returns a value between 0-15 of the mapped angle of the knob
 * Indicator Bulb
-  * `getState()` - returns a boolean of the current state of the bulb, on or off
+  * `getState()` - returns true if the bulb is on, false if otherwise
   * `getColor()` - returns a serialized string of the current bulb color
   * `setState(bool)` - sets the state of the bulb, on or off
   * `setColor(string)` - sets the color of the bulb
+* Momentary Switch
+  * `getState()` - returns true if the switch is pressed, false if otherwise
 ---
 ## Example code
 ```lua

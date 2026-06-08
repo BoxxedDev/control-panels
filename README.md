@@ -57,6 +57,11 @@ A json for a custom module type could look something like this:
 </ul>
 </details>
 
+<details>
+<summary>Fabric</summary>
+        Version 3 will hopefully have multiloader, may be a month or two until then from 6/8/26
+</details>
+
 ---
 
 #### Started May 10th, 2026

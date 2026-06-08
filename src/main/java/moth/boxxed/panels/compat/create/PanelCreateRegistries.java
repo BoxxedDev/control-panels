@@ -38,7 +38,7 @@ public class PanelCreateRegistries implements PanelCompat {
                         () -> BlockEntityType.Builder.of(PanelLinkBlockEntity::new, PANEL_LINK.get())
                                 .build(null)
                 );
-        PanelCreativeTabs.addContentTo(PanelCreativeTabs.PANEL_TAB, PANEL_LINK);
+//        PanelCreativeTabs.addContentTo(PanelCreativeTabs.PANEL_TAB, PANEL_LINK);
 
         PANEL_LINK_MENU = PanelMenuTypes.MENU_TYPES.register(
                 "panel_link", () -> IMenuTypeExtension.create(PanelLinkMenu::new)

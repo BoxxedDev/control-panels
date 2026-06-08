@@ -1,5 +1,6 @@
 package moth.boxxed.panels.compat.create.panel_link;
 
+import moth.boxxed.panels.api.module.ModuleIOInfo;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
@@ -90,7 +91,7 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
         this.getOrCreate().compileModules();
-        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules().keySet(), ByteBufCodecs.STRING_UTF8);
+        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules(), (buffer, val) -> ModuleIOInfo.STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, val));
     }
 
     public ModuleLinkEntries getModuleEntries() {

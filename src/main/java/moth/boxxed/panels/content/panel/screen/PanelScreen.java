@@ -134,7 +134,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     @Override
     protected void renderSlotContents(GuiGraphics graphics, ItemStack itemstack, Slot slot, @Nullable String countString) {
         for (Map.Entry<ResourceKey<ModuleType<?>>, ModuleType<?>> entry : ModulesRegistry.MODULE_REGISTRY.entrySet()) {
-            if (itemstack.getItem() == entry.getValue().associatedItem) {
+            if (itemstack.getItem() == entry.getValue().associatedItem.get()) {
                 int x1 = slot.x;
                 int y1 = slot.y;
                 int x2 = slot.x+16;
@@ -171,7 +171,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         }
         RenderSystem.enableBlend();
         graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-        graphics.renderItem(new ItemStack(this.draggingModule.module.type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+        graphics.renderItem(new ItemStack(this.draggingModule.module.type.associatedItem.get()), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
         RenderSystem.disableBlend();
         this.draggingModule.module.setPos(localPosX, localPosY);
         graphics.setColor(1f, 1, 1f, 1f);
@@ -187,7 +187,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 graphics.setColor(0.5f, 1, 0.5f, 0.9f);
             RenderSystem.enableBlend();
             graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-            graphics.renderItem(new ItemStack(entry.getValue().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+            graphics.renderItem(new ItemStack(entry.getValue().type.associatedItem.get()), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
             RenderSystem.disableBlend();
             graphics.setColor(1f, 1, 1f, 1f);
         }
@@ -217,7 +217,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     private void addItemToInv(Module module) {
         if (!this.getMenu().inventory.player.isCreative()) {
-            int slotExisting = this.getMenu().inventory.getSlotWithRemainingSpace(new ItemStack(module.type.associatedItem));
+            int slotExisting = this.getMenu().inventory.getSlotWithRemainingSpace(new ItemStack(module.type.associatedItem.get()));
             if (slotExisting == -1) {
                 slotExisting = this.getMenu().inventory.getFreeSlot();
             }
@@ -226,7 +226,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 existingStack.setCount(existingStack.getCount() + 1);
                 PacketDistributor.sendToServer(new SetPlayerSlotPacket(slotExisting, existingStack, existingStack.getCount()));
             } else {
-                this.getMenu().inventory.setItem(slotExisting, new ItemStack(module.type.associatedItem));
+                this.getMenu().inventory.setItem(slotExisting, new ItemStack(module.type.associatedItem.get()));
             }
         }
     }
@@ -240,7 +240,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         if (slot != null && this.draggingModule == null) {
             if (!slot.getItem().isEmpty()) {
                 for (Map.Entry<ResourceKey<ModuleType<?>>, ModuleType<?>> entry : ModulesRegistry.MODULE_REGISTRY.entrySet()) {
-                    if (slot.getItem().getItem() == entry.getValue().associatedItem) {
+                    if (slot.getItem().getItem() == entry.getValue().associatedItem.get()) {
                         String location = entry.getKey().location().getPath();
                         Module module = entry.getValue().create(0, 0);
                         module.name = validateName(location);

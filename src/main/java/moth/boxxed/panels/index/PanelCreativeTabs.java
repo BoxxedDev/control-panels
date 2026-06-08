@@ -1,12 +1,21 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.ModuleType;
+import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.content.panel.PanelBlock;
+import net.mcexpanded.fancytabsections.FancyTabSections;
+import net.mcexpanded.fancytabsections.creativetab.ConglomerateOfItems;
+import net.mcexpanded.fancytabsections.creativetab.SectionTextured;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -22,13 +31,7 @@ public class PanelCreativeTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.control_panel"))
                     .icon(PanelBlocks.CONTROL_PANEL::toStack)
-                    .build()
-    );
-    public static final Supplier<CreativeModeTab> MODULES_TAB = TABS.register(
-            "dashpanels_module",
-            () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.control_panel_modules"))
-                    .icon(PanelItems.SWITCH_MODULE::toStack)
+                    .displayItems(((parameters, output) -> {}))
                     .build()
     );
 
@@ -38,7 +41,37 @@ public class PanelCreativeTabs {
         set.add(item);
     }
 
+    public static void addItems() {
+        ConglomerateOfItems base = new ConglomerateOfItems()
+                .add(PanelBlocks.CONTROL_PANEL)
+                .add(PanelBlocks.CABLE)
+                .add(PanelItems.CABLE_STRIPPER);
+        if (ModList.get().isLoaded("create"))
+            base.add(PanelCreateRegistries.PANEL_LINK);
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), SectionTextured.of(
+                Dashpanels.path("dashpanels"),
+                Component.translatable("creativetab.dashpanels.dashpanels"),
+                0xFFFFFF,
+                base
+        ));
+
+        ConglomerateOfItems modules = new ConglomerateOfItems()
+                .add(PanelItems.SWITCH_MODULE)
+                .add(PanelItems.KNOB_MODULE)
+                .add(PanelItems.CONTROL_LEVER_MODULE)
+                .add(PanelItems.INDICATOR_BULB_MODULE)
+                .add(PanelItems.MOMENTARY_SWITCH_MODULE);
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), new SectionTextured(
+                Dashpanels.path("modules"),
+                Component.translatable("creativetab.dashpanels.modules"),
+                Dashpanels.path("textures/gui/fancy_tab_section/dashpanels.png"),
+                0xFFFFFF,
+                modules
+        ));
+    }
+
     public static void register(IEventBus eventBus) {
         TABS.register(eventBus);
+        addItems();
     }
 }

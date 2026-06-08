@@ -1,9 +1,7 @@
 package moth.boxxed.panels.content.cable.stripped;
 
-import moth.boxxed.panels.api.module.IInput;
-import moth.boxxed.panels.api.module.IOutput;
+import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
@@ -33,6 +31,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class StrippedCableBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -99,8 +100,16 @@ public class StrippedCableBlock extends BaseEntityBlock {
         if (network == null) return 0;
         network.compileModules();
         ModuleMap map = network.getCompiledModules();
+        Module module = map.get(be.boundModule);
+        if (module == null) return 0;
         if (map.get(be.boundModule) instanceof IInput input) {
             return input.getAnalog();
+        }
+        if (map.get(be.boundModule) instanceof IMultiInput input) {
+            Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
+            input.getValues(resultMap::put);
+            String extension = be.boundModule.substring(module.getName().length()+3);
+            return resultMap.get(extension).getAnalog();
         }
         return 0;
     }
@@ -126,6 +135,16 @@ public class StrippedCableBlock extends BaseEntityBlock {
                     output.setAnalog(0);
                 }
                 module.parentBlockEntity.networkUpdate(module.parentBlockEntity.getOrCreate());
+            }
+            if (module instanceof IMultiOutput output) {
+                Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
+                output.setValues(runnableMap::put);
+                String extension = be.boundModule.substring(module.name.length()+3);
+                if (level.hasNeighborSignal(pos)) {
+                    runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
+                } else {
+                    runnableMap.get(extension).setAnalog(0);
+                }
             }
         }
     }

@@ -51,6 +51,11 @@ repositories {
     maven { url = "https://maven.ithundxr.dev/hidden" } // Registrate
     maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
     maven { url = "https://maven.createmod.net" } // Ponder
+
+    //Modrinth maven
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
 }
 
 base {
@@ -163,6 +168,9 @@ dependencies {
 
     //JEI
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+
+    //Fancy tabs
+    jarJar(implementation("maven.modrinth:fancytabsections:${fancytabs_version}-${minecraft_version}"))
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

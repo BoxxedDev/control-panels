@@ -128,24 +128,24 @@ public class ControlPanelsCommonEvents {
 
     @SubscribeEvent
     public static void tabContents(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTab() == PanelCreativeTabs.PANEL_TAB.get()) {
-            event.accept(PanelBlocks.CONTROL_PANEL);
-            event.accept(PanelBlocks.CABLE);
-            event.accept(PanelItems.CABLE_STRIPPER);
-        }
-        if (event.getTab() == PanelCreativeTabs.MODULES_TAB.get()) {
-            for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {
-                event.accept(holder.get().associatedItem);
-            }
-        }
-
-        Set<ItemLike> itemLikesToAdd = new LinkedHashSet<>();
-        for (Map.Entry<Supplier<CreativeModeTab>, Set<ItemLike>> entry : PanelCreativeTabs.creativeItemMap.entrySet()) {
-            if (entry.getKey().get() == event.getTab())
-                itemLikesToAdd.addAll(entry.getValue());
-        }
-        for (ItemLike itemLike : itemLikesToAdd) {
-            event.accept(itemLike);
-        }
+//        if (event.getTab() == PanelCreativeTabs.PANEL_TAB.get()) {
+//            event.accept(PanelBlocks.CONTROL_PANEL);
+//            event.accept(PanelBlocks.CABLE);
+//            event.accept(PanelItems.CABLE_STRIPPER);
+//        }
+//        if (event.getTab() == PanelCreativeTabs.MODULES_TAB.get()) {
+//            for (DeferredHolder<ModuleType<?>, ? extends ModuleType<?>> holder : PanelModules.MODULES.getEntries()) {
+//                event.accept(holder.get().associatedItem);
+//            }
+//        }
+//
+//        Set<ItemLike> itemLikesToAdd = new LinkedHashSet<>();
+//        for (Map.Entry<Supplier<CreativeModeTab>, Set<ItemLike>> entry : PanelCreativeTabs.creativeItemMap.entrySet()) {
+//            if (entry.getKey().get() == event.getTab())
+//                itemLikesToAdd.addAll(entry.getValue());
+//        }
+//        for (ItemLike itemLike : itemLikesToAdd) {
+//            event.accept(itemLike);
+//        }
     }
 }

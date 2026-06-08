@@ -17,15 +17,15 @@ public class PanelModules {
     public static final DeferredRegister<ModuleType<?>> MODULES = DeferredRegister.create(ModulesRegistry.MODULE_REGISTRY, Dashpanels.MOD_ID);
 
     public static final Supplier<ModuleType<SwitchModule>> SWITCH =
-            MODULES.register("switch", () -> new ModuleType<>(SwitchModule::new, PanelItems.SWITCH_MODULE.get()));
+            MODULES.register("switch", () -> new ModuleType<>(SwitchModule::new, PanelItems.SWITCH_MODULE));
     public static final Supplier<ModuleType<KnobModule>> KNOB =
-            MODULES.register("knob", () -> new ModuleType<>(KnobModule::new, PanelItems.KNOB_MODULE.get()));
+            MODULES.register("knob", () -> new ModuleType<>(KnobModule::new, PanelItems.KNOB_MODULE));
     public static final Supplier<ModuleType<ControlLeverModule>> CONTROL_LEVER =
-            MODULES.register("control_lever", () -> new ModuleType<>(ControlLeverModule::new, PanelItems.CONTROL_LEVER_MODULE.get()));
+            MODULES.register("control_lever", () -> new ModuleType<>(ControlLeverModule::new, PanelItems.CONTROL_LEVER_MODULE));
     public static final Supplier<ModuleType<IndicatorBulbModule>> INDICATOR_BULB =
-            MODULES.register("indicator_bulb", () -> new ModuleType<>(IndicatorBulbModule::new, PanelItems.INDICATOR_BULB_MODULE.get()));
+            MODULES.register("indicator_bulb", () -> new ModuleType<>(IndicatorBulbModule::new, PanelItems.INDICATOR_BULB_MODULE));
     public static final Supplier<ModuleType<MomentarySwitchModule>> MOMENTARY_SWITCH =
-            MODULES.register("momentary_switch", () -> new ModuleType<>(MomentarySwitchModule::new, PanelItems.MOMENTARY_SWITCH_MODULE.get()));
+            MODULES.register("momentary_switch", () -> new ModuleType<>(MomentarySwitchModule::new, PanelItems.MOMENTARY_SWITCH_MODULE));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

@@ -7,8 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.redstone.link.IRedstoneLinkable;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
-import moth.boxxed.panels.api.module.IInput;
-import moth.boxxed.panels.api.module.IOutput;
+import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import net.createmod.catnip.data.Couple;
@@ -153,10 +152,18 @@ public class ModuleLinkEntries {
         public void setReceivedStrength(int power) {
             if (this.parentalBE == null)
                 return;
-            if (!this.parentalBE.getLevel().isClientSide && this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IOutput output) {
-                Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
+            if (this.parentalBE.getLevel().isClientSide)
+                return;
+            Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
+            if (actualModule instanceof IOutput output) {
                 output.setAnalog(power);
                 actualModule.parentBlockEntity.networkUpdate(actualModule.parentBlockEntity.getOrCreate());
+            }
+            if (actualModule instanceof IMultiOutput multiOutput) {
+                Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
+                multiOutput.setValues(runnableMap::put);
+                String extension = this.module.substring(module.length()+3);
+                runnableMap.get(extension).setAnalog(power);
             }
         }
 
@@ -164,15 +171,19 @@ public class ModuleLinkEntries {
         public boolean isListening() {
             if (this.parentalBE == null)
                 return false;
-            return this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IOutput;
+            return this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IOutput ||
+                    this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IMultiOutput;
         }
 
         @Override
         public boolean isAlive() {
             if (this.parentalBE == null)
                 return false;
-            return (this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IInput input && input.getAnalog() > 0) ||
-                    this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IOutput;
+            Module gottenModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
+            return gottenModule instanceof IInput ||
+                    gottenModule instanceof IOutput ||
+                    gottenModule instanceof IMultiInput ||
+                    gottenModule instanceof IMultiOutput;
         }
 
         @Override

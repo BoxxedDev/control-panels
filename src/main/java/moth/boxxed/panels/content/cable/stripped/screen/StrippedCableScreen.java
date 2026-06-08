@@ -3,6 +3,8 @@ package moth.boxxed.panels.content.cable.stripped.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleIOInfo;
+import moth.boxxed.panels.api.module.ModuleIOType;
 import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -42,7 +44,18 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
         this.centerX = this.width/2;
         this.centerY = this.height/2;
 
-        this.list = new ArrayList<>(this.menu.map.filterIOModules().keySet());
+        this.list = new ArrayList<>();
+        for (ModuleIOInfo info : this.menu.map.filterIOModules()) {
+            if (info.type() == null) continue;
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) {
+                list.add(info.name());
+            } else {
+                String start = info.name();
+                for (String extension : info.multiExtension()) {
+                    list.add(start.concat(" - " + extension));
+                }
+            }
+        }
         this.list.sort(null);
         String initConfig = this.menu.initialConfig;
         for (int i=0; i<this.list.size(); i++) {

@@ -73,7 +73,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (Map.Entry<String, Module> entry : this.modules) {
             Module module = entry.getValue();
             this.container.addItem(
-                    new ItemStack(module.type.associatedItem)
+                    new ItemStack(module.type.associatedItem.get())
             );
         }
     }

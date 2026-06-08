@@ -4,10 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
+import moth.boxxed.panels.api.module.ModuleIOInfo;
+import moth.boxxed.panels.api.module.ModuleIOType;
 import moth.boxxed.panels.compat.create.panel_link.ModuleLinkEntries;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class EntryEditorScreen {
@@ -40,9 +44,21 @@ public class EntryEditorScreen {
                 });
         this.cancel = new IconButton(this.leftPos + 176, this.topPos + 25, AllIcons.I_TRASH)
                 .withCallback(this::finishEmpty);
+        Set<String> entriesToShow = new HashSet<>();
+        for (ModuleIOInfo info : this.parent.getMenu().modulesInfo) {
+            if (info.type() == null) continue;
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) {
+                entriesToShow.add(info.name());
+            } else {
+                String start = info.name();
+                for (String extension : info.multiExtension()) {
+                    entriesToShow.add(start.concat(" - " + extension));
+                }
+            }
+        }
         this.moduleSelect = new StringEntryWidget(
                 this.leftPos + 13, this.topPos + 25, 90, 28,
-                this.parent.getMenu().modulesSet,
+                entriesToShow,
                 Component.translatable("widget.dashpanels.panel_link.module_select")
         );
     }

@@ -98,4 +98,12 @@ public abstract class ModuleHoldInteraction<T extends Module> {
     protected void update(Integer... values) {
         PacketDistributor.sendToServer(new DefaultModuleUpdatePacket(this.module.getParentPos(), this.module.getName(), List.of(values)));
     }
+
+    public boolean keyPress(int key, int scanCode, int modifiers) {
+        return false;
+    }
+
+    public boolean keyRelease(int key, int scanCode, int modifiers) {
+        return false;
+    }
 }

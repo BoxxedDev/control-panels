@@ -83,7 +83,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
     }
 
     public Module getModule(String moduleName) {
-        return this.modules.get(moduleName);
+        return this.modules.normalGet(moduleName);
     }
 
     @Override

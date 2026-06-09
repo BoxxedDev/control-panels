@@ -80,6 +80,10 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
         return super.get(key);
     }
 
+    public Module normalGet(Object key) {
+        return super.get(key);
+    }
+
     @Override
     public boolean containsKey(Object key) {
         if (!(key instanceof String str)) return false;
@@ -91,6 +95,10 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
                 return super.containsKey(sub);
             }
         }
+        return super.containsKey(key);
+    }
+
+    public boolean normalContainsKey(Object key) {
         return super.containsKey(key);
     }
 

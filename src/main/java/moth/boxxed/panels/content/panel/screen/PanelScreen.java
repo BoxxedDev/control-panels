@@ -345,13 +345,14 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.nameEditBox.setValue("");
     }
 
+    private static final int MAX = 192;
     private String validateName(String tryName) {
         String name = tryName;
-        if (!(this.modulesToSave.containsKey(name) || this.getMenu().takenNames.contains(name)))
+        if (!(this.modulesToSave.normalContainsKey(name) || this.getMenu().takenNames.contains(name)))
             return name;
         name = tryName+"_0";
         int i=0;
-        while (this.modulesToSave.containsKey(name) || this.getMenu().takenNames.contains(name)) {
+        while ((this.modulesToSave.normalContainsKey(name) || this.getMenu().takenNames.contains(name)) && i<=MAX) {
             i++;
             name = (tryName+"_%d").formatted(i);
         }

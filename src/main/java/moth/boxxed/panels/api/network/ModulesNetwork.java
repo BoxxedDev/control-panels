@@ -135,11 +135,11 @@ public class ModulesNetwork {
 
     public String validateName(String name, Module.ModuleInfo module) {
         ModuleMap collective = getCollectiveModules();
-        if (collective.containsKey(name) || name==null) {
+        if (collective.normalContainsKey(name) || name==null) {
             String location = module.type().getPath();
             String ret = location+"_0";
             int i=0;
-            while (collective.containsKey(ret)) {
+            while (collective.normalContainsKey(ret)) {
                 i++;
                 ret = (location+"_%d").formatted(i);
             }

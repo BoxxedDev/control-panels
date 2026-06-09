@@ -100,7 +100,7 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
         poseStack.mulPose(Axis.ZP.rotationDegrees(angleX));
         PanelPreloadedModels.JOYSTICK_STICK.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
-        poseStack.translate(0, 0.09375, 0);
+        poseStack.translate(0, 0.125, 0);
         poseStack.mulPose(Axis.XP.rotationDegrees(triggerAngle));
         PanelPreloadedModels.JOYSTICK_TRIGGER.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
@@ -130,8 +130,10 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
 
     @Override
     public void setNum(List<Integer> num) {
-        this.stickX = num.getFirst()/100f;
-        this.stickY = num.get(1)/100f;
-        this.triggered = num.getLast()==1;
+        if (num.size() == 3) {
+            this.stickX = num.getFirst()/100f;
+            this.stickY = num.get(1)/100f;
+            this.triggered = num.getLast()==1;
+        }
     }
 }

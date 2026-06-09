@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.redstone.link.IRedstoneLinkable;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetwork;
@@ -29,24 +30,40 @@ import java.util.Map;
 public class ModuleLinkEntries {
     private final Map<String, ModuleEntry> entryMap = new HashMap<>();
 
+    private final Map<String, ModuleEntry> modulesToAdd = new HashMap<>();
+    private final Map<String, ModuleEntry> modulesToRemove = new HashMap<>();
+
     public void updateNetworks(Level level) {
         if (!level.isClientSide) {
+            for (ModuleEntry entry : this.modulesToRemove.values()) {
+                Create.REDSTONE_LINK_NETWORK_HANDLER.removeFromNetwork(level, entry);
+            }
+            this.modulesToRemove.clear();
+
+            for (ModuleEntry entry : this.modulesToAdd.values()) {
+                Dashpanels.LOGGER.debug(entry.module);
+                Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
+            }
+            this.modulesToAdd.clear();
+        }
+    }
+
+    public void clearFromNetworks(Level level) {
+        if (!level.isClientSide) {
             for (ModuleEntry entry : this.entryMap.values()) {
-                if (entry.isAlive()) {
-                    Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
-                } else {
-                    Create.REDSTONE_LINK_NETWORK_HANDLER.removeFromNetwork(level, entry);
-                }
+                Create.REDSTONE_LINK_NETWORK_HANDLER.removeFromNetwork(level, entry);
             }
         }
     }
 
     public void add(ModuleEntry entry) {
         this.entryMap.put(entry.getModule(), entry);
+        this.modulesToAdd.put(entry.getModule(), entry);
     }
 
     public void addAll(Map<String, ModuleEntry> entries) {
         this.entryMap.putAll(entries);
+        this.modulesToAdd.putAll(entries);
     }
 
     public Map<String, ModuleEntry> getMap() {
@@ -82,11 +99,13 @@ public class ModuleLinkEntries {
 
     public void set(String module, ModuleEntry entry) {
         if (entry == null) {
-            this.entryMap.remove(module);
+            ModuleEntry nonNullEntry = this.entryMap.remove(module);
+            this.modulesToRemove.put(module, nonNullEntry);
             return;
         }
 
         this.entryMap.put(module, entry);
+        this.modulesToAdd.put(module, entry);
     }
 
     public void validate(ModulesNetwork modulesNetwork) {
@@ -143,16 +162,22 @@ public class ModuleLinkEntries {
         public int getTransmittedStrength() {
             if (this.parentalBE == null)
                 return 0;
-            if (this.parentalBE.getOrCreate().getCompiledModules().get(this.module) instanceof IInput input)
+            Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
+            if (actualModule instanceof IInput input)
                 return input.getAnalog();
+            if (actualModule instanceof IMultiInput multiInput) {
+                Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
+                multiInput.getValues(resultMap::put);
+                String extension = this.module.substring(actualModule.getName().length()+3);
+                if (resultMap.get(extension) != null)
+                    return resultMap.get(extension).getAnalog();
+            }
             return 0;
         }
 
         @Override
         public void setReceivedStrength(int power) {
             if (this.parentalBE == null)
-                return;
-            if (this.parentalBE.getLevel().isClientSide)
                 return;
             Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
             if (actualModule instanceof IOutput output) {
@@ -162,8 +187,10 @@ public class ModuleLinkEntries {
             if (actualModule instanceof IMultiOutput multiOutput) {
                 Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
                 multiOutput.setValues(runnableMap::put);
-                String extension = this.module.substring(module.length()+3);
-                runnableMap.get(extension).setAnalog(power);
+                String extension = this.module.substring(actualModule.getName().length()+3);
+                if (runnableMap.get(extension) != null)
+                    runnableMap.get(extension).setAnalog(power);
+                actualModule.parentBlockEntity.networkUpdate(actualModule.parentBlockEntity.getOrCreate());
             }
         }
 

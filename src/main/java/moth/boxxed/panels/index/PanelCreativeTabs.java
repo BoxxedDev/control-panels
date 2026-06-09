@@ -1,9 +1,7 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
-import moth.boxxed.panels.content.panel.PanelBlock;
 import net.mcexpanded.fancytabsections.FancyTabSections;
 import net.mcexpanded.fancytabsections.creativetab.ConglomerateOfItems;
 import net.mcexpanded.fancytabsections.creativetab.SectionTextured;
@@ -13,9 +11,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;

@@ -1,6 +1,5 @@
 package moth.boxxed.panels.api.module;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import net.minecraft.core.HolderLookup;

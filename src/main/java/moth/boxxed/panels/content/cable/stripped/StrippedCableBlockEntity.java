@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.cable.stripped;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;

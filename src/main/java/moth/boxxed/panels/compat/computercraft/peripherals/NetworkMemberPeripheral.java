@@ -7,7 +7,6 @@ import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleArguments;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;

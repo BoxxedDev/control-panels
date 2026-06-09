@@ -13,7 +13,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -77,6 +76,12 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         this.entries.updateNetworks(level);
         super.tick(level, blockPos, blockState);
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        this.entries.clearFromNetworks(getLevel());
     }
 
     @Override

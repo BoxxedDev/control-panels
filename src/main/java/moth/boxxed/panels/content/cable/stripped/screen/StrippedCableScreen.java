@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.cable.stripped.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleIOInfo;
 import moth.boxxed.panels.api.module.ModuleIOType;
 import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
@@ -18,7 +17,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigMenu> {

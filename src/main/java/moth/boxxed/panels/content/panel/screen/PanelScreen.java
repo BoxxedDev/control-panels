@@ -255,13 +255,15 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             if (!this.draggingModuleIntersecting()) {
                 this.modulesToSave.put(this.draggingModule.getName(), this.draggingModule.module);
                 if (!this.getMenu().inventory.player.isCreative()) {
-                    this.draggingModule.boundSlot.remove(1);
-                    ItemStack slotStack = this.draggingModule.boundSlot.getItem();
-                    PacketDistributor.sendToServer(new SetPlayerSlotPacket(
-                            this.draggingModule.boundSlot.getSlotIndex(),
-                            slotStack,
-                            slotStack.getCount()
-                    ));
+                    if (this.draggingModule.boundSlot != null) {
+                        this.draggingModule.boundSlot.remove(1);
+                        ItemStack slotStack = this.draggingModule.boundSlot.getItem();
+                        PacketDistributor.sendToServer(new SetPlayerSlotPacket(
+                                this.draggingModule.boundSlot.getSlotIndex(),
+                                slotStack,
+                                slotStack.getCount()
+                        ));
+                    }
                 }
                 this.draggingModule = null;
                 return true;

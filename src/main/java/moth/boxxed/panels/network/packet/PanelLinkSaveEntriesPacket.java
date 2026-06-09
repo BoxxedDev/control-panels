@@ -43,6 +43,7 @@ public record PanelLinkSaveEntriesPacket(Map<String, ModuleLinkEntries.ModuleEnt
             }
 
             panelLinkBlockEntity.getModuleEntries().clearAll();
+            panelLinkBlockEntity.getModuleEntries().clearFromNetworks(level);
             panelLinkBlockEntity.getModuleEntries().addAll(this.entries);
             panelLinkBlockEntity.networkUpdate(panelLinkBlockEntity.getOrCreate());
         }

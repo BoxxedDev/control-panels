@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class StringEntryWidget extends AbstractSimiWidget {
     private List<String> available;

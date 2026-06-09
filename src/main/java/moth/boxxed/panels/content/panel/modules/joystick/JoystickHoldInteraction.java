@@ -7,7 +7,6 @@ import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.lwjgl.glfw.GLFW;
 
 public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModule> {
     private static final ResourceLocation CROSSHAIR = Dashpanels.path("module/joystick/crosshair");

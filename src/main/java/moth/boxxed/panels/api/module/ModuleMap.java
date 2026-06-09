@@ -1,5 +1,6 @@
 package moth.boxxed.panels.api.module;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import net.minecraft.core.HolderLookup;
@@ -69,13 +70,29 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
     @Override
     public Module get(Object key) {
         if (!(key instanceof String str)) return null;
+        if (str.isEmpty()) return null;
         for (ModuleIOInfo info : this.filterIOModules()) {
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
             String sub = str.substring(0, info.name().length());
             if (sub.equals(info.name())) {
                 return super.get(sub);
             }
         }
         return super.get(key);
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        if (!(key instanceof String str)) return false;
+        if (str.isEmpty()) return false;
+        for (ModuleIOInfo info : this.filterIOModules()) {
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
+            String sub = str.substring(0, info.name().length());
+            if (sub.equals(info.name())) {
+                return super.containsKey(sub);
+            }
+        }
+        return super.containsKey(key);
     }
 
     public Map<String, IModuleLuaObject> asGenericLuaMap() {

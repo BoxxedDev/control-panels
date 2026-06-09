@@ -31,6 +31,7 @@ public class PanelTagProviders {
                     .add(PanelItems.CONTROL_LEVER_MODULE.getKey())
                     .add(PanelItems.INDICATOR_BULB_MODULE.getKey())
                     .add(PanelItems.MOMENTARY_SWITCH_MODULE.getKey())
+                    .add(PanelItems.JOYSTICK_MODULE.getKey())
             ;
         }
     }

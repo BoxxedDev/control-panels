@@ -45,6 +45,7 @@ public class PanelRecipeProvider extends RecipeProvider {
         module(PanelItems.CONTROL_LEVER_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
         module(PanelItems.INDICATOR_BULB_MODULE.get(), Ingredient.of(Tags.Items.GLASS_BLOCKS), 4, output);
         module(PanelItems.MOMENTARY_SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+        module(PanelItems.JOYSTICK_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
     }
 
     private static void module(ItemLike item, Ingredient ingredient, int count, RecipeOutput output) {

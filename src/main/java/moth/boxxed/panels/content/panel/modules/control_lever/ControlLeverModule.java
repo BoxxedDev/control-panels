@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class ControlLeverModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
@@ -101,8 +102,8 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     }
 
     @Override
-    public void setNum(int num) {
-        this.signal = num;
+    public void setNum(List<Integer> num) {
+        this.signal = num.getFirst();
         float f = (this.signal+15)/15f;
         this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, f);
     }

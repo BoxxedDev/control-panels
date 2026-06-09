@@ -60,7 +60,8 @@ public class PanelCreativeTabs {
                 .add(PanelItems.KNOB_MODULE)
                 .add(PanelItems.CONTROL_LEVER_MODULE)
                 .add(PanelItems.INDICATOR_BULB_MODULE)
-                .add(PanelItems.MOMENTARY_SWITCH_MODULE);
+                .add(PanelItems.MOMENTARY_SWITCH_MODULE)
+                .add(PanelItems.JOYSTICK_MODULE);
         FancyTabSections.addSection(Dashpanels.path("dashpanels"), new SectionTextured(
                 Dashpanels.path("modules"),
                 Component.translatable("creativetab.dashpanels.modules"),

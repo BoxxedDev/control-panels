@@ -12,6 +12,7 @@
   },
   "client": [
     "CreativeModeInventoryScreen",
+    "GuiMixin",
     "KeyboardHandlerMixin",
     "MouseHandlerMixin"
   ]

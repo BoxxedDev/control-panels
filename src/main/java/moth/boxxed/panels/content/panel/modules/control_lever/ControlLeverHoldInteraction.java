@@ -17,7 +17,6 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
     private int signal = 0;
 
     private float renderSignal = 0;
-    private float indicatorRender = 0;
 
     @Override
     public void start() {
@@ -25,7 +24,6 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
         this.val = this.signal/15f;
 
         this.renderSignal = Mth.map((float) this.signal, 0, 15, 0, 112);
-        this.indicatorRender = Mth.map((float) this.signal, 0, 15, 0, 112);
     }
 
     @Override
@@ -43,7 +41,6 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
     @Override
     public void tick() {
         this.renderSignal = org.joml.Math.lerp(this.renderSignal, Mth.map((float) this.signal, 0, 15, 0, 112), 0.5f);
-        this.indicatorRender = org.joml.Math.lerp(this.indicatorRender, Mth.map((float) this.signal, 0, 15, 0,112), 0.15f);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.interaction.HoldGuiContext;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.index.PanelHoldInteractions;

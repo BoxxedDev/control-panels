@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.cable.stripped;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetwork;
@@ -109,7 +110,10 @@ public class StrippedCableBlock extends BaseEntityBlock {
             Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
             input.getValues(resultMap::put);
             String extension = be.boundModule.substring(module.getName().length()+3);
-            return resultMap.get(extension).getAnalog();
+            IMultiInput.AnalogResult result = resultMap.get(extension);
+            if (result != null) {
+                return resultMap.get(extension).getAnalog();
+            }
         }
         return 0;
     }

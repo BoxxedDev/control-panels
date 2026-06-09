@@ -18,7 +18,13 @@ public class PanelPreloadedModels {
             INDICATOR_BULB_BASE = regular("indicator_bulb/base"),
 
             MOMENTARY_SWITCH_BASE = regular("momentary_switch/base"),
-            MOMENTARY_SWITCH_BUTTON = regular("momentary_switch/button");
+            MOMENTARY_SWITCH_BUTTON = regular("momentary_switch/button"),
+
+            JOYSTICK_BASE = regular("joystick/base"),
+            JOYSTICK_BETWEEN = regular("joystick/between"),
+            JOYSTICK_STICK = regular("joystick/stick"),
+            JOYSTICK_TRIGGER = regular("joystick/trigger");
+
     //Too lazy rn to find a way to change the texture automatically on render
     public static final ColoredPreloadedModel
             INDICATOR_BULB_ON = regularColored("indicator_bulb/bulb_on"),

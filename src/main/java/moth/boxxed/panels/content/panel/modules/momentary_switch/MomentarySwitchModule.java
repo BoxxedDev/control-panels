@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class MomentarySwitchModule extends Module implements IModuleLuaObject, IInput, IExternalUpdatable {
@@ -97,8 +98,8 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     }
 
     @Override
-    public void setNum(int num) {
-        this.pressed = num==1;
+    public void setNum(List<Integer> num) {
+        this.pressed = num.getFirst()==1;
         if (this.pressed) {
             this.parentBlockEntity.getLevel().playSound(
                     null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, 1f

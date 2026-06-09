@@ -154,14 +154,11 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
+        if (level.isClientSide)
+            PanelModulesHitHandler.tick(this);
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
-        Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
-        boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
-        if (!isInPanel) return InteractionResult.PASS;
-
         Module hitModule = getHitModule(player);
         if (hitModule != null) {
             if (!level.isClientSide)
@@ -177,10 +174,6 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
     public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
-        Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
-        boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
-        if (!isInPanel) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         Module hitModule = getHitModule(player);
         if (hitModule != null) {

@@ -3,6 +3,7 @@ package moth.boxxed.panels.event;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
+import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -35,6 +36,11 @@ public class ControlPanelsClientEvents {
                 interaction.tick();
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void clientPreTick(ClientTickEvent.Pre event) {
+        PanelModulesHitHandler.clearNear();
     }
 
     @SubscribeEvent

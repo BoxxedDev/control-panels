@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.network.packet.SelectedModulePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Map;
 
@@ -48,6 +50,16 @@ public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
                     hitModule = module;
                 }
             }
+        }
+
+        if (hitModule == null) {
+            if (!panelBlockEntity.getSelectedModule().isEmpty()) {
+                PacketDistributor.sendToServer(new SelectedModulePacket("", panelBlockEntity.getBlockPos()));
+                panelBlockEntity.setSelectedModule("");
+            }
+        } else if (!panelBlockEntity.getSelectedModule().equals(hitModule.getName())) {
+            PacketDistributor.sendToServer(new SelectedModulePacket(hitModule.getName(), panelBlockEntity.getBlockPos()));
+            panelBlockEntity.setSelectedModule(hitModule.getName());
         }
 
         for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {

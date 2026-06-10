@@ -13,6 +13,7 @@ import moth.boxxed.panels.network.packet.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -56,7 +57,11 @@ public class ControlPanelsCommonEvents {
                 SetPlayerSlotPacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSetPlayerSlot
         );
-
+        registrar.playToServer(
+                SelectedModulePacket.TYPE,
+                SelectedModulePacket.STREAM_CODEC,
+                ServerPayloadHandler::handleSelectedModule
+        );
         //Compat packet
         if (ModList.get().isLoaded("create"))
             registrar.playToServer(

@@ -13,6 +13,7 @@ out/
 !**/src/**/out/
 
 .run/
+.run2/
 
 ### Eclipse ###
 .apt_generated
@@ -34,7 +35,10 @@ bin/
 
 ### Minecraft Modding ###
 run/
+run2/
 !**/src/**/run/
+!**/src/**/run2/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+/run2/mods/

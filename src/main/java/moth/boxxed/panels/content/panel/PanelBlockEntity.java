@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.panel;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
@@ -40,6 +41,8 @@ import java.util.Set;
 public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider {
     public ModuleMap modules;
     public SimpleContainer container;
+
+    private String selectedModule = "";
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
@@ -159,7 +162,8 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        Module hitModule = getHitModule(player);
+        Module hitModule = this.getModule(this.selectedModule);
+        Dashpanels.LOGGER.debug("Selected module {} | Is null : {}", this.selectedModule, hitModule == null);
         if (hitModule != null) {
             if (!level.isClientSide)
                 this.blockChanged();
@@ -174,8 +178,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
     public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-
-        Module hitModule = getHitModule(player);
+        Module hitModule = this.getModule(this.selectedModule);
         if (hitModule != null) {
             if (!level.isClientSide)
                 this.blockChanged();
@@ -227,5 +230,13 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         buf.writeNbt(tag);
         Set<String> takenNames = this.getOrCreate().compiledModules.keySet();
         buf.writeCollection(takenNames, ByteBufCodecs.STRING_UTF8);
+    }
+
+    public void setSelectedModule(String string) {
+        this.selectedModule = string;
+    }
+
+    public String getSelectedModule() {
+        return this.selectedModule;
     }
 }

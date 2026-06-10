@@ -2,6 +2,7 @@ package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
@@ -32,7 +33,11 @@ public class PanelTagProviders {
                     .add(PanelItems.INDICATOR_BULB_MODULE.getKey())
                     .add(PanelItems.MOMENTARY_SWITCH_MODULE.getKey())
                     .add(PanelItems.JOYSTICK_MODULE.getKey())
+                    .add(PanelItems.LABEL_MODULE.getKey())
             ;
+            if (ModList.get().isLoaded("sable"))
+                tag(PanelTags.Items.MODULE)
+                        .add(PanelSableRegistries.NAVBALL_MODULE.getKey());
         }
     }
 

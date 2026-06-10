@@ -1,0 +1,38 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "dashpanels:block/label",
+		"particle": "dashpanels:block/label"
+	},
+	"elements": [
+		{
+			"from": [5, 8, 7],
+			"to": [11, 8, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"up": {"uv": [0, 0, 6, 2], "texture": "#0"},
+				"down": {"uv": [0, 2, 6, 0], "texture": "#0"}
+			}
+		}
+	],
+	"display": {
+		"firstperson_righthand": {
+			"rotation": [0, 20, 0],
+			"translation": [0, 1, 1]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 20, 0],
+			"translation": [0, 1, 1]
+		},
+		"gui": {
+			"rotation": [30, -135, 0],
+			"scale": [2, 2, 2]
+		},
+		"fixed": {
+			"rotation": [-90, 0, 0],
+			"translation": [0, 0, 0.75],
+			"scale": [3, 3, 3]
+		}
+	}
+}

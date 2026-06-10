@@ -2,12 +2,14 @@ package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
@@ -24,6 +26,9 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.INDICATOR_BULB_MODULE, "Indicator Bulb");
         addItem(PanelItems.MOMENTARY_SWITCH_MODULE, "Momentary Switch");
         addItem(PanelItems.JOYSTICK_MODULE, "Joystick");
+        addItem(PanelItems.LABEL_MODULE, "Label");
+        if (ModList.get().isLoaded("sable"))
+            addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 
         //Non module stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");

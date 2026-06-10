@@ -26,7 +26,9 @@ public class PanelPreloadedModels {
             JOYSTICK_TRIGGER = regular("joystick/trigger"),
 
             NAVBALL_BASE = regular("navball/base"),
-            NAVBALL = regular("navball/ball");
+            NAVBALL = regular("navball/ball"),
+
+            LABEL = regular("label");
 
     //Too lazy rn to find a way to change the texture automatically on render
     public static final ColoredPreloadedModel

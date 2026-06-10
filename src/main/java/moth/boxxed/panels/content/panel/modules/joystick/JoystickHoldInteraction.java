@@ -77,6 +77,7 @@ public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModul
         );
         graphics.blitSprite(CROSSHAIR, leftPos, topPos, 21, 21);
         graphics.blitSprite(INDICATOR, indicatorX, indicatorY, 3, 3);
+        graphics.pose().pushPose();
         graphics.pose().translate(centerX, centerY+16, 0);
         graphics.pose().scale(0.5f,0.5f,0.5f);
         graphics.drawCenteredString(Minecraft.getInstance().font, "X: %.2f".formatted(this.valX), 0, 0, 0xAAFFCCCC);

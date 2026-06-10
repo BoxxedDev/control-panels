@@ -31,6 +31,8 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.NoSuchElementException;
+
 @EventBusSubscriber(modid = Dashpanels.MOD_ID, value = Dist.CLIENT)
 public class ControlPanelsClientEvents {
     @SubscribeEvent
@@ -40,6 +42,7 @@ public class ControlPanelsClientEvents {
                 interaction.renderGui(event.getGuiGraphics(), event.getPartialTick().getRealtimeDeltaTicks());
             }
         }
+        boolean active = false;
         if (ClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
                 !ModuleHoldInteractionManager.isActive() &&
                 Minecraft.getInstance().hitResult != null &&
@@ -49,21 +52,15 @@ public class ControlPanelsClientEvents {
             if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof PanelBlockEntity pbe) {
                 Module module = pbe.getModule(pbe.getSelectedModule());
                 if (!pbe.getSelectedModule().isEmpty() && module != null) {
-                    BlockPos pos = pbe.getBlockPos();
-                    Direction direction = pbe.getBlockState().getValue(PanelBlock.FACING);
-                    Quaternionf rotationQuat = direction.getRotation();
-                    Vector3f globalModulePos = new Vector3f(module.getPos().x/16f, 0.75f, module.getPos().y/16f);
-                    rotationQuat.transform(globalModulePos);
-                    globalModulePos.add(pos.getX(), pos.getY(), pos.getZ());
-//                    ModuleTooltipManager.renderSelected(
-//                            event.getGuiGraphics(),
-//                            event.getPartialTick().getGameTimeDeltaPartialTick(true),
-//                            module,
-//                            globalModulePos
-//                    );
+                    ModuleTooltipManager.renderSelected(
+                            event.getGuiGraphics(),
+                            module
+                    );
+                    active = true;
                 }
             }
         }
+        ModuleTooltipManager.guiFrame(active);
     }
 
     @SubscribeEvent

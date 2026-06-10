@@ -163,7 +163,6 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         Module hitModule = this.getModule(this.selectedModule);
-        Dashpanels.LOGGER.debug("Selected module {} | Is null : {}", this.selectedModule, hitModule == null);
         if (hitModule != null) {
             if (!level.isClientSide)
                 this.blockChanged();

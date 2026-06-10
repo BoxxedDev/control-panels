@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.IHoverTooltip;
 import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleType;
@@ -14,8 +15,11 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,9 +29,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.List;
 import java.util.function.BiConsumer;
 
-public class NavballModule extends Module implements IMultiInput, IModuleLuaObject {
+public class NavballModule extends Module implements IMultiInput, IModuleLuaObject, IHoverTooltip {
     public NavballModule(int x, int y) {
         super(PanelSableRegistries.NAVBALL.get(), x, y, 6, 6);
     }
@@ -139,5 +144,12 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
         consumer.accept("getYaw", args -> this.getAngleYaw());
         consumer.accept("getPitch", args -> this.getAnglePitch());
         consumer.accept("getRoll", args -> this.getAngleRoll());
+    }
+
+    @Override
+    public void addLines(List<Component> list) {
+        list.add(Component.literal("Pitch : %.1f".formatted(this.getAnglePitch())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.literal("Yaw : %.1f".formatted(this.getAngleYaw())).withStyle(ChatFormatting.GREEN));
+        list.add(Component.literal("Roll : %.1f".formatted(this.getAngleRoll())).withStyle(ChatFormatting.RED));
     }
 }

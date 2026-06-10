@@ -41,7 +41,6 @@ public class ModuleLinkEntries {
             this.modulesToRemove.clear();
 
             for (ModuleEntry entry : this.modulesToAdd.values()) {
-                Dashpanels.LOGGER.debug(entry.module);
                 Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
             }
             this.modulesToAdd.clear();

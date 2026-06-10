@@ -1,6 +1,7 @@
 package moth.boxxed.panels.api.module.interaction;
 
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.content.panel.modules.knob.KnobHoldInteraction;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;

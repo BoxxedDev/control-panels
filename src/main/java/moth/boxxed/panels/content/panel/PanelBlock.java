@@ -47,7 +47,7 @@ public class PanelBlock extends BaseEntityBlock {
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (this.getBlockEntity(level, pos) != null) {
-            if (player.isCrouching()) {
+            if (player.isShiftKeyDown()) {
                 if (!level.isClientSide)
                     this.openMenu(player, this.getBlockEntity(level, pos));
                 return InteractionResult.SUCCESS;
@@ -62,7 +62,7 @@ public class PanelBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (this.getBlockEntity(level, pos) != null)
-            if (player.isCrouching()) {
+            if (player.isShiftKeyDown()) {
                 if (!level.isClientSide)
                     this.openMenu(player, this.getBlockEntity(level, pos));
                 return ItemInteractionResult.SUCCESS;

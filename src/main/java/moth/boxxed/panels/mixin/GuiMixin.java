@@ -2,6 +2,7 @@ package moth.boxxed.panels.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
+import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -19,7 +20,7 @@ public class GuiMixin {
             cancellable = true)
     private void panels$renderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
-            for (ModuleHoldInteraction<?> interaction : PanelHoldInteractions.INTERACTIONS) {
+            for (ModuleHoldInteraction<?> interaction : ModuleHoldInteractionManager.INTERACTIONS) {
                 if (interaction.isActive())
                     if (!interaction.getGuiContext().crosshairVisibility) {
                         RenderSystem.defaultBlendFunc();

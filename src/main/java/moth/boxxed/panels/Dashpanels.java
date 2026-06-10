@@ -5,6 +5,8 @@ import com.mojang.logging.LogUtils;
 import moth.boxxed.panels.api.network.ModulesNetworkManager;
 import moth.boxxed.panels.compat.PanelCompat;
 import moth.boxxed.panels.compat.computercraft.CCPeripherals;
+import moth.boxxed.panels.config.ClientConfig;
+import moth.boxxed.panels.config.Config;
 import moth.boxxed.panels.index.*;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -50,6 +52,7 @@ public class Dashpanels {
         }
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

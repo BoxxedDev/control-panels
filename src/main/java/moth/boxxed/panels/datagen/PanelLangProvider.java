@@ -49,6 +49,8 @@ public class PanelLangProvider extends LanguageProvider {
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
         add("creativetab.dashpanels.dashpanels", "Panels");
         add("creativetab.dashpanels.modules", "Modules");
+
+        addCustom("dashpanels", "configuration.showModuleTooltips", "Show Module Tooltips");
     }
 
     private void addWidget(String key, String string) {

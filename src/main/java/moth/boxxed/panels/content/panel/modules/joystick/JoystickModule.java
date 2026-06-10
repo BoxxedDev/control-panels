@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
@@ -25,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class JoystickModule extends Module implements IExternalUpdatable, IMultiInput {
+public class JoystickModule extends Module implements IExternalUpdatable, IMultiInput, IModuleLuaObject {
     public float stickX = 0;
     public float stickY = 0;
     public boolean triggered = false;
@@ -135,5 +136,11 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
             this.stickY = num.get(1)/100f;
             this.triggered = num.getLast()==1;
         }
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("getX", args -> this.stickX);
+        consumer.accept("getY", args -> this.stickY);
     }
 }

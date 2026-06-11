@@ -33,7 +33,7 @@ public class Dashpanels {
     public Dashpanels(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
-        PanelCompat.loadAll();
+        PanelCompat.loadAll(modEventBus);
 
         PanelItems.register(modEventBus);
         PanelBlocks.register(modEventBus);
@@ -57,7 +57,7 @@ public class Dashpanels {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-
+        PanelCompat.postLoadAll();
     }
 
     @SubscribeEvent

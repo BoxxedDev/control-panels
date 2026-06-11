@@ -48,8 +48,8 @@ public class PanelLangProvider extends LanguageProvider {
         addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
 
         addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
-        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change \n   its configured input or output module");
-        addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables \n   or stripped cables");
+        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output module");
+        addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
         add("creativetab.dashpanels.dashpanels", "Panels");

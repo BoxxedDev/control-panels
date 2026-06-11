@@ -24,8 +24,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ModuleLinkEntries {
     private final Map<String, ModuleEntry> entryMap = new HashMap<>();
@@ -35,12 +34,13 @@ public class ModuleLinkEntries {
 
     public void updateNetworks(Level level) {
         if (!level.isClientSide) {
-            for (ModuleEntry entry : this.modulesToRemove.values()) {
+            //Create new array so ConcurrentModificationException does not occur
+            for (ModuleEntry entry : new ArrayList<>(this.modulesToRemove.values())) {
                 Create.REDSTONE_LINK_NETWORK_HANDLER.removeFromNetwork(level, entry);
             }
             this.modulesToRemove.clear();
 
-            for (ModuleEntry entry : this.modulesToAdd.values()) {
+            for (ModuleEntry entry : new ArrayList<>(this.modulesToAdd.values())) {
                 Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
             }
             this.modulesToAdd.clear();

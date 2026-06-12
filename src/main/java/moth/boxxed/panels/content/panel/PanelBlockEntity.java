@@ -33,6 +33,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -40,6 +41,8 @@ import java.util.Set;
 public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider {
     public ModuleMap modules;
     public SimpleContainer container;
+
+    private Map<Player, String> selectedModules = new HashMap<>();
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
@@ -73,7 +76,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (Map.Entry<String, Module> entry : this.modules) {
             Module module = entry.getValue();
             this.container.addItem(
-                    new ItemStack(module.type.associatedItem)
+                    new ItemStack(module.type.associatedItem.get())
             );
         }
     }
@@ -83,7 +86,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
     }
 
     public Module getModule(String moduleName) {
-        return this.modules.get(moduleName);
+        return this.modules.normalGet(moduleName);
     }
 
     @Override
@@ -135,9 +138,9 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
         Direction fromDirection = from.getValue(PanelBlock.FACING);
 
-        if (direction.getAxis().isVertical())
+        if (direction.equals(Direction.UP))
             return false;
-        if (fromDirection.getOpposite()==direction && to.getBlock() instanceof CableBlock)
+        if ((fromDirection.getOpposite()==direction || direction==Direction.DOWN) && to.getBlock() instanceof CableBlock)
             return true;
         return (fromDirection.getClockWise()==direction || fromDirection.getCounterClockWise()==direction) &&
                 to.getBlock() instanceof PanelBlock &&
@@ -154,18 +157,13 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
+        if (level.isClientSide)
+            PanelModulesHitHandler.tick(this);
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
-        Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
-        boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
-        if (!isInPanel) return InteractionResult.PASS;
-
-        Module hitModule = getHitModule(player);
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
         if (hitModule != null) {
-            if (!level.isClientSide)
-                this.blockChanged();
             InteractionResult result = hitModule.onUse(level, player);
             if (!level.isClientSide)
                 this.blockChanged();
@@ -177,15 +175,8 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
     public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        Vec3 localHitCoordinates = hitResult.getLocation().subtract(pos.getBottomCenter()).yRot((float) Math.toRadians(state.getValue(PanelBlock.FACING).toYRot())).add(0, 0, -0.25f);
-        Rect2d rect = new Rect2d(-0.5, -0.5, 0.5, .25);
-        boolean isInPanel = (localHitCoordinates.y>=0.75f && localHitCoordinates.y <= 1f) && rect.contains(localHitCoordinates.x, localHitCoordinates.z);
-        if (!isInPanel) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-
-        Module hitModule = getHitModule(player);
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
         if (hitModule != null) {
-            if (!level.isClientSide)
-                this.blockChanged();
             ItemInteractionResult result = hitModule.onItemUse(stack, level, player);
             if (!level.isClientSide)
                 this.blockChanged();
@@ -234,5 +225,13 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         buf.writeNbt(tag);
         Set<String> takenNames = this.getOrCreate().compiledModules.keySet();
         buf.writeCollection(takenNames, ByteBufCodecs.STRING_UTF8);
+    }
+
+    public void setSelectedModule(Player player, String string) {
+        this.selectedModules.put(player, string);
+    }
+
+    public String getSelectedModules(Player player) {
+        return this.selectedModules.computeIfAbsent(player, player1 -> "");
     }
 }

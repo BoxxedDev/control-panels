@@ -1,0 +1,19 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"render_type": "cutout",
+	"textures": {
+		"0": "dashpanels:block/label",
+		"particle": "dashpanels:block/label"
+	},
+	"elements": [
+		{
+			"from": [-1, -1, 0],
+			"to": [5, 0, 2],
+			"faces": {
+				"up": {"uv": [0, 0, 6, 2], "texture": "#0"},
+				"down": {"uv": [0, 2, 6, 0], "texture": "#0"}
+			}
+		}
+	]
+}

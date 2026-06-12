@@ -60,12 +60,7 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PreLoadedModel model = this.switchState ? PanelPreloadedModels.SWITCH_ON : PanelPreloadedModels.SWITCH_OFF;
-
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
-        BlockPos pos = panelBlockEntity.getBlockPos();
-
-        model.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        model.render(poseStack, bufferSource, RenderType.solid(), packedLight);
     }
 
     @Override

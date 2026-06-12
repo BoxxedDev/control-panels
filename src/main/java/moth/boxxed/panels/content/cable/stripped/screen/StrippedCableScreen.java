@@ -2,7 +2,8 @@ package moth.boxxed.panels.content.cable.stripped.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleIOInfo;
+import moth.boxxed.panels.api.module.ModuleIOType;
 import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,16 +14,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
+import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigMenu> {
     public static final ResourceLocation GUI = Dashpanels.path("textures/gui/container/stripped_cable_config.png");
 
-    public List<String> list;
+    public List<Pair<String, ModuleIOType>> list;
 
     private int centerX;
     private int centerY;
@@ -42,8 +44,19 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
         this.centerX = this.width/2;
         this.centerY = this.height/2;
 
-        this.list = new ArrayList<>(this.menu.map.filterIOModules().keySet());
-        this.list.sort(null);
+        this.list = new ArrayList<>();
+        for (ModuleIOInfo info : this.menu.map.filterIOModules()) {
+            if (info.type() == null) continue;
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) {
+                list.add(new Pair<>(info.name(), info.type()));
+            } else {
+                String start = info.name();
+                for (String extension : info.multiExtension()) {
+                    list.add(new Pair<>(start.concat(" - " + extension), info.type()));
+                }
+            }
+        }
+        this.list.sort(Comparator.comparing(Pair::getA));
         String initConfig = this.menu.initialConfig;
         for (int i=0; i<this.list.size(); i++) {
             if (Objects.equals(this.list.get(i), initConfig)) {
@@ -86,7 +99,23 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
             RenderSystem.enableBlend();
             guiGraphics.setColor(1,1,1,1-(distance*0.33f));
             guiGraphics.pose().translate(0, y, 0);
-            guiGraphics.drawCenteredString(this.font, list.get(i), 0, 0, 0xFFFFFF);
+            String attachment = switch (list.get(i).getB()) {
+                case INPUT -> "I";
+                case OUTPUT -> "O";
+                case MULTI_INPUT -> "MI";
+                case MULTI_OUTPUT -> "MO";
+                default -> "";
+            };
+            int color = switch (list.get(i).getB()) {
+                case INPUT -> 0x00FF00;
+                case OUTPUT -> 0x0000FF;
+                case MULTI_INPUT -> 0xFFFF00;
+                case MULTI_OUTPUT -> 0xFF00FF;
+                default -> 0xFFFFFF;
+            };
+            int sizeX = this.font.width(list.get(i).getA());
+            guiGraphics.drawCenteredString(this.font, list.get(i).getA(), 0, 0, 0xFFFFFF);
+            guiGraphics.drawCenteredString(this.font, attachment, sizeX/2 + 20, 0, color);
             guiGraphics.setColor(1,1,1,1);
             RenderSystem.disableBlend();
             guiGraphics.pose().popPose();
@@ -111,7 +140,7 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             if (!this.list.isEmpty())
-                PacketDistributor.sendToServer(new ConfigureStrippedCablePacket(this.list.get((int) Math.round(this.scroll)), this.menu.pos));
+                PacketDistributor.sendToServer(new ConfigureStrippedCablePacket(this.list.get((int) Math.round(this.scroll)).getA(), this.menu.pos));
             this.playClickSound(1f);
             this.onClose();
         }

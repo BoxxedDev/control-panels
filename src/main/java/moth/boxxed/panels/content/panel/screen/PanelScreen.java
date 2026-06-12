@@ -2,29 +2,37 @@ package moth.boxxed.panels.content.panel.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import mezz.jei.library.runtime.JeiHelpers;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
+import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
 import moth.boxxed.panels.network.packet.SetPlayerSlotPacket;
 import moth.boxxed.panels.util.BasicButtonWidget;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.settings.KeyMappingLookup;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,14 +85,14 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                         this::writeName
                 )
         );
-        this.addRenderableWidget(
-                new BasicButtonWidget(
-                        SAVE, SAVE_HOVERED,
-                        this.leftPos + 142, this.topPos + 9, 18, 18,
-                        Component.translatable("widget.dashpanels.panel.save"),
-                        this::onClose
-                        )
-        );
+//        this.addRenderableWidget(
+//                new BasicButtonWidget(
+//                        SAVE, SAVE_HOVERED,
+//                        this.leftPos + 142, this.topPos + 9, 18, 18,
+//                        Component.translatable("widget.dashpanels.panel.save"),
+//                        this::onClose
+//                        )
+//        );
 //        this.addRenderableWidget(
 //                new BasicButtonWidget(
 //                        EXIT, EXIT_HOVERED,
@@ -113,6 +121,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.renderDraggingModule(graphics, mouseX, mouseY);
         this.renderModules(graphics, mouseX, mouseY);
         this.handleEditBox();
+        this.renderBindings(graphics);
     }
 
     private float backdropPulse = 0;
@@ -134,7 +143,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     @Override
     protected void renderSlotContents(GuiGraphics graphics, ItemStack itemstack, Slot slot, @Nullable String countString) {
         for (Map.Entry<ResourceKey<ModuleType<?>>, ModuleType<?>> entry : ModulesRegistry.MODULE_REGISTRY.entrySet()) {
-            if (itemstack.getItem() == entry.getValue().associatedItem) {
+            if (itemstack.getItem() == entry.getValue().associatedItem.get()) {
                 int x1 = slot.x;
                 int y1 = slot.y;
                 int x2 = slot.x+16;
@@ -171,7 +180,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         }
         RenderSystem.enableBlend();
         graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-        graphics.renderItem(new ItemStack(this.draggingModule.module.type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+        graphics.renderItem(new ItemStack(this.draggingModule.module.type.associatedItem.get()), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
         RenderSystem.disableBlend();
         this.draggingModule.module.setPos(localPosX, localPosY);
         graphics.setColor(1f, 1, 1f, 1f);
@@ -187,29 +196,54 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 graphics.setColor(0.5f, 1, 0.5f, 0.9f);
             RenderSystem.enableBlend();
             graphics.blitSprite(MODULE_OUTLINE, posX, posY, sizeX, sizeY);
-            graphics.renderItem(new ItemStack(entry.getValue().type.associatedItem), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
+            graphics.renderItem(new ItemStack(entry.getValue().type.associatedItem.get()), posX+(sizeX/2)-8, posY+(sizeY/2)-8);
             RenderSystem.disableBlend();
             graphics.setColor(1f, 1, 1f, 1f);
         }
     }
 
+    private static final ResourceLocation MOUSE_LEFT_SPRITE = Dashpanels.path("icons/mouse_left");
+    private static final ResourceLocation MOUSE_RIGHT_SPRITE = Dashpanels.path("icons/mouse_right");
+    private static final ResourceLocation MOUSE_MIDDLE_SPRITE = Dashpanels.path("icons/mouse_middle");
+    private static final ResourceLocation KEY_BACKGROUND = Dashpanels.path("icons/key_background");
+
+    private void renderBindings(GuiGraphics graphics) {
+        int bottom = graphics.guiHeight() - 10;
+        int left = 60;
+
+        drawKey(graphics, PanelKeybinds.DELETE_MODULE_MAPPING, left, bottom-15);
+        drawKey(graphics, PanelKeybinds.MOVE_MODULE_MAPPING, left, bottom-35);
+        drawKey(graphics, PanelKeybinds.SELECT_MODULE_MAPPING, left, bottom-55);
+    }
+
+    private void drawKey(GuiGraphics graphics, KeyMapping mapping, int x, int y) {
+        if (mapping.matchesMouse(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+            graphics.blitSprite(MOUSE_LEFT_SPRITE, x, y, 15, 15);
+        } else if (mapping.matchesMouse(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)) {
+            graphics.blitSprite(MOUSE_MIDDLE_SPRITE, x, y, 15, 15);
+        } else if (mapping.matchesMouse(GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+            graphics.blitSprite(MOUSE_RIGHT_SPRITE, x, y, 15, 15);
+        } else {
+            graphics.blitSprite(KEY_BACKGROUND,x, y, 15, 15);
+            graphics.drawCenteredString(this.font, Component.literal(mapping.getKey().getDisplayName().getString()).withStyle(ChatFormatting.BOLD),x+8, y+4, 0xFFFFFF);
+        }
+        graphics.drawString(this.font, mapping.getDisplayName(), x+20, y+3, 0xFFFFFF);
+    }
+
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == InputConstants.KEY_E)
-            return true;
-
-        if (keyCode == 256 && this.draggingModule != null) {
-            Module module = this.modulesToSave.remove(this.draggingModule.getName());
-            addItemToInv(module);
-            this.draggingModule = null;
+        if (this.draggingModule != null && (minecraft.options.keyInventory.matches(keyCode, scanCode) || keyCode == InputConstants.KEY_ESCAPE)) {
+            if (this.draggingModule.boundSlot != null)
+                this.draggingModule = null;
             return true;
         }
 
-        if (keyCode == InputConstants.KEY_DELETE && !this.selectedModule.isEmpty()) {
+        if (PanelKeybinds.DELETE_MODULE_MAPPING.matches(keyCode, scanCode) && !this.selectedModule.isEmpty()) {
             Module module = this.modulesToSave.remove(this.selectedModule);
             addItemToInv(module);
             this.selectedModule = "";
             this.nameEditBox.setValue("");
+            return true;
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -217,7 +251,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     private void addItemToInv(Module module) {
         if (!this.getMenu().inventory.player.isCreative()) {
-            int slotExisting = this.getMenu().inventory.getSlotWithRemainingSpace(new ItemStack(module.type.associatedItem));
+            int slotExisting = this.getMenu().inventory.getSlotWithRemainingSpace(new ItemStack(module.type.associatedItem.get()));
             if (slotExisting == -1) {
                 slotExisting = this.getMenu().inventory.getFreeSlot();
             }
@@ -226,7 +260,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
                 existingStack.setCount(existingStack.getCount() + 1);
                 PacketDistributor.sendToServer(new SetPlayerSlotPacket(slotExisting, existingStack, existingStack.getCount()));
             } else {
-                this.getMenu().inventory.setItem(slotExisting, new ItemStack(module.type.associatedItem));
+                this.getMenu().inventory.setItem(slotExisting, new ItemStack(module.type.associatedItem.get()));
             }
         }
     }
@@ -240,7 +274,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         if (slot != null && this.draggingModule == null) {
             if (!slot.getItem().isEmpty()) {
                 for (Map.Entry<ResourceKey<ModuleType<?>>, ModuleType<?>> entry : ModulesRegistry.MODULE_REGISTRY.entrySet()) {
-                    if (slot.getItem().getItem() == entry.getValue().associatedItem) {
+                    if (slot.getItem().getItem() == entry.getValue().associatedItem.get()) {
                         String location = entry.getKey().location().getPath();
                         Module module = entry.getValue().create(0, 0);
                         module.name = validateName(location);
@@ -255,13 +289,15 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
             if (!this.draggingModuleIntersecting()) {
                 this.modulesToSave.put(this.draggingModule.getName(), this.draggingModule.module);
                 if (!this.getMenu().inventory.player.isCreative()) {
-                    this.draggingModule.boundSlot.remove(1);
-                    ItemStack slotStack = this.draggingModule.boundSlot.getItem();
-                    PacketDistributor.sendToServer(new SetPlayerSlotPacket(
-                            this.draggingModule.boundSlot.getSlotIndex(),
-                            slotStack,
-                            slotStack.getCount()
-                    ));
+                    if (this.draggingModule.boundSlot != null) {
+                        this.draggingModule.boundSlot.remove(1);
+                        ItemStack slotStack = this.draggingModule.boundSlot.getItem();
+                        PacketDistributor.sendToServer(new SetPlayerSlotPacket(
+                                this.draggingModule.boundSlot.getSlotIndex(),
+                                slotStack,
+                                slotStack.getCount()
+                        ));
+                    }
                 }
                 this.draggingModule = null;
                 return true;
@@ -269,7 +305,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         }
 
         //Handle left click on module
-        if (this.draggingModule == null && this.contentArea.contains((int) mouseX, (int) mouseY) && button == 0) {
+        if (this.draggingModule == null && this.contentArea.contains((int) mouseX, (int) mouseY) && PanelKeybinds.MOVE_MODULE_MAPPING.matchesMouse(button)) {
             Map.Entry<String, Module> entry = this.findModule(mouseX, mouseY);
             if (entry != null) {
                 if (!this.selectedModule.isEmpty()) {
@@ -283,7 +319,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         }
 
         //Handle right click on module
-        if (this.draggingModule == null && this.contentArea.contains((int) mouseX, (int) mouseY) && button == 1) {
+        if (this.draggingModule == null && this.contentArea.contains((int) mouseX, (int) mouseY) && PanelKeybinds.SELECT_MODULE_MAPPING.matchesMouse(button)) {
             Map.Entry<String, Module> entry = this.findModule(mouseX, mouseY);
             if (entry != null) {
                 this.selectedModule = entry.getKey();
@@ -343,13 +379,14 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         this.nameEditBox.setValue("");
     }
 
+    private static final int MAX = 192;
     private String validateName(String tryName) {
         String name = tryName;
-        if (!(this.modulesToSave.containsKey(name) || this.getMenu().takenNames.contains(name)))
+        if (!(this.modulesToSave.normalContainsKey(name) || this.getMenu().takenNames.contains(name)))
             return name;
         name = tryName+"_0";
         int i=0;
-        while (this.modulesToSave.containsKey(name) || this.getMenu().takenNames.contains(name)) {
+        while ((this.modulesToSave.normalContainsKey(name) || this.getMenu().takenNames.contains(name)) && i<=MAX) {
             i++;
             name = (tryName+"_%d").formatted(i);
         }

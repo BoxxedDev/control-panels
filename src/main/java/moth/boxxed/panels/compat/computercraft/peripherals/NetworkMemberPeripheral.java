@@ -7,14 +7,16 @@ import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleArguments;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
+import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class NetworkMemberPeripheral implements IPeripheral {
@@ -71,6 +73,17 @@ public class NetworkMemberPeripheral implements IPeripheral {
         for (ResourceLocation location : ModulesRegistry.MODULE_REGISTRY.keySet())
             ret.add(location.getPath());
         return ret;
+    }
+
+    @LuaFunction
+    public IDynamicLuaObject getModuleAt(int x, int y) {
+        this.blockEntity.getOrCreate().compileModules();
+        for (Map.Entry<String, Pair<Module, IModuleLuaObject>> entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaPairMap().entrySet()) {
+            if (Objects.equals(entry.getValue().getA().getPos(), new Vector2i(x, y))) {
+                return fromModuleLuaObject(entry.getValue().getB());
+            }
+        }
+        return null;
     }
 
     private static IDynamicLuaObject fromModuleLuaObject(IModuleLuaObject luaObject) {

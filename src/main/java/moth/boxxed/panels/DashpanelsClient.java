@@ -2,6 +2,7 @@ package moth.boxxed.panels;
 
 import moth.boxxed.panels.content.panel.PanelRenderer;
 import moth.boxxed.panels.index.PanelBlockEntities;
+import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PreLoadedModelHandler;
 import net.neoforged.api.distmarker.Dist;
@@ -22,6 +23,7 @@ public class DashpanelsClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
         PanelPreloadedModels.init();
+        PanelKeybinds.init();
 
         modEventBus.addListener(PreLoadedModelHandler::registerAdditional);
         modEventBus.addListener(PreLoadedModelHandler::bakingCompleted);

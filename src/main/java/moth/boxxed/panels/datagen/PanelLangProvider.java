@@ -2,12 +2,14 @@ package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
@@ -23,6 +25,11 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.CONTROL_LEVER_MODULE, "Control Lever");
         addItem(PanelItems.INDICATOR_BULB_MODULE, "Indicator Bulb");
         addItem(PanelItems.MOMENTARY_SWITCH_MODULE, "Momentary Switch");
+        addItem(PanelItems.JOYSTICK_MODULE, "Joystick");
+        addItem(PanelItems.LABEL_MODULE, "Label");
+        addItem(PanelItems.SEVEN_SEGMENT_MODULE, "Seven Segment");
+        if (ModList.get().isLoaded("sable"))
+            addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 
         //Non module stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
@@ -42,11 +49,19 @@ public class PanelLangProvider extends LanguageProvider {
         addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
 
         addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
-        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change \n   its configured input or output module");
-        addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables \n   or stripped cables");
+        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output module");
+        addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
-        addCreativeTab(PanelCreativeTabs.MODULES_TAB.get(), "Dashpanels Modules");
+        add("creativetab.dashpanels.dashpanels", "Panels");
+        add("creativetab.dashpanels.modules", "Modules");
+
+        addCustom("dashpanels", "configuration.showModuleTooltips", "Show Module Tooltips");
+
+        addCustom("key", "delete_module", "Delete Module");
+        addCustom("key", "select_module", "Select Module");
+        addCustom("key", "move_module", "Move Module");
+        add("key.categories.dashpanels", "Dashpanels");
     }
 
     private void addWidget(String key, String string) {

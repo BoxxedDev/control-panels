@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class ControlLeverModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
@@ -70,14 +71,6 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
         this.indicatorRender = Math.lerp(this.indicatorRender, Mth.map((float) this.signal, 0, 15, 0,0.25f), 0.15f);
     }
 
-    private static float bounce(float a, float b, float t) {
-        final float c1 = 1.7f;
-        final float c2 = c1 + 1;
-        final float c3 = (float) (1f + c2 * java.lang.Math.pow(t-1, 3) + c1 * java.lang.Math.pow(t-1, 2));
-
-        return Math.lerp(a, b, c3);
-    }
-
     @Override
     public VoxelShape getShape() {
         return Block.box(0, 0, 0, 3, 1, 5);
@@ -85,24 +78,20 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
 
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
-        BlockPos pos = panelBlockEntity.getBlockPos();
-
-        PanelPreloadedModels.CONTROL_LEVER_BASE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0, this.renderSignal);
-        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(0, 0, this.indicatorRender);
-        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 
     @Override
-    public void setNum(int num) {
-        this.signal = num;
+    public void setNum(List<Integer> num) {
+        this.signal = num.getFirst();
         float f = (this.signal+15)/15f;
         this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, f);
     }

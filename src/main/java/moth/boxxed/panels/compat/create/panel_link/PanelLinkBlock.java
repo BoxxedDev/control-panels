@@ -101,14 +101,14 @@ public class PanelLinkBlock extends BaseEntityBlock implements IWrenchable {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (player.isCrouching())
-            openMenu(level, pos, player);
+        openMenu(level, pos, player);
 
         return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     private void openMenu(Level level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof PanelLinkBlockEntity be && player instanceof ServerPlayer serverPlayer) {
+            be.getModuleEntries().validate(be.getOrCreate());
             serverPlayer.openMenu(be, be::sendToMenu);
         }
     }

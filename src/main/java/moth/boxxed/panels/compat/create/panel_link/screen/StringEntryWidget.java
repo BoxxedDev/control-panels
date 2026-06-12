@@ -10,20 +10,20 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class StringEntryWidget extends AbstractSimiWidget {
     private List<String> available;
     private int currentIndex = 0;
     private int priorIndex = 0;
 
-    public StringEntryWidget(int x, int y, int width, int height, Set<String> available, Component message) {
+    public StringEntryWidget(int x, int y, int width, int height, Collection<String> available, Component message) {
         super(x, y, width, height, message);
         this.setAvailable(available);
     }
 
-    public void setAvailable(Set<String> available) {
+    public void setAvailable(Collection<String> available) {
         this.available = new ArrayList<>(available);
         this.available.sort(null);
     }

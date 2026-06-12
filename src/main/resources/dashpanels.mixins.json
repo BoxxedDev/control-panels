@@ -11,6 +11,9 @@
     "requireAnnotations": true
   },
   "client": [
+    "CreativeModeInventoryScreen",
+    "GameRendererMixin",
+    "GuiMixin",
     "KeyboardHandlerMixin",
     "MouseHandlerMixin"
   ]

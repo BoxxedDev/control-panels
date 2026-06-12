@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 //TODO: Maybe make it so you can use this while hovering it with a scroll wheel
@@ -75,13 +76,9 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
 
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
-        BlockPos pos = panelBlockEntity.getBlockPos();
-
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
-        PanelPreloadedModels.KNOB.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.KNOB.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 
@@ -98,8 +95,8 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public void setNum(int num) {
-        this.angle = num;
+    public void setNum(List<Integer> num) {
+        this.angle = num.getFirst();
         float f = (angle+360)/360f;
         this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, f);
     }

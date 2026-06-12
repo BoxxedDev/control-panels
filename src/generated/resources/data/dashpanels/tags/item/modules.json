@@ -4,6 +4,10 @@
     "dashpanels:knob",
     "dashpanels:control_lever",
     "dashpanels:indicator_bulb",
-    "dashpanels:momentary_switch"
+    "dashpanels:momentary_switch",
+    "dashpanels:joystick",
+    "dashpanels:label",
+    "dashpanels:seven_segment",
+    "dashpanels:navball"
   ]
 }

@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
+import oshi.util.tuples.Pair;
 
 import java.util.*;
 
@@ -51,13 +52,55 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
         return this.entrySet().stream().toList();
     }
 
-    public ModuleMap filterIOModules() {
-        ModuleMap ret = new ModuleMap();
+    public List<ModuleIOInfo> filterIOModules() {
+        List<ModuleIOInfo> ret = new ArrayList<>();
         for (Map.Entry<String, Module> entry : this) {
-            if (entry.getValue() instanceof IInput || entry.getValue() instanceof IOutput)
-                ret.put(entry.getKey(), entry.getValue());
+            if (entry.getValue() instanceof IInput      ||     entry.getValue() instanceof IOutput ||
+                entry.getValue() instanceof IMultiInput || entry.getValue() instanceof IMultiOutput) {
+                ret.add(new ModuleIOInfo(
+                        entry.getKey(),
+                        ModuleIOType.decide(entry.getValue()),
+                        ModuleIOInfo.getMultiExtensionsIfAny(entry.getValue())
+                ));
+            }
         }
         return ret;
+    }
+
+    @Override
+    public Module get(Object key) {
+        if (!(key instanceof String str)) return null;
+        if (str.isEmpty()) return null;
+        for (ModuleIOInfo info : this.filterIOModules()) {
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
+            String sub = str.substring(0, info.name().length());
+            if (sub.equals(info.name())) {
+                return super.get(sub);
+            }
+        }
+        return super.get(key);
+    }
+
+    public Module normalGet(Object key) {
+        return super.get(key);
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        if (!(key instanceof String str)) return false;
+        if (str.isEmpty()) return false;
+        for (ModuleIOInfo info : this.filterIOModules()) {
+            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
+            String sub = str.substring(0, info.name().length());
+            if (sub.equals(info.name())) {
+                return super.containsKey(sub);
+            }
+        }
+        return super.containsKey(key);
+    }
+
+    public boolean normalContainsKey(Object key) {
+        return super.containsKey(key);
     }
 
     public Map<String, IModuleLuaObject> asGenericLuaMap() {
@@ -65,6 +108,15 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
         for (Map.Entry<String, Module> entry : this) {
             if (entry.getValue() instanceof IModuleLuaObject luaObject)
                 ret.put(entry.getKey(), luaObject);
+        }
+        return ret;
+    }
+
+    public Map<String, Pair<Module, IModuleLuaObject>> asGenericLuaPairMap() {
+        Map<String, Pair<Module, IModuleLuaObject>> ret = new HashMap<>();
+        for (Map.Entry<String, Module> entry : this) {
+            if (entry.getValue() instanceof IModuleLuaObject luaObject)
+                ret.put(entry.getKey(), new Pair<>(entry.getValue(), luaObject));
         }
         return ret;
     }

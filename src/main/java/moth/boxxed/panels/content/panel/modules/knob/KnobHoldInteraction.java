@@ -57,6 +57,7 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
         graphics.pose().scale(0.5f,0.5f,0.5f);
         graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), 0, 0, 0xAAFFFFFF);
         graphics.pose().popPose();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
     }
 }

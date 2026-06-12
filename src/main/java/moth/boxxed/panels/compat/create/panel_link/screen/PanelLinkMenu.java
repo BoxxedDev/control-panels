@@ -1,13 +1,12 @@
 package moth.boxxed.panels.compat.create.panel_link.screen;
 
-import com.google.common.collect.Sets;
 import com.simibubi.create.foundation.gui.menu.GhostItemMenu;
+import moth.boxxed.panels.api.module.ModuleIOInfo;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -15,20 +14,20 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-import java.util.Set;
+import java.util.List;
 
 public class PanelLinkMenu extends GhostItemMenu<PanelLinkBlockEntity> {
     public boolean showSlots = false;
-    public Set<String> modulesSet;
+    public List<ModuleIOInfo> modulesInfo;
 
     public PanelLinkMenu(int id, Inventory inv, RegistryFriendlyByteBuf extraData) {
         super(PanelCreateRegistries.PANEL_LINK_MENU.get(), id, inv, extraData);
-        this.modulesSet = extraData.readCollection(Sets::newHashSetWithExpectedSize, ByteBufCodecs.STRING_UTF8);
+        this.modulesInfo = extraData.readList(buffer -> ModuleIOInfo.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
     }
 
     public PanelLinkMenu(int id, Inventory inv, PanelLinkBlockEntity be) {
         super(PanelCreateRegistries.PANEL_LINK_MENU.get(), id, inv, be);
-        this.modulesSet = be.getOrCreate().getCompiledModules().keySet();
+        this.modulesInfo = be.getOrCreate().getCompiledModules().filterIOModules();
     }
 
     @Override

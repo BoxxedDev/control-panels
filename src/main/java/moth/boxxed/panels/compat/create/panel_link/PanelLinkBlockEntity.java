@@ -1,5 +1,7 @@
 package moth.boxxed.panels.compat.create.panel_link;
 
+import com.simibubi.create.Create;
+import moth.boxxed.panels.api.module.ModuleIOInfo;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
@@ -12,7 +14,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -69,13 +70,19 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     @Override
     public void networkUpdate(ModulesNetwork modulesNetwork) {
         super.networkUpdate(modulesNetwork);
-        this.entries.validate(modulesNetwork);
     }
 
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        this.entries.updateNetworks(level);
         super.tick(level, blockPos, blockState);
+        this.entries.updateNetworks(level);
+        this.entries.addAllToNetworks(level);
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        this.entries.clearFromNetworks(getLevel());
     }
 
     @Override
@@ -90,7 +97,7 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
         this.getOrCreate().compileModules();
-        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules().keySet(), ByteBufCodecs.STRING_UTF8);
+        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules(), (buffer, val) -> ModuleIOInfo.STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, val));
     }
 
     public ModuleLinkEntries getModuleEntries() {

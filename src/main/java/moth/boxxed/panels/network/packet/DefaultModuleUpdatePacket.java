@@ -11,13 +11,25 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
-public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, int num) implements CustomPacketPayload {
+import java.util.List;
+
+public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, List<Integer> values) implements CustomPacketPayload {
     public static final Type<DefaultModuleUpdatePacket> TYPE = new Type<DefaultModuleUpdatePacket>(Dashpanels.path("update_knob_module"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DefaultModuleUpdatePacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, DefaultModuleUpdatePacket::pos,
             ByteBufCodecs.STRING_UTF8, DefaultModuleUpdatePacket::moduleName,
-            ByteBufCodecs.INT, DefaultModuleUpdatePacket::num,
+            new StreamCodec<>() {
+                @Override
+                public List<Integer> decode(RegistryFriendlyByteBuf buffer) {
+                    return buffer.readList(ByteBufCodecs.INT);
+                }
+
+                @Override
+                public void encode(RegistryFriendlyByteBuf buffer, List<Integer> value) {
+                    buffer.writeCollection(value, ByteBufCodecs.INT);
+                }
+            }, DefaultModuleUpdatePacket::values,
             DefaultModuleUpdatePacket::new
     );
 
@@ -31,7 +43,7 @@ public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, int num
 
         if (level.getBlockEntity(this.pos) instanceof PanelBlockEntity pbe) {
             if (pbe.getModule(this.moduleName) instanceof IExternalUpdatable updatable) {
-                updatable.setNum(this.num);
+                updatable.setNum(this.values);
                 pbe.setChanged();
                 pbe.blockChanged();
             }

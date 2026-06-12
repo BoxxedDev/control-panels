@@ -3,6 +3,7 @@ package moth.boxxed.panels.datagen;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.advancements.Advancement;
@@ -45,6 +46,11 @@ public class PanelRecipeProvider extends RecipeProvider {
         module(PanelItems.CONTROL_LEVER_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
         module(PanelItems.INDICATOR_BULB_MODULE.get(), Ingredient.of(Tags.Items.GLASS_BLOCKS), 4, output);
         module(PanelItems.MOMENTARY_SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+        module(PanelItems.JOYSTICK_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
+        module(PanelItems.LABEL_MODULE.get(), Ingredient.of(Items.PAPER), 4, output);
+        module(PanelItems.SEVEN_SEGMENT_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+        if (ModList.get().isLoaded("sable"))
+            module(PanelSableRegistries.NAVBALL_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
     }
 
     private static void module(ItemLike item, Ingredient ingredient, int count, RecipeOutput output) {

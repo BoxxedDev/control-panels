@@ -21,6 +21,9 @@ public class PanelItems {
     public static final DeferredItem<Item> CONTROL_LEVER_MODULE = moduleItem("control_lever");
     public static final DeferredItem<Item> INDICATOR_BULB_MODULE = moduleItem("indicator_bulb");
     public static final DeferredItem<Item> MOMENTARY_SWITCH_MODULE = moduleItem("momentary_switch");
+    public static final DeferredItem<Item> JOYSTICK_MODULE = moduleItem("joystick");
+    public static final DeferredItem<Item> LABEL_MODULE = moduleItem("label");
+    public static final DeferredItem<Item> SEVEN_SEGMENT_MODULE = moduleItem("seven_segment");
 
     public static DeferredItem<Item> moduleItem(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

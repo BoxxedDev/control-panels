@@ -1,16 +1,12 @@
 package moth.boxxed.panels.compat.sable.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IHoverTooltip;
 import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
@@ -19,7 +15,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +23,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.*;
 
-import java.lang.Math;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -118,7 +112,7 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
         Level level = panelBlockEntity.getLevel();
         BlockState state = panelBlockEntity.getBlockState();
 
-        PanelPreloadedModels.NAVBALL_BASE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.NAVBALL_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate( 0.1875f,0,  0.1875f);
         Quaternionf quat = new Quaternionf();
@@ -127,7 +121,7 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
             quat.set(clientSubLevel.renderPose(partialTick).orientation());
         poseStack.mulPose(quat);
 //        Dashpanels.LOGGER.debug("\nRoll : {}\nPitch : {}\nYaw : {}", this.getAngleRoll(), this.getAnglePitch(), this.getAngleYaw());
-        PanelPreloadedModels.NAVBALL.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.NAVBALL.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 

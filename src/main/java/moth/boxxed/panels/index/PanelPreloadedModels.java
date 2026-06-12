@@ -28,7 +28,9 @@ public class PanelPreloadedModels {
             NAVBALL_BASE = regular("navball/base"),
             NAVBALL = regular("navball/ball"),
 
-            LABEL = regular("label");
+            LABEL = regular("label"),
+
+            SEVEN_SEGMENT = regular("seven_segment");
 
     //Too lazy rn to find a way to change the texture automatically on render
     public static final ColoredPreloadedModel

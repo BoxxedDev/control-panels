@@ -109,6 +109,7 @@ public class PanelLinkBlock extends BaseEntityBlock implements IWrenchable {
 
     private void openMenu(Level level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof PanelLinkBlockEntity be && player instanceof ServerPlayer serverPlayer) {
+            be.getModuleEntries().validate(be.getOrCreate());
             serverPlayer.openMenu(be, be::sendToMenu);
         }
     }

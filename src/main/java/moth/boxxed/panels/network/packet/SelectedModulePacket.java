@@ -29,6 +29,6 @@ public record SelectedModulePacket(String string, BlockPos pos) implements Custo
         Level level = context.player().level();
         BlockEntity be = level.getBlockEntity(this.pos);
         if (!(be instanceof PanelBlockEntity pbe)) return;
-        pbe.setSelectedModule(this.string);
+        pbe.setSelectedModule(context.player(), this.string);
     }
 }

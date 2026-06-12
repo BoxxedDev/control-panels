@@ -1,37 +1,35 @@
 package moth.boxxed.panels.event;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.module.IHoverTooltip;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleTooltipManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.config.ClientConfig;
-import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
-import moth.boxxed.panels.index.PanelHoldInteractions;
+import moth.boxxed.panels.index.PanelShaders;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.server.packs.resources.ResourceProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-import java.util.NoSuchElementException;
+import java.io.IOException;
 
 @EventBusSubscriber(modid = Dashpanels.MOD_ID, value = Dist.CLIENT)
 public class ControlPanelsClientEvents {
@@ -49,9 +47,10 @@ public class ControlPanelsClientEvents {
                 Minecraft.getInstance().hitResult.getType().equals(HitResult.Type.BLOCK)) {
             BlockHitResult blockHitResult = (BlockHitResult) Minecraft.getInstance().hitResult;
             Level level = Minecraft.getInstance().level;
+            Player player = Minecraft.getInstance().player;
             if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof PanelBlockEntity pbe) {
-                Module module = pbe.getModule(pbe.getSelectedModule());
-                if (!pbe.getSelectedModule().isEmpty() && module != null) {
+                Module module = pbe.getModule(pbe.getSelectedModules(player));
+                if (!pbe.getSelectedModules(player).isEmpty() && module != null) {
                     ModuleTooltipManager.renderSelected(
                             event.getGuiGraphics(),
                             module
@@ -92,5 +91,14 @@ public class ControlPanelsClientEvents {
         if (!(be instanceof ModulesNetworkMember eminem)) return;
 
         event.getRight().add("Network: %s".formatted(eminem.network));
+    }
+
+    @SubscribeEvent
+    public static void registerShaders(RegisterShadersEvent event) throws IOException {
+        ResourceProvider provider = event.getResourceProvider();
+        event.registerShader(
+                new ShaderInstance(provider, Dashpanels.path("rendertype_translucent_glow"), DefaultVertexFormat.BLOCK),
+                shader -> PanelShaders.translucentGlowShader = shader
+        );
     }
 }

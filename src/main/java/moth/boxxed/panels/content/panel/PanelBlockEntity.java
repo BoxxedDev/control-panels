@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.panel;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
@@ -34,6 +33,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -42,7 +42,7 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
     public ModuleMap modules;
     public SimpleContainer container;
 
-    private String selectedModule = "";
+    private Map<Player, String> selectedModules = new HashMap<>();
 
     public PanelBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.PANEL.get(), pos, blockState);
@@ -162,10 +162,8 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        Module hitModule = this.getModule(this.selectedModule);
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
         if (hitModule != null) {
-            if (!level.isClientSide)
-                this.blockChanged();
             InteractionResult result = hitModule.onUse(level, player);
             if (!level.isClientSide)
                 this.blockChanged();
@@ -177,10 +175,8 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
     public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        Module hitModule = this.getModule(this.selectedModule);
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
         if (hitModule != null) {
-            if (!level.isClientSide)
-                this.blockChanged();
             ItemInteractionResult result = hitModule.onItemUse(stack, level, player);
             if (!level.isClientSide)
                 this.blockChanged();
@@ -231,11 +227,11 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         buf.writeCollection(takenNames, ByteBufCodecs.STRING_UTF8);
     }
 
-    public void setSelectedModule(String string) {
-        this.selectedModule = string;
+    public void setSelectedModule(Player player, String string) {
+        this.selectedModules.put(player, string);
     }
 
-    public String getSelectedModule() {
-        return this.selectedModule;
+    public String getSelectedModules(Player player) {
+        return this.selectedModules.computeIfAbsent(player, player1 -> "");
     }
 }

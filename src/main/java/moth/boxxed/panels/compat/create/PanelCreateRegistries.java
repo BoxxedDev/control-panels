@@ -58,17 +58,17 @@ public class PanelCreateRegistries implements PanelCompat {
                 "panel_link", () -> IMenuTypeExtension.create(PanelLinkMenu::new)
         );
 
-        PANEL_DISPLAY_SOURCE = DISPLAY_SOURCES.register("panel", PanelDisplaySource::new);
+//        PANEL_DISPLAY_SOURCE = DISPLAY_SOURCES.register("panel", PanelDisplaySource::new);
     }
 
     @Override
     public void busInit(IEventBus bus) {
-        DISPLAY_SOURCES.register(bus);
+//        DISPLAY_SOURCES.register(bus);
     }
 
     @Override
     public void postInit() {
-        DisplaySource.BY_BLOCK.add(PanelBlocks.CONTROL_PANEL.get(), PANEL_DISPLAY_SOURCE.get());
+//        DisplaySource.BY_BLOCK.add(PanelBlocks.CONTROL_PANEL.get(), PANEL_DISPLAY_SOURCE.get());
     }
 
     @Override

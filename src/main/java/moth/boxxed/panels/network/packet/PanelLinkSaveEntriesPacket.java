@@ -37,13 +37,11 @@ public record PanelLinkSaveEntriesPacket(Map<String, ModuleLinkEntries.ModuleEnt
 
         BlockEntity be = level.getBlockEntity(this.pos);
         if (be instanceof PanelLinkBlockEntity panelLinkBlockEntity) {
+            panelLinkBlockEntity.getModuleEntries().clearAll();
             for (ModuleLinkEntries.ModuleEntry entry : this.entries.values()) {
                 entry.setPos(this.pos);
                 entry.setBe(panelLinkBlockEntity);
             }
-
-            panelLinkBlockEntity.getModuleEntries().clearAll();
-            panelLinkBlockEntity.getModuleEntries().clearFromNetworks(level);
             panelLinkBlockEntity.getModuleEntries().addAll(this.entries);
             panelLinkBlockEntity.networkUpdate(panelLinkBlockEntity.getOrCreate());
         }

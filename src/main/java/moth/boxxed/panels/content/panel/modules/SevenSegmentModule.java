@@ -1,18 +1,22 @@
 package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
-import moth.boxxed.panels.util.PreLoadedModel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -25,45 +29,60 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.function.BiConsumer;
 
-public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaObject {
-    public DyeColor color;
-    public boolean lit;
+public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObject {
+    public String display = "--";
+    public DyeColor color = DyeColor.WHITE;
 
-    public IndicatorBulbModule(int x, int y) {
-        super(PanelModules.INDICATOR_BULB.get(), x, y, 1,2);
-        this.color = DyeColor.WHITE;
-        this.lit = false;
-    }
-
-    @Override
-    public void setAnalog(int signal) {
-        this.lit = signal > 0;
-    }
-
-    @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        PreLoadedModel bulbModel = this.lit ? PanelPreloadedModels.INDICATOR_BULB_ON.getModel(DyeColor.WHITE) : PanelPreloadedModels.INDICATOR_BULB_OFF.getModel(DyeColor.WHITE);
-        int bulbLight = this.lit ? LightTexture.FULL_BRIGHT : packedLight;
-
-        poseStack.pushPose();
-        poseStack.translate(0, 0, 0.5/16f);
-        PanelPreloadedModels.INDICATOR_BULB_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
-        bulbModel.render(poseStack, bufferSource, RenderType.translucent(), bulbLight, this.color.getTextureDiffuseColor());
-        poseStack.popPose();
-    }
-
-    @Override
-    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
-        this.color = DyeColor.byId(tag.getInt("color"));
-        this.lit = tag.getBoolean("lit");
-        return super.loadData(tag, registries);
+    public SevenSegmentModule(int x, int y) {
+        super(PanelModules.SEVEN_SEGMENT.get(), x, y, 6, 4);
     }
 
     @Override
     public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("color", this.color.getId());
-        tag.putBoolean("lit", this.lit);
+        tag.putString("display", this.display);
+        tag.putInt("color", color.getId());
         return super.saveData(tag, registries);
+    }
+
+    @Override
+    public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
+        this.display = tag.getString("display");
+        this.color = DyeColor.byId(tag.getInt("color"));
+        return super.loadData(tag, registries);
+    }
+
+    @Override
+    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        poseStack.pushPose();
+        poseStack.translate(0, -1/32f, 0);
+        PanelPreloadedModels.SEVEN_SEGMENT.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        poseStack.popPose();
+
+        Font font = Minecraft.getInstance().font;
+
+        poseStack.pushPose();
+        poseStack.translate(0, 1/32f, 0);
+        poseStack.scale(1/32f, 1/32f, 1/32f);
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.XP.rotationDegrees(90));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+
+        float offset = this.display.length() == 1 ? 6 : 0;
+
+        FormattedCharSequence sequence = Component.literal(this.display).getVisualOrderText();
+        font.drawInBatch(
+                sequence,
+                -11.5f + offset, -7.5f,
+                this.color.getTextColor(),
+                false,
+                poseStack.last().pose(),
+                bufferSource,
+                Font.DisplayMode.POLYGON_OFFSET,
+                0,
+                LightTexture.FULL_BRIGHT
+        );
+        poseStack.popPose();
+        poseStack.popPose();
     }
 
     @Override
@@ -77,16 +96,23 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
 
     @Override
     public VoxelShape getShape() {
-        return Block.box(0, 0, 0.5, 1, 1.5, 1.5);
+        return Block.box(0, 0, 0, 6, 0.5, 4);
+    }
+
+    @Override
+    public void setAnalog(int signal) {
+        this.display = String.valueOf(signal);
     }
 
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getState", args -> this.lit);
+        consumer.accept("getDisplay", args -> this.display);
         consumer.accept("getColor", args -> this.color.getSerializedName());
-        consumer.accept("setState", args -> {
-            if (args.getType(0).equals("boolean")) {
-                this.lit = (boolean) args.get(0);
+        consumer.accept("setDisplay", args -> {
+            if (args.count() != 1)
+                return false;
+            if (args.get(0) instanceof String str && str.length() <= 2) {
+                this.display = str.isEmpty() ? "--" : str;
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }

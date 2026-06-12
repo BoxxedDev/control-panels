@@ -7,6 +7,7 @@
     "dashpanels:momentary_switch",
     "dashpanels:joystick",
     "dashpanels:label",
+    "dashpanels:seven_segment",
     "dashpanels:navball"
   ]
 }

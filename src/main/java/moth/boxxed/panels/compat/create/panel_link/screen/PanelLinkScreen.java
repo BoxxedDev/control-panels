@@ -217,6 +217,7 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
         private final IconButton edit;
         private final IconButton delete;
         private ModuleLinkEntries.ModuleEntry entry;
+        public boolean active = true;
 
         public ModuleEntryWidget(ModuleLinkEntries.ModuleEntry entry) {
             this.edit = new CustomAdjustableButton(AllIcons.I_CONFIG_SAVE)
@@ -242,6 +243,10 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
 
             this.edit.setPosition(x+147, (int) (y+6));
             this.delete.setPosition(x+170, (int) (y+6));
+
+            boolean isInContent = y < PanelLinkScreen.this.topPos+127 && y+30 > PanelLinkScreen.this.topPos+16;
+            this.edit.setActive(isInContent && this.active);
+            this.delete.setActive(isInContent && this.active);
 
             this.renderFrequencies(graphics, stack);
 
@@ -287,6 +292,7 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
             PanelLinkScreen.this.addWidget(this.delete);
             this.edit.setActive(true);
             this.delete.setActive(true);
+            this.active = true;
         }
 
         public void disableInnerWidgets() {
@@ -294,6 +300,7 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
             PanelLinkScreen.this.removeWidget(this.delete);
             this.edit.setActive(false);
             this.delete.setActive(false);
+            this.active = false;
         }
     }
 

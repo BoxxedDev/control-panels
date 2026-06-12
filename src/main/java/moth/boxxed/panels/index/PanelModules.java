@@ -5,6 +5,7 @@ import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.modules.IndicatorBulbModule;
 import moth.boxxed.panels.content.panel.modules.LabelModule;
+import moth.boxxed.panels.content.panel.modules.SevenSegmentModule;
 import moth.boxxed.panels.content.panel.modules.SwitchModule;
 import moth.boxxed.panels.content.panel.modules.control_lever.ControlLeverModule;
 import moth.boxxed.panels.content.panel.modules.joystick.JoystickModule;
@@ -32,6 +33,8 @@ public class PanelModules {
             MODULES.register("joystick", () -> new ModuleType<>(JoystickModule::new, PanelItems.JOYSTICK_MODULE));
     public static final Supplier<ModuleType<LabelModule>> LABEL =
             MODULES.register("label", () -> new ModuleType<>(LabelModule::new, PanelItems.LABEL_MODULE));
+    public static final Supplier<ModuleType<SevenSegmentModule>> SEVEN_SEGMENT =
+            MODULES.register("seven_segment", () -> new ModuleType<>(SevenSegmentModule::new, PanelItems.SEVEN_SEGMENT_MODULE));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

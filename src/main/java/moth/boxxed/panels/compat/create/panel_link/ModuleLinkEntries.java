@@ -112,6 +112,7 @@ public class ModuleLinkEntries {
     }
 
     public void clearAll() {
+        this.modulesToRemove.putAll(this.entryMap);
         this.entryMap.clear();
     }
 

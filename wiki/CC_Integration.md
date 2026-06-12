@@ -25,6 +25,38 @@
   * `getColor()` - returns a serialized string of the current bulb color
   * `setState(bool)` - sets the state of the bulb, on or off
   * `setColor(string)` - sets the color of the bulb
+  * List of all dyes that the bulb can be set to
+    * `white`
+    * `orange`
+    * `magenta`
+    * `light_blue`
+    * `yellow`
+    * `lime`
+    * `pink`
+    * `gray`
+    * `light_gray`
+    * `cyan`
+    * `purple`
+    * `blue`
+    * `brown`
+    * `green`
+    * `red`
+    * `black`
+    * Dye depot dyes
+      * `maroon`
+      * `rose`
+      * `coral`
+      * `indigo`
+      * `navy`
+      * `slate`
+      * `olive`
+      * `teal`
+      * `mint`
+      * `aqua`
+      * `verdant`
+      * `forest`
+      * `ginger`
+      * `tan`
 ---
 ## Example code
 ```lua

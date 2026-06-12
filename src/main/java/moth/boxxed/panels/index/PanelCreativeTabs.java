@@ -2,6 +2,7 @@ package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
+import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import net.mcexpanded.fancytabsections.FancyTabSections;
 import net.mcexpanded.fancytabsections.creativetab.ConglomerateOfItems;
 import net.mcexpanded.fancytabsections.creativetab.SectionTextured;
@@ -57,7 +58,11 @@ public class PanelCreativeTabs {
                 .add(PanelItems.CONTROL_LEVER_MODULE)
                 .add(PanelItems.INDICATOR_BULB_MODULE)
                 .add(PanelItems.MOMENTARY_SWITCH_MODULE)
-                .add(PanelItems.JOYSTICK_MODULE);
+                .add(PanelItems.JOYSTICK_MODULE)
+                .add(PanelItems.LABEL_MODULE)
+                .add(PanelItems.SEVEN_SEGMENT_MODULE);
+        if (ModList.get().isLoaded("sable"))
+            modules.add(PanelSableRegistries.NAVBALL_MODULE);
         FancyTabSections.addSection(Dashpanels.path("dashpanels"), new SectionTextured(
                 Dashpanels.path("modules"),
                 Component.translatable("creativetab.dashpanels.modules"),

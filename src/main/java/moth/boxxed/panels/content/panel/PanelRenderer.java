@@ -53,13 +53,13 @@ public class PanelRenderer implements BlockEntityRenderer<PanelBlockEntity> {
         }
 
         if (hitModule == null) {
-            if (!panelBlockEntity.getSelectedModule().isEmpty()) {
+            if (!panelBlockEntity.getSelectedModules(player).isEmpty()) {
                 PacketDistributor.sendToServer(new SelectedModulePacket("", panelBlockEntity.getBlockPos()));
-                panelBlockEntity.setSelectedModule("");
+                panelBlockEntity.setSelectedModule(player, "");
             }
-        } else if (!panelBlockEntity.getSelectedModule().equals(hitModule.getName())) {
+        } else if (!panelBlockEntity.getSelectedModules(player).equals(hitModule.getName())) {
             PacketDistributor.sendToServer(new SelectedModulePacket(hitModule.getName(), panelBlockEntity.getBlockPos()));
-            panelBlockEntity.setSelectedModule(hitModule.getName());
+            panelBlockEntity.setSelectedModule(player, hitModule.getName());
         }
 
         for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {

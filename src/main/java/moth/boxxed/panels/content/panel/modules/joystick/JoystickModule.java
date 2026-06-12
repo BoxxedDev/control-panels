@@ -82,28 +82,25 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
 
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
-
         float angleX = Mth.map(this.renderStickX, -1, 1, -7.5f, 7.5f);
         float angleY = Mth.map(this.renderStickY, -1, 1, -7.5f, 7.5f);
         float triggerAngle = Mth.map(this.renderTriggered, 0, 1, 5f, 22.5f);
 
         poseStack.pushPose();
-        PanelPreloadedModels.JOYSTICK_BASE.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.translate(0.125, 0.03125, 0.125);
         poseStack.mulPose(Axis.XP.rotationDegrees(angleY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(angleX));
-        PanelPreloadedModels.JOYSTICK_BETWEEN.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_BETWEEN.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0.03125, 0);
         poseStack.mulPose(Axis.XP.rotationDegrees(angleY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(angleX));
-        PanelPreloadedModels.JOYSTICK_STICK.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_STICK.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0.125, 0);
         poseStack.mulPose(Axis.XP.rotationDegrees(triggerAngle));
-        PanelPreloadedModels.JOYSTICK_TRIGGER.render(level, state, poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_TRIGGER.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
         poseStack.popPose();
         poseStack.popPose();

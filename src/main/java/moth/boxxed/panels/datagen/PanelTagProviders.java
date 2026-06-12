@@ -34,6 +34,7 @@ public class PanelTagProviders {
                     .add(PanelItems.MOMENTARY_SWITCH_MODULE.getKey())
                     .add(PanelItems.JOYSTICK_MODULE.getKey())
                     .add(PanelItems.LABEL_MODULE.getKey())
+                    .add(PanelItems.SEVEN_SEGMENT_MODULE.getKey())
             ;
             if (ModList.get().isLoaded("sable"))
                 tag(PanelTags.Items.MODULE)

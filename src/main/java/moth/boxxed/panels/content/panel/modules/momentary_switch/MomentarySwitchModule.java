@@ -64,11 +64,7 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
 
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
         PanelPreloadedModels.MOMENTARY_SWITCH_BASE.render(
-                level,
-                state,
                 poseStack,
                 bufferSource,
                 RenderType.solid(),
@@ -77,8 +73,6 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
         poseStack.pushPose();
         poseStack.translate(0, pressValue, 0);
         PanelPreloadedModels.MOMENTARY_SWITCH_BUTTON.render(
-                level,
-                state,
                 poseStack,
                 bufferSource,
                 RenderType.solid(),

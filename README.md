@@ -20,7 +20,8 @@
 |---------------|--------------------------------------------------------------------------------------------------|
 | ComputerCraft | [:white_check_mark:](https://github.com/BoxxedDev/control-panels/wiki/ComputerCraft-Integration) |
 | Create        | :white_check_mark:                                                                               |
-| Sable         | Custom module in progress                                                                        |
+| Sable         | :white_check_mark:                                                                               |
+| Dye Depot     | :white_check_mark:                                                                               |
 
 ---
 

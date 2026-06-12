@@ -48,6 +48,7 @@ public class PanelRecipeProvider extends RecipeProvider {
         module(PanelItems.MOMENTARY_SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
         module(PanelItems.JOYSTICK_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
         module(PanelItems.LABEL_MODULE.get(), Ingredient.of(Items.PAPER), 4, output);
+        module(PanelItems.SEVEN_SEGMENT_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
         if (ModList.get().isLoaded("sable"))
             module(PanelSableRegistries.NAVBALL_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
     }

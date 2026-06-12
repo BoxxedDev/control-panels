@@ -233,6 +233,8 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.draggingModule != null && (minecraft.options.keyInventory.matches(keyCode, scanCode) || keyCode == InputConstants.KEY_ESCAPE)) {
+            if (this.draggingModule.boundSlot != null)
+                this.draggingModule = null;
             return true;
         }
 

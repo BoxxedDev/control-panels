@@ -27,6 +27,7 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.MOMENTARY_SWITCH_MODULE, "Momentary Switch");
         addItem(PanelItems.JOYSTICK_MODULE, "Joystick");
         addItem(PanelItems.LABEL_MODULE, "Label");
+        addItem(PanelItems.SEVEN_SEGMENT_MODULE, "Seven Segment");
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 

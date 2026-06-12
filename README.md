@@ -53,8 +53,6 @@ A json for a custom module type could look something like this:
 <ul>
 <li>Terminal Keyboard
 <li>Terminal Screen
-<li>7 Segment display
-<li>Navball (sable exclusive)
 </ul>
 </details>
 

@@ -108,12 +108,27 @@ public class ModuleLinkEntries {
     }
 
     public void validate(ModulesNetwork modulesNetwork) {
-        this.entryMap.entrySet().removeIf(entry -> !modulesNetwork.hasModule(entry.getKey()));
+        modulesNetwork.compileModules();
+        this.entryMap.entrySet().removeIf(entry -> {
+            if (!modulesNetwork.hasModule(entry.getKey())) {
+                this.set(entry.getKey(), null);
+                return true;
+            }
+            return false;
+        });
     }
 
     public void clearAll() {
         this.modulesToRemove.putAll(this.entryMap);
         this.entryMap.clear();
+    }
+
+    public void addAllToNetworks(Level level) {
+        if (!level.isClientSide) {
+            for (ModuleEntry entry : new ArrayList<>(this.entryMap.values())) {
+                Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
+            }
+        }
     }
 
     public static class ModuleEntry implements IRedstoneLinkable {

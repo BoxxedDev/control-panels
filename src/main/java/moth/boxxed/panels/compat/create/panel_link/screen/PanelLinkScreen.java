@@ -244,7 +244,7 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
             this.edit.setPosition(x+147, (int) (y+6));
             this.delete.setPosition(x+170, (int) (y+6));
 
-            boolean isInContent = y < PanelLinkScreen.this.topPos+127 && y+30 > PanelLinkScreen.this.topPos+16;
+            boolean isInContent = y+16 < PanelLinkScreen.this.topPos+127 && y+30 > PanelLinkScreen.this.topPos+16;
             this.edit.setActive(isInContent && this.active);
             this.delete.setActive(isInContent && this.active);
 

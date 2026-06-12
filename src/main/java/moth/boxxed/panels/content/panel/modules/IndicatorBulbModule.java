@@ -7,6 +7,7 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.index.PanelRendertypes;
 import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -44,11 +45,12 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PreLoadedModel bulbModel = this.lit ? PanelPreloadedModels.INDICATOR_BULB_ON.getModel(DyeColor.WHITE) : PanelPreloadedModels.INDICATOR_BULB_OFF.getModel(DyeColor.WHITE);
         int bulbLight = this.lit ? LightTexture.FULL_BRIGHT : packedLight;
+        RenderType bulbRenderType = this.lit ? PanelRendertypes.TRANSLUCENT_GLOW : RenderType.translucent();
 
         poseStack.pushPose();
         poseStack.translate(0, 0, 0.5/16f);
         PanelPreloadedModels.INDICATOR_BULB_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
-        bulbModel.render(poseStack, bufferSource, RenderType.translucent(), bulbLight, this.color.getTextureDiffuseColor());
+        bulbModel.render(poseStack, bufferSource, bulbRenderType, bulbLight, this.color.getTextureDiffuseColor());
         poseStack.popPose();
     }
 

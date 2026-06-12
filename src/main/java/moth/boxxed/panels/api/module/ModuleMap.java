@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
+import oshi.util.tuples.Pair;
 
 import java.util.*;
 
@@ -107,6 +108,15 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
         for (Map.Entry<String, Module> entry : this) {
             if (entry.getValue() instanceof IModuleLuaObject luaObject)
                 ret.put(entry.getKey(), luaObject);
+        }
+        return ret;
+    }
+
+    public Map<String, Pair<Module, IModuleLuaObject>> asGenericLuaPairMap() {
+        Map<String, Pair<Module, IModuleLuaObject>> ret = new HashMap<>();
+        for (Map.Entry<String, Module> entry : this) {
+            if (entry.getValue() instanceof IModuleLuaObject luaObject)
+                ret.put(entry.getKey(), new Pair<>(entry.getValue(), luaObject));
         }
         return ret;
     }

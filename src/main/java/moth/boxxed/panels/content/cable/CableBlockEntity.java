@@ -29,7 +29,7 @@ public class CableBlockEntity extends ModulesNetworkMember {
                 return true;
         if (to.getBlock() instanceof CableBlock)
             return true;
-        boolean isPanel = to.getBlock() instanceof PanelBlock && to.getValue(PanelBlock.FACING) == direction;
+        boolean isPanel = to.getBlock() instanceof PanelBlock && (to.getValue(PanelBlock.FACING) == direction || direction == Direction.UP);
         boolean isStripped = to.getBlock() instanceof StrippedCableBlock && to.getValue(StrippedCableBlock.FACING) == direction;
         return isStripped || isPanel;
     }

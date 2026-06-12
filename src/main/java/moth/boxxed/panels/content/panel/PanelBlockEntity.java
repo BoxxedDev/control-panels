@@ -138,9 +138,9 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
         Direction fromDirection = from.getValue(PanelBlock.FACING);
 
-        if (direction.getAxis().isVertical())
+        if (direction.equals(Direction.UP))
             return false;
-        if (fromDirection.getOpposite()==direction && to.getBlock() instanceof CableBlock)
+        if ((fromDirection.getOpposite()==direction || direction==Direction.DOWN) && to.getBlock() instanceof CableBlock)
             return true;
         return (fromDirection.getClockWise()==direction || fromDirection.getCounterClockWise()==direction) &&
                 to.getBlock() instanceof PanelBlock &&

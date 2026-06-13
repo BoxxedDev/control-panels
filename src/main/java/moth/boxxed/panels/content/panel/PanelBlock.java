@@ -3,12 +3,10 @@ package moth.boxxed.panels.content.panel;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -30,7 +28,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PanelBlock extends BaseEntityBlock {
+public class PanelBlock extends BaseEntityBlock implements Clearable {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
 
@@ -162,11 +160,19 @@ public class PanelBlock extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (newState.getBlock() != state.getBlock()) {
-            this.getBlockEntity(level, pos).reconstructItems();
-            Containers.dropContents(level, pos, this.getBlockEntity(level, pos).container);
+        if (!state.is(newState.getBlock())) {
+            if (level.getBlockEntity(pos) instanceof PanelBlockEntity pbe) {
+                if (level instanceof ServerLevel) {
+                    Containers.dropContents(level, pos, pbe.container);
+                }
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public void clearContent() {
+
     }
 
     public enum Shape implements StringRepresentable {

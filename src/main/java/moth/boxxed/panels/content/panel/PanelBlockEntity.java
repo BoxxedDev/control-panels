@@ -19,10 +19,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -38,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider {
+public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvider, Clearable {
     public ModuleMap modules;
     public SimpleContainer container;
 
@@ -186,28 +182,6 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    private Module getHitModule(Player player) {
-        Module hitModule = null;
-        double hitDistance = Double.MAX_EXPONENT;
-        for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
-            Module module = entry.getValue();
-            Vec3 eyePos = player.getEyePosition();
-            Double result = Module.clipModule(
-                    this,
-                    module,
-                    new Vec3(module.getPos().x/16f, 0.75, module.getPos().y/16f),
-                    eyePos,
-                    player.getViewVector(1),
-                    1
-            );
-            if (result != null && result < hitDistance) {
-                hitDistance = result;
-                hitModule = module;
-            }
-        }
-        return hitModule;
-    }
-
     @Override
     public Component getDisplayName() {
         return Component.translatable(PanelBlocks.CONTROL_PANEL.get().getDescriptionId());
@@ -233,5 +207,10 @@ public class PanelBlockEntity extends ModulesNetworkMember implements MenuProvid
 
     public String getSelectedModules(Player player) {
         return this.selectedModules.computeIfAbsent(player, player1 -> "");
+    }
+
+    @Override
+    public void clearContent() {
+        this.container.clearContent();
     }
 }

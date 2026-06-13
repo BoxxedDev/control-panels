@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.panel.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import mezz.jei.library.runtime.JeiHelpers;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
@@ -15,21 +14,18 @@ import moth.boxxed.panels.network.packet.SetPlayerSlotPacket;
 import moth.boxxed.panels.util.BasicButtonWidget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.settings.KeyMappingLookup;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -232,18 +228,25 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.draggingModule != null && (minecraft.options.keyInventory.matches(keyCode, scanCode) || keyCode == InputConstants.KEY_ESCAPE)) {
-            if (this.draggingModule.boundSlot != null)
-                this.draggingModule = null;
-            return true;
-        }
+        boolean inventoryOrEscape = minecraft.options.keyInventory.matches(keyCode, scanCode) || keyCode == InputConstants.KEY_ESCAPE;
 
-        if (PanelKeybinds.DELETE_MODULE_MAPPING.matches(keyCode, scanCode) && !this.selectedModule.isEmpty()) {
-            Module module = this.modulesToSave.remove(this.selectedModule);
-            addItemToInv(module);
-            this.selectedModule = "";
-            this.nameEditBox.setValue("");
+        if (this.nameEditBox.keyPressed(keyCode, scanCode, modifiers) || (this.nameEditBox.isFocused() && inventoryOrEscape))
             return true;
+
+        if (!this.nameEditBox.isFocused()) {
+            if (this.draggingModule != null && inventoryOrEscape) {
+                if (this.draggingModule.boundSlot != null)
+                    this.draggingModule = null;
+                return true;
+            }
+
+            if (PanelKeybinds.DELETE_MODULE_MAPPING.matches(keyCode, scanCode) && !this.selectedModule.isEmpty()) {
+                Module module = this.modulesToSave.remove(this.selectedModule);
+                addItemToInv(module);
+                this.selectedModule = "";
+                this.nameEditBox.setValue("");
+                return true;
+            }
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);

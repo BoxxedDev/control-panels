@@ -73,7 +73,7 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
         if (str.isEmpty()) return null;
         for (ModuleIOInfo info : this.filterIOModules()) {
             if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
-            if (str.length() > info.name().length()) continue;
+            if (str.length() < info.name().length()) continue;
             String sub = str.substring(0, info.name().length());
             if (sub.equals(info.name())) {
                 return super.get(sub);
@@ -92,7 +92,7 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
         if (str.isEmpty()) return false;
         for (ModuleIOInfo info : this.filterIOModules()) {
             if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
-            if (str.length() > info.name().length()) continue;
+            if (str.length() < info.name().length()) continue;
             String sub = str.substring(0, info.name().length());
             if (sub.equals(info.name())) {
                 return super.containsKey(sub);

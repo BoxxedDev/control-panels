@@ -2,10 +2,8 @@ package moth.boxxed.panels.compat.create;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateRegistries;
-import com.simibubi.create.foundation.data.CreateRegistrate;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.PanelCompat;
-import moth.boxxed.panels.compat.create.display_sources.PanelDisplaySource;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
@@ -13,7 +11,6 @@ import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelMenuTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;

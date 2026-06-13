@@ -1,6 +1,5 @@
 package moth.boxxed.panels.event;
 
-import cpw.mods.util.Lazy;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
@@ -16,8 +15,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;

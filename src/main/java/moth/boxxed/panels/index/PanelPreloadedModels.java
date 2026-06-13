@@ -1,7 +1,6 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.util.ColoredPreloadedModel;
 import moth.boxxed.panels.util.PreLoadedModel;
 
 public class PanelPreloadedModels {
@@ -33,16 +32,12 @@ public class PanelPreloadedModels {
             SEVEN_SEGMENT = regular("seven_segment");
 
     //Too lazy rn to find a way to change the texture automatically on render
-    public static final ColoredPreloadedModel
-            INDICATOR_BULB_ON = regularColored("indicator_bulb/bulb_on"),
-            INDICATOR_BULB_OFF = regularColored("indicator_bulb/bulb_off");
+    public static final PreLoadedModel
+            INDICATOR_BULB_ON = regular("indicator_bulb/bulb_on"),
+            INDICATOR_BULB_OFF = regular("indicator_bulb/bulb_off");
 
     private static PreLoadedModel regular(String name) {
         return PreLoadedModel.create(Dashpanels.path("block/" + name));
-    }
-
-    private static ColoredPreloadedModel regularColored(String name) {
-        return new ColoredPreloadedModel(Dashpanels.path("block/" + name));
     }
 
     public static void init() {}

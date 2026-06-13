@@ -21,7 +21,6 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.function.BiConsumer;
@@ -43,7 +42,7 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
 
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        PreLoadedModel bulbModel = this.lit ? PanelPreloadedModels.INDICATOR_BULB_ON.getModel(DyeColor.WHITE) : PanelPreloadedModels.INDICATOR_BULB_OFF.getModel(DyeColor.WHITE);
+        PreLoadedModel bulbModel = this.lit ? PanelPreloadedModels.INDICATOR_BULB_ON : PanelPreloadedModels.INDICATOR_BULB_OFF;
         int bulbLight = this.lit ? LightTexture.FULL_BRIGHT : packedLight;
         RenderType bulbRenderType = this.lit ? PanelRendertypes.TRANSLUCENT_GLOW : RenderType.translucent();
 

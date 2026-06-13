@@ -9,7 +9,6 @@ import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
@@ -56,7 +55,7 @@ public class PanelLangProvider extends LanguageProvider {
         add("creativetab.dashpanels.dashpanels", "Panels");
         add("creativetab.dashpanels.modules", "Modules");
 
-        addCustom("dashpanels", "configuration.showModuleTooltips", "Show Module Tooltips");
+        add("dashpanels.configuration.showModuleTooltips", "Show Module Tooltips");
 
         addCustom("key", "delete_module", "Delete Module");
         addCustom("key", "select_module", "Select Module");

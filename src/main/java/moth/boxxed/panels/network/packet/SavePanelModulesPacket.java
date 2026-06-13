@@ -44,6 +44,8 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
             }
             pbe.networkUpdate(network);
 
+            pbe.reconstructItems();
+
             pbe.setChanged();
             pbe.blockChanged();
         }

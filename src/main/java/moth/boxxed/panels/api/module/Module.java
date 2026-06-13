@@ -46,9 +46,12 @@ import org.joml.Vector3f;
 
 import java.awt.*;
 
+/**
+Base class for creating a custom module
+ */
 public abstract class Module {
     private Vector2i pos;
-    private Vector2i size;
+    private final Vector2i size;
 
     public Rect2d rect;
     public PanelBlockEntity parentBlockEntity;

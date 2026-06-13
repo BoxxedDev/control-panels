@@ -1,6 +1,5 @@
 package moth.boxxed.panels.compat.create.panel_link;
 
-import com.simibubi.create.Create;
 import moth.boxxed.panels.api.module.ModuleIOInfo;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;

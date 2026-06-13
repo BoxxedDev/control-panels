@@ -1,8 +1,5 @@
 package moth.boxxed.panels.api.module.interaction;
 
-import moth.boxxed.panels.content.panel.modules.knob.KnobHoldInteraction;
-import moth.boxxed.panels.index.PanelHoldInteractions;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 

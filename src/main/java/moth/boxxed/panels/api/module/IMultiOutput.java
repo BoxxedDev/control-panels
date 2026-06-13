@@ -2,6 +2,13 @@ package moth.boxxed.panels.api.module;
 
 import java.util.function.BiConsumer;
 
+/**
+ * Used to mark a module as multi output on the panel
+ * e.g. screen, levels display, etc. which then takes an input redstone signal or something similar
+ * <br>
+ * <br>
+ * For now modules can ONLY be black or white, inputs or outputs
+ */
 public interface IMultiOutput {
     void setValues(BiConsumer<String, AnalogRunnable> consumer);
 

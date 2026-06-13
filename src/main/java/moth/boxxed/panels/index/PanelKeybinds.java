@@ -1,10 +1,7 @@
 package moth.boxxed.panels.index;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import cpw.mods.util.Lazy;
 import net.minecraft.client.KeyMapping;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 

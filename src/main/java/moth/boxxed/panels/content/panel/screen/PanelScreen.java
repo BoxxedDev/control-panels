@@ -273,6 +273,9 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
         if (containerEventHandlerMouseClicked(mouseX, mouseY, button))
             return true;
 
+        if (!this.nameEditBox.isMouseOver(mouseX, mouseY))
+            this.nameEditBox.setFocused(false);
+
         Slot slot = this.findSlot(mouseX, mouseY);
         if (slot != null && this.draggingModule == null) {
             if (!slot.getItem().isEmpty()) {

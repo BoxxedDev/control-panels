@@ -3,7 +3,6 @@ package moth.boxxed.panels.mixin;
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
-import moth.boxxed.panels.index.PanelHoldInteractions;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

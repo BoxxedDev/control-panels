@@ -1,6 +1,5 @@
 package moth.boxxed.panels.api.module;
 
-import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import net.minecraft.core.HolderLookup;

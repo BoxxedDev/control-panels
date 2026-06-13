@@ -21,7 +21,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.*;
+import org.joml.Quaterniondc;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
 
 import java.util.List;
 import java.util.function.BiConsumer;

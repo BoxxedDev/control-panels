@@ -1,6 +1,7 @@
 package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.PanelSkinsServerManager;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
@@ -22,6 +23,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -153,5 +155,10 @@ public class ControlPanelsCommonEvents {
         for (KeyMapping keyMapping : PanelKeybinds.MAPPINGS) {
             event.register(keyMapping);
         }
+    }
+
+    @SubscribeEvent
+    public static void addReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(PanelSkinsServerManager.ReloadListener.INSTANCE);
     }
 }

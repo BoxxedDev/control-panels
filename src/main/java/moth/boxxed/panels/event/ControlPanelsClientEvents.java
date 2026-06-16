@@ -7,6 +7,7 @@ import moth.boxxed.panels.api.module.ModuleTooltipManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
+import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
 import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
@@ -24,10 +25,7 @@ import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.client.event.*;
 
 import java.io.IOException;
 
@@ -100,5 +98,10 @@ public class ControlPanelsClientEvents {
                 new ShaderInstance(provider, Dashpanels.path("rendertype_translucent_glow"), DefaultVertexFormat.BLOCK),
                 shader -> PanelShaders.translucentGlowShader = shader
         );
+    }
+
+    @SubscribeEvent
+    public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(PanelSkinsClientManager.ReloadListener.INSTANCE);
     }
 }

@@ -112,7 +112,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
             if (args.count() != 1)
                 return false;
             if (args.get(0) instanceof Number number) {
-                this.signal = number.intValue();
+                this.signal = Math.clamp(0, 15, number.intValue());
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }

@@ -114,7 +114,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
             if (args.count() != 1)
                 return false;
             if (args.get(0) instanceof Number number) {
-                this.angle = number.intValue();
+                this.angle = Math.clamp(0, 360, number.intValue());
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }

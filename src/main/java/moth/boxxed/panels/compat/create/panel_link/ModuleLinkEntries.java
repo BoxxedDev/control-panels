@@ -180,13 +180,13 @@ public class ModuleLinkEntries {
                 return 0;
             Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.module);
             if (actualModule instanceof IInput input)
-                return input.getAnalog();
+                return Math.clamp(0, 15, input.getAnalog());
             if (actualModule instanceof IMultiInput multiInput) {
                 Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
                 multiInput.getValues(resultMap::put);
                 String extension = this.module.substring(actualModule.getName().length()+3);
                 if (resultMap.get(extension) != null)
-                    return resultMap.get(extension).getAnalog();
+                    return Math.clamp(0, 15, resultMap.get(extension).getAnalog());
             }
             return 0;
         }

@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -75,7 +76,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
         PanelPreloadedModels.KNOB.render(poseStack, bufferSource, RenderType.solid(), packedLight);

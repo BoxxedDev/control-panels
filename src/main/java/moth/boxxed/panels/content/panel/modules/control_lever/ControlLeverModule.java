@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -77,7 +78,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PanelPreloadedModels.CONTROL_LEVER_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0, this.renderSignal);

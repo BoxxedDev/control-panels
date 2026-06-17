@@ -1,7 +1,7 @@
 package moth.boxxed.panels.content.panel.screen;
 
 import com.google.common.collect.Sets;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class PanelMenu extends AbstractContainerMenu {
     public Inventory inventory;
-    public PanelBlockEntity holder;
+    public AbstractPanelBlockEntity holder;
     public Set<String> takenNames;
 
     public PanelMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf extraData) {
@@ -29,24 +29,24 @@ public class PanelMenu extends AbstractContainerMenu {
         init(inv, createOnClient(extraData), extraData.readCollection(Sets::newHashSetWithExpectedSize, ByteBufCodecs.STRING_UTF8));
     }
 
-    public PanelMenu(int containerId, Inventory inv, PanelBlockEntity be) {
+    public PanelMenu(int containerId, Inventory inv, AbstractPanelBlockEntity be) {
         super(PanelMenuTypes.PANEL.get(), containerId);
         init(inv, be, new HashSet<>(be.getOrCreate().getCompiledModules().keySet()));
     }
 
     @OnlyIn(Dist.CLIENT)
-    private PanelBlockEntity createOnClient(RegistryFriendlyByteBuf extraData) {
+    private AbstractPanelBlockEntity createOnClient(RegistryFriendlyByteBuf extraData) {
         ClientLevel level = Minecraft.getInstance().level;
 
         BlockEntity be = level.getBlockEntity(extraData.readBlockPos());
-        if (be instanceof PanelBlockEntity pbe) {
+        if (be instanceof AbstractPanelBlockEntity pbe) {
             pbe.loadClient(extraData.readNbt(), extraData.registryAccess());
             return pbe;
         }
         return null;
     }
 
-    private void init(Inventory inv, PanelBlockEntity be, Set<String> takenNames) {
+    private void init(Inventory inv, AbstractPanelBlockEntity be, Set<String> takenNames) {
         this.inventory = inv;
         this.holder = be;
         this.takenNames = takenNames;

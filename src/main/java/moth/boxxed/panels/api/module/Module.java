@@ -10,9 +10,9 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlock;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -54,7 +54,7 @@ public abstract class Module {
     private final Vector2i size;
 
     public Rect2d rect;
-    public PanelBlockEntity parentBlockEntity;
+    public AbstractPanelBlockEntity parentBlockEntity;
     public ModuleType<?> type;
     public String name = "";
 
@@ -121,7 +121,7 @@ public abstract class Module {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
+    public abstract void render(AbstractPanelBlockEntity AbstractPanelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
 
     @OnlyIn(Dist.CLIENT)
     public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
@@ -138,7 +138,7 @@ public abstract class Module {
         poseStack.popPose();
     }
 
-    public static Double clipModule(PanelBlockEntity pbe, Module module, Vec3 shapeOffset, Vec3 eyePosMoj, Vec3 viewVectorMoj, float partialTick) {
+    public static Double clipModule(AbstractPanelBlockEntity pbe, Module module, Vec3 shapeOffset, Vec3 eyePosMoj, Vec3 viewVectorMoj, float partialTick) {
         LocalPlayer player = Minecraft.getInstance().player;
 
         Vector3d eyePos = JOMLConversion.toJOML(eyePosMoj);

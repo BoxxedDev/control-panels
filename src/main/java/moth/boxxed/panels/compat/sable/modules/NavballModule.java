@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.companion.SubLevelAccess;
 import moth.boxxed.panels.api.module.IHoverTooltip;
 import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
@@ -110,7 +111,7 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         Level level = panelBlockEntity.getLevel();
         BlockState state = panelBlockEntity.getBlockState();
 

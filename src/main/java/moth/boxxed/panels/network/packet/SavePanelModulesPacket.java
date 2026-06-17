@@ -3,6 +3,7 @@ package moth.boxxed.panels.network.packet;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetwork;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -33,7 +34,7 @@ public record SavePanelModulesPacket(Map<String, Module.ModuleInfo> modules, Blo
         ServerPlayer player = context.player();
         Level level = player.level();
         BlockEntity be = level.getBlockEntity(this.pos);
-        if (be instanceof PanelBlockEntity pbe) {
+        if (be instanceof AbstractPanelBlockEntity pbe) {
             pbe.clearModules();
             ModulesNetwork network = pbe.getOrCreate();
             for (Map.Entry<String, Module.ModuleInfo> entry : this.modules.entrySet()) {

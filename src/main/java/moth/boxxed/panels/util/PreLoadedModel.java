@@ -71,11 +71,11 @@ public class PreLoadedModel {
         long i = 42L;
 
         for (Direction direction : Direction.values()) {
-            randomsource.setSeed(42L);
+            randomsource.setSeed(i);
             renderQuadList(poseStack.last(), consumer, red, green, blue, model.getQuads(null, direction, randomsource, ModelData.EMPTY, renderType), packedLight, OverlayTexture.NO_OVERLAY);
         }
 
-        randomsource.setSeed(42L);
+        randomsource.setSeed(i);
         renderQuadList(poseStack.last(), consumer, red, green, blue, model.getQuads(null, null, randomsource, ModelData.EMPTY, renderType), packedLight, OverlayTexture.NO_OVERLAY);
     }
 

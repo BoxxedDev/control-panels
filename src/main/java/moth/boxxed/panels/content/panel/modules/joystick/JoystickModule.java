@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -81,7 +82,7 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         float angleX = Mth.map(this.renderStickX, -1, 1, -7.5f, 7.5f);
         float angleY = Mth.map(this.renderStickY, -1, 1, -7.5f, 7.5f);
         float triggerAngle = Mth.map(this.renderTriggered, 0, 1, 5f, 22.5f);

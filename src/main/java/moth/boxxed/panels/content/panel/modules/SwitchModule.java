@@ -3,6 +3,7 @@ package moth.boxxed.panels.content.panel.modules;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
@@ -56,7 +57,7 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PreLoadedModel model = this.switchState ? PanelPreloadedModels.SWITCH_ON : PanelPreloadedModels.SWITCH_OFF;
         model.render(poseStack, bufferSource, RenderType.solid(), packedLight);
     }

@@ -6,6 +6,7 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.ModuleType;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelKeybinds;
@@ -405,7 +406,7 @@ public class PanelScreen extends AbstractContainerScreen<PanelMenu> {
 
     @Override
     public void onClose() {
-        PanelBlockEntity be = PanelScreen.this.getMenu().holder;
+        AbstractPanelBlockEntity be = PanelScreen.this.getMenu().holder;
         Map<String, Module.ModuleInfo> moduleInfoMap = new HashMap<>();
         for (Map.Entry<String, Module> entry : PanelScreen.this.modulesToSave) {
             moduleInfoMap.put(

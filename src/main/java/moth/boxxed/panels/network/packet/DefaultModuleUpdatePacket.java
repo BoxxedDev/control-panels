@@ -2,6 +2,7 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -41,7 +42,7 @@ public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, List<In
     public void handle(ServerPayloadContext context) {
         Level level = context.player().level();
 
-        if (level.getBlockEntity(this.pos) instanceof PanelBlockEntity pbe) {
+        if (level.getBlockEntity(this.pos) instanceof AbstractPanelBlockEntity pbe) {
             if (pbe.getModule(this.moduleName) instanceof IExternalUpdatable updatable) {
                 updatable.setNum(this.values);
                 pbe.setChanged();

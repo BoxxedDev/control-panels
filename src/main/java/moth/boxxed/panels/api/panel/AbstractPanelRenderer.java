@@ -1,10 +1,11 @@
-package moth.boxxed.panels.content.panel;
+package moth.boxxed.panels.api.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.panel.AbstractPanelRenderer;
+import moth.boxxed.panels.content.panel.PanelBlock;
+import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.network.packet.SelectedModulePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -17,9 +18,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Map;
 
-public class PanelRenderer extends AbstractPanelRenderer<PanelBlockEntity> {
+public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> implements BlockEntityRenderer<T> {
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, float partialTick, PoseStack poseStack,  MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(T panelBlockEntity, float partialTick, PoseStack poseStack,  MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         LocalPlayer player = Minecraft.getInstance().player;
         boolean spectator = false;
         boolean guiHidden = Minecraft.getInstance().options.hideGui;

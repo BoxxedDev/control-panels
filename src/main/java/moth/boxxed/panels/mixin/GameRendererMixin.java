@@ -1,6 +1,7 @@
 package moth.boxxed.panels.mixin;
 
 import dev.ryanhcode.sable.companion.SableCompanion;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,7 @@ public class GameRendererMixin {
         Vec3 eyePos = SableCompanion.INSTANCE.getEyePositionInterpolated(player, partialTicks);
         HitResult normalHit = this.minecraft.hitResult;
         double minDist = normalHit != null && normalHit.getType() != HitResult.Type.MISS ? SableCompanion.INSTANCE.distanceSquaredWithSubLevels(player.level(), eyePos, normalHit.getLocation()) : Double.MAX_VALUE;
-        for (PanelBlockEntity pbe : PanelModulesHitHandler.getNear()) {
+        for (AbstractPanelBlockEntity pbe : PanelModulesHitHandler.getNear()) {
             if (pbe.isRemoved()) continue;
 
             Double hitResultDist = PanelModulesHitHandler.clipPanel(eyePos, player.getViewVector(partialTicks), pbe, partialTicks);

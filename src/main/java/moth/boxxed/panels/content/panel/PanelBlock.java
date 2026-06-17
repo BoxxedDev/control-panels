@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.panel;
 
+import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PanelBlock extends BaseEntityBlock implements Clearable {
+public class PanelBlock extends AbstractPanelBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
 
@@ -40,39 +41,6 @@ public class PanelBlock extends BaseEntityBlock implements Clearable {
 
     public PanelBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (this.getBlockEntity(level, pos) != null) {
-            if (player.isShiftKeyDown()) {
-                if (!level.isClientSide)
-                    this.openMenu(player, this.getBlockEntity(level, pos));
-                return InteractionResult.SUCCESS;
-            }
-            InteractionResult result = this.getBlockEntity(level, pos).onUse(state, level, pos, player, hitResult);
-            if (result != null)
-                return result;
-        }
-        return InteractionResult.PASS;
-    }
-
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (this.getBlockEntity(level, pos) != null)
-            if (player.isShiftKeyDown()) {
-                if (!level.isClientSide)
-                    this.openMenu(player, this.getBlockEntity(level, pos));
-                return ItemInteractionResult.SUCCESS;
-            }
-
-        if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (this.getBlockEntity(level, pos) != null) {
-            ItemInteractionResult result = this.getBlockEntity(level, pos).onItemUse(stack, state, level, pos, player, hitResult);
-            if (result != null)
-                return result;
-        }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -141,38 +109,6 @@ public class PanelBlock extends BaseEntityBlock implements Clearable {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new PanelBlockEntity(blockPos, blockState);
-    }
-
-    public PanelBlockEntity getBlockEntity(Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof PanelBlockEntity blockEntity)
-            return blockEntity;
-        return null;
-    }
-
-    private void openMenu(Player player, PanelBlockEntity be) {
-        ((ServerPlayer)player).openMenu(be, be::sendToMenu);
-    }
-
-    @Override
-    public @org.jetbrains.annotations.Nullable PushReaction getPistonPushReaction(BlockState state) {
-        return PushReaction.IGNORE;
-    }
-
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof PanelBlockEntity pbe) {
-                if (level instanceof ServerLevel) {
-                    Containers.dropContents(level, pos, pbe.container);
-                }
-            }
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
-
-    @Override
-    public void clearContent() {
-
     }
 
     public enum Shape implements StringRepresentable {

@@ -1,6 +1,7 @@
 package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -28,7 +29,7 @@ public record SelectedModulePacket(String string, BlockPos pos) implements Custo
     public void handle(ServerPayloadContext context) {
         Level level = context.player().level();
         BlockEntity be = level.getBlockEntity(this.pos);
-        if (!(be instanceof PanelBlockEntity pbe)) return;
+        if (!(be instanceof AbstractPanelBlockEntity pbe)) return;
         pbe.setSelectedModule(context.player(), this.string);
     }
 }

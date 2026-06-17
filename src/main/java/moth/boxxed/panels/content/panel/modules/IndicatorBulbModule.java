@@ -3,6 +3,7 @@ package moth.boxxed.panels.content.panel.modules;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
@@ -41,7 +42,7 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PreLoadedModel bulbModel = this.lit ? PanelPreloadedModels.INDICATOR_BULB_ON : PanelPreloadedModels.INDICATOR_BULB_OFF;
         int bulbLight = this.lit ? LightTexture.FULL_BRIGHT : packedLight;
         RenderType bulbRenderType = this.lit ? PanelRendertypes.TRANSLUCENT_GLOW : RenderType.translucent();

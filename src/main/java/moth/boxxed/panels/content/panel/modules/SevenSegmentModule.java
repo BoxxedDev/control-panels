@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IOutput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
@@ -51,7 +52,7 @@ public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObj
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(0, -1/32f, 0);
         PanelPreloadedModels.SEVEN_SEGMENT.render(poseStack, bufferSource, RenderType.solid(), packedLight);

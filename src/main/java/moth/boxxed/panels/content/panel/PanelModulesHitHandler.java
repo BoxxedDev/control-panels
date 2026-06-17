@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -25,15 +26,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class PanelModulesHitHandler {
-    private static final Set<PanelBlockEntity> panels = new HashSet<>();
+    private static final Set<AbstractPanelBlockEntity> panels = new HashSet<>();
 
-    public static void tick(PanelBlockEntity pbe) {
+    public static void tick(AbstractPanelBlockEntity pbe) {
         if (invalid(pbe)) return;
 
         panels.add(pbe);
     }
 
-    private static boolean invalid(PanelBlockEntity pbe) {
+    private static boolean invalid(AbstractPanelBlockEntity pbe) {
         if (pbe.isRemoved())
             return true;
 
@@ -52,11 +53,11 @@ public class PanelModulesHitHandler {
         panels.removeIf(PanelModulesHitHandler::invalid);
     }
 
-    public static Set<PanelBlockEntity> getNear() {
+    public static Set<AbstractPanelBlockEntity> getNear() {
         return panels;
     }
 
-    public static Double clipPanel(Vec3 eyePosMoj, Vec3 viewVectorMoj, PanelBlockEntity pbe, float partialTick) {
+    public static Double clipPanel(Vec3 eyePosMoj, Vec3 viewVectorMoj, AbstractPanelBlockEntity pbe, float partialTick) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return null;
         BlockPos pos = pbe.getBlockPos();

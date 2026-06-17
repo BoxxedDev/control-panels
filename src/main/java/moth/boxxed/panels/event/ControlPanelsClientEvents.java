@@ -7,6 +7,7 @@ import moth.boxxed.panels.api.module.ModuleTooltipManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
 import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
@@ -46,7 +47,7 @@ public class ControlPanelsClientEvents {
             BlockHitResult blockHitResult = (BlockHitResult) Minecraft.getInstance().hitResult;
             Level level = Minecraft.getInstance().level;
             Player player = Minecraft.getInstance().player;
-            if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof PanelBlockEntity pbe) {
+            if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof AbstractPanelBlockEntity pbe) {
                 Module module = pbe.getModule(pbe.getSelectedModules(player));
                 if (!pbe.getSelectedModules(player).isEmpty() && module != null) {
                     ModuleTooltipManager.renderSelected(

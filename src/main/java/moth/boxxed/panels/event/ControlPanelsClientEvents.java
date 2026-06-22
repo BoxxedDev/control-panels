@@ -9,7 +9,9 @@ import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
+import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.config.ClientConfig;
+import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import moth.boxxed.panels.index.PanelShaders;
@@ -37,7 +39,12 @@ public class ControlPanelsClientEvents {
         for (ModuleHoldInteraction<?> interaction : ModuleHoldInteractionManager.INTERACTIONS) {
             if (interaction.isActive()) {
                 interaction.renderGui(event.getGuiGraphics(), event.getPartialTick().getRealtimeDeltaTicks());
+                return;
             }
+        }
+        if (PaintWheel.isActive()) {
+            PaintWheel.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
+            return;
         }
         boolean active = false;
         if (ClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
@@ -104,5 +111,10 @@ public class ControlPanelsClientEvents {
     @SubscribeEvent
     public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(PanelSkinsClientManager.ReloadListener.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public static void modifyBakingResult(ModelEvent.ModifyBakingResult event) {
+        PanelSkinModelSwapper.INSTANCE.modifyResult(event);
     }
 }

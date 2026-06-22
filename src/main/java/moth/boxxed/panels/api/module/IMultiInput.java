@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
 public interface IMultiInput {
     /**
      *
-     * @param consumer Accepts a string and an analog result:<br> () -> this.someinteger
+     * @param consumer Accepts a name and an analog result:<br> () -> this.someinteger
      */
     void getValues(BiConsumer<String, AnalogResult> consumer);
 

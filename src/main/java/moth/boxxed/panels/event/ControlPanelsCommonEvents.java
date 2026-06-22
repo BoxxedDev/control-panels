@@ -10,6 +10,7 @@ import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelMenuTypes;
+import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.*;
 import net.minecraft.client.KeyMapping;
@@ -51,7 +52,7 @@ public class ControlPanelsCommonEvents {
                 DefaultModuleUpdatePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleDefaultUpdate
         );
-        registrar.playBidirectional(
+        registrar.playToServer(
                 ConfigureStrippedCablePacket.TYPE,
                 ConfigureStrippedCablePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleStrippedConfig
@@ -65,6 +66,16 @@ public class ControlPanelsCommonEvents {
                 SelectedModulePacket.TYPE,
                 SelectedModulePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSelectedModule
+        );
+        registrar.playToClient(
+                OpenPaintWheelPacket.TYPE,
+                OpenPaintWheelPacket.STREAM_CODEC,
+                ClientPayloadHandler::handleOpenPaintWheel
+        );
+        registrar.playToServer(
+                SetPanelSkinPacket.TYPE,
+                SetPanelSkinPacket.STREAM_CODEC,
+                ServerPayloadHandler::handleSetPanelSkin
         );
         //Compat packet
         if (ModList.get().isLoaded("create"))

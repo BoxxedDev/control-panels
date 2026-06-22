@@ -2,6 +2,7 @@ package moth.boxxed.panels.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
+import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +20,12 @@ public class MouseHandlerMixin {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
             if (ModuleHoldInteractionManager.onMouseMove(j, k*l)) {
                 ci.cancel();
+                return;
+            }
+
+            if (PaintWheel.isActive()) {
+                PaintWheel.moveMouse(k*l, j);
+                ci.cancel();
             }
         }
     }
@@ -29,6 +36,11 @@ public class MouseHandlerMixin {
     private void panels$onPress(long windowPointer, int button, int action, int modifiers, CallbackInfo ci) {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
             if (ModuleHoldInteractionManager.beforeMouseInput(button, action)) {
+                ci.cancel();
+                return;
+            }
+
+            if (PaintWheel.beforeMouseInput(button, action)) {
                 ci.cancel();
             }
         }

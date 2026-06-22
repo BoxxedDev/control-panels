@@ -1,6 +1,8 @@
 {
   "panel": "default",
   "skins": [
-    "dashpanels:default"
+    "dashpanels:default",
+    "dashpanels:kipti",
+    "dashpanels:construction"
   ]
 }

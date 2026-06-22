@@ -2,6 +2,7 @@ package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.cable.stripper.CableStripperItem;
+import moth.boxxed.panels.content.paintbrush.PaintbrushItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +16,8 @@ public class PanelItems {
 
     public static final DeferredItem<CableStripperItem> CABLE_STRIPPER = ITEMS.register("cable_stripper",
             () -> new CableStripperItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<PaintbrushItem> PAINT_BRUSH = ITEMS.register("paint_brush",
+            () -> new PaintbrushItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> SWITCH_MODULE = moduleItem("switch");
     public static final DeferredItem<Item> KNOB_MODULE = moduleItem("knob");

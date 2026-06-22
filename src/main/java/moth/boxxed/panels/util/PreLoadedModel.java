@@ -40,21 +40,7 @@ public class PreLoadedModel {
 
     //TODO: fix flat looking lighting
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return;
-
-        ModelBlockRenderer renderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
-        renderer.renderModel(
-                poseStack.last(),
-                bufferSource.getBuffer(renderType),
-                null,
-                this.model,
-                1, 1, 1,
-                packedLight,
-                OverlayTexture.NO_OVERLAY,
-                ModelData.builder().build(),
-                renderType
-        );
+        this.render(poseStack, bufferSource, renderType, packedLight, 0xFFFFFF);
     }
 
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight, int colorPacked) {

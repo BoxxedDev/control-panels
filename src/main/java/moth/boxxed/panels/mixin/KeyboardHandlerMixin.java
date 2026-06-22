@@ -1,6 +1,7 @@
 package moth.boxxed.panels.mixin;
 
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
+import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Final;
@@ -22,7 +23,7 @@ public class KeyboardHandlerMixin {
     )
     public void panels$keyPress(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
         if (this.minecraft.player != null && !this.minecraft.player.isSpectator()) {
-            if (ModuleHoldInteractionManager.beforeKeyInput(key, scanCode, action, modifiers)) {
+            if (ModuleHoldInteractionManager.beforeKeyInput(key, scanCode, action, modifiers) || PaintWheel.isActive()) {
                 ci.cancel();
             }
         }

@@ -35,6 +35,7 @@ public class PanelLangProvider extends LanguageProvider {
         addBlock(PanelBlocks.CABLE, "Control Cable");
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
+        addItem(PanelItems.PAINT_BRUSH, "Paint Brush");
         if (ModList.get().isLoaded("create"))
             addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
 

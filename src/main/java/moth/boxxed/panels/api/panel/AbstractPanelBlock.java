@@ -1,5 +1,6 @@
 package moth.boxxed.panels.api.panel;
 
+import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -30,6 +32,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractPanelBlock extends BaseEntityBlock {
+    public static final EnumProperty<PanelBlock.Shape> SHAPE = EnumProperty.create("shape", PanelBlock.Shape.class);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
     public AbstractPanelBlock(Properties properties) {
         super(properties);
     }
@@ -92,5 +97,28 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(SHAPE);
+        builder.add(FACING);
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return super.getRenderShape(state);
+    }
+
+    public enum Shape implements StringRepresentable {
+        SINGLE,
+        LEFT,
+        CENTER,
+        RIGHT;
+
+        @Override
+        public String getSerializedName() {
+            return this.toString().toLowerCase();
+        }
     }
 }

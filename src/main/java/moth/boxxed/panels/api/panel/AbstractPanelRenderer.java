@@ -1,6 +1,7 @@
 package moth.boxxed.panels.api.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
@@ -10,17 +11,36 @@ import moth.boxxed.panels.network.packet.SelectedModulePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> implements BlockEntityRenderer<T> {
     @Override
     public void render(T panelBlockEntity, float partialTick, PoseStack poseStack,  MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        ClientSkin clientSkin = PanelSkinsClientManager.MAP.getOrDefault(panelBlockEntity.skin, ClientSkin.DEFAULT);
+//        BakedModel model = clientSkin.getBlockModel(panelBlockEntity.getBlockState().getValue(AbstractPanelBlock.SHAPE));
+        Direction direction = panelBlockEntity.getBlockState().getValue(AbstractPanelBlock.FACING);
+
+//        poseStack.pushPose();
+//        poseStack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 180 : 0)), 0.5f, 0, 0.5f);
+//        renderModel(panelBlockEntity, poseStack, bufferSource.getBuffer(RenderType.cutout()), packedLight, packedOverlay, model);
+//        poseStack.popPose();
+
         LocalPlayer player = Minecraft.getInstance().player;
         boolean spectator = false;
         boolean guiHidden = Minecraft.getInstance().options.hideGui;
@@ -30,9 +50,7 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
 
         poseStack.pushPose();
         poseStack.translate(0, 0.75f, 0);
-        Direction direction = panelBlockEntity.getBlockState().getValue(PanelBlock.FACING);
         poseStack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
-
         Module hitModule = null;
         double hitDistance = Double.MAX_EXPONENT;
         if (hit) {
@@ -84,5 +102,13 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
             poseStack.popPose();
         }
         poseStack.popPose();
+    }
+
+    private static final RandomSource RANDOM = RandomSource.create();
+    protected static void renderModel(AbstractPanelBlockEntity be, PoseStack poseStack, VertexConsumer builder, int packedLight, int packedOverlay, BakedModel bakedModel) {
+        List<BakedQuad> quads = bakedModel.getQuads(be.getBlockState(), null, RANDOM, null, null);
+        for (BakedQuad quad : quads) {
+            builder.putBulkData(poseStack.last(), quad, 1.0f, 1.0f, 1.0f, 1.0f, packedLight, packedOverlay);
+        }
     }
 }

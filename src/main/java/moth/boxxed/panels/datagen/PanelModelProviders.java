@@ -18,6 +18,7 @@ public class PanelModelProviders {
             withExistingParent("control_panel", Dashpanels.path("block/control_panel/single"));
             withExistingParent("panel_link", Dashpanels.path("block/control_link"));
             basicItem(PanelItems.CABLE_STRIPPER.get());
+            basicItem(PanelItems.PAINT_BRUSH.get());
         }
     }
 

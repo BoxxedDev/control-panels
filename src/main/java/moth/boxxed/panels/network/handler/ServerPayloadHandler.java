@@ -28,4 +28,8 @@ public class ServerPayloadHandler {
     public static void handleSelectedModule(SelectedModulePacket packet, IPayloadContext context) {
         packet.handle((ServerPayloadContext) context);
     }
+
+    public static void handleSetPanelSkin(SetPanelSkinPacket packet, IPayloadContext context) {
+        packet.handle((ServerPayloadContext) context);
+    }
 }

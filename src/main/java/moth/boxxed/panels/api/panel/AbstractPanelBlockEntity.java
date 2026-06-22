@@ -1,5 +1,6 @@
 package moth.boxxed.panels.api.panel;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
@@ -31,6 +32,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelDataManager;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -39,8 +43,12 @@ import java.util.Objects;
 import java.util.Set;
 
 public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember implements MenuProvider, Clearable {
+    public static final ModelProperty<ResourceLocation> SKIN_PROPERTY = new ModelProperty<>();
+
     public ModuleMap modules;
     public SimpleContainer container;
+    public ResourceLocation skin;
+    public PanelType panelType;
 
     private Map<Player, String> selectedModules = new HashMap<>();
 
@@ -49,6 +57,9 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         this.modules = new ModuleMap();
         //12*16 is 192 so like, I think that would be the max size.
         this.container = new SimpleContainer(192);
+        this.skin = panelType.defaultSkin;
+        this.panelType = panelType;
+
     }
 
     public boolean tryAddModule(String string, moth.boxxed.panels.api.module.Module module) {
@@ -106,6 +117,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             }
         }
         tag.put("container", this.container.createTag(registries));
+        tag.putString("skin", this.skin.toString());
     }
 
     @Override
@@ -126,6 +138,9 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         for (Tag itemTag : items) {
             this.container.addItem(ItemStack.parse(registries, itemTag).orElse(ItemStack.EMPTY));
         }
+        this.skin = ResourceLocation.parse(tag.getString("skin"));
+        this.requestModelDataUpdate();
+        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
     }
 
     public void loadClient(CompoundTag tag, HolderLookup.Provider registries) {
@@ -197,5 +212,21 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     @Override
     public void clearContent() {
         this.container.clearContent();
+    }
+
+    public void setSkin(ResourceLocation skin) {
+        this.skin = skin;
+        this.setChanged();
+        this.blockChanged();
+        Dashpanels.LOGGER.debug("Setting skin on the client : {}", this.getLevel().isClientSide);
+    }
+
+    @Override
+    public ModelData getModelData() {
+        if (this.skin.equals(this.panelType.defaultSkin))
+            return super.getModelData();
+        return ModelData.builder()
+                .with(SKIN_PROPERTY, this.skin)
+                .build();
     }
 }

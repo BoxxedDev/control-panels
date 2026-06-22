@@ -3,6 +3,7 @@ package moth.boxxed.panels.mixin;
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
+import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -25,7 +26,14 @@ public class GuiMixin {
                         RenderSystem.defaultBlendFunc();
                         RenderSystem.disableBlend();
                         ci.cancel();
+                        return;
                     }
+            }
+
+            if (PaintWheel.isActive()) {
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.disableBlend();
+                ci.cancel();
             }
         }
     }

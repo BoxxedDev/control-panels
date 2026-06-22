@@ -1,0 +1,6 @@
+{
+  "single": "dashpanels:block/construction_panel/single",
+  "left": "dashpanels:block/construction_panel/left",
+  "center": "dashpanels:block/construction_panel/center",
+  "right": "dashpanels:block/construction_panel/right"
+}

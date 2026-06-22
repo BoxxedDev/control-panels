@@ -30,9 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PanelBlock extends AbstractPanelBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
-
     private static final VoxelShape MAIN_SHAPE = Block.box(0,0,0,16,12,16);
     private static final VoxelShape TOP_N_SHAPE = Block.box(0, 12, 12, 16, 16, 16);
     private static final VoxelShape TOP_S_SHAPE = Block.box(0, 12, 0, 16, 16, 4);
@@ -41,12 +38,6 @@ public class PanelBlock extends AbstractPanelBlock {
 
     public PanelBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-        builder.add(SHAPE);
     }
 
     @Override
@@ -111,15 +102,8 @@ public class PanelBlock extends AbstractPanelBlock {
         return new PanelBlockEntity(blockPos, blockState);
     }
 
-    public enum Shape implements StringRepresentable {
-        SINGLE,
-        LEFT,
-        CENTER,
-        RIGHT;
-
-        @Override
-        public String getSerializedName() {
-            return this.toString().toLowerCase();
-        }
+    @Override
+    protected void spawnDestroyParticles(Level level, Player player, BlockPos pos, BlockState state) {
+        super.spawnDestroyParticles(level, player, pos, state);
     }
 }

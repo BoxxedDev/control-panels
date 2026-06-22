@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import moth.boxxed.panels.Dashpanels;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;

@@ -31,6 +31,7 @@ import java.util.function.BiConsumer;
 
 //TODO: Maybe make it so you can use this while hovering it with a scroll wheel
 public class KnobModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
+    private float lastRenderAngle = 0;
     private float renderAngle = 0;
     private int angle = 0;
 
@@ -50,7 +51,8 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
 
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        this.renderAngle = Math.lerp(this.renderAngle, (float) this.angle, 0.75f);
+        this.lastRenderAngle = this.renderAngle;
+        this.renderAngle = Math.lerp(this.renderAngle, this.angle, 0.75f);
     }
 
     @Override
@@ -62,6 +64,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("num", this.angle);
         tag.putFloat("render_angle", this.renderAngle);
+        tag.putFloat("last_render_angle", this.lastRenderAngle);
 
         return super.saveData(tag, registries);
     }
@@ -70,6 +73,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.angle = tag.getInt("num");
         this.renderAngle = tag.getFloat("render_angle");
+        this.lastRenderAngle = tag.getFloat("last_render_angle");
 
         return super.loadData(tag, registries);
     }
@@ -77,7 +81,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     @Override
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
-        poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
+        poseStack.rotateAround(Axis.YP.rotationDegrees(Mth.lerp(partialTick, this.lastRenderAngle, this.renderAngle)-45), 1/16f, 0, 1/16f);
         PanelPreloadedModels.KNOB.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
@@ -85,7 +89,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     @Override
     public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int rgb) {
         poseStack.pushPose();
-        poseStack.rotateAround(Axis.YP.rotationDegrees(this.renderAngle-45), 1/16f, 0, 1/16f);
+        poseStack.rotateAround(Axis.YP.rotationDegrees(Mth.lerp(partialTick, this.lastRenderAngle, this.renderAngle)-45), 1/16f, 0, 1/16f);
         super.renderOutline(poseStack, bufferSource, partialTick, rgb);
         poseStack.popPose();
     }
@@ -114,7 +118,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
             if (args.count() != 1)
                 return false;
             if (args.get(0) instanceof Number number) {
-                this.angle = Math.clamp(0, 360, number.intValue());
+                this.angle = Math.clamp(number.intValue(), 0, 360);
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }

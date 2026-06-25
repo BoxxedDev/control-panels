@@ -103,7 +103,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
         Module module = map.get(be.boundModule);
         if (module == null) return 0;
         if (map.get(be.boundModule) instanceof IInput input) {
-            return input.getAnalog();
+            return Math.clamp(input.getAnalog(), 0, 15);
         }
         if (map.get(be.boundModule) instanceof IMultiInput input) {
             Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
@@ -111,7 +111,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
             String extension = be.boundModule.substring(module.getName().length()+3);
             IMultiInput.AnalogResult result = resultMap.get(extension);
             if (result != null) {
-                return resultMap.get(extension).getAnalog();
+                return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
             }
         }
         return 0;
@@ -163,12 +163,6 @@ public class StrippedCableBlock extends BaseEntityBlock {
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        level.updateNeighborsAt(pos, this);
-        super.tick(state, level, pos, random);
     }
 
     public StrippedCableBlockEntity getBlockEntity(BlockGetter level, BlockPos pos) {

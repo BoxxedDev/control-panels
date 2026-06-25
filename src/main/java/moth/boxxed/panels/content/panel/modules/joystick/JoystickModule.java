@@ -7,6 +7,7 @@ import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -31,6 +32,10 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     public float stickY = 0;
     public boolean triggered = false;
 
+    private float lastRenderTriggered = 0;
+    private float lastRenderStickX = 0;
+    private float lastRenderStickY = 0;
+
     private float renderTriggered = 0;
     private float renderStickX = 0;
     private float renderStickY = 0;
@@ -48,6 +53,10 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
         tag.putFloat("render_x", renderStickX);
         tag.putFloat("render_y", renderStickY);
         tag.putFloat("render_triggered", renderTriggered);
+
+        tag.putFloat("last_render_x", lastRenderStickX);
+        tag.putFloat("last_render_y", lastRenderStickY);
+        tag.putFloat("last_render_triggered", lastRenderTriggered);
         return super.saveData(tag, registries);
     }
 
@@ -60,6 +69,10 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
         this.renderStickX = tag.getFloat("render_x");
         this.renderStickY = tag.getFloat("render_y");
         this.renderTriggered = tag.getFloat("render_triggered");
+
+        this.lastRenderStickX = tag.getFloat("last_render_x");
+        this.lastRenderStickY = tag.getFloat("last_render_y");
+        this.lastRenderTriggered = tag.getFloat("last_render_triggered");
         return super.loadData(tag, registries);
     }
 
@@ -75,6 +88,9 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
 
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+        this.lastRenderStickX = this.renderStickX;
+        this.lastRenderStickY = this.renderStickY;
+        this.lastRenderTriggered = this.renderTriggered;
         this.renderStickX = org.joml.Math.lerp(this.renderStickX, this.stickX, 0.5f);
         this.renderStickY = org.joml.Math.lerp(this.renderStickY, this.stickY, 0.5f);
         this.renderTriggered = org.joml.Math.lerp(this.renderTriggered, this.triggered?0:1, 0.5f);
@@ -82,9 +98,9 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
 
     @Override
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        float angleX = Mth.map(this.renderStickX, -1, 1, -7.5f, 7.5f);
-        float angleY = Mth.map(this.renderStickY, -1, 1, -7.5f, 7.5f);
-        float triggerAngle = Mth.map(this.renderTriggered, 0, 1, 5f, 22.5f);
+        float angleX = Mth.map(Mth.lerp(partialTick, this.lastRenderStickX, this.renderStickX), -1, 1, -7.5f, 7.5f);
+        float angleY = Mth.map(Mth.lerp(partialTick, this.lastRenderStickY, this.renderStickY), -1, 1, -7.5f, 7.5f);
+        float triggerAngle = Mth.map(Mth.lerp(partialTick, this.lastRenderTriggered, this.renderTriggered), 0, 1, 5f, 22.5f);
 
         poseStack.pushPose();
         PanelPreloadedModels.JOYSTICK_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);

@@ -2,9 +2,9 @@ package moth.boxxed.panels.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -12,13 +12,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//Flat lighting fix by Exaskye on github (thank you, you are a saint)
 public class PreLoadedModel {
     public static final Map<ResourceLocation, PreLoadedModel> ALL_MODELS = new HashMap<>();
 
@@ -37,30 +37,38 @@ public class PreLoadedModel {
         return this.model;
     }
 
-    //TODO: fix flat looking lighting
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
-        this.render(poseStack, bufferSource, renderType, packedLight, 0xFFFFFF);
+        this.render(poseStack, bufferSource, renderType, packedLight, -1);
     }
 
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight, int colorPacked) {
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return;
-
         float red = ((colorPacked >> 16) & 0xFF)/255f;
         float green = ((colorPacked >> 8) & 0xFF)/255f;
         float blue = (colorPacked & 0xFF)/255f;
 
+        // remap chunk bakery render types to entity rendering render types
+        // if this is not done, all normals are ignored and lighting looks flat
+        if (renderType == RenderType.SOLID) {
+            renderType = Sheets.solidBlockSheet();
+        } else if (renderType == RenderType.TRANSLUCENT) {
+            renderType = Sheets.translucentCullBlockSheet();
+        } else if (renderType == RenderType.CUTOUT) {
+            renderType = Sheets.cutoutBlockSheet();
+        } else if (renderType == RenderType.CUTOUT_MIPPED) {
+            renderType = Sheets.cutoutBlockSheet();
+        }
+
         VertexConsumer consumer = bufferSource.getBuffer(renderType);
 
         RandomSource randomsource = RandomSource.create();
-        long i = 42L;
+        long fixedSeed = 42L;
 
         for (Direction direction : Direction.values()) {
-            randomsource.setSeed(i);
+            randomsource.setSeed(fixedSeed);
             renderQuadList(poseStack.last(), consumer, red, green, blue, model.getQuads(null, direction, randomsource, ModelData.EMPTY, renderType), packedLight, OverlayTexture.NO_OVERLAY);
         }
 
-        randomsource.setSeed(i);
+        randomsource.setSeed(fixedSeed);
         renderQuadList(poseStack.last(), consumer, red, green, blue, model.getQuads(null, null, randomsource, ModelData.EMPTY, renderType), packedLight, OverlayTexture.NO_OVERLAY);
     }
 
@@ -74,11 +82,11 @@ public class PreLoadedModel {
             int packedLight,
             int packedOverlay
     ) {
-        float f = Mth.clamp(red, 0.0F, 1.0F);
-        float f1 = Mth.clamp(green, 0.0F, 1.0F);
-        float f2 = Mth.clamp(blue, 0.0F, 1.0F);
+        float r = Mth.clamp(red, 0.0F, 1.0F);
+        float g = Mth.clamp(green, 0.0F, 1.0F);
+        float b = Mth.clamp(blue, 0.0F, 1.0F);
         for (BakedQuad bakedquad : quads) {
-            consumer.putBulkData(pose, bakedquad, f, f1, f2, 1.0F, packedLight, packedOverlay);
+            consumer.putBulkData(pose, bakedquad, r, g, b, 1.0F, packedLight, packedOverlay);
         }
     }
 }

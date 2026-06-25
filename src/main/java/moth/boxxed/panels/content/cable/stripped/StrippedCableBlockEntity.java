@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 public class StrippedCableBlockEntity extends ModulesNetworkMember implements MenuProvider {
     public String boundModule = "";
+    private int lastSignal = -1;
 
     public StrippedCableBlockEntity(BlockPos pos, BlockState blockState) {
         super(PanelBlockEntities.STRIPPED_CABLE.get(), pos, blockState);
@@ -85,7 +86,11 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
 
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        level.updateNeighborsAt(blockPos, blockState.getBlock());
+        int signal = blockState.getSignal(level, blockPos, Direction.UP);
+        if (signal != lastSignal) {
+            lastSignal = signal;
+            level.updateNeighborsAt(blockPos, blockState.getBlock());
+        }
         super.tick(level, blockPos, blockState);
     }
 }

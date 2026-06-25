@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//Flat lighting fix by Exaskye (thank you, you are a saint)
 public class PreLoadedModel {
     public static final Map<ResourceLocation, PreLoadedModel> ALL_MODELS = new HashMap<>();
 

@@ -24,7 +24,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class PanelCreateRegistries implements PanelCompat {
-    private static final DeferredRegister<DisplaySource> DISPLAY_SOURCES = DeferredRegister.create(CreateRegistries.DISPLAY_SOURCE, Dashpanels.MOD_ID);
+    private static DeferredRegister<DisplaySource> DISPLAY_SOURCES;
 
     public static DeferredBlock<PanelLinkBlock> PANEL_LINK;
     public static Supplier<BlockEntityType<PanelLinkBlockEntity>> PANEL_LINK_BE;
@@ -33,6 +33,8 @@ public class PanelCreateRegistries implements PanelCompat {
 
     @Override
     public void init() {
+        DISPLAY_SOURCES = DeferredRegister.create(CreateRegistries.DISPLAY_SOURCE, Dashpanels.MOD_ID);
+
         PANEL_LINK = PanelBlocks.BLOCKS.register(
                         "panel_link",
                         () -> new PanelLinkBlock(

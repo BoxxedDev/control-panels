@@ -7,7 +7,11 @@ public class ClientConfig {
 
     public static final ModConfigSpec.BooleanValue SHOW_MODULE_TOOLTIPS = BUILDER
             .comment("Whether to show the hovering tooltips on modules or not")
-            .define("showModuleTooltips", true);
+            .define("show_module_tooltips", true);
+
+    public static final ModConfigSpec.BooleanValue CLICK_FOR_MODULE_HOLD = BUILDER
+            .comment("Click to hold a module instead of holding the mouse button")
+            .define("click_for_module_hold", false);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

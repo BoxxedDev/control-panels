@@ -8,7 +8,6 @@ import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.network.packet.SavePanelModulesPacket;
 import moth.boxxed.panels.network.packet.SetPlayerSlotPacket;

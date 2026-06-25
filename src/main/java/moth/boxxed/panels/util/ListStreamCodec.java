@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record ListStreamCodec<C>(StreamCodec<ByteBuf, C> codec) implements StreamCodec<FriendlyByteBuf, List<C>> {

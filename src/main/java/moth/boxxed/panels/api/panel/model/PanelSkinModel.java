@@ -2,7 +2,6 @@ package moth.boxxed.panels.api.panel.model;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.ClientSkin;
@@ -33,7 +32,6 @@ public class PanelSkinModel extends BakedModelWrapper<BakedModel> {
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType renderType) {
         List<BakedQuad> base = super.getQuads(state, side, rand, extraData, renderType);
 
-        Dashpanels.LOGGER.debug("Getting quads");
         if (!extraData.has(AbstractPanelBlockEntity.SKIN_PROPERTY))
             return base;
 

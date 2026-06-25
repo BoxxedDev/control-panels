@@ -3,7 +3,6 @@ package moth.boxxed.panels.content.panel.modules;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import net.minecraft.client.renderer.MultiBufferSource;

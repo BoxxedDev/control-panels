@@ -2,7 +2,6 @@ package moth.boxxed.panels.mixin;
 
 import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

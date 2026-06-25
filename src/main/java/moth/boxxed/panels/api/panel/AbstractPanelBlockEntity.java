@@ -5,15 +5,11 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.cable.CableBlock;
-import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
-import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -28,12 +24,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.client.model.data.ModelDataManager;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,16 +44,14 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public ResourceLocation skin;
     public PanelType panelType;
 
-    private Map<Player, String> selectedModules = new HashMap<>();
+    private final Map<Player, String> selectedModules = new HashMap<>();
 
     public AbstractPanelBlockEntity(PanelType panelType, BlockEntityType<? extends AbstractPanelBlockEntity> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
         this.modules = new ModuleMap();
         //12*16 is 192 so like, I think that would be the max size.
         this.container = new SimpleContainer(192);
-        this.skin = panelType.defaultSkin;
         this.panelType = panelType;
-
     }
 
     public boolean tryAddModule(String string, moth.boxxed.panels.api.module.Module module) {
@@ -117,7 +109,11 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             }
         }
         tag.put("container", this.container.createTag(registries));
-        tag.putString("skin", this.skin.toString());
+        if (this.skin != null) {
+            tag.putString("skin", this.skin.toString());
+        } else {
+            tag.putString("skin", this.panelType.defaultSkin.toString());
+        }
     }
 
     @Override
@@ -140,7 +136,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         }
         this.skin = ResourceLocation.parse(tag.getString("skin"));
         this.requestModelDataUpdate();
-        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
+        if (this.level != null)
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
     }
 
     public void loadClient(CompoundTag tag, HolderLookup.Provider registries) {
@@ -223,6 +220,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     @Override
     public ModelData getModelData() {
+        if (this.skin == null)
+            return super.getModelData();
         if (this.skin.equals(this.panelType.defaultSkin))
             return super.getModelData();
         return ModelData.builder()

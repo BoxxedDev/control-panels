@@ -3,12 +3,14 @@ package moth.boxxed.panels.datagen;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
+import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
@@ -56,12 +58,21 @@ public class PanelLangProvider extends LanguageProvider {
         add("creativetab.dashpanels.dashpanels", "Panels");
         add("creativetab.dashpanels.modules", "Modules");
 
-        add("dashpanels.configuration.showModuleTooltips", "Show Module Tooltips");
+        addConfig(ClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
+        addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
 
         addCustom("key", "delete_module", "Delete Module");
         addCustom("key", "select_module", "Select Module");
         addCustom("key", "move_module", "Move Module");
         add("key.categories.dashpanels", "Dashpanels");
+    }
+
+    private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {
+        String nameKey = Dashpanels.MOD_ID + ".configuration";
+        for (String path : configValue.getPath()) {
+            nameKey = nameKey.concat("." + path);
+        }
+        add(nameKey, string);
     }
 
     private void addWidget(String key, String string) {

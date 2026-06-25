@@ -2,7 +2,6 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
-import moth.boxxed.panels.datagen.PanelModelProviders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

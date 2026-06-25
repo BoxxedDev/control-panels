@@ -4,9 +4,10 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
-import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
-import moth.boxxed.panels.api.panel.*;
+import moth.boxxed.panels.api.panel.ClientSkin;
+import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
+import moth.boxxed.panels.api.panel.PanelType;
+import moth.boxxed.panels.api.panel.ServerSkin;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.network.packet.SetPanelSkinPacket;
 import net.minecraft.client.Minecraft;
@@ -15,21 +16,16 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class PaintWheel {
     private static boolean active = false;

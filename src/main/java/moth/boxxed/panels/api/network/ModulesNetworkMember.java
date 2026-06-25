@@ -13,7 +13,6 @@ import java.util.UUID;
 
 public abstract class ModulesNetworkMember extends BaseBlockEntity {
     public UUID network;
-    public ModuleMap compiledMap;
 
     public ModulesNetworkMember(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -24,10 +23,6 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
         super.saveAdditional(tag, registries);
         if (hasNetwork())
             tag.putString("network", this.network.toString());
-//        if (this.compiledMap != null) {
-//            CompoundTag subTag = this.compiledMap.asTag();
-//            tag.put("collective_modules", subTag);
-//        }
     }
 
     @Override
@@ -35,8 +30,6 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
         super.loadAdditional(tag, registries);
         if (tag.contains("network"))
             this.network = UUID.fromString(tag.getString("network"));
-//        if (tag.contains("collective_modules"))
-//            this.compiledMap = ModuleMap.fromTag(tag.getCompound("collective_modules"));
     }
 
     public ModulesNetwork getOrCreate() {
@@ -51,7 +44,6 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
 
     public void networkUpdate(ModulesNetwork modulesNetwork) {
         modulesNetwork.compileModules();
-        this.compiledMap = modulesNetwork.getCompiledModules();
         setChanged();
         blockChanged();
     }

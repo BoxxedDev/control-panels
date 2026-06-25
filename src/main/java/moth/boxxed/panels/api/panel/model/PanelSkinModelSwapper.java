@@ -1,6 +1,5 @@
 package moth.boxxed.panels.api.panel.model;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.client.renderer.block.BlockModelShaper;

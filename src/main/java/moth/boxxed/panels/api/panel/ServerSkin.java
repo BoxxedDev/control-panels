@@ -3,14 +3,15 @@ package moth.boxxed.panels.api.panel;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.ListCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.util.ListStreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public record ServerSkin(PanelType type, Set<ResourceLocation> skins) {
     public static final Codec<ServerSkin> CODEC = RecordCodecBuilder.create(

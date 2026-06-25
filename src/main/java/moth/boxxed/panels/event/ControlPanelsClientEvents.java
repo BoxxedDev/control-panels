@@ -12,7 +12,6 @@ import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
 import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.content.paintbrush.PaintWheel;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import moth.boxxed.panels.index.PanelShaders;
 import net.minecraft.ChatFormatting;

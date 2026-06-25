@@ -1,6 +1,7 @@
 package moth.boxxed.panels.api.module.interaction;
 
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -76,9 +77,13 @@ public abstract class ModuleHoldInteraction<T extends Module> {
     }
 
     public boolean use(int action) {
-        if (action == GLFW.GLFW_RELEASE && this.isActive()) {
+        boolean pressAgain = ClientConfig.CLICK_FOR_MODULE_HOLD.get() && action == GLFW.GLFW_PRESS;
+        boolean release = !ClientConfig.CLICK_FOR_MODULE_HOLD.get() && action == GLFW.GLFW_RELEASE;
+        if ((pressAgain || release) && this.isActive()) {
             this.release();
             ModuleHoldInteractionManager.stop();
+            if (pressAgain)
+                return true;
         }
         return false;
     }

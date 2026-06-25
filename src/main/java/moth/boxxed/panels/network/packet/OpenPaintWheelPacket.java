@@ -9,8 +9,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.ClientPayloadContext;
 
-import java.util.List;
-
 public record OpenPaintWheelPacket(ServerSkin serverSkin, BlockPos pos) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<OpenPaintWheelPacket> TYPE = new CustomPacketPayload.Type<OpenPaintWheelPacket>(Dashpanels.path("open_paint_wheel"));
 

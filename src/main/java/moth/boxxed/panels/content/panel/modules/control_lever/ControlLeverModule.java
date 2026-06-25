@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class ControlLeverModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
+    private float lastRenderSignal = 0;
+    private float lastIndicatorRender = 0;
     private float renderSignal = 0;
     private float indicatorRender = 0;
     private int signal = 0;
@@ -42,6 +44,8 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
         tag.putInt("signal", this.signal);
         tag.putFloat("render_signal", this.renderSignal);
         tag.putFloat("indicator_render", this.indicatorRender);
+        tag.putFloat("last_render_signal", this.lastRenderSignal);
+        tag.putFloat("last_indicator_render", this.lastIndicatorRender);
 
         return super.saveData(tag, registries);
     }
@@ -51,6 +55,8 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
         this.signal = tag.getInt("signal");
         this.renderSignal = tag.getFloat("render_signal");
         this.indicatorRender = tag.getFloat("indicator_render");
+        this.lastRenderSignal = tag.getFloat("last_render_signal");
+        this.lastIndicatorRender = tag.getFloat("last_indicator_render");
 
         return super.loadData(tag, registries);
     }
@@ -67,8 +73,10 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
 
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        this.renderSignal = Math.lerp(this.renderSignal, Mth.map((float) this.signal, 0, 15, 0, 0.25f), 0.5f);
-        this.indicatorRender = Math.lerp(this.indicatorRender, Mth.map((float) this.signal, 0, 15, 0,0.25f), 0.15f);
+        this.lastRenderSignal = this.renderSignal;
+        this.lastIndicatorRender = this.indicatorRender;
+        this.renderSignal = Math.lerp(this.renderSignal, Mth.map(this.signal, 0, 15, 0, 0.25f), 0.5f);
+        this.indicatorRender = Math.lerp(this.indicatorRender, Mth.map(this.signal, 0, 15, 0,0.25f), 0.15f);
     }
 
     @Override
@@ -80,11 +88,11 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PanelPreloadedModels.CONTROL_LEVER_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.pushPose();
-        poseStack.translate(0, 0, this.renderSignal);
+        poseStack.translate(0, 0, Mth.lerp(partialTick, this.lastRenderSignal, this.renderSignal));
         PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(0, 0, this.indicatorRender);
+        poseStack.translate(0, 0, Mth.lerp(partialTick, this.lastIndicatorRender, this.indicatorRender));
         PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(poseStack, bufferSource, RenderType.solid(), packedLight);
         poseStack.popPose();
     }

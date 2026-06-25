@@ -16,6 +16,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -30,6 +31,7 @@ import java.util.function.BiConsumer;
 public class MomentarySwitchModule extends Module implements IModuleLuaObject, IInput, IExternalUpdatable {
     public boolean pressed;
     private float pressValue;
+    private float lastPressValue;
 
     public MomentarySwitchModule(int x, int y) {
         super(PanelModules.MOMENTARY_SWITCH.get(), x, y, 3, 3);
@@ -41,6 +43,7 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putBoolean("pressed", this.pressed);
         tag.putFloat("pressValue", this.pressValue);
+        tag.putFloat("lastPressValue", this.lastPressValue);
         return super.saveData(tag, registries);
     }
 
@@ -48,6 +51,7 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.pressed = tag.getBoolean("pressed");
         this.pressValue = tag.getFloat("pressValue");
+        this.lastPressValue = tag.getFloat("lastPressValue");
         return super.loadData(tag, registries);
     }
 
@@ -59,6 +63,7 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         float target = this.pressed ? -0.5f/16f + 0.001f : 0f;
+        this.lastPressValue = pressValue;
         pressValue = Math.lerp(pressValue, target, 0.5f);
     }
 
@@ -71,7 +76,7 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
                 packedLight
         );
         poseStack.pushPose();
-        poseStack.translate(0, pressValue, 0);
+        poseStack.translate(0, Mth.lerp(partialTick, lastPressValue, pressValue), 0);
         PanelPreloadedModels.MOMENTARY_SWITCH_BUTTON.render(
                 poseStack,
                 bufferSource,

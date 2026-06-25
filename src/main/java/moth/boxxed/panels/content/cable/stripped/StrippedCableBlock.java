@@ -103,7 +103,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
         Module module = map.get(be.boundModule);
         if (module == null) return 0;
         if (map.get(be.boundModule) instanceof IInput input) {
-            return Math.clamp(0, 15, input.getAnalog());
+            return Math.clamp(input.getAnalog(), 0, 15);
         }
         if (map.get(be.boundModule) instanceof IMultiInput input) {
             Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
@@ -111,7 +111,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
             String extension = be.boundModule.substring(module.getName().length()+3);
             IMultiInput.AnalogResult result = resultMap.get(extension);
             if (result != null) {
-                return Math.clamp(0, 15, resultMap.get(extension).getAnalog());
+                return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
             }
         }
         return 0;

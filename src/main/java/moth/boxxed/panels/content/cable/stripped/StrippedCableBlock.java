@@ -165,12 +165,6 @@ public class StrippedCableBlock extends BaseEntityBlock {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        level.updateNeighborsAt(pos, this);
-        super.tick(state, level, pos, random);
-    }
-
     public StrippedCableBlockEntity getBlockEntity(BlockGetter level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof StrippedCableBlockEntity blockEntity)
             return blockEntity;

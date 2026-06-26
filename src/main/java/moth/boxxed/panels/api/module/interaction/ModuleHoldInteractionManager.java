@@ -26,6 +26,8 @@ public class ModuleHoldInteractionManager {
             active.stop();
         }
 
+        canMoveCamera = false;
+
         active = interaction;
         active.start();
     }
@@ -35,6 +37,8 @@ public class ModuleHoldInteractionManager {
             active.stop();
             active = null;
         }
+
+        canMoveCamera = false;
     }
 
     public static boolean onMouseMove(double yaw, double pitch) {
@@ -61,7 +65,7 @@ public class ModuleHoldInteractionManager {
     }
 
     public static boolean beforeKeyInput(int key, int scanCode, int action, int modifiers) {
-        if (Minecraft.getInstance().screen != null || isActive()) return false;
+        if (Minecraft.getInstance().screen != null || !isActive()) return false;
         if (action == GLFW.GLFW_REPEAT) return false;
         if (PanelKeybinds.HOLD_MOVE_CAMERA.matches(key, scanCode)) {
             if (action == GLFW.GLFW_PRESS) {

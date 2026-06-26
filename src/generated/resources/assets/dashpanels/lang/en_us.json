@@ -19,6 +19,7 @@
   "itemGroup.control_panel": "Dashpanels",
   "key.categories.dashpanels": "Dashpanels",
   "key.dashpanels.delete_module": "Delete Module",
+  "key.dashpanels.hold_move_camera": "Move Camera While Holding",
   "key.dashpanels.move_module": "Move Module",
   "key.dashpanels.select_module": "Select Module",
   "tooltip.dashpanels.cable_stripper_info_1": "§bRight-click §3a normal cable to strip it",

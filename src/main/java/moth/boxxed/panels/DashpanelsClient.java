@@ -33,9 +33,4 @@ public class DashpanelsClient {
     static void onClientSetup(FMLClientSetupEvent event) {
 
     }
-
-    @SubscribeEvent
-    public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(PanelBlockEntities.PANEL.get(), ctx -> new PanelRenderer());
-    }
 }

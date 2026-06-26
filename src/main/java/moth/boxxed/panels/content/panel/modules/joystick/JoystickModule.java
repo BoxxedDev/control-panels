@@ -153,7 +153,7 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
 
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getX", args -> this.stickX);
-        consumer.accept("getY", args -> this.stickY);
+        consumer.accept("getStickX", args -> this.stickX);
+        consumer.accept("getStickY", args -> this.stickY);
     }
 }

@@ -60,6 +60,7 @@ public class PanelLangProvider extends LanguageProvider {
         addCustom("key", "delete_module", "Delete Module");
         addCustom("key", "select_module", "Select Module");
         addCustom("key", "move_module", "Move Module");
+        addCustom("key", "hold_move_camera", "Move Camera While Holding");
         add("key.categories.dashpanels", "Dashpanels");
     }
 

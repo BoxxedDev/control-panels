@@ -1,10 +1,10 @@
 package moth.boxxed.panels.api.panel.model;
 
 import moth.boxxed.panels.index.PanelBlocks;
-import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.event.ModelEvent;
@@ -25,7 +25,7 @@ public class PanelSkinModelSwapper {
 
     public static List<ModelResourceLocation> getBlockStateModels(Block block) {
         List<ModelResourceLocation> models = new ArrayList<>();
-        ResourceLocation blockRl = RegisteredObjectsHelper.getKeyOrThrow(block);
+        ResourceLocation blockRl = BuiltInRegistries.BLOCK.getKey(block);
         block.getStateDefinition()
                 .getPossibleStates()
                 .forEach(state -> {

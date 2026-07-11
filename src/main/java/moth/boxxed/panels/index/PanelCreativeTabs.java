@@ -3,9 +3,10 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
+import moth.boxxed.panels.util.CustomSectionTextured;
 import net.mcexpanded.fancytabsections.FancyTabSections;
+import net.mcexpanded.fancytabsections.Section.SectionTextured;
 import net.mcexpanded.fancytabsections.creativetab.ConglomerateOfItems;
-import net.mcexpanded.fancytabsections.creativetab.SectionTextured;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -45,10 +46,18 @@ public class PanelCreativeTabs {
                 .add(PanelItems.CABLE_STRIPPER);
         if (ModList.get().isLoaded("create"))
             base.add(PanelCreateRegistries.PANEL_LINK);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), SectionTextured.of(
+//        FancyTabSections.addSection(Dashpanels.path("dashpanels"), SectionTextured.of(
+//                Dashpanels.path("dashpanels"),
+//                Component.translatable("creativetab.dashpanels.dashpanels"),
+//                0xFFFFFF,
+//                base
+//        ));
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), CustomSectionTextured.of(
                 Dashpanels.path("dashpanels"),
                 Component.translatable("creativetab.dashpanels.dashpanels"),
                 0xFFFFFF,
+                true,
+                true,
                 base
         ));
 
@@ -63,11 +72,13 @@ public class PanelCreativeTabs {
                 .add(PanelItems.SEVEN_SEGMENT_MODULE);
         if (ModList.get().isLoaded("sable"))
             modules.add(PanelSableRegistries.NAVBALL_MODULE);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), new SectionTextured(
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), new CustomSectionTextured(
                 Dashpanels.path("modules"),
                 Component.translatable("creativetab.dashpanels.modules"),
                 Dashpanels.path("textures/gui/fancy_tab_section/dashpanels.png"),
                 0xFFFFFF,
+                true,
+                true,
                 modules
         ));
     }

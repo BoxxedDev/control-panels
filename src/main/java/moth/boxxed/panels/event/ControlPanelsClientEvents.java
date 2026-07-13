@@ -13,7 +13,8 @@ import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
 import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.content.paintbrush.PaintWheel;
-import moth.boxxed.panels.content.panel.PanelRenderer;
+import moth.boxxed.panels.content.panel.normal.PanelRenderer;
+import moth.boxxed.panels.content.panel.wall.WallPanelRenderer;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelShaders;
 import net.minecraft.ChatFormatting;
@@ -122,5 +123,6 @@ public class ControlPanelsClientEvents {
     @SubscribeEvent
     public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(PanelBlockEntities.PANEL.get(), ctx -> new PanelRenderer());
+        event.registerBlockEntityRenderer(PanelBlockEntities.WALL_PANEL.get(), ctx -> new WallPanelRenderer());
     }
 }

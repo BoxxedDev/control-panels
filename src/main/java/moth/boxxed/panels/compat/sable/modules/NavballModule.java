@@ -114,7 +114,7 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
         Level level = panelBlockEntity.getLevel();
         BlockState state = panelBlockEntity.getBlockState();
 
-        PanelPreloadedModels.NAVBALL_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.NAVBALL_BASE.render(poseStack, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate( 0.1875f,0,  0.1875f);
         Quaternionf quat = new Quaternionf();
@@ -123,7 +123,7 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
             quat.set(clientSubLevel.renderPose(partialTick).orientation());
         poseStack.mulPose(quat);
 //        Dashpanels.LOGGER.debug("\nRoll : {}\nPitch : {}\nYaw : {}", this.getAngleRoll(), this.getAnglePitch(), this.getAngleYaw());
-        PanelPreloadedModels.NAVBALL.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.NAVBALL.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 

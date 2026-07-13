@@ -86,14 +86,14 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
 
     @Override
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        PanelPreloadedModels.CONTROL_LEVER_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_BASE.render(poseStack, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0, Mth.lerp(partialTick, this.lastRenderSignal, this.renderSignal));
-        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_HANDLE.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(0, 0, Mth.lerp(partialTick, this.lastIndicatorRender, this.indicatorRender));
-        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.CONTROL_LEVER_INDICATOR.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 

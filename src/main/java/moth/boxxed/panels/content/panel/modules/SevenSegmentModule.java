@@ -54,7 +54,7 @@ public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObj
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(0, -1/32f, 0);
-        PanelPreloadedModels.SEVEN_SEGMENT.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.SEVEN_SEGMENT.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
 
         Font font = Minecraft.getInstance().font;

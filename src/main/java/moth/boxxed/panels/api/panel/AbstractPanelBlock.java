@@ -1,6 +1,6 @@
 package moth.boxxed.panels.api.panel;
 
-import moth.boxxed.panels.content.panel.PanelBlock;
+import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

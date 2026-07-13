@@ -82,15 +82,15 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(Mth.lerp(partialTick, this.lastRenderAngle, this.renderAngle)-45), 1/16f, 0, 1/16f);
-        PanelPreloadedModels.KNOB.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.KNOB.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 
     @Override
-    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int rgb) {
+    public void renderOutline(PoseStack poseStack, float partialTick, int rgb) {
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(Mth.lerp(partialTick, this.lastRenderAngle, this.renderAngle)-45), 1/16f, 0, 1/16f);
-        super.renderOutline(poseStack, bufferSource, partialTick, rgb);
+        super.renderOutline(poseStack, partialTick, rgb);
         poseStack.popPose();
     }
 

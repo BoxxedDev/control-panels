@@ -4,7 +4,7 @@ import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.CableBlockEntity;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
+import moth.boxxed.panels.content.panel.normal.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

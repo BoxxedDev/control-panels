@@ -34,6 +34,7 @@ public class PanelLangProvider extends LanguageProvider {
 
         //Non module stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
+        addBlock(PanelBlocks.WALL_CONTROL_PANEL, "Wall Control Panel");
         addBlock(PanelBlocks.CABLE, "Control Cable");
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");

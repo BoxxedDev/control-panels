@@ -29,7 +29,7 @@ public class PanelCreativeTabs {
         SectionTextured defaultSection = new SectionTextured(Dashpanels.path("dashpanels"));
         defaultSection.setTitle(Component.translatable("creativetab.dashpanels.dashpanels"));
 
-        defaultSection.add(PanelBlocks.CONTROL_PANEL);
+        defaultSection.addItemTag(PanelTags.Items.PANELS);
         defaultSection.add(PanelBlocks.CABLE);
         defaultSection.add(PanelItems.CABLE_STRIPPER);
         if (ModList.get().isLoaded("create"))

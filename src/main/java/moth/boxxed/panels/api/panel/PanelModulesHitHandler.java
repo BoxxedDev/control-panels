@@ -1,17 +1,14 @@
 package moth.boxxed.panels.api.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -77,9 +74,7 @@ public class PanelModulesHitHandler {
         stack.pushPose();
         stack.translate(pos.getX()-eyePos.x, pos.getY()-eyePos.y, pos.getZ()-eyePos.z);
 
-        Direction direction = pbe.getBlockState().getValue(PanelBlock.FACING);
-        stack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
-        stack.translate(0, 0, 0.25f);
+        pbe.transformPanelClipping(stack);
 
         Matrix4f pose = stack.last().pose();
         pose.invert();
@@ -96,7 +91,7 @@ public class PanelModulesHitHandler {
             VoxelShape moduleShape = moduleEntry.getValue().getShape();
             shape = Shapes.or(shape, moduleShape.move(
                     moduleEntry.getValue().getPos().x/16f,
-                    0.75f,
+                    0,
                     moduleEntry.getValue().getPos().y/16f
             ));
         }

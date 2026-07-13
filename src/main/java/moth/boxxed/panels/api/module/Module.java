@@ -2,7 +2,6 @@ package moth.boxxed.panels.api.module;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
@@ -12,7 +11,6 @@ import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -20,7 +18,6 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -124,8 +121,9 @@ public abstract class Module {
     public abstract void render(AbstractPanelBlockEntity AbstractPanelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
 
     @OnlyIn(Dist.CLIENT)
-    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
+    public void renderOutline(PoseStack poseStack, float partialTick, int color) {
+        MultiBufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer consumer = bs.getBuffer(RenderType.lines());
 
         Color rgb = new Color(color);
         poseStack.pushPose();
@@ -168,9 +166,7 @@ public abstract class Module {
         stack.pushPose();
         stack.translate(blockPos.getX()-eyePos.x, blockPos.getY()-eyePos.y, blockPos.getZ()-eyePos.z);
 
-        Direction direction = pbe.getBlockState().getValue(PanelBlock.FACING);
-        stack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
-        stack.translate(0, 0, 0.25f);
+        pbe.transformPanelClipping(stack);
 
         Matrix4f pose = stack.last().pose();
         pose.invert();

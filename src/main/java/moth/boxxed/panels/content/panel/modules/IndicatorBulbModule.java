@@ -48,8 +48,8 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
 
         poseStack.pushPose();
         poseStack.translate(0, 0, 0.5/16f);
-        PanelPreloadedModels.INDICATOR_BULB_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
-        bulbModel.render(poseStack, bufferSource, bulbRenderType, bulbLight, this.color.getTextureDiffuseColor());
+        PanelPreloadedModels.INDICATOR_BULB_BASE.render(poseStack, RenderType.solid(), packedLight);
+        bulbModel.render(poseStack, bulbRenderType, bulbLight, this.color.getTextureDiffuseColor());
         poseStack.popPose();
     }
 

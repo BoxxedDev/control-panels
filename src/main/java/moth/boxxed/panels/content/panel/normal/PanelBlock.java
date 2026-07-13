@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel;
+package moth.boxxed.panels.content.panel.normal;
 
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import net.minecraft.core.BlockPos;

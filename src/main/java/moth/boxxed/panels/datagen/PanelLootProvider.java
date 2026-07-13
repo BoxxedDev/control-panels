@@ -37,7 +37,10 @@ public class PanelLootProvider extends LootTableProvider {
         @Override
         protected void generate() {
             dropSelf(PanelBlocks.CABLE.get());
+
             dropSelf(PanelBlocks.CONTROL_PANEL.get());
+            dropSelf(PanelBlocks.WALL_CONTROL_PANEL.get());
+
             dropOther(PanelBlocks.STRIPPED_CABLE.get(), PanelBlocks.CABLE.get());
             if (ModList.get().isLoaded("create"))
                 dropSelf(PanelCreateRegistries.PANEL_LINK.get());

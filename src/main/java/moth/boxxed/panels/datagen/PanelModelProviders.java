@@ -16,6 +16,7 @@ public class PanelModelProviders {
         @Override
         protected void registerModels() {
             withExistingParent("control_panel", Dashpanels.path("block/control_panel/single"));
+            withExistingParent("wall_control_panel", Dashpanels.path("block/wall_control_panel/single"));
             withExistingParent("panel_link", Dashpanels.path("block/control_link"));
             basicItem(PanelItems.CABLE_STRIPPER.get());
             basicItem(PanelItems.PAINT_BRUSH.get());

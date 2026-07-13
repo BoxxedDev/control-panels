@@ -102,20 +102,20 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
         float triggerAngle = Mth.map(Mth.lerp(partialTick, this.lastRenderTriggered, this.renderTriggered), 0, 1, 5f, 22.5f);
 
         poseStack.pushPose();
-        PanelPreloadedModels.JOYSTICK_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_BASE.render(poseStack, RenderType.solid(), packedLight);
         poseStack.translate(0.125, 0.03125, 0.125);
         poseStack.mulPose(Axis.XP.rotationDegrees(angleY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(angleX));
-        PanelPreloadedModels.JOYSTICK_BETWEEN.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_BETWEEN.render(poseStack, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0.03125, 0);
         poseStack.mulPose(Axis.XP.rotationDegrees(angleY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(angleX));
-        PanelPreloadedModels.JOYSTICK_STICK.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_STICK.render(poseStack, RenderType.solid(), packedLight);
         poseStack.pushPose();
         poseStack.translate(0, 0.125, 0);
         poseStack.mulPose(Axis.XP.rotationDegrees(triggerAngle));
-        PanelPreloadedModels.JOYSTICK_TRIGGER.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.JOYSTICK_TRIGGER.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
         poseStack.popPose();
         poseStack.popPose();

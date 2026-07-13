@@ -1,7 +1,6 @@
 package moth.boxxed.panels.api.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
@@ -9,29 +8,24 @@ import moth.boxxed.panels.network.packet.SelectedModulePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> implements BlockEntityRenderer<T> {
+
+
     @Override
     public void render(T panelBlockEntity, float partialTick, PoseStack poseStack,  MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        ClientSkin clientSkin = PanelSkinsClientManager.MAP.getOrDefault(panelBlockEntity.skin, ClientSkin.DEFAULT);
-//        BakedModel model = clientSkin.getBlockModel(panelBlockEntity.getBlockState().getValue(AbstractPanelBlock.SHAPE));
-        Direction direction = panelBlockEntity.getBlockState().getValue(AbstractPanelBlock.FACING);
+        renderModules(panelBlockEntity, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+    }
 
-//        poseStack.pushPose();
-//        poseStack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 180 : 0)), 0.5f, 0, 0.5f);
-//        renderModel(panelBlockEntity, poseStack, bufferSource.getBuffer(RenderType.cutout()), packedLight, packedOverlay, model);
-//        poseStack.popPose();
+    protected static <T extends AbstractPanelBlockEntity> void renderModules(T panelBlockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        Direction direction = panelBlockEntity.getBlockState().getValue(AbstractPanelBlock.FACING);
 
         LocalPlayer player = Minecraft.getInstance().player;
         boolean spectator = false;
@@ -52,7 +46,7 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
                 Double result = Module.clipModule(
                         panelBlockEntity,
                         module,
-                        new Vec3(module.getPos().x/16f, 0.75, module.getPos().y/16f),
+                        new Vec3(module.getPos().x/16f, 0, module.getPos().y/16f),
                         eyePos,
                         player.getViewVector(partialTick),
                         partialTick
@@ -85,22 +79,15 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
             }
             poseStack.translate(module.getPos().x/16f+module.getSize().x/16f+offsetX, 0, module.getPos().y/16f+module.getSize().y/16f);
             poseStack.pushPose();
+//            panelBlockEntity.transformPanelClipping(poseStack);
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
             poseStack.translate(0, 0, -0.25f);
             module.render(panelBlockEntity, poseStack, partialTick, bufferSource, packedLight, packedOverlay);
             if (hit && !spectator && !guiHidden)
-                module.renderOutline(poseStack, bufferSource, partialTick, hitModule == module ? 0xFFFFFF : 0x000000);
+                module.renderOutline(poseStack, partialTick, hitModule == module ? 0xFFFFFF : 0x000000);
             poseStack.popPose();
             poseStack.popPose();
         }
         poseStack.popPose();
-    }
-
-    private static final RandomSource RANDOM = RandomSource.create();
-    protected static void renderModel(AbstractPanelBlockEntity be, PoseStack poseStack, VertexConsumer builder, int packedLight, int packedOverlay, BakedModel bakedModel) {
-        List<BakedQuad> quads = bakedModel.getQuads(be.getBlockState(), null, RANDOM, null, null);
-        for (BakedQuad quad : quads) {
-            builder.putBulkData(poseStack.last(), quad, 1.0f, 1.0f, 1.0f, 1.0f, packedLight, packedOverlay);
-        }
     }
 }

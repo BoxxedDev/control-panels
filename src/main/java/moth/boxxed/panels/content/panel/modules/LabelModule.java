@@ -20,7 +20,7 @@ public class LabelModule extends Module {
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(0, 0.001f, 0);
-        PanelPreloadedModels.LABEL.render(poseStack, bufferSource, RenderType.cutout(), packedLight);
+        PanelPreloadedModels.LABEL.render(poseStack, RenderType.cutout(), packedLight);
         poseStack.popPose();
     }
 

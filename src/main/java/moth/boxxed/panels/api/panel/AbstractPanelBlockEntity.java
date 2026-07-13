@@ -1,5 +1,6 @@
 package moth.boxxed.panels.api.panel;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
@@ -62,14 +63,14 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             if (existingModule.getValue().inside(module.rect) && existingModule.getKey().equals(string))
                 return false;
         }
-        module.name = string;
-        module.parentBlockEntity = this;
         this.addModule(string, module);
         return true;
     }
 
     public void addModule(String string, Module module) {
         this.reconstructItems();
+        module.name = string;
+        module.parentBlockEntity = this;
         this.modules.put(string, module);
     }
 
@@ -247,4 +248,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
                 .with(SKIN_PROPERTY, this.skin)
                 .build();
     }
+
+    public abstract void transformPanelClipping(PoseStack stack);
 }

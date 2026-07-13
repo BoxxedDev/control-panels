@@ -3,7 +3,7 @@ package moth.boxxed.panels.content.cable.stripped;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;
-import moth.boxxed.panels.content.panel.PanelBlock;
+import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;

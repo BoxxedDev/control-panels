@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel;
+package moth.boxxed.panels.api.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -7,7 +7,7 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.content.panel.PanelBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;

@@ -5,7 +5,6 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.panel.PanelModulesHitHandler;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;

@@ -8,6 +8,9 @@
     "dashpanels:joystick",
     "dashpanels:label",
     "dashpanels:seven_segment",
-    "dashpanels:navball"
+    {
+      "id": "dashpanels:navball",
+      "required": false
+    }
   ]
 }

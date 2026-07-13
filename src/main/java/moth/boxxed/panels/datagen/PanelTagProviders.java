@@ -35,10 +35,8 @@ public class PanelTagProviders {
                     .add(PanelItems.JOYSTICK_MODULE.getKey())
                     .add(PanelItems.LABEL_MODULE.getKey())
                     .add(PanelItems.SEVEN_SEGMENT_MODULE.getKey())
+                    .addOptional(Dashpanels.path("navball"))
             ;
-            if (ModList.get().isLoaded("sable"))
-                tag(PanelTags.Items.MODULE)
-                        .add(PanelSableRegistries.NAVBALL_MODULE.getKey());
         }
     }
 

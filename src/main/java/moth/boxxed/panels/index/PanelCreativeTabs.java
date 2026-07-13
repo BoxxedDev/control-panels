@@ -32,10 +32,11 @@ public class PanelCreativeTabs {
         defaultSection.add(PanelBlocks.CONTROL_PANEL);
         defaultSection.add(PanelBlocks.CABLE);
         defaultSection.add(PanelItems.CABLE_STRIPPER);
-        if (ModList.get().isLoaded("create"))
+        if (ModList.get().isLoaded("create")) {
             defaultSection.add(PanelCreateRegistries.PANEL_LINK);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), defaultSection
-        );
+        }
+
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), defaultSection);
 
         SectionTextured modulesSection = new SectionTextured(Dashpanels.path("dashpanels"));
         modulesSection.setTitle(Component.translatable("creativetab.dashpanels.modules"));

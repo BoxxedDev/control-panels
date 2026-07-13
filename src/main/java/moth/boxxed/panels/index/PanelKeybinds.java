@@ -3,7 +3,6 @@ package moth.boxxed.panels.index;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
-import org.jline.keymap.KeyMap;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;

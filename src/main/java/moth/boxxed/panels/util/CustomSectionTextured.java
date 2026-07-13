@@ -1,7 +1,6 @@
 package moth.boxxed.panels.util;
 
 import net.mcexpanded.fancytabsections.Section.Section;
-import net.mcexpanded.fancytabsections.Section.SectionTextured;
 import net.mcexpanded.fancytabsections.creativetab.ConglomerateOfItems;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

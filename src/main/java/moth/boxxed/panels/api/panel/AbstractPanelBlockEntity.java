@@ -54,12 +54,12 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         this.panelType = panelType;
     }
 
-    public boolean tryAddModule(String string, moth.boxxed.panels.api.module.Module module) {
+    public boolean tryAddModule(String string, Module module) {
         Rect2d tempRect = new Rect2d(0,0,16,16);
         if (!tempRect.contains(module.rect))
             return false;
 
-        for (Map.Entry<String, moth.boxxed.panels.api.module.Module> existingModule : this.modules.entrySet()) {
+        for (Map.Entry<String, Module> existingModule : this.modules.entrySet()) {
             if (existingModule.getValue().inside(module.rect) && existingModule.getKey().equals(string))
                 return false;
         }
@@ -69,15 +69,15 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return true;
     }
 
-    public void addModule(String string, moth.boxxed.panels.api.module.Module module) {
+    public void addModule(String string, Module module) {
         this.reconstructItems();
         this.modules.put(string, module);
     }
 
     public void reconstructItems() {
         this.container.clearContent();
-        for (Map.Entry<String, moth.boxxed.panels.api.module.Module> entry : this.modules) {
-            moth.boxxed.panels.api.module.Module module = entry.getValue();
+        for (Map.Entry<String, Module> entry : this.modules) {
+            Module module = entry.getValue();
             this.container.addItem(
                     new ItemStack(module.type.associatedItem.get())
             );
@@ -88,7 +88,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         this.modules.clear();
     }
 
-    public moth.boxxed.panels.api.module.Module getModule(String moduleName) {
+    public Module getModule(String moduleName) {
         return this.modules.normalGet(moduleName);
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         super.saveAdditional(tag, registries);
         tag.putInt("modules_size", this.modules.size());
         for (int i=0; i<this.modules.size(); i++) {
-            Map.Entry<String, moth.boxxed.panels.api.module.Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
+            Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
             CompoundTag subTag = new CompoundTag();
             if (moduleEntry.getValue().saveData(subTag, registries)) {
                 tag.put("module_%d".formatted(i), subTag);
@@ -125,7 +125,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             CompoundTag subTag = (CompoundTag) tag.get("module_%d".formatted(i));
             if (subTag == null) continue;
             ResourceLocation typeId = ResourceLocation.parse(subTag.getString("type"));
-            moth.boxxed.panels.api.module.Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
+            Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
             module.loadData(subTag, registries);
             this.tryAddModule(module.getName(), module);
         }
@@ -147,7 +147,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         super.tick(level, blockPos, blockState);
-        for (Map.Entry<String, moth.boxxed.panels.api.module.Module> module : this.modules.entrySet()) {
+        for (Map.Entry<String, Module> module : this.modules.entrySet()) {
             module.getValue().tick(level, blockPos, blockState);
         }
         if (level.isClientSide)
@@ -155,7 +155,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        moth.boxxed.panels.api.module.Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
         if (hitModule != null) {
             InteractionResult result = hitModule.onUse(level, player);
             if (!level.isClientSide)

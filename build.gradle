@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
+    id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -183,6 +184,9 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_name               : mod_name,
             mod_license            : mod_license,
             mod_version            : mod_version,
+            fancytabs_version      : fancytabs_version,
+            create_version_range   : create_version_range,
+            cc_tweaked_version_range   : cc_tweaked_version_range
     ]
     inputs.properties replaceProperties
     expand replaceProperties
@@ -214,4 +218,8 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+tasks.named('jar') {
+    archiveFileName = "dashpanels-${mod_version}+neoforge${minecraft_version}.jar"
 }

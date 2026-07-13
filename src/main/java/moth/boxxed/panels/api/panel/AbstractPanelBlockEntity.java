@@ -99,14 +99,23 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putInt("modules_size", this.modules.size());
-        for (int i=0; i<this.modules.size(); i++) {
-            Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
+//        tag.putInt("modules_size", this.modules.size());
+//        for (int i=0; i<this.modules.size(); i++) {
+//            Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
+//            CompoundTag subTag = new CompoundTag();
+//            if (moduleEntry.getValue().saveData(subTag, registries)) {
+//                tag.put("module_%d".formatted(i), subTag);
+//            }
+//        }
+        ListTag modulesTag = new ListTag(this.modules.size());
+        for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
             CompoundTag subTag = new CompoundTag();
-            if (moduleEntry.getValue().saveData(subTag, registries)) {
-                tag.put("module_%d".formatted(i), subTag);
+            if (entry.getValue().saveData(subTag, registries)) {
+                modulesTag.add(subTag);
             }
         }
+        tag.put("modules", modulesTag);
+        tag.putBoolean("new_loading", true);
         tag.put("container", this.container.createTag(registries));
         if (this.skin != null) {
             tag.putString("skin", this.skin.toString());
@@ -120,13 +129,24 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         super.loadAdditional(tag, registries);
         int size = tag.getInt("modules_size");
         this.clearModules();
-        for (int i=0; i<size; i++) {
-            CompoundTag subTag = (CompoundTag) tag.get("module_%d".formatted(i));
-            if (subTag == null) continue;
-            ResourceLocation typeId = ResourceLocation.parse(subTag.getString("type"));
-            Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
-            module.loadData(subTag, registries);
-            this.tryAddModule(module.getName(), module);
+        if (tag.contains("new_loading")) {
+            ListTag listTag = tag.getList("modules", 10);
+            for (Tag moduleTag : listTag) {
+                String typeString = ((CompoundTag) moduleTag).getString("type");
+                ResourceLocation typeId = ResourceLocation.parse(typeString);
+                Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
+                module.loadData((CompoundTag) moduleTag, registries);
+                this.addModule(module.getName(), module);
+            }
+        } else {
+            for (int i=0; i<size; i++) {
+                CompoundTag subTag = (CompoundTag) tag.get("module_%d".formatted(i));
+                if (subTag == null) continue;
+                ResourceLocation typeId = ResourceLocation.parse(subTag.getString("type"));
+                Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
+                module.loadData(subTag, registries);
+                this.tryAddModule(module.getName(), module);
+            }
         }
         this.container.clearContent();
         ListTag items = tag.getList("container", 10);

@@ -219,3 +219,7 @@ idea {
         downloadJavadoc = true
     }
 }
+
+tasks.named('jar') {
+    archiveFileName = "dashpanels-${mod_version}+neoforge${minecraft_version}.jar"
+}

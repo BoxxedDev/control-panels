@@ -1,16 +1,20 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import net.mcexpanded.fancytabsections.FancyTabSections;
 import net.mcexpanded.fancytabsections.Section.SectionTextured;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class PanelCreativeTabs {
@@ -22,6 +26,7 @@ public class PanelCreativeTabs {
                     .title(Component.translatable("itemGroup.control_panel"))
                     .icon(PanelBlocks.CONTROL_PANEL::toStack)
                     .displayItems(((parameters, output) -> {}))
+                    .withSearchBar()
                     .build()
     );
 
@@ -42,7 +47,15 @@ public class PanelCreativeTabs {
         modulesSection.setTitle(Component.translatable("creativetab.dashpanels.modules"));
         modulesSection.setTexture(Dashpanels.path("dashpanels"));
 
-        modulesSection.addItemTag(PanelTags.Items.MODULE);
+        modulesSection.add(registryAccess -> {
+            List<ItemStack> ret = new ArrayList<>();
+            ModulesRegistry.MODULE_REGISTRY.entrySet().forEach(
+                    entry -> ret.add(new ItemStack(entry.getValue().associatedItem.get()))
+            );
+            ret.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getDisplayName().getString(), b.getDisplayName().getString()));
+            return ret;
+        });
+//        modulesSection.addItemTag(PanelTags.Items.MODULE);
         FancyTabSections.addSection(Dashpanels.path("dashpanels"), modulesSection);
     }
 

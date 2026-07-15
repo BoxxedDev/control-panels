@@ -28,7 +28,7 @@ public class PanelBlockEntity extends AbstractPanelBlockEntity {
         Direction fromDirection = from.getValue(PanelBlock.FACING);
 
         if (direction.equals(Direction.UP) && to.getBlock() instanceof WallPanelBlock && to.getValue(WallPanelBlock.FACING) == fromDirection)
-            return false;
+            return true;
         if ((fromDirection.getOpposite()==direction || direction==Direction.DOWN) && to.getBlock() instanceof CableBlock)
             return true;
         return (fromDirection.getClockWise()==direction || fromDirection.getCounterClockWise()==direction) &&

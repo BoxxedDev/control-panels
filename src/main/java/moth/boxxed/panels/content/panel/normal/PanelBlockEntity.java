@@ -6,6 +6,7 @@ import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.content.cable.CableBlock;
+import moth.boxxed.panels.content.panel.wall.WallPanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ public class PanelBlockEntity extends AbstractPanelBlockEntity {
         Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
         Direction fromDirection = from.getValue(PanelBlock.FACING);
 
-        if (direction.equals(Direction.UP))
+        if (direction.equals(Direction.UP) && to.getBlock() instanceof WallPanelBlock && to.getValue(WallPanelBlock.FACING) == fromDirection)
             return false;
         if ((fromDirection.getOpposite()==direction || direction==Direction.DOWN) && to.getBlock() instanceof CableBlock)
             return true;

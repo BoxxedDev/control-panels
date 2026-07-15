@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.cable;
 
+import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.normal.PanelBlock;
@@ -100,7 +101,7 @@ public class CableBlock extends BaseEntityBlock {
             BlockState neighborState = context.getLevel().getBlockState(neighborPos);
 
             boolean check1 = neighborState.getBlock() instanceof CableBlock;
-            boolean check2 = neighborState.getBlock() instanceof PanelBlock && (neighborState.getValue(PanelBlock.FACING)==direction || direction==Direction.UP);
+            boolean check2 = neighborState.getBlock() instanceof AbstractPanelBlock && (neighborState.getValue(AbstractPanelBlock.FACING)==direction || direction==Direction.UP);
             boolean check3 = neighborState.getBlock() instanceof StrippedCableBlock && neighborState.getValue(StrippedCableBlock.FACING)==direction;
             boolean check4 = false;
             if (ModList.get().isLoaded("create"))
@@ -122,7 +123,7 @@ public class CableBlock extends BaseEntityBlock {
 
         boolean check1 = neighborState.hasBlockEntity() && state.hasBlockEntity();
         boolean check2 = neighborState.getBlock() instanceof CableBlock;
-        boolean check3 = neighborState.getBlock() instanceof PanelBlock && (neighborState.getValue(PanelBlock.FACING)==direction || direction==Direction.UP);
+        boolean check3 = neighborState.getBlock() instanceof AbstractPanelBlock && (neighborState.getValue(AbstractPanelBlock.FACING)==direction || direction==Direction.UP);
         boolean check4 = neighborState.getBlock() instanceof StrippedCableBlock && neighborState.getValue(StrippedCableBlock.FACING)==direction;
         boolean check5 = false;
         if (ModList.get().isLoaded("create"))

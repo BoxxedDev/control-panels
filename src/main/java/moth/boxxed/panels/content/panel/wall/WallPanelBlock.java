@@ -17,11 +17,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class WallPanelBlock extends AbstractPanelBlock {
-    private static final VoxelShape MAIN_SHAPE = Block.box(0,0,0,16,12,16);
-    private static final VoxelShape TOP_N_SHAPE = Block.box(0, 12, 12, 16, 16, 16);
-    private static final VoxelShape TOP_S_SHAPE = Block.box(0, 12, 0, 16, 16, 4);
-    private static final VoxelShape TOP_E_SHAPE = Block.box(0, 12, 0, 4, 16, 16);
-    private static final VoxelShape TOP_W_SHAPE = Block.box(12, 12, 0, 16, 16, 16);
+    private static final VoxelShape N_SHAPE = Block.box(0, 0, 14, 16, 16, 16);
+    private static final VoxelShape S_SHAPE = Block.box(0, 0, 0, 16, 16, 2);
+    private static final VoxelShape E_SHAPE = Block.box(0, 0, 0, 2, 16, 16);
+    private static final VoxelShape W_SHAPE = Block.box(14, 0, 0, 16, 16, 16);
 
     public WallPanelBlock(Properties properties) {
         super(properties);
@@ -29,15 +28,12 @@ public class WallPanelBlock extends AbstractPanelBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.or(
-                MAIN_SHAPE,
-                switch (state.getValue(FACING)) {
-                    case SOUTH -> TOP_S_SHAPE;
-                    case EAST -> TOP_E_SHAPE;
-                    case WEST -> TOP_W_SHAPE;
-                    default -> TOP_N_SHAPE;
-                }
-        );
+        return switch (state.getValue(FACING)) {
+            case SOUTH -> S_SHAPE;
+            case EAST -> E_SHAPE;
+            case WEST -> W_SHAPE;
+            default -> N_SHAPE;
+        };
     }
 
     @Override

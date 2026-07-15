@@ -15,18 +15,11 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> implements BlockEntityRenderer<T> {
-
-
-    @Override
-    public void render(T panelBlockEntity, float partialTick, PoseStack poseStack,  MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        renderModules(panelBlockEntity, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
-    }
-
-    protected static <T extends AbstractPanelBlockEntity> void renderModules(T panelBlockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Direction direction = panelBlockEntity.getBlockState().getValue(AbstractPanelBlock.FACING);
-
+    protected void renderModules(BiConsumer<Module, PoseStack> individualModuleTransform, T panelBlockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         LocalPlayer player = Minecraft.getInstance().player;
         boolean spectator = false;
         boolean guiHidden = Minecraft.getInstance().options.hideGui;
@@ -34,9 +27,6 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
             spectator = player.isSpectator();
         boolean hit = Minecraft.getInstance().hitResult instanceof BlockHitResult hitResult && hitResult.getBlockPos().equals(panelBlockEntity.getBlockPos());
 
-        poseStack.pushPose();
-        poseStack.translate(0, 0.75f, 0);
-        poseStack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
         Module hitModule = null;
         double hitDistance = Double.MAX_EXPONENT;
         if (hit) {
@@ -71,23 +61,11 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
         for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {
             poseStack.pushPose();
             Module module = entry.getValue();
-            float offsetX = 0;
-            if (module.getPos().x == 0) {
-                offsetX = 0.0001f;
-            } else if (module.getPos().x+module.getSize().x == 16) {
-                offsetX = -0.0001f;
-            }
-            poseStack.translate(module.getPos().x/16f+module.getSize().x/16f+offsetX, 0, module.getPos().y/16f+module.getSize().y/16f);
-            poseStack.pushPose();
-//            panelBlockEntity.transformPanelClipping(poseStack);
-            poseStack.mulPose(Axis.YP.rotationDegrees(180));
-            poseStack.translate(0, 0, -0.25f);
+            individualModuleTransform.accept(module, poseStack);
             module.render(panelBlockEntity, poseStack, partialTick, bufferSource, packedLight, packedOverlay);
             if (hit && !spectator && !guiHidden)
                 module.renderOutline(poseStack, partialTick, hitModule == module ? 0xFFFFFF : 0x000000);
             poseStack.popPose();
-            poseStack.popPose();
         }
-        poseStack.popPose();
     }
 }

@@ -41,6 +41,16 @@ public class PreLoadedModel {
         render(poseStack, RenderType.cutout(), packedLight);
     }
 
+    @Deprecated
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
+        render(poseStack, renderType, packedLight);
+    }
+
+    @Deprecated
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight, int colorPacked) {
+        render(poseStack, renderType, packedLight, colorPacked);
+    }
+
     public void render(PoseStack poseStack, RenderType renderType, int packedLight) {
         render(poseStack, renderType, packedLight, 0xFFFFFF);
     }

@@ -37,6 +37,7 @@ public class PanelCreativeTabs {
         defaultSection.addItemTag(PanelTags.Items.PANELS);
         defaultSection.add(PanelBlocks.CABLE);
         defaultSection.add(PanelItems.CABLE_STRIPPER);
+        defaultSection.add(PanelItems.PAINT_BRUSH);
         if (ModList.get().isLoaded("create")) {
             defaultSection.add(PanelCreateRegistries.PANEL_LINK);
         }
@@ -51,7 +52,7 @@ public class PanelCreativeTabs {
         modulesSection.add(registryAccess -> {
             List<ItemStack> ret = new ArrayList<>();
             ModulesRegistry.MODULE_REGISTRY.entrySet().forEach(
-                    entry -> ret.add(new ItemStack(entry.getValue().associatedItem.get()))
+                    entry -> ret.add(new ItemStack(entry.getValue().associatedItem))
             );
             ret.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getDisplayName().getString(), b.getDisplayName().getString()));
             return ret;

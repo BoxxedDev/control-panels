@@ -79,7 +79,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         for (Map.Entry<String, Module> entry : this.modules) {
             Module module = entry.getValue();
             this.container.addItem(
-                    new ItemStack(module.type.associatedItem.get())
+                    new ItemStack(module.type.associatedItem)
             );
         }
     }
@@ -247,6 +247,10 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return ModelData.builder()
                 .with(SKIN_PROPERTY, this.skin)
                 .build();
+    }
+
+    public Map<Player, String> getSelectedModules() {
+        return new HashMap<>(this.selectedModules);
     }
 
     public abstract void transformPanelClipping(PoseStack stack);

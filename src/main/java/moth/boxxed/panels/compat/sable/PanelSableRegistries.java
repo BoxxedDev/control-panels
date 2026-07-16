@@ -18,7 +18,7 @@ public class PanelSableRegistries implements PanelCompat {
     public void init() {
         NAVBALL_MODULE = PanelItems.moduleItem("navball");
         NAVBALL = PanelModules.MODULES.register(
-                "navball", () -> new ModuleType<>(NavballModule::new, NAVBALL_MODULE)
+                "navball", () -> new ModuleType<>(NavballModule::new, NAVBALL_MODULE.get())
         );
     }
 

@@ -99,11 +99,12 @@ public class PaintWheel {
     public static boolean beforeMouseInput(int button, int action) {
         if (Minecraft.getInstance().screen != null) return false;
 
-        if (action == GLFW.GLFW_RELEASE && isActive()) {
+        if (button==GLFW.GLFW_MOUSE_BUTTON_RIGHT && action==GLFW.GLFW_PRESS && isActive()) {
             closeAndSend();
+            return true;
         }
 
-        return isActive();
+        return false;
     }
 
     public static void moveMouse(double pitch, double yaw) {

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Block;
 
 public enum PanelType implements StringRepresentable {
     DEFAULT(PanelBlocks.CONTROL_PANEL.get(), Dashpanels.path("default")),
-    WALL(null, Dashpanels.path("wall")),
+    WALL(PanelBlocks.WALL_CONTROL_PANEL.get(), Dashpanels.path("wall")),
     CEILING(null, Dashpanels.path("ceiling"));
 
     public final Block block;

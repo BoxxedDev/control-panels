@@ -59,13 +59,6 @@ file="META-INF/accesstransformer.cfg"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="fancytabsections"
-    type="required"
-    versionRange="${fancytabs_version_range}"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
     modId="create"
     type="optional"
     versionRange="${create_version_range}"

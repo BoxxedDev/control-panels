@@ -52,7 +52,7 @@ public class PanelLangProvider extends LanguageProvider {
         addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
-        add("creativetab.dashpanels.dashpanels", "§lPanels");
+        add("creativetab.dashpanels.dashpanels", "§lDashpanels");
         add("creativetab.dashpanels.modules", "§lModules");
 
         add("dashpanels.configuration.showModuleTooltips", "Show Module Tooltips");

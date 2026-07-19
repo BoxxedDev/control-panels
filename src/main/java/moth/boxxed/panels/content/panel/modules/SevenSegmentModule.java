@@ -2,7 +2,7 @@ package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.api.module.IOutput;
+import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;

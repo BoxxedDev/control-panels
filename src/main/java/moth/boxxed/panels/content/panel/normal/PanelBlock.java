@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.panel.normal;
 
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
+import moth.boxxed.panels.index.PanelShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -17,27 +18,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class PanelBlock extends AbstractPanelBlock {
-    private static final VoxelShape MAIN_SHAPE = Block.box(0,0,0,16,12,16);
-    private static final VoxelShape TOP_N_SHAPE = Block.box(0, 12, 12, 16, 16, 16);
-    private static final VoxelShape TOP_S_SHAPE = Block.box(0, 12, 0, 16, 16, 4);
-    private static final VoxelShape TOP_E_SHAPE = Block.box(0, 12, 0, 4, 16, 16);
-    private static final VoxelShape TOP_W_SHAPE = Block.box(12, 12, 0, 16, 16, 16);
-
     public PanelBlock(Properties properties) {
         super(properties);
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.or(
-                MAIN_SHAPE,
-                switch (state.getValue(FACING)) {
-                    case SOUTH -> TOP_S_SHAPE;
-                    case EAST -> TOP_E_SHAPE;
-                    case WEST -> TOP_W_SHAPE;
-                    default -> TOP_N_SHAPE;
-                }
-        );
+        return PanelShapes.PANEL_SHAPE.get(state.getValue(FACING));
     }
 
     @Override
@@ -87,10 +74,5 @@ public class PanelBlock extends AbstractPanelBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new PanelBlockEntity(blockPos, blockState);
-    }
-
-    @Override
-    protected void spawnDestroyParticles(Level level, Player player, BlockPos pos, BlockState state) {
-        super.spawnDestroyParticles(level, player, pos, state);
     }
 }

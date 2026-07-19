@@ -1,8 +1,9 @@
-package moth.boxxed.panels.api.module;
+package moth.boxxed.panels.api.module.tooltip;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.Module;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

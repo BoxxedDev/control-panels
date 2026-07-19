@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -36,11 +37,15 @@ public class PanelCreativeTabs {
 
         defaultSection.addItemTag(PanelTags.Items.PANELS);
         defaultSection.add(PanelBlocks.CABLE);
-        defaultSection.add(PanelItems.CABLE_STRIPPER);
-        defaultSection.add(PanelItems.PAINT_BRUSH);
         if (ModList.get().isLoaded("create")) {
             defaultSection.add(PanelCreateRegistries.PANEL_LINK);
         }
+
+        defaultSection.add(Items.AIR);
+        
+        defaultSection.add(PanelItems.CABLE_STRIPPER);
+        defaultSection.add(PanelItems.WRENCH);
+        defaultSection.add(PanelItems.PAINT_BRUSH);
 
         defaultSection.setCentered(true);
         FancyTabSections.addSection(Dashpanels.path("dashpanels"), defaultSection);

@@ -1,7 +1,7 @@
 package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.panel.ServerSkin;
+import moth.boxxed.panels.api.panel.skin.ServerSkin;
 import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;

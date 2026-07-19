@@ -1,0 +1,6 @@
+{
+  "single": "dashpanels:block/control_panel_animated/single",
+  "left": "dashpanels:block/control_panel_animated/left",
+  "center": "dashpanels:block/control_panel_animated/center",
+  "right": "dashpanels:block/control_panel_animated/right"
+}

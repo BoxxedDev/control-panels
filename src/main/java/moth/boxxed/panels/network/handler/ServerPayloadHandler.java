@@ -32,4 +32,8 @@ public class ServerPayloadHandler {
     public static void handleSetPanelSkin(SetPanelSkinPacket packet, IPayloadContext context) {
         packet.handle((ServerPayloadContext) context);
     }
+
+    public static void handlePlaceModule(PlaceModulePacket packet, IPayloadContext context) {
+        packet.handle((ServerPayloadContext) context);
+    }
 }

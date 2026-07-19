@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -94,6 +95,7 @@ public abstract class Module {
         return this.rect.contains(rect);
     }
 
+    //TODO: add hit result parameter
     public InteractionResult onUse(Level level, Player player) {
         return InteractionResult.PASS;
     }
@@ -134,6 +136,15 @@ public abstract class Module {
                 0, 0, 0, rgb.getRed()/255f, rgb.getGreen()/255f, rgb.getBlue()/255f, 0.4f
         );
         poseStack.popPose();
+    }
+
+    public Rect2i getRect() {
+        return new Rect2i(
+                this.pos.x,
+                this.pos.y,
+                this.size.x,
+                this.size.y
+        );
     }
 
     public static Double clipModule(AbstractPanelBlockEntity pbe, Module module, Vec3 shapeOffset, Vec3 eyePosMoj, Vec3 viewVectorMoj, float partialTick) {

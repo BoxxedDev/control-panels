@@ -2,6 +2,10 @@ package moth.boxxed.panels.content.cable.stripped;
 
 import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.io.IInput;
+import moth.boxxed.panels.api.module.io.IMultiInput;
+import moth.boxxed.panels.api.module.io.IMultiOutput;
+import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;

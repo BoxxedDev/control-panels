@@ -73,7 +73,7 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
     }
 
     public void setNetwork(UUID uuid) {
-        if (uuid == this.network) return;
+        if (uuid.equals(this.network)) return;
         if (this.network != null) getOrCreate().removeMember(this);
 
         this.network = uuid;

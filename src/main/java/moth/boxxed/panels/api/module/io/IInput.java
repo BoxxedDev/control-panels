@@ -1,4 +1,4 @@
-package moth.boxxed.panels.api.module;
+package moth.boxxed.panels.api.module.io;
 
 /**
  * Used to mark a module as an input on the panel

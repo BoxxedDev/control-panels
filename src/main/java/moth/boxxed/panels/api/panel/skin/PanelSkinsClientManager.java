@@ -1,4 +1,4 @@
-package moth.boxxed.panels.api.panel;
+package moth.boxxed.panels.api.panel.skin;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

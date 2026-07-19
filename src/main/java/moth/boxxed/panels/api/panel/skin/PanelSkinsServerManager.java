@@ -1,4 +1,4 @@
-package moth.boxxed.panels.api.panel;
+package moth.boxxed.panels.api.panel.skin;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.PanelType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;

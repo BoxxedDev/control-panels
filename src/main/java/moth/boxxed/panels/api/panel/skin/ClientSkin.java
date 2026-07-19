@@ -1,8 +1,9 @@
-package moth.boxxed.panels.api.panel;
+package moth.boxxed.panels.api.panel.skin;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;

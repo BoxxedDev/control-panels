@@ -2,8 +2,8 @@ package moth.boxxed.panels.content.cable.stripped.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.module.ModuleIOInfo;
-import moth.boxxed.panels.api.module.ModuleIOType;
+import moth.boxxed.panels.api.module.io.ModuleIOInfo;
+import moth.boxxed.panels.api.module.io.ModuleIOType;
 import moth.boxxed.panels.network.packet.ConfigureStrippedCablePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

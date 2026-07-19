@@ -3,16 +3,18 @@ package moth.boxxed.panels.event;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleTooltipManager;
+import moth.boxxed.panels.api.module.PlacementManager;
+import moth.boxxed.panels.api.module.tooltip.ModuleTooltipManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelModulesHitHandler;
-import moth.boxxed.panels.api.panel.PanelSkinsClientManager;
+import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
 import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.content.paintbrush.PaintWheel;
+import moth.boxxed.panels.content.panel.ceiling.CeilingPanelRenderer;
 import moth.boxxed.panels.content.panel.normal.PanelRenderer;
 import moth.boxxed.panels.content.panel.wall.WallPanelRenderer;
 import moth.boxxed.panels.index.PanelBlockEntities;
@@ -57,8 +59,8 @@ public class ControlPanelsClientEvents {
             Level level = Minecraft.getInstance().level;
             Player player = Minecraft.getInstance().player;
             if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof AbstractPanelBlockEntity pbe) {
-                Module module = pbe.getModule(pbe.getSelectedModules(player));
-                if (!pbe.getSelectedModules(player).isEmpty() && module != null) {
+                Module module = pbe.getModule(pbe.getSelectedModule(player));
+                if (!pbe.getSelectedModule(player).isEmpty() && module != null) {
                     ModuleTooltipManager.renderSelected(
                             event.getGuiGraphics(),
                             module
@@ -124,5 +126,12 @@ public class ControlPanelsClientEvents {
     public static void registerBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(PanelBlockEntities.PANEL.get(), ctx -> new PanelRenderer());
         event.registerBlockEntityRenderer(PanelBlockEntities.WALL_PANEL.get(), ctx -> new WallPanelRenderer());
+        event.registerBlockEntityRenderer(PanelBlockEntities.CEILING_PANEL.get(), ctx -> new CeilingPanelRenderer());
+    }
+
+    @SubscribeEvent
+    public static void onPreRender(RenderLevelStageEvent event) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES)
+            PlacementManager.frame(event.getCamera().getPosition(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
     }
 }

@@ -14,14 +14,7 @@ public class WallPanelRenderer extends AbstractPanelRenderer<WallPanelBlockEntit
 
         poseStack.pushPose();
         poseStack.rotateAround(Axis.YP.rotationDegrees(direction.toYRot() + (direction.getAxis()== Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
-        poseStack.pushPose();
-        poseStack.rotateAround(Axis.ZP.rotationDegrees(180), 0.5f, 0.5f, 0.5f);
-        poseStack.rotateAround(Axis.XP.rotationDegrees(90), 0.5f, 0.5f, 0.5f);
-        poseStack.translate(0, 0.125f, 0.125f);
         this.renderModules(
-                (module, stack) -> {
-                    poseStack.translate(module.getPos().x/16f, 0, module.getPos().y/16f);
-                },
                 panelBlockEntity,
                 partialTick,
                 poseStack,
@@ -29,7 +22,6 @@ public class WallPanelRenderer extends AbstractPanelRenderer<WallPanelBlockEntit
                 packedLight,
                 packedOverlay
         );
-        poseStack.popPose();
         poseStack.popPose();
     }
 }

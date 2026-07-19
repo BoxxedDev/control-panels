@@ -3,6 +3,7 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
+import moth.boxxed.panels.content.panel.ceiling.CeilingPanelBlock;
 import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.content.panel.wall.WallPanelBlock;
 import net.minecraft.world.level.block.Block;
@@ -31,6 +32,16 @@ public class PanelBlocks {
     public static final DeferredBlock<WallPanelBlock> WALL_CONTROL_PANEL =
             registerBlock("wall_control_panel",
                     () -> new WallPanelBlock(
+                            BlockBehaviour.Properties.of()
+                                    .strength(1f, 20f)
+                                    .sound(SoundType.NETHERITE_BLOCK)
+                                    .mapColor(MapColor.COLOR_GRAY)
+                                    .noOcclusion()
+                    )
+            );
+    public static final DeferredBlock<CeilingPanelBlock> CEILING_CONTROL_PANEL =
+            registerBlock("ceiling_control_panel",
+                    () -> new CeilingPanelBlock(
                             BlockBehaviour.Properties.of()
                                     .strength(1f, 20f)
                                     .sound(SoundType.NETHERITE_BLOCK)

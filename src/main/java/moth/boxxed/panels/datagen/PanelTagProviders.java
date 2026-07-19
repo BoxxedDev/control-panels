@@ -46,7 +46,12 @@ public class PanelTagProviders {
 
             tag(PanelTags.Items.PANELS)
                     .add(fromBlock(PanelBlocks.CONTROL_PANEL.getKey()))
-                    .add(fromBlock(PanelBlocks.WALL_CONTROL_PANEL.getKey()));
+                    .add(fromBlock(PanelBlocks.WALL_CONTROL_PANEL.getKey()))
+                    .add(fromBlock(PanelBlocks.CEILING_CONTROL_PANEL.getKey()));
+
+            tag(PanelTags.Items.WRENCH)
+                    .add(PanelItems.WRENCH.getKey())
+                    .addOptional(ResourceLocation.fromNamespaceAndPath("create", "wrench"));
         }
 
         protected static ResourceKey<Item> fromBlock(ResourceKey<Block> blockKey) {
@@ -75,7 +80,8 @@ public class PanelTagProviders {
 
             tag(PanelTags.Blocks.PANELS)
                     .add(PanelBlocks.CONTROL_PANEL.getKey())
-                    .add(PanelBlocks.WALL_CONTROL_PANEL.getKey());
+                    .add(PanelBlocks.WALL_CONTROL_PANEL.getKey())
+                    .add(PanelBlocks.CEILING_CONTROL_PANEL.getKey());
         }
     }
 }

@@ -1,7 +1,8 @@
 package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.api.panel.PanelSkinsServerManager;
+import moth.boxxed.panels.api.panel.AbstractPanelBlock;
+import moth.boxxed.panels.api.panel.skin.PanelSkinsServerManager;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
@@ -10,13 +11,22 @@ import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelMenuTypes;
+import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.*;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,6 +36,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -77,6 +88,12 @@ public class ControlPanelsCommonEvents {
                 SetPanelSkinPacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSetPanelSkin
         );
+        registrar.playToServer(
+                PlaceModulePacket.TYPE,
+                PlaceModulePacket.STREAM_CODEC,
+                ServerPayloadHandler::handlePlaceModule
+        );
+
         //Compat packet
         if (ModList.get().isLoaded("create"))
             registrar.playToServer(
@@ -171,5 +188,27 @@ public class ControlPanelsCommonEvents {
     @SubscribeEvent
     public static void addReloadListeners(AddReloadListenerEvent event) {
         event.addListener(PanelSkinsServerManager.ReloadListener.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public static void useItemOnBlock(UseItemOnBlockEvent event) {
+        if (event.getUsePhase() != UseItemOnBlockEvent.UsePhase.ITEM_BEFORE_BLOCK)
+            return;
+
+        UseOnContext context = event.getUseOnContext();
+        BlockPos pos = context.getClickedPos();
+        Level level = context.getLevel();
+        Player player = context.getPlayer();
+        BlockState state = level.getBlockState(pos);
+        ItemStack itemInHand = player.getMainHandItem();
+
+        if (itemInHand.is(PanelTags.Items.WRENCH) && player.isShiftKeyDown() &&
+                state.getBlock() instanceof AbstractPanelBlock block &&
+                level.getBlockEntity(pos) != null) {
+            if (!block.removeSelectedModule(level, pos, player)) {
+                event.setCancellationResult(ItemInteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
+        }
     }
 }

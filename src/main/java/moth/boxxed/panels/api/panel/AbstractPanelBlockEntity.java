@@ -4,12 +4,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
+import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;
+import moth.boxxed.panels.util.RectUtil;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,14 +31,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember implements MenuProvider, Clearable {
     public static final ModelProperty<ResourceLocation> SKIN_PROPERTY = new ModelProperty<>();
@@ -44,7 +48,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public ResourceLocation skin;
     public PanelType panelType;
 
-    private final Map<Player, String> selectedModules = new HashMap<>();
+    private final Map<UUID, String> selectedModules = new HashMap<>();
 
     public AbstractPanelBlockEntity(PanelType panelType, BlockEntityType<? extends AbstractPanelBlockEntity> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -72,6 +76,12 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         module.name = string;
         module.parentBlockEntity = this;
         this.modules.put(string, module);
+    }
+
+    public Module removeModule(String module) {
+        Module removedModule = this.modules.remove(module);
+        this.reconstructItems();
+        return removedModule;
     }
 
     public void reconstructItems() {
@@ -175,7 +185,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
         if (hitModule != null) {
             InteractionResult result = hitModule.onUse(level, player);
             if (!level.isClientSide)
@@ -188,12 +198,18 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player, p -> ""));
+        Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
         if (hitModule != null) {
             ItemInteractionResult result = hitModule.onItemUse(stack, level, player);
             if (!level.isClientSide)
                 this.blockChanged();
             return result;
+        }
+
+        if (level.isClientSide()) {
+            if (PlacementManager.tryPlaceModule()) {
+                return ItemInteractionResult.SUCCESS;
+            }
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -219,11 +235,11 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public void setSelectedModule(Player player, String string) {
-        this.selectedModules.put(player, string);
+        this.selectedModules.put(player.getUUID(), string);
     }
 
-    public String getSelectedModules(Player player) {
-        return this.selectedModules.computeIfAbsent(player, player1 -> "");
+    public String getSelectedModule(Player player) {
+        return this.selectedModules.computeIfAbsent(player.getUUID(), player1 -> "");
     }
 
     @Override
@@ -249,9 +265,30 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
                 .build();
     }
 
-    public Map<Player, String> getSelectedModules() {
+    public boolean intersectsWithAnotherModule(Module module) {
+        Rect2i moduleRect = module.getRect();
+        for (Map.Entry<String, Module> entry : this.modules) {
+            Rect2i otherModuleRect = entry.getValue().getRect();
+            if (RectUtil.intersects(moduleRect, otherModuleRect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map<UUID, String> getSelectedModules() {
         return new HashMap<>(this.selectedModules);
     }
 
     public abstract void transformPanelClipping(PoseStack stack);
+
+    public abstract boolean canPlaceModuleOnSurface(Vec3 position, Direction face);
+
+    public abstract Vector2i getPosForModule(Vec3 localSpace);
+
+    public abstract BiConsumer<Module, PoseStack> getIndividualModuleTransform();
+
+    public abstract void renderTransform(PoseStack poseStack);
+
+    public abstract Vector2i getContentArea();
 }

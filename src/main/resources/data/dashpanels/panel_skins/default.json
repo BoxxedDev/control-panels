@@ -3,6 +3,7 @@
   "skins": [
     "dashpanels:default",
     "dashpanels:kipti",
-    "dashpanels:construction"
+    "dashpanels:construction",
+    "dashpanels:animated"
   ]
 }

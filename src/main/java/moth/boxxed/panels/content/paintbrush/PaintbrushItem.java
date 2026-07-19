@@ -1,8 +1,8 @@
 package moth.boxxed.panels.content.paintbrush;
 
-import moth.boxxed.panels.api.panel.PanelSkinsServerManager;
+import moth.boxxed.panels.api.panel.skin.PanelSkinsServerManager;
 import moth.boxxed.panels.api.panel.PanelType;
-import moth.boxxed.panels.api.panel.ServerSkin;
+import moth.boxxed.panels.api.panel.skin.ServerSkin;
 import moth.boxxed.panels.network.packet.OpenPaintWheelPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;

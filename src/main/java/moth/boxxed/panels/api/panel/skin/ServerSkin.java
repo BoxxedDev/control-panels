@@ -1,8 +1,9 @@
-package moth.boxxed.panels.api.panel;
+package moth.boxxed.panels.api.panel.skin;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.ListCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.util.ListStreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

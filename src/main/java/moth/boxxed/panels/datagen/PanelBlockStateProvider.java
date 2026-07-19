@@ -35,6 +35,13 @@ public class PanelBlockStateProvider extends BlockStateProvider {
                 Dashpanels.path("block/wall_control_panel/left"),
                 Dashpanels.path("block/wall_control_panel/right")
         );
+        controlPanel(
+                PanelBlocks.CEILING_CONTROL_PANEL.get(),
+                Dashpanels.path("block/ceiling_control_panel/single"),
+                Dashpanels.path("block/ceiling_control_panel/center"),
+                Dashpanels.path("block/ceiling_control_panel/left"),
+                Dashpanels.path("block/ceiling_control_panel/right")
+        );
         cable();
         horizontalBlock(PanelBlocks.STRIPPED_CABLE.get(), models().getExistingFile(Dashpanels.path("block/cable/stripped")));
         panelLink();

@@ -1,4 +1,4 @@
-package moth.boxxed.panels.api.module;
+package moth.boxxed.panels.api.module.tooltip;
 
 import moth.boxxed.panels.Dashpanels;
 import net.minecraft.network.chat.Component;

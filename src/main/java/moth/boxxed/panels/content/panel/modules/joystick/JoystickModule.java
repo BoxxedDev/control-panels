@@ -3,7 +3,7 @@ package moth.boxxed.panels.content.panel.modules.joystick;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
-import moth.boxxed.panels.api.module.IMultiInput;
+import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;

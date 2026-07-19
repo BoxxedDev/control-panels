@@ -3,6 +3,7 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.cable.CableBlockEntity;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
+import moth.boxxed.panels.content.panel.ceiling.CeilingPanelBlockEntity;
 import moth.boxxed.panels.content.panel.normal.PanelBlockEntity;
 import moth.boxxed.panels.content.panel.wall.WallPanelBlockEntity;
 import net.minecraft.core.registries.Registries;
@@ -23,6 +24,11 @@ public class PanelBlockEntities {
     public static final Supplier<BlockEntityType<WallPanelBlockEntity>> WALL_PANEL =
             BLOCK_ENTITY_TYPES.register("wall_panel", () -> BlockEntityType.Builder.of(
                         WallPanelBlockEntity::new, PanelBlocks.WALL_CONTROL_PANEL.get()
+                    ).build(null)
+            );
+    public static final Supplier<BlockEntityType<CeilingPanelBlockEntity>> CEILING_PANEL =
+            BLOCK_ENTITY_TYPES.register("ceiling_panel", () -> BlockEntityType.Builder.of(
+                            CeilingPanelBlockEntity::new, PanelBlocks.CEILING_CONTROL_PANEL.get()
                     ).build(null)
             );
 

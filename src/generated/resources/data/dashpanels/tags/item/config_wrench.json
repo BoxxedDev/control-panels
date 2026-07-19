@@ -1,0 +1,9 @@
+{
+  "values": [
+    "dashpanels:wrench",
+    {
+      "id": "create:wrench",
+      "required": false
+    }
+  ]
+}

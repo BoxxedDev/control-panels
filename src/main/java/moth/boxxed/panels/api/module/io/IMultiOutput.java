@@ -1,4 +1,4 @@
-package moth.boxxed.panels.api.module;
+package moth.boxxed.panels.api.module.io;
 
 import java.util.function.BiConsumer;
 

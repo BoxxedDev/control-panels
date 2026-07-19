@@ -11,6 +11,7 @@ public class PanelTags {
     public static class Items {
         public static final TagKey<net.minecraft.world.item.Item> MODULE = TagKey.create(Registries.ITEM, Dashpanels.path("modules"));
         public static final TagKey<Item> PANELS = TagKey.create(Registries.ITEM, Dashpanels.path("panels"));
+        public static final TagKey<Item> WRENCH = TagKey.create(Registries.ITEM, Dashpanels.path("config_wrench"));
     }
 
     public static class Blocks {

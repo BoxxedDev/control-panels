@@ -18,6 +18,8 @@ public class PanelItems {
             () -> new CableStripperItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<PaintbrushItem> PAINT_BRUSH = ITEMS.register("paint_brush",
             () -> new PaintbrushItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> WRENCH = ITEMS.register("wrench",
+            () -> new Item(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> SWITCH_MODULE = moduleItem("switch");
     public static final DeferredItem<Item> KNOB_MODULE = moduleItem("knob");

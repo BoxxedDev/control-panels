@@ -3,6 +3,8 @@ package moth.boxxed.panels.content.panel.modules.control_lever;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
@@ -35,7 +37,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     private float indicatorRender = 0;
     private int signal = 0;
 
-
+    private final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15);
 
     public ControlLeverModule(int x, int y) {
         super(PanelModules.CONTROL_LEVER.get(), x, y, 3, 5);
@@ -128,5 +130,10 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
             }
             return false;
         });
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(redstoneOutput);
     }
 }

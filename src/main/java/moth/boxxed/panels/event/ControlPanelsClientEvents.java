@@ -47,10 +47,7 @@ public class ControlPanelsClientEvents {
                 return;
             }
         }
-//        if (PaintWheel.isActive()) {
-//            PaintWheel.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
-//            return;
-//        }
+
         boolean active = false;
         if (ClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
                 !ModuleHoldInteractionManager.isActive() &&

@@ -178,13 +178,13 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (this.level != null) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
 
-//            if (this.level.isClientSide) {
-//                if (this.skin != this.cSkin || this.skinColor != this.cSkinColor) {
-//                    this.requestModelDataUpdate();
-//                    this.cSkin = this.skin;
-//                    this.cSkinColor = this.skinColor;
-//                }
-//            }
+            if (this.level.isClientSide) {
+                if (this.skin != this.cSkin || this.skinColor != this.cSkinColor) {
+                    this.requestModelDataUpdate();
+                    this.cSkin = this.skin;
+                    this.cSkinColor = this.skinColor;
+                }
+            }
         }
     }
 

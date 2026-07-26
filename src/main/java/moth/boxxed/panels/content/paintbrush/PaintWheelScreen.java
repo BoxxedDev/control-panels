@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class PaintWheelScreen extends Screen {
     public static final ResourceLocation PAINT_WHEEL = Dashpanels.path("textures/gui/paint_brush/paint_wheel.png");
@@ -99,22 +100,7 @@ public class PaintWheelScreen extends Screen {
                         Component.translatable("paint_wheel.hex_input")
                 )
         );
-//        this.hexInput.setFilter(
-//                s -> {
-//                    if (s.equals("#"))
-//                        return true;
-//                    try {
-//                        if (s.charAt(0) == '#') {
-//                            Integer.decode(s.substring(1));
-//                        } else {
-//                            Integer.decode(s);
-//                        }
-//                        return true;
-//                    } catch (NumberFormatException e) {
-//                        return false;
-//                    }
-//                }
-//        );
+        this.hexInput.setFilter(s -> Pattern.compile("^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$").matcher(s).matches());
 
         this.reconstructSkinWidgets();
     }
@@ -326,8 +312,8 @@ public class PaintWheelScreen extends Screen {
         private float brightness = 1;
         private float alpha = 1;
 
-//        private final PickerGradient gradient = new PickerGradient(66, 66, 0.0f);
-//        private final HueGradient hueGradient = new HueGradient(66, 4);
+        private final PickerGradient gradient = new PickerGradient(66, 66, 0.0f);
+        private final HueGradient hueGradient = new HueGradient(66, 4);
 
         public ColorPicker(int color, Component message) {
             super(0, 0, 66, 82, message);
@@ -337,8 +323,8 @@ public class PaintWheelScreen extends Screen {
 
         @Override
         protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//            this.gradient.render(guiGraphics, this.getX(), this.getY());
-//            this.hueGradient.render(guiGraphics, this.getX(), this.getY()+this.getHeight()-8);
+            this.gradient.render(guiGraphics, this.getX(), this.getY());
+            this.hueGradient.render(guiGraphics, this.getX(), this.getY()+this.getHeight()-8);
 
             int satMapped = (int) (this.getX()+Mth.clampedMap(this.saturation, 0, 1, 0, 64));
             int hueMapped = (int) (this.getX()+Mth.clampedMap(this.hue, 0, 1, 0, 64));
@@ -365,7 +351,7 @@ public class PaintWheelScreen extends Screen {
                     this.brightness = (float) Mth.clampedMap(mouseY, this.getY(), this.getY()+66, 1, 0);
                 } else if (mouseY >= this.getY()+this.getHeight()-9 && mouseY <= this.getY()+this.getHeight()-3) {
                     this.hue = x;
-//                    this.gradient.setHue(this.hue);
+                    this.gradient.setHue(this.hue);
                 } else if (mouseY >= this.getY()+this.getHeight()-5 && mouseY <= this.getY()+this.getHeight()+1) {
                     this.alpha = x;
                 }
@@ -383,7 +369,7 @@ public class PaintWheelScreen extends Screen {
             this.saturation = hsb[1];
             this.brightness = hsb[2];
 
-//            this.gradient.setHue(this.hue);
+            this.gradient.setHue(this.hue);
         }
 
         @Override
@@ -418,165 +404,165 @@ public class PaintWheelScreen extends Screen {
     }
 
     //A little bloated but it's wtv
-//    private static class PickerGradient implements AutoCloseable {
-//        private static final ResourceLocation LOCATION = Dashpanels.path("textures/gui/paint_brush/picker_gradient");
-//
-//        private boolean dirty = true;
-//
-//        private float hue;
-//
-//        private final int width;
-//        private final int height;
-//
-//        private final DynamicTexture texture;
-//
-//        public PickerGradient(int width, int height, float hue) {
-//            this.width = width;
-//            this.height = height;
-//            this.hue = hue;
-//
-//            TextureManager manager = Minecraft.getInstance().getTextureManager();
-//
-//            this.texture = new DynamicTexture(width, height, false);
-//            this.texture.setFilter(true, false);
-//
-//            manager.register(LOCATION, this.texture);
-//
-//            this.generateTexture();
-//        }
-//
-//        private void generateTexture() {
-//            NativeImage image = this.texture.getPixels();
-//
-//            if (image == null) {
-//                return;
-//            }
-//
-//            int hsbColor = Color.HSBtoRGB(this.hue, 1, 1);
-//
-//            for (int y = 0; y < this.height; y++) {
-//                float v = y/(this.height-1f);
-//                for (int x = 0; x < this.width; x++) {
-//                    float u = x/(this.width-1f);
-//                    int color = bilinear(hsbColor, u, v);
-//                    image.setPixelRGBA(x, y, color);
-//                }
-//            }
-//
-//            this.texture.upload();
-//            this.dirty = false;
-//        }
-//
-//        public void render(
-//                GuiGraphics graphics,
-//                int x, int y
-//        ) {
-//            if (this.dirty)
-//                generateTexture();
-//
-//            graphics.blit(
-//                    LOCATION,
-//                    x, y,
-//                    this.width, this.height,
-//                    0, 0,
-//                    this.width, this.height,
-//                    this.width, this.height
-//            );
-//        }
-//
-//        public void setHue(float hue) {
-//            this.hue = hue;
-//            this.dirty = true;
-//        }
-//
-//        private static int bilinear(int color, float u, float v) {
-//            float r = (color >> 16) & 0xFF;
-//            float g = (color >> 8) & 0xFF;
-//            float b = color & 0xFF;
-//
-//            float topR = Mth.lerp(u, 255, r);
-//            float topG = Mth.lerp(u, 255, g);
-//            float topB = Mth.lerp(u, 255, b);
-//
-//            int outR = Math.clamp(Math.round(Mth.lerp(v, topR, 0)), 0, 255);
-//            int outG = Math.clamp(Math.round(Mth.lerp(v, topG, 0)), 0, 255);
-//            int outB = Math.clamp(Math.round(Mth.lerp(v, topB, 0)), 0, 255);
-//
-//            //For some reason the output is flipped? it's weird
-//            return 0xFF000000 | (outB << 16) | (outG << 8) | outR;
-//        }
-//
-//        @Override
-//        public void close() throws Exception {
-//            this.texture.close();
-//        }
-//    }
+    private static class PickerGradient implements AutoCloseable {
+        private static final ResourceLocation LOCATION = Dashpanels.path("textures/gui/paint_brush/picker_gradient");
 
-//    private static class HueGradient implements AutoCloseable {
-//        private static final ResourceLocation LOCATION = Dashpanels.path("textures/gui/paint_brush/hue_gradient");
-//
-//        private final DynamicTexture texture;
-//
-//        private final int width;
-//        private final int height;
-//
-//        private boolean dirty = true;
-//
-//        public HueGradient(int width, int height) {
-//            TextureManager manager = Minecraft.getInstance().getTextureManager();
-//
-//            this.texture = new DynamicTexture(width, height, false);
-//            this.texture.setFilter(true, false);
-//
-//            manager.register(LOCATION, this.texture);
-//
-//            this.width = width;
-//            this.height = height;
-//
-//            this.generateTexture();
-//        }
-//
-//        private void generateTexture() {
-//            NativeImage image = this.texture.getPixels();
-//
-//            if (image == null)
-//                return;
-//
-//            for (int x = 0; x < width; x++) {
-//                int color = Color.HSBtoRGB(Mth.clampedMap(x, 0, width, 0f, 1f), 1f, 1f);
-//
-//                int r = (color >> 16) & 0xFF;
-//                int g = (color >> 8) & 0xFF;
-//                int b = color & 0xFF;
-//
-//                color = 0xFF000000 | (b << 16) | (g << 8) | r;
-//                for (int y = 0; y < height; y++) {
-//                    image.setPixelRGBA(x, y, color);
-//                }
-//            }
-//
-//            this.texture.upload();
-//
-//            this.dirty = false;
-//        }
-//
-//        public void render(GuiGraphics graphics, int x, int y) {
-//            if (this.dirty)
-//                this.generateTexture();
-//
-//            graphics.blit(
-//                    LOCATION,
-//                    x, y,
-//                    this.width, this.height,
-//                    0, 0,
-//                    this.width, this.height,
-//                    this.width, this.height
-//            );
-//        }
-//
-//        @Override
-//        public void close() throws Exception {
-//            this.texture.close();
-//        }
-//    }
+        private boolean dirty = true;
+
+        private float hue;
+
+        private final int width;
+        private final int height;
+
+        private final DynamicTexture texture;
+
+        public PickerGradient(int width, int height, float hue) {
+            this.width = width;
+            this.height = height;
+            this.hue = hue;
+
+            TextureManager manager = Minecraft.getInstance().getTextureManager();
+
+            this.texture = new DynamicTexture(width, height, false);
+            this.texture.setFilter(true, false);
+
+            manager.register(LOCATION, this.texture);
+
+            this.generateTexture();
+        }
+
+        private void generateTexture() {
+            NativeImage image = this.texture.getPixels();
+
+            if (image == null) {
+                return;
+            }
+
+            int hsbColor = Color.HSBtoRGB(this.hue, 1, 1);
+
+            for (int y = 0; y < this.height; y++) {
+                float v = y/(this.height-1f);
+                for (int x = 0; x < this.width; x++) {
+                    float u = x/(this.width-1f);
+                    int color = bilinear(hsbColor, u, v);
+                    image.setPixelRGBA(x, y, color);
+                }
+            }
+
+            this.texture.upload();
+            this.dirty = false;
+        }
+
+        public void render(
+                GuiGraphics graphics,
+                int x, int y
+        ) {
+            if (this.dirty)
+                generateTexture();
+
+            graphics.blit(
+                    LOCATION,
+                    x, y,
+                    this.width, this.height,
+                    0, 0,
+                    this.width, this.height,
+                    this.width, this.height
+            );
+        }
+
+        public void setHue(float hue) {
+            this.hue = hue;
+            this.dirty = true;
+        }
+
+        private static int bilinear(int color, float u, float v) {
+            float r = (color >> 16) & 0xFF;
+            float g = (color >> 8) & 0xFF;
+            float b = color & 0xFF;
+
+            float topR = Mth.lerp(u, 255, r);
+            float topG = Mth.lerp(u, 255, g);
+            float topB = Mth.lerp(u, 255, b);
+
+            int outR = Math.clamp(Math.round(Mth.lerp(v, topR, 0)), 0, 255);
+            int outG = Math.clamp(Math.round(Mth.lerp(v, topG, 0)), 0, 255);
+            int outB = Math.clamp(Math.round(Mth.lerp(v, topB, 0)), 0, 255);
+
+            //For some reason the output is flipped? it's weird
+            return 0xFF000000 | (outB << 16) | (outG << 8) | outR;
+        }
+
+        @Override
+        public void close() throws Exception {
+            this.texture.close();
+        }
+    }
+
+    private static class HueGradient implements AutoCloseable {
+        private static final ResourceLocation LOCATION = Dashpanels.path("textures/gui/paint_brush/hue_gradient");
+
+        private final DynamicTexture texture;
+
+        private final int width;
+        private final int height;
+
+        private boolean dirty = true;
+
+        public HueGradient(int width, int height) {
+            TextureManager manager = Minecraft.getInstance().getTextureManager();
+
+            this.texture = new DynamicTexture(width, height, false);
+            this.texture.setFilter(true, false);
+
+            manager.register(LOCATION, this.texture);
+
+            this.width = width;
+            this.height = height;
+
+            this.generateTexture();
+        }
+
+        private void generateTexture() {
+            NativeImage image = this.texture.getPixels();
+
+            if (image == null)
+                return;
+
+            for (int x = 0; x < width; x++) {
+                int color = Color.HSBtoRGB(Mth.clampedMap(x, 0, width, 0f, 1f), 1f, 1f);
+
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+
+                color = 0xFF000000 | (b << 16) | (g << 8) | r;
+                for (int y = 0; y < height; y++) {
+                    image.setPixelRGBA(x, y, color);
+                }
+            }
+
+            this.texture.upload();
+
+            this.dirty = false;
+        }
+
+        public void render(GuiGraphics graphics, int x, int y) {
+            if (this.dirty)
+                this.generateTexture();
+
+            graphics.blit(
+                    LOCATION,
+                    x, y,
+                    this.width, this.height,
+                    0, 0,
+                    this.width, this.height,
+                    this.width, this.height
+            );
+        }
+
+        @Override
+        public void close() throws Exception {
+            this.texture.close();
+        }
+    }
 }

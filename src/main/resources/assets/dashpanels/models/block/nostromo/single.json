@@ -5,7 +5,8 @@
 	"render_type": "cutout",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "dashpanels:block/control_panel_animated",
+		"1": "dashpanels:block/nostromo",
+		"2": "dashpanels:block/nostromo_tint",
 		"particle": "dashpanels:block/metal"
 	},
 	"elements": [
@@ -35,12 +36,37 @@
 			}
 		},
 		{
+			"from": [0, 0, 0],
+			"to": [16, 12, 16],
+			"faces": {
+				"north": {"uv": [12, 1, 16, 4], "texture": "#2", "tintindex": 0},
+				"east": {"uv": [8, 1, 4, 4], "texture": "#2", "tintindex": 0},
+				"south": {"uv": [0, 1, 4, 4], "texture": "#2", "tintindex": 0},
+				"west": {"uv": [4, 1, 8, 4], "texture": "#2", "tintindex": 0},
+				"up": {"uv": [8, 4, 12, 0], "texture": "#2", "tintindex": 0},
+				"down": {"uv": [12, 4, 16, 8], "texture": "#2", "tintindex": 0}
+			}
+		},
+		{
+			"from": [0, 12, 12],
+			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 12, 12]},
+			"faces": {
+				"north": {"uv": [12, 0, 16, 1], "texture": "#2", "tintindex": 0},
+				"east": {"uv": [8, 0, 7, 1], "texture": "#2", "tintindex": 0},
+				"south": {"uv": [0, 0, 4, 1], "texture": "#2", "tintindex": 0},
+				"west": {"uv": [7, 0, 8, 1], "texture": "#2", "tintindex": 0},
+				"up": {"uv": [8, 0, 12, 1], "texture": "#2", "tintindex": 0},
+				"down": {"uv": [0, 0, 4, 1], "texture": "#2", "tintindex": 0}
+			}
+		},
+		{
 			"from": [0, 12, 0],
 			"to": [0.001, 16, 12],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 12, 0]},
 			"faces": {
-				"east": {"uv": [7, 0, 4, 1], "texture": "#1"},
-				"west": {"uv": [4, 0, 7, 1], "texture": "#1"}
+				"east": {"uv": [7, 0, 4, 1], "texture": "#1", "tintindex": 0},
+				"west": {"uv": [4, 0, 7, 1], "texture": "#1", "tintindex": 0}
 			}
 		},
 		{
@@ -48,8 +74,8 @@
 			"to": [16, 16, 12],
 			"rotation": {"angle": 0, "axis": "y", "origin": [16, 12, 0]},
 			"faces": {
-				"east": {"uv": [7, 0, 4, 1], "texture": "#1"},
-				"west": {"uv": [4, 0, 7, 1], "texture": "#1"}
+				"east": {"uv": [7, 0, 4, 1], "texture": "#1", "tintindex": 0},
+				"west": {"uv": [4, 0, 7, 1], "texture": "#1", "tintindex": 0}
 			}
 		}
 	],
@@ -84,5 +110,16 @@
 			"translation": [0, 0, -3],
 			"scale": [0.5, 0.5, 0.5]
 		}
-	}
+	},
+	"groups": [
+		0,
+		1,
+		{
+			"name": "tint",
+			"origin": [8, 8, 8],
+			"scope": 0,
+			"color": 0,
+			"children": [2, 3, 4, 5]
+		}
+	]
 }

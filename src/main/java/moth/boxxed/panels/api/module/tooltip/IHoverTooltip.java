@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
 /**
- * A hovering tooltip can be added to a module to display an extra information when hovering (other than its name)
+ * A hovering tooltip can be added to a moduleName to display an extra information when hovering (other than its name)
  */
 public interface IHoverTooltip {
     void addLines(List<Component> list);

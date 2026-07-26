@@ -1,7 +1,7 @@
 package moth.boxxed.panels.content.cable.stripped;
 
-import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.io.IMultiOutput;
@@ -144,7 +144,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
             if (module instanceof IMultiOutput output) {
                 Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
                 output.setValues(runnableMap::put);
-                String extension = be.boundModule.substring(module.name.length()+3);
+                String extension = be.boundModule.substring(module.getName().length()+3);
                 if (level.hasNeighborSignal(pos)) {
                     runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
                 } else {

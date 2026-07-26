@@ -2,8 +2,10 @@ package moth.boxxed.panels.content.panel.modules.momentary_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
-import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
+import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
@@ -32,6 +35,9 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     public boolean pressed;
     private float pressValue;
     private float lastPressValue;
+
+    private final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15);
+    private final ModuleConfigValue.BooleanValue inverted = new ModuleConfigValue.BooleanValue("inverted", false);
 
     public MomentarySwitchModule(int x, int y) {
         super(PanelModules.MOMENTARY_SWITCH.get(), x, y, 3, 3);
@@ -57,7 +63,9 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
 
     @Override
     public int getAnalog() {
-        return this.pressed ? 15 : 0;
+        int outputValue = this.redstoneOutput.get();
+        boolean pressed = this.inverted.get() != this.pressed;
+        return pressed ? outputValue : 0;
     }
 
     @Override
@@ -116,5 +124,11 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
                 return InteractionResult.SUCCESS;
             }
         return super.onUse(level, player);
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(redstoneOutput);
+        builder.add(inverted);
     }
 }

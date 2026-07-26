@@ -1,0 +1,310 @@
+package moth.boxxed.panels.api.module.config;
+
+import dev.engine_room.flywheel.backend.gl.array.VertexAttribute;
+import moth.boxxed.panels.api.module.config.gui.ConfigFrameBuilder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.phys.Vec3;
+import org.apache.logging.log4j.core.lookup.JmxRuntimeInputArgumentsLookup;
+import org.checkerframework.common.value.qual.StringVal;
+import org.jspecify.annotations.NonNull;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+public abstract class ModuleConfigValue<T> {
+    protected final String name;
+    protected final T defaultValue;
+    protected T value;
+    protected boolean revertable = true;
+
+    protected List<ValueChangedListener<T>> listeners = new ArrayList<>();
+
+    public ModuleConfigValue(String name, @Nonnull T defaultValue) {
+        if (name.contains(" ")) {
+            throw new IllegalArgumentException("Module config value name cannot contain spaces");
+        }
+
+        this.name = name;
+        this.value = defaultValue;
+        this.defaultValue = defaultValue;
+    }
+
+    public abstract void save(CompoundTag tag, HolderLookup.Provider registries);
+
+    public abstract void load(CompoundTag tag, HolderLookup.Provider registries);
+
+    public T get() {
+        return this.value;
+    }
+
+    public void set(T value) {
+        T oldValue = this.value;
+        this.value = value;
+        broadcastChange(oldValue);
+    }
+
+    public T getDefault() {
+        return this.defaultValue;
+    }
+
+    public Component getName() {
+        return Component.translatable("module_config.value.%s".formatted(this.name));
+    }
+
+    public String getId() {
+        return this.name;
+    }
+
+    public void setRevertable(boolean revertable) {
+        this.revertable = revertable;
+    }
+
+    public boolean isRevertable() {
+        return this.revertable;
+    }
+
+    public void addChangeListener(ValueChangedListener<T> listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeChangeListener(ValueChangedListener<T> listener) {
+        this.listeners.remove(listener);
+    }
+
+    public void broadcastChange(T oldValue) {
+        this.listeners.forEach(listener -> {
+            if (listener != null)
+                listener.run(oldValue, this.value);
+        });
+    }
+
+    public abstract void buildGuiFrame(ConfigFrameBuilder builder);
+
+    @FunctionalInterface
+    public interface ValueChangedListener<T> {
+        void run(T oldValue, T newValue);
+    }
+
+    public static class BooleanValue extends ModuleConfigValue<Boolean> {
+        public BooleanValue(String name, boolean defaultValue) {
+            super(name, defaultValue);
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putBoolean("value", this.value);
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (!tag.contains("value"))
+                return;
+            this.set(tag.getBoolean("value"));
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addValuesButton(this, new Boolean[]{true, false}, 32);
+        }
+    }
+
+    public static class IntValue extends ModuleConfigValue<Integer> {
+        protected final int min;
+        protected final int max;
+
+        public IntValue(String name, int defaultValue, int min, int max) {
+            super(name, defaultValue);
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putInt("value", this.value);
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (!tag.contains("value"))
+                return;
+            this.set(Math.clamp(tag.getInt("value"), this.min, this.max));
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addIntBox(
+                    this,
+                    String::valueOf,
+                    (value, string) -> {
+                        try {
+                            int num = Integer.parseInt(string);
+                            value.set(Math.clamp(num, this.min, this.max));
+                        } catch (NumberFormatException ignored) {}
+            },
+                    32
+            );
+        }
+    }
+
+    public static class StringValue extends ModuleConfigValue<String> {
+        protected Predicate<String> validator = Objects::nonNull;
+
+        public StringValue(String name, @NonNull String defaultValue) {
+            super(name, defaultValue);
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putString("value", this.value);
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (!tag.contains("value"))
+                return;
+            this.setWithoutValidation(tag.getString("value"));
+        }
+
+        @Override
+        public void set(String value) {
+            if (this.validator.test(value))
+                super.set(value);
+        }
+
+        public void setWithoutValidation(String value) {
+            super.set(value);
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addEditBox(this, value -> value, ModuleConfigValue::set, 128);
+        }
+
+        public StringValue withValidator(Predicate<String> validator) {
+            this.validator = validator;
+            return this;
+        }
+    }
+
+    public static class EnumValue<T extends Enum<T> & StringRepresentable> extends ModuleConfigValue<T> {
+        private final StringRepresentable.EnumCodec<T> codec;
+        private final Supplier<T[]> valuesSupplier;
+
+        public EnumValue(String name, T defaultValue, Supplier<T[]> valuesSupplier) {
+            super(name, defaultValue);
+            this.codec = StringRepresentable.fromEnum(valuesSupplier);
+            this.valuesSupplier = valuesSupplier;
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            RegistryOps<Tag> ops = registries.createSerializationContext(NbtOps.INSTANCE);
+            var result = this.codec.encodeStart(ops, this.value);
+            if (result.isSuccess()) {
+                tag.put("value", result.getOrThrow());
+            }
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (!tag.contains("value"))
+                return;
+            RegistryOps<Tag> ops = registries.createSerializationContext(NbtOps.INSTANCE);
+            var result = this.codec.decode(ops, tag.get("value"));
+            if (result.isSuccess()) {
+                this.set(result.getOrThrow().getFirst());
+            }
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addValuesButton(this, this.valuesSupplier, 64);
+        }
+    }
+
+    public static class Vec3Value extends ModuleConfigValue<Vec3> {
+        public Vec3Value(String name, @NonNull Vec3 defaultValue) {
+            super(name, defaultValue);
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putDouble("x", this.value.x());
+            tag.putDouble("y", this.value.y());
+            tag.putDouble("z", this.value.z());
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (tag.contains("x") && tag.contains("y") && tag.contains("z")) {
+                this.set(new Vec3(
+                        tag.getDouble("x"),
+                        tag.getDouble("y"),
+                        tag.getDouble("z")
+                ));
+            }
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addLabel(Component.literal("X: "));
+            builder.addDoubleBox(this,
+                    vec3 -> String.valueOf(vec3.x()),
+                    (value, string) -> {
+                try {
+                    Vec3 originalVec3 = value.get();
+                    double x = Double.parseDouble(string);
+                    value.set(
+                            new Vec3(x, originalVec3.y(), originalVec3.z())
+                    );
+                } catch (NumberFormatException e) {
+
+                }
+            }, 32);
+            builder.nextRow();
+
+            builder.addLabel(Component.literal("Y: "));
+            builder.addDoubleBox(this,
+                    vec3 -> String.valueOf(vec3.y()),
+                    (value, string) -> {
+                try {
+                    Vec3 originalVec3 = value.get();
+                    double y = Double.parseDouble(string);
+                    value.set(
+                            new Vec3(originalVec3.x(), y, originalVec3.z())
+                    );
+                } catch (NumberFormatException e) {
+
+                }
+            }, 32);
+            builder.nextRow();
+
+            builder.addLabel(Component.literal("Z: "));
+            builder.addDoubleBox(this,
+                    vec3 -> String.valueOf(vec3.z()),
+                    (value, string) -> {
+                try {
+                    Vec3 originalVec3 = value.get();
+                    double z = Double.parseDouble(string);
+                    value.set(
+                            new Vec3(originalVec3.x(), originalVec3.y(), z)
+                    );
+                } catch (NumberFormatException e) {
+
+                }
+            }, 32);
+        }
+    }
+}

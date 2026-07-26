@@ -142,7 +142,10 @@ public class PlacementManager {
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
             Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).create(0, 0);
-            position.sub(new Vector2i(module.getSize()).div(2));
+            position.sub(
+                    module.getSize().x==1 ? module.getSize().x : module.getSize().x/2,
+                    module.getSize().y==1 ? module.getSize().y : module.getSize().y/2
+            );
 
             Vector2i contentAreaSize = pbe.getContentArea();
             position = RectUtil.clampRectPosToArea(

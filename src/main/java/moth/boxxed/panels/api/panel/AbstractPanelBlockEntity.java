@@ -4,13 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
+import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.module.PlacementManager;
+import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.panel.screen.PanelMenu;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.util.Rect2d;
 import moth.boxxed.panels.util.RectUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -34,18 +35,23 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember implements MenuProvider, Clearable {
+public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember implements Clearable {
     public static final ModelProperty<ResourceLocation> SKIN_PROPERTY = new ModelProperty<>();
 
     public ModuleMap modules;
     public SimpleContainer container;
+
     public ResourceLocation skin;
+    public int skinColor = 0xFFFFFF;
+
+    private ResourceLocation cSkin;
+    private Integer cSkinColor;
+
     public PanelType panelType;
 
     private final Map<UUID, String> selectedModules = new HashMap<>();
@@ -73,8 +79,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public void addModule(String string, Module module) {
         this.reconstructItems();
-        module.name = string;
-        module.parentBlockEntity = this;
+        module.setName(string);
+        module.setParentBE(this);
         this.modules.put(string, module);
     }
 
@@ -133,6 +139,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         } else {
             tag.putString("skin", this.panelType.defaultSkin.toString());
         }
+        tag.putInt("skin_color", this.skinColor);
     }
 
     @Override
@@ -146,6 +153,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
                 String typeString = ((CompoundTag) moduleTag).getString("type");
                 ResourceLocation typeId = ResourceLocation.parse(typeString);
                 Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
+                module.setParentBE(this);
                 module.loadData((CompoundTag) moduleTag, registries);
                 this.addModule(module.getName(), module);
             }
@@ -165,9 +173,19 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             this.container.addItem(ItemStack.parse(registries, itemTag).orElse(ItemStack.EMPTY));
         }
         this.skin = ResourceLocation.parse(tag.getString("skin"));
-        this.requestModelDataUpdate();
-        if (this.level != null)
+        this.skinColor = tag.getInt("skin_color");
+
+        if (this.level != null) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
+
+//            if (this.level.isClientSide) {
+//                if (this.skin != this.cSkin || this.skinColor != this.cSkinColor) {
+//                    this.requestModelDataUpdate();
+//                    this.cSkin = this.skin;
+//                    this.cSkinColor = this.skinColor;
+//                }
+//            }
+        }
     }
 
     public void loadClient(CompoundTag tag, HolderLookup.Provider registries) {
@@ -215,16 +233,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    @Override
-    public Component getDisplayName() {
-        return Component.translatable(PanelBlocks.CONTROL_PANEL.get().getDescriptionId());
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new PanelMenu(containerId, playerInventory, this);
-    }
-
     public void sendToMenu(RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(this.getBlockPos());
         CompoundTag tag = new CompoundTag();
@@ -251,7 +259,12 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         this.skin = skin;
         this.setChanged();
         this.blockChanged();
-        Dashpanels.LOGGER.debug("Setting skin on the client : {}", this.getLevel().isClientSide);
+    }
+
+    public void setSkinColor(int color) {
+        this.skinColor = color;
+        this.setChanged();
+        this.blockChanged();
     }
 
     @Override
@@ -276,6 +289,36 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return false;
     }
 
+    public boolean removeSelectedModule(Level level, BlockPos pos, Player player) {
+        String module = this.getSelectedModule(player);
+        if (module != null) {
+            this.setSelectedModule(player, null);
+            Module removedModule = this.removeModule(module);
+            if (!player.isCreative() && removedModule != null) {
+                ItemStack stack = new ItemStack(ModuleType.getItemFromType(removedModule.type));
+                Inventory inventory = player.getInventory();
+                int slot = inventory.getSlotWithRemainingSpace(stack);
+                inventory.add(slot, stack);
+            }
+            this.setChanged();
+            this.blockChanged();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean openConfigureScreen(Level level, BlockPos pos, Player player) {
+        String moduleName = this.getSelectedModule(player);
+        if (moduleName != null && level.isClientSide()) {
+            Module module = this.getModule(moduleName);
+            Minecraft.getInstance().tell(() -> {
+                Minecraft.getInstance().setScreen(new ModuleConfigScreen(module, pos));
+            });
+            return true;
+        }
+        return false;
+    }
+
     public Map<UUID, String> getSelectedModules() {
         return new HashMap<>(this.selectedModules);
     }
@@ -291,4 +334,14 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public abstract void renderTransform(PoseStack poseStack);
 
     public abstract Vector2i getContentArea();
+
+    public void renameModule(String originalName, String newName) {
+        Module module = this.modules.remove(originalName);
+        if (module != null) {
+            this.tryAddModule(newName, module);
+            Dashpanels.LOGGER.debug("Changed name from {} to {} | C: {}", originalName, newName, this.level.isClientSide);
+        }
+        setChanged();
+        blockChanged();
+    }
 }

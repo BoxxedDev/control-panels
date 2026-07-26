@@ -5,26 +5,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.api.module.HotbarOverlayManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
-import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.checkerframework.checker.units.qual.A;
-import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 @Mixin(Gui.class)
 public class GuiMixin {
@@ -41,12 +32,6 @@ public class GuiMixin {
                         ci.cancel();
                         return;
                     }
-            }
-
-            if (PaintWheel.isActive()) {
-                RenderSystem.defaultBlendFunc();
-                RenderSystem.disableBlend();
-                ci.cancel();
             }
         }
     }

@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 public enum PanelType implements StringRepresentable {
     DEFAULT(PanelBlocks.CONTROL_PANEL.get(), Dashpanels.path("default")),
     WALL(PanelBlocks.WALL_CONTROL_PANEL.get(), Dashpanels.path("wall")),
-    CEILING(null, Dashpanels.path("ceiling"));
+    CEILING(PanelBlocks.CEILING_CONTROL_PANEL.get(), Dashpanels.path("ceiling"));
 
     public final Block block;
     public final ResourceLocation defaultSkin;

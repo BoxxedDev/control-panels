@@ -2,12 +2,12 @@ package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.skin.PanelSkinsServerManager;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
-import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelMenuTypes;
@@ -20,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -54,9 +53,9 @@ public class ControlPanelsCommonEvents {
     public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("control_panels_1");
         registrar.playToServer(
-                SavePanelModulesPacket.TYPE,
-                SavePanelModulesPacket.STREAM_CODEC,
-                ServerPayloadHandler::handleSavePanelModules
+                ConfigureModulePacket.TYPE,
+                ConfigureModulePacket.STREAM_CODEC,
+                ServerPayloadHandler::handleConfigureModule
         );
         registrar.playToServer(
                 DefaultModuleUpdatePacket.TYPE,
@@ -105,7 +104,6 @@ public class ControlPanelsCommonEvents {
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(PanelMenuTypes.PANEL.get(), PanelScreen::new);
         event.register(PanelMenuTypes.STRIPPED_CONFIG.get(), StrippedCableScreen::new);
         if (ModList.get().isLoaded("create"))
             event.register(PanelCreateRegistries.PANEL_LINK_MENU.get(), PanelLinkScreen::new);
@@ -202,12 +200,19 @@ public class ControlPanelsCommonEvents {
         BlockState state = level.getBlockState(pos);
         ItemStack itemInHand = player.getMainHandItem();
 
-        if (itemInHand.is(PanelTags.Items.WRENCH) && player.isShiftKeyDown() &&
+        if (itemInHand.is(PanelTags.Items.WRENCH) &&
                 state.getBlock() instanceof AbstractPanelBlock block &&
-                level.getBlockEntity(pos) != null) {
-            if (!block.removeSelectedModule(level, pos, player)) {
-                event.setCancellationResult(ItemInteractionResult.SUCCESS);
-                event.setCanceled(true);
+                level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
+            if (player.isShiftKeyDown()) {
+                if (pbe.removeSelectedModule(level, pos, player)) {
+                    event.setCanceled(true);
+                    event.setCancellationResult(ItemInteractionResult.SUCCESS);
+                }
+            } else {
+                if (pbe.openConfigureScreen(level, pos, player)) {
+                    event.setCanceled(true);
+                    event.setCancellationResult(ItemInteractionResult.SUCCESS);
+                }
             }
         }
     }

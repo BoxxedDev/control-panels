@@ -3,13 +3,9 @@ package moth.boxxed.panels.api.module;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class ModuleType<T extends Module> {
     private static final Map<Item, ModuleType<?>> typeItemMap = new HashMap<>();

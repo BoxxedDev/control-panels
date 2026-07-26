@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "dashpanels:item/tool",
   "textures": {
     "layer0": "dashpanels:item/paint_brush"
   }

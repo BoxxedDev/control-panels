@@ -1,7 +1,7 @@
 package moth.boxxed.panels.api.module.io;
 
 /**
- * Used to mark a module as an input on the panel
+ * Used to mark a moduleName as an input on the panel
  * e.g. switch, button, etc. which then outputs a redstone signal or something of the sort
  * <br>
  * <br>

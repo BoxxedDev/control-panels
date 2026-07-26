@@ -1,6 +1,6 @@
 package moth.boxxed.panels.api.panel.model;
 
-import moth.boxxed.panels.index.PanelBlocks;
+import moth.boxxed.panels.api.panel.PanelType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -18,9 +18,11 @@ public class PanelSkinModelSwapper {
 
     public void modifyResult(ModelEvent.ModifyBakingResult event) {
         Map<ModelResourceLocation, BakedModel> blocks = event.getModels();
-        getBlockStateModels(PanelBlocks.CONTROL_PANEL.get()).forEach(modelResourceLocation -> {
-            blocks.put(modelResourceLocation, new PanelSkinModel(blocks.get(modelResourceLocation)));
-        });
+        for (PanelType panelType : PanelType.values()) {
+            getBlockStateModels(panelType.block).forEach(modelResourceLocation -> {
+                blocks.put(modelResourceLocation, new PanelSkinModel(blocks.get(modelResourceLocation)));
+            });
+        }
     }
 
     public static List<ModelResourceLocation> getBlockStateModels(Block block) {

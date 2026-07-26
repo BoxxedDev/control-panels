@@ -10,7 +10,7 @@ public class ClientConfig {
             .define("show_module_tooltips", true);
 
     public static final ModConfigSpec.BooleanValue CLICK_FOR_MODULE_HOLD = BUILDER
-            .comment("Click to hold a module instead of holding the mouse button")
+            .comment("Click to hold a moduleName instead of holding the mouse button")
             .define("click_for_module_hold", false);
 
     public static final ModConfigSpec SPEC = BUILDER.build();

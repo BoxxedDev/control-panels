@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
-    private static final ResourceLocation KNOB_SPRITE = Dashpanels.path("module/knob");
+    private static final ResourceLocation KNOB_SPRITE = Dashpanels.path("moduleName/knob");
 
     private float val = 0;
 

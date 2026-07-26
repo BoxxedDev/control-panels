@@ -3,7 +3,7 @@ package moth.boxxed.panels.api.module.io;
 import java.util.function.BiConsumer;
 
 /**
- * Used to mark a module as multi output on the panel
+ * Used to mark a moduleName as multi output on the panel
  * e.g. screen, levels display, etc. which then takes an input redstone signal or something similar
  * <br>
  * <br>

@@ -4,16 +4,17 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.PlacementManager;
-import moth.boxxed.panels.api.module.tooltip.ModuleTooltipManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
+import moth.boxxed.panels.api.module.tooltip.ModuleTooltipManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelModulesHitHandler;
-import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
+import moth.boxxed.panels.api.panel.PanelType;
+import moth.boxxed.panels.api.panel.model.PanelSkinBlockColor;
 import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
+import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
 import moth.boxxed.panels.config.ClientConfig;
-import moth.boxxed.panels.content.paintbrush.PaintWheel;
 import moth.boxxed.panels.content.panel.ceiling.CeilingPanelRenderer;
 import moth.boxxed.panels.content.panel.normal.PanelRenderer;
 import moth.boxxed.panels.content.panel.wall.WallPanelRenderer;
@@ -46,10 +47,10 @@ public class ControlPanelsClientEvents {
                 return;
             }
         }
-        if (PaintWheel.isActive()) {
-            PaintWheel.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
-            return;
-        }
+//        if (PaintWheel.isActive()) {
+//            PaintWheel.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
+//            return;
+//        }
         boolean active = false;
         if (ClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
                 !ModuleHoldInteractionManager.isActive() &&
@@ -133,5 +134,12 @@ public class ControlPanelsClientEvents {
     public static void onPreRender(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES)
             PlacementManager.frame(event.getCamera().getPosition(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
+    }
+
+    @SubscribeEvent
+    public static void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
+        for (PanelType type : PanelType.values()) {
+            event.register(new PanelSkinBlockColor(), type.block);
+        }
     }
 }

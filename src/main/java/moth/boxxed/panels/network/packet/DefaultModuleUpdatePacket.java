@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 import java.util.List;
 
 public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, List<Integer> values) implements CustomPacketPayload {
-    public static final Type<DefaultModuleUpdatePacket> TYPE = new Type<DefaultModuleUpdatePacket>(Dashpanels.path("update_knob_module"));
+    public static final Type<DefaultModuleUpdatePacket> TYPE = new Type<DefaultModuleUpdatePacket>(Dashpanels.path("update_module"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DefaultModuleUpdatePacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, DefaultModuleUpdatePacket::pos,

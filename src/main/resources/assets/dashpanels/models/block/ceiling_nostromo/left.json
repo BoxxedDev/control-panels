@@ -1,0 +1,13 @@
+{
+  "automatic_culling": true,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "dashpanels:models/block/ceiling_control_panel/left.obj",
+  "mtl_override": "dashpanels:models/block/ceiling_control_panel/left.mtl",
+  "shade_quads": true,
+  "textures": {
+    "0": "dashpanels:block/ceiling_nostromo",
+    "particle": "dashpanels:block/metal"
+  }
+}

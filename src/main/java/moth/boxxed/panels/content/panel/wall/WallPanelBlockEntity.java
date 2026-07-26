@@ -2,13 +2,14 @@ package moth.boxxed.panels.content.panel.wall;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.content.cable.CableBlock;
-import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
+import moth.boxxed.panels.content.panel.ceiling.CeilingPanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -8,7 +8,6 @@ import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -75,10 +74,6 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
         return null;
     }
 
-    private void openMenu(Player player, AbstractPanelBlockEntity be) {
-        ((ServerPlayer)player).openMenu(be, be::sendToMenu);
-    }
-
     @Override
     public @Nullable PushReaction getPistonPushReaction(BlockState state) {
         return PushReaction.IGNORE;
@@ -111,28 +106,9 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         ItemStack inHandStack = player.getMainHandItem();
         if (inHandStack.is(PanelTags.Items.WRENCH) || inHandStack.is(PanelTags.Items.MODULE)) {
-            return removeSelectedModule(level, pos, player);
+            return !this.getBlockEntity(level, pos).removeSelectedModule(level, pos, player);
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
-    }
-
-    public boolean removeSelectedModule(Level level, BlockPos pos, Player player) {
-        Dashpanels.LOGGER.debug("Client : {}", level.isClientSide);
-        AbstractPanelBlockEntity pbe = this.getBlockEntity(level, pos);
-        String module = pbe.getSelectedModule(player);
-        if (module != null) {
-            pbe.setSelectedModule(player, null);
-            Module removedModule = pbe.removeModule(module);
-            if (!player.isCreative() && removedModule != null) {
-                ItemStack stack = new ItemStack(ModuleType.getItemFromType(removedModule.type));
-                Inventory inventory = player.getInventory();
-                int slot = inventory.getSlotWithRemainingSpace(stack);
-                inventory.add(slot, stack);
-            }
-            pbe.setChanged();
-            pbe.blockChanged();
-        }
-        return false;
     }
 
     public enum Shape implements StringRepresentable {

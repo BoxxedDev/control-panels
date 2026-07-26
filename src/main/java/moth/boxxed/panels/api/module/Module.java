@@ -9,6 +9,9 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
+import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.util.Rect2d;
@@ -45,7 +48,7 @@ import org.joml.Vector3f;
 import java.awt.*;
 
 /**
-Base class for creating a custom module
+Base class for creating a custom moduleName
  */
 public abstract class Module {
     private Vector2i pos;
@@ -54,7 +57,10 @@ public abstract class Module {
     public Rect2d rect;
     public AbstractPanelBlockEntity parentBlockEntity;
     public ModuleType<?> type;
-    public String name = "";
+    protected String name = "";
+
+    private ModuleConfig config;
+    protected ModuleConfigValue.StringValue nameConfig;
 
     public Module(ModuleType<?> type, int x, int y, int sizeX, int sizeY) {
         this.type = type;
@@ -100,9 +106,44 @@ public abstract class Module {
         return InteractionResult.PASS;
     }
 
+    private void compileConfig() {
+        this.nameConfig = new ModuleConfigValue.StringValue("name", this.name);
+        this.nameConfig.setRevertable(false);
+        this.nameConfig.withValidator(
+                s -> {
+                    if (this.parentBlockEntity == null)
+                        return false;
+                    if (this.parentBlockEntity.getModules().normalContainsKey(s))
+                        return false;
+                    if (this.parentBlockEntity.getLevel() == null)
+                        return true;
+                    if (this.parentBlockEntity.getLevel().isClientSide)
+                        return true;
+                    if (this.parentBlockEntity.getOrCreate() == null)
+                        return true;
+                    this.parentBlockEntity.getOrCreate().compileModules();
+                    return !this.parentBlockEntity.getOrCreate().hasModule(s);
+                }
+        );
+        ModuleConfig.Builder builder = new ModuleConfig.Builder();
+        builder.add(nameConfig);
+        this.createConfig(builder);
+        this.config = builder.build();
+    }
+
     public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.setPos(tag.getInt("pos_x"), tag.getInt("pos_y"));
         this.name = tag.getString("name");
+
+        this.compileConfig();
+        CompoundTag configTag = tag.getCompound("config");
+        for (ModuleConfigValue<?> configValue : this.config.getValues()) {
+            if (configValue == null || !configTag.contains(configValue.getId()))
+                continue;
+            CompoundTag valueTag = configTag.getCompound(configValue.getId());
+            configValue.load(valueTag, registries);
+        }
+
         return true;
     }
 
@@ -111,6 +152,15 @@ public abstract class Module {
         if (type == null)
             return false;
 
+        CompoundTag configTag = new CompoundTag();
+        this.compileConfig();
+        for (ModuleConfigValue<?> configValue : this.config.getValues()) {
+            CompoundTag valueTag = new CompoundTag();
+            configValue.save(valueTag, registries);
+            configTag.put(configValue.getId(), valueTag);
+        }
+
+        tag.put("config", configTag);
         tag.putInt("pos_x", this.pos.x);
         tag.putInt("pos_y", this.pos.y);
         tag.putString("type", type.toString());
@@ -210,8 +260,23 @@ public abstract class Module {
         return this.name;
     }
 
+    public void setName(String string) {
+        this.name = string;
+        this.nameConfig.set(string);
+    }
+
     public ItemInteractionResult onItemUse(ItemStack stack, Level level, Player player) {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    public void createConfig(ModuleConfig.Builder builder) {}
+
+    public ModuleConfig getConfig() {
+        return this.config;
+    }
+
+    public void setParentBE(AbstractPanelBlockEntity abstractPanelBlockEntity) {
+        this.parentBlockEntity = abstractPanelBlockEntity;
     }
 
     public record ModuleInfo(ResourceLocation type, int x, int y, CompoundTag moduleData) {

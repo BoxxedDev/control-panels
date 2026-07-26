@@ -2,15 +2,15 @@ package moth.boxxed.panels.content.panel.normal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
+import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.content.cable.CableBlock;
+import moth.boxxed.panels.content.panel.ceiling.CeilingPanelBlock;
 import moth.boxxed.panels.content.panel.wall.WallPanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -35,7 +35,7 @@ public class PanelBlockEntity extends AbstractPanelBlockEntity {
         Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
         Direction fromDirection = from.getValue(PanelBlock.FACING);
 
-        if (direction.equals(Direction.UP) && to.getBlock() instanceof WallPanelBlock && to.getValue(WallPanelBlock.FACING) == fromDirection)
+        if (direction.equals(Direction.UP) && (to.getBlock() instanceof WallPanelBlock || to.getBlock() instanceof CeilingPanelBlock) && to.getValue(AbstractPanelBlock.FACING) == fromDirection)
             return true;
         if ((fromDirection.getOpposite()==direction || direction==Direction.DOWN) && to.getBlock() instanceof CableBlock)
             return true;

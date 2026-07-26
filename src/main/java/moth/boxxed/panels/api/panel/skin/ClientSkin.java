@@ -13,11 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public record ClientSkin(ResourceLocation single,
                          ResourceLocation left,
                          ResourceLocation center,
-                         ResourceLocation right) {
+                         ResourceLocation right,
+                         Optional<Boolean> tintable) {
     private static final ResourceLocation DEFAULT_SINGLE = Dashpanels.path("block/control_panel/single");
     private static final ResourceLocation DEFAULT_LEFT = Dashpanels.path("block/control_panel/left");
     private static final ResourceLocation DEFAULT_CENTER = Dashpanels.path("block/control_panel/center");
@@ -26,7 +28,8 @@ public record ClientSkin(ResourceLocation single,
             DEFAULT_SINGLE,
             DEFAULT_LEFT,
             DEFAULT_CENTER,
-            DEFAULT_RIGHT
+            DEFAULT_RIGHT,
+            Optional.of(false)
     );
 
     public static final Codec<ClientSkin> CODEC = RecordCodecBuilder.create(
@@ -34,7 +37,8 @@ public record ClientSkin(ResourceLocation single,
                     ResourceLocation.CODEC.fieldOf("single").orElse(DEFAULT_SINGLE).forGetter(ClientSkin::single),
                     ResourceLocation.CODEC.fieldOf("left").orElse(DEFAULT_LEFT).forGetter(ClientSkin::left),
                     ResourceLocation.CODEC.fieldOf("center").orElse(DEFAULT_CENTER).forGetter(ClientSkin::center),
-                    ResourceLocation.CODEC.fieldOf("right").orElse(DEFAULT_RIGHT).forGetter(ClientSkin::right)
+                    ResourceLocation.CODEC.fieldOf("right").orElse(DEFAULT_RIGHT).forGetter(ClientSkin::right),
+                    Codec.BOOL.optionalFieldOf("tintable").forGetter(ClientSkin::tintable)
             ).apply(instance, ClientSkin::new)
     );
 

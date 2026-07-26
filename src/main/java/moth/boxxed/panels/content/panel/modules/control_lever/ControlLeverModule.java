@@ -2,8 +2,8 @@ package moth.boxxed.panels.content.panel.modules.control_lever;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
-import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelHoldInteractions;
@@ -34,6 +34,8 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     private float renderSignal = 0;
     private float indicatorRender = 0;
     private int signal = 0;
+
+
 
     public ControlLeverModule(int x, int y) {
         super(PanelModules.CONTROL_LEVER.get(), x, y, 3, 5);

@@ -34,7 +34,11 @@ public class PanelRecipeProvider extends RecipeProvider {
     protected void buildRecipes(RecipeOutput output) {
         controlPanel().save(output);
         cable().save(output);
+
         wireStripper().save(output);
+        wrench().save(output);
+        paintBrush().save(output);
+
         if (ModList.get().isLoaded("create"))
             panelLink().save(output);
         modules(output);
@@ -71,44 +75,6 @@ public class PanelRecipeProvider extends RecipeProvider {
         );
     }
 
-    private static void modulesOld(RecipeOutput output) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.SWITCH_MODULE.get(), 4)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('N', Tags.Items.NUGGETS_IRON)
-                .pattern("N")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.KNOB_MODULE.get(), 4)
-                .define('W', ItemTags.WOOL)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern("W")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CONTROL_LEVER_MODULE.get(), 2)
-                .define('W', ItemTags.WOOL)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern(" W")
-                .pattern("II")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.INDICATOR_BULB_MODULE.get(), 2)
-                .define('G', Tags.Items.GLASS_PANES)
-                .define('I', Tags.Items.NUGGETS_IRON)
-                .pattern("G")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.MOMENTARY_SWITCH_MODULE.get(), 2)
-                .define('B', ItemTags.STONE_BUTTONS)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern("B")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-    }
-
     private static ShapedRecipeBuilder panelLink() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelCreateRegistries.PANEL_LINK.get(), 1)
                 .define('L', AllBlocks.REDSTONE_LINK)
@@ -141,10 +107,29 @@ public class PanelRecipeProvider extends RecipeProvider {
     private static ShapedRecipeBuilder wireStripper() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CABLE_STRIPPER.get(), 1)
                 .define('I', Tags.Items.INGOTS_IRON)
-                .define('H', ItemTags.WOOL)
+                .define('H', Tags.Items.LEATHERS)
                 .pattern("I I")
                 .pattern(" I ")
                 .pattern("H H")
-                .unlockedBy("has_wool", has(ItemTags.WOOL));
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS));
+    }
+    private static ShapedRecipeBuilder wrench() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.WRENCH.get(), 1)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('H', Tags.Items.LEATHERS)
+                .pattern("I")
+                .pattern("H")
+                .pattern("I")
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS));
+    }
+    private static ShapedRecipeBuilder paintBrush() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.PAINT_BRUSH.get(), 1)
+                .define('S', Tags.Items.STRINGS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('H', Tags.Items.LEATHERS)
+                .pattern("SSS")
+                .pattern(" I ")
+                .pattern(" H ")
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS));
     }
 }

@@ -2,7 +2,8 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.skin.ServerSkin;
-import moth.boxxed.panels.content.paintbrush.PaintWheel;
+import moth.boxxed.panels.content.paintbrush.PaintWheelScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -26,6 +27,8 @@ public record OpenPaintWheelPacket(ServerSkin serverSkin, BlockPos pos) implemen
     }
 
     public void handle(ClientPayloadContext context) {
-        PaintWheel.open(this.serverSkin, this.pos);
+        Minecraft.getInstance().tell(() -> {
+            Minecraft.getInstance().setScreen(new PaintWheelScreen(this.serverSkin, this.pos));
+        });
     }
 }

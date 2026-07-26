@@ -10,7 +10,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 import oshi.util.tuples.Pair;
 
 import java.util.*;
@@ -26,28 +25,28 @@ public class PanelShapes {
     public static final Map<Direction, VoxelShape> WALL_PANEL_SHAPE = forHorizontal(
             aabb(16,16,2)
     );
-    public static final Map<Direction, VoxelShape> CEILING_PANEL_SHAPE = forHorizontal(
+    public static final Map<Direction, OutlinedVoxelShape> CEILING_PANEL_SHAPE = forHorizontalOutlined(
             Stream.concat(
-                    Arrays.stream(new AABB[]{aabb(16, 16, 6), aabb(0, 10, 6, 16, 16, 16)}),
-                    IntStream.range(1, 5).mapToObj(i -> aabb(
-                            0, (4-i)*2+2, (6-i)*2+4,
-                            16, 10, ((4-i)+1)*2+4
-                    ))).toArray(AABB[]::new)//,
-//            line(0, 0, 0, 16, 0, 0),
-//            line(0, 0, 0, 0, 16, 0),
-//            line(0, 16, 0, 16, 16, 0),
-//            line(16, 0, 0, 16, 16, 0),
-//            line(0, 16, 0, 0, 16, 16),
-//            line(16, 16, 0, 16, 16, 16),
-//            line(0, 16, 16, 16, 16, 16),
-//            line(0, 0, 0, 0, 0, 4),
-//            line(16, 0, 0, 16, 0, 4),
-//            line(0, 0, 4, 16, 0, 4),
-//            line(0, 12, 16, 0, 16, 16),
-//            line(16, 12, 16, 16, 16, 16),
-//            line(0, 12, 16, 16, 12, 16),
-//            line(0, 0, 4, 0, 12, 16),
-//            line(16, 0, 4, 16, 12, 16)
+                    Arrays.stream(new AABB[]{aabb(16, 16, 5), aabb(0, 11, 5, 16, 16, 16)}),
+                    IntStream.range(1, 12).mapToObj(i -> aabb(
+                            0, (11-i)+1, (11-i)+5,
+                            16, 11, ((11-i)+1)+5
+                    ))).toArray(AABB[]::new),
+            line(0, 0, 0, 16, 0, 0),
+            line(0, 0, 0, 0, 16, 0),
+            line(0, 16, 0, 16, 16, 0),
+            line(16, 0, 0, 16, 16, 0),
+            line(0, 16, 0, 0, 16, 16),
+            line(16, 16, 0, 16, 16, 16),
+            line(0, 16, 16, 16, 16, 16),
+            line(0, 0, 0, 0, 0, 4),
+            line(16, 0, 0, 16, 0, 4),
+            line(0, 0, 4, 16, 0, 4),
+            line(0, 12, 16, 0, 16, 16),
+            line(16, 12, 16, 16, 16, 16),
+            line(0, 12, 16, 16, 12, 16),
+            line(0, 0, 4, 0, 12, 16),
+            line(16, 0, 4, 16, 12, 16)
     );
 
     private static AABB aabb(double sizeX, double sizeY, double sizeZ) {

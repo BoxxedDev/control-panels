@@ -1,6 +1,7 @@
 {
   "panel": "wall",
   "skins": [
-    "dashpanels:wall"
+    "dashpanels:wall",
+    "dashpanels:wall_nostromo"
   ]
 }

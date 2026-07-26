@@ -1,0 +1,7 @@
+{
+  "panel": "ceiling",
+  "skins": [
+    "dashpanels:ceiling",
+    "dashpanels:ceiling_nostromo"
+  ]
+}

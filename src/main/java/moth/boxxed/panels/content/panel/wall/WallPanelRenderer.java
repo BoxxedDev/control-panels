@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.panel.wall;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;

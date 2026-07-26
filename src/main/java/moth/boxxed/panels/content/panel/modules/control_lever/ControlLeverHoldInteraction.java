@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLeverModule> {
-    private static final ResourceLocation LEVER_SPRITE = Dashpanels.path("module/control_lever");
+    private static final ResourceLocation LEVER_SPRITE = Dashpanels.path("moduleName/control_lever");
 
     private float val = 0;
     private int oldSignal = 0;

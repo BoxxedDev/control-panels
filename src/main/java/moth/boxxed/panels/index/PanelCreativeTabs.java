@@ -5,7 +5,6 @@ import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.util.CustomSectionTextured;
 import net.mcexpanded.fancytabsections.FancyTabSections;
-import net.mcexpanded.fancytabsections.Section.SectionTextured;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;

@@ -10,8 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModule> {
-    private static final ResourceLocation CROSSHAIR = Dashpanels.path("module/joystick/crosshair");
-    private static final ResourceLocation INDICATOR = Dashpanels.path("module/joystick/indicator");
+    private static final ResourceLocation CROSSHAIR = Dashpanels.path("moduleName/joystick/crosshair");
+    private static final ResourceLocation INDICATOR = Dashpanels.path("moduleName/joystick/indicator");
 
     private float valX = 0;
     private float valY = 0;

@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.cable;
 
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
-import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.normal.PanelBlock;

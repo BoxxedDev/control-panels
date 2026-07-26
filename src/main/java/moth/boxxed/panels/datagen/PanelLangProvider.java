@@ -32,15 +32,18 @@ public class PanelLangProvider extends LanguageProvider {
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 
-        //Non module stuff
+        //Non moduleName stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
         addBlock(PanelBlocks.WALL_CONTROL_PANEL, "Wall Control Panel");
         addBlock(PanelBlocks.CEILING_CONTROL_PANEL, "Ceiling Control Panel");
 
         addBlock(PanelBlocks.CABLE, "Control Cable");
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
+
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
         addItem(PanelItems.PAINT_BRUSH, "Paint Brush");
+        addItem(PanelItems.WRENCH, "Panel Wrench");
+
         if (ModList.get().isLoaded("create"))
             addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
 
@@ -49,12 +52,12 @@ public class PanelLangProvider extends LanguageProvider {
         addWidget("panel.write_name", "Write Name");
         addWidget("panel.edit_box.module_name", "Module Name");
         addWidget("stripped_cable.scrollbar", "Scroll Bar");
-        addWidget("panel_link.module_select", "Scroll to select module");
+        addWidget("panel_link.module_select", "Scroll to select moduleName");
 
         addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
 
         addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
-        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output module");
+        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output moduleName");
         addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
@@ -69,6 +72,10 @@ public class PanelLangProvider extends LanguageProvider {
         addCustom("key", "move_module", "Move Module");
         addCustom("key", "hold_move_camera", "Move Camera While Holding");
         add("key.categories.dashpanels", "Dashpanels");
+
+        addModuleConfig("name", "Name");
+        addModuleConfig("output", "Output");
+        addModuleConfig("inverted", "Inverted");
     }
 
     private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {
@@ -93,5 +100,9 @@ public class PanelLangProvider extends LanguageProvider {
 
     private void addCreativeTab(CreativeModeTab tab, String string) {
         add(tab.getDisplayName().getString(), string);
+    }
+
+    private void addModuleConfig(String valueName, String string) {
+        add("module_config.value.%s".formatted(valueName), string);
     }
 }

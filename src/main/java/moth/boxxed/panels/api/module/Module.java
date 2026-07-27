@@ -45,6 +45,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -62,7 +63,7 @@ public abstract class Module {
     private ModuleConfig config;
     protected ModuleConfigValue.StringValue nameConfig;
 
-    public Module(ModuleType<?> type, int x, int y, int sizeX, int sizeY) {
+    public Module(@Nonnull ModuleType<?> type, int x, int y, int sizeX, int sizeY) {
         this.type = type;
         this.pos = new Vector2i(x, y);
         this.size = new Vector2i(sizeX, sizeY);

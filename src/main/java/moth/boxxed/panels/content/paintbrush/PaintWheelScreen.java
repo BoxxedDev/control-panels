@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.engine_room.flywheel.backend.gl.array.VertexAttribute;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.DashpanelsClient;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.api.panel.skin.ClientSkin;
@@ -32,15 +32,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 public class PaintWheelScreen extends Screen {
     public static final ResourceLocation PAINT_WHEEL = Dashpanels.path("textures/gui/paint_brush/paint_wheel.png");
@@ -61,8 +57,15 @@ public class PaintWheelScreen extends Screen {
     private PageChangeButton leftChange;
     private PageChangeButton rightChange;
 
+    private ApplyButton applyButton;
+    private ApplyButton applyToAllButton;
+
     private ColorPicker colorPicker;
     private HexInput hexInput;
+    private List<PaletteColorButton> paletteColors = new ArrayList<>();
+    private PaletteColorButton selectedColor;
+
+    private GenericPaletteButton addColorButton;
 
     public PaintWheelScreen(ServerSkin skinsToDisplay, BlockPos clickedPos) {
         super(Component.literal("Paint Wheel"));
@@ -88,19 +91,45 @@ public class PaintWheelScreen extends Screen {
         this.pages = Math.ceilDiv(skins.size(), 8)+1;
 
         if (this.pages > 1) {
-            this.leftChange = this.addWidget(new PageChangeButton(-1, Component.translatable("paint_wheel.left_change")));
-            this.rightChange = this.addWidget(new PageChangeButton(1, Component.translatable("paint_wheel.right_change")));
+            this.leftChange = this.addWidget(new PageChangeButton(-1, Component.translatable("dashpanels.paint_wheel.left_change")));
+            this.rightChange = this.addWidget(new PageChangeButton(1, Component.translatable("dashpanels.paint_wheel.right_change")));
         }
 
-        this.colorPicker = this.addWidget(new ColorPicker(pbe.skinColor, Component.translatable("paint_wheel.color_picker")));
+        this.applyButton = this.addWidget(new ApplyButton(false, Component.translatable("dashpanels.paint_wheel.apply")));
+        this.applyToAllButton = this.addWidget(new ApplyButton(true, Component.translatable("dashpanels.paint_wheel.apply_all")));
+
+        this.colorPicker = this.addWidget(new ColorPicker(pbe.skinColor, Component.translatable("dashpanels.paint_wheel.color_picker")));
         this.hexInput = this.addWidget(
                 new HexInput(
                         Minecraft.getInstance().font,
                         66, 16,
-                        Component.translatable("paint_wheel.hex_input")
+                        Component.translatable("dashpanels.paint_wheel.hex_input")
                 )
         );
-        this.hexInput.setFilter(s -> Pattern.compile("^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$").matcher(s).matches());
+//        this.hexInput.setFilter(s -> Pattern.compile("^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$").matcher(s).matches());
+        for (int color : DashpanelsClient.PALETTE_STORAGE.getDefaultPalette()) {
+            this.paletteColors.add(
+                    this.addWidget(
+                            new PaletteColorButton(color, Component.translatable("dashpanels.paint_wheel.palette_color"))
+                    )
+            );
+        }
+
+        this.addColorButton = this.addWidget(new GenericPaletteButton(
+                Component.translatable("dashpanels.paint_wheel.add_color"),
+                96,
+                () -> {
+                    if (this.selectedColor != null) {
+                        this.selectedColor.color = this.colorPicker.getColor();
+                    } else if (this.paletteColors.size() < ColorPalette.MAX){
+                        this.paletteColors.add(
+                                this.addWidget(
+                                        new PaletteColorButton(this.colorPicker.getColor(), Component.translatable("dashpanels.paint_wheel.palette_color"))
+                                )
+                        );
+                    }
+                }
+        ));
 
         this.reconstructSkinWidgets();
     }
@@ -134,7 +163,7 @@ public class PaintWheelScreen extends Screen {
         this.centerY = guiGraphics.guiHeight()/2;
 
         this.renderSkins(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderPageExtra(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderExtra(guiGraphics, mouseX, mouseY, partialTick);
         this.renderColorPicker(guiGraphics, mouseX, mouseY, partialTick);
     }
 
@@ -157,7 +186,7 @@ public class PaintWheelScreen extends Screen {
         }
     }
 
-    private void renderPageExtra(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    private void renderExtra(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (this.pages > 1) {
             this.leftChange.setX(this.centerX-55);
             this.rightChange.setX(this.centerX+40);
@@ -167,14 +196,22 @@ public class PaintWheelScreen extends Screen {
 
             graphics.drawCenteredString(this.font, "%d / %d".formatted(this.currentPage, this.pages), this.centerX, 24, 0xFFFFFFFF);
         }
+
+        this.applyButton.setX(this.centerX+115);
+        this.applyButton.setY(this.centerY-36);
+        this.applyButton.renderWidget(graphics, mouseX, mouseY, partialTick);
+
+        this.applyToAllButton.setX(this.centerX+115);
+        this.applyToAllButton.setY(this.centerY+20);
+        this.applyToAllButton.renderWidget(graphics, mouseX, mouseY, partialTick);
     }
 
     private void renderColorPicker(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (this.currentSkin.tintable().orElse(false)) {
-            int left = 20;
-            int top = this.centerY-59;
+            int left = 10;
+            int top = this.centerY-80;
 
-            graphics.blit(PAINT_WHEEL, left, top, 32, 16, 102, 118, 256, 256);
+            graphics.blit(PAINT_WHEEL, left, top, 32, 16, 102, 114, 256, 256);
 
             this.colorPicker.setX(left+6);
             this.colorPicker.setY(top+6);
@@ -183,6 +220,25 @@ public class PaintWheelScreen extends Screen {
             this.hexInput.setX(left+6);
             this.hexInput.setY(top+92);
             this.hexInput.renderWidget(graphics, mouseX, mouseY, partialTick);
+
+            this.addColorButton.setX(left+78);
+            this.addColorButton.setY(top+76);
+            this.addColorButton.renderWidget(graphics, mouseX, mouseY, partialTick);
+
+            graphics.pose().pushPose();
+            //Line it up ever so slightly...
+            graphics.pose().translate(0.5f, 0, 0);
+            int width = 6;
+            for (int i = 0; i < this.paletteColors.size(); i++) {
+                int x = Math.floorMod(i, width)*17;
+                int y = (int) (Math.floor((double) i / width)) * 17;
+
+                PaletteColorButton button = this.paletteColors.get(i);
+                button.setX(left+x);
+                button.setY(top+122+y);
+                button.renderWidget(graphics, mouseX, mouseY, partialTick);
+            }
+            graphics.pose().popPose();
         }
     }
 
@@ -216,8 +272,12 @@ public class PaintWheelScreen extends Screen {
         return false;
     }
 
-    @Override
-    public void onClose() {
+//    @Override
+//    public void onClose() {
+//        this.close(false);
+//    }
+
+    private void close(boolean applyToAll) {
         ResourceLocation skin = this.type.defaultSkin;
         for (Map.Entry<ResourceLocation, ClientSkin> entry : PanelSkinsClientManager.MAP.entrySet()) {
             if (entry.getValue().equals(this.currentSkin)) {
@@ -226,11 +286,41 @@ public class PaintWheelScreen extends Screen {
             }
         }
 
-        PacketDistributor.sendToServer(
-                new SetPanelSkinPacket(this.pos, skin, Optional.of(this.colorPicker.getColor()))
-        );
-
+        int color = this.currentSkin.tintable().orElse(false) ? this.colorPicker.getColor() : 0xFFFFFF;
+        PacketDistributor.sendToServer(new SetPanelSkinPacket(this.type, this.pos, skin, Optional.of(color), applyToAll));
         super.onClose();
+    }
+
+    public class ApplyButton extends AbstractWidget {
+        private final boolean toAll;
+
+        public ApplyButton(boolean toAll, Component message) {
+            super(0, 0, 80, 16, message);
+            this.toAll = toAll;
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            guiGraphics.blit(PAINT_WHEEL, this.getX(), this.getY(), 144, 96, this.getWidth(), this.getHeight());
+            guiGraphics.drawCenteredString(PaintWheelScreen.this.font, this.getMessage(), this.getX()+this.getWidth()/2, this.getY()+4, 0xFFFFFF);
+            if (this.isMouseOver(mouseX, mouseY)) {
+                RenderSystem.enableBlend();
+                guiGraphics.setColor(1, 1, 1, 0.25f);
+                guiGraphics.fill(this.getX()+1, this.getY()+1, this.getX()+this.getWidth()-1, this.getY()+this.getHeight()-1, 1, 0xFFFFFFFF);
+                guiGraphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            PaintWheelScreen.this.close(this.toAll);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
+        }
     }
 
     public class SkinButton extends AbstractWidget {
@@ -563,6 +653,79 @@ public class PaintWheelScreen extends Screen {
         @Override
         public void close() throws Exception {
             this.texture.close();
+        }
+    }
+
+    public class PaletteColorButton extends AbstractWidget {
+        protected int color;
+        protected float scale = 1;
+
+        public PaletteColorButton(int color, Component message) {
+            super(0, 0, 16, 16, message);
+            this.color = color;
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            PoseStack poseStack = guiGraphics.pose();
+
+            poseStack.pushPose();
+            this.scale = Mth.lerp(partialTick, this.scale, this.isMouseOver(mouseX, mouseY) || PaintWheelScreen.this.selectedColor == this ? 1.1f : 1f);
+            MathUtil.scaleAround(poseStack, this.scale, this.scale, 1, this.getX()+8, this.getY()+8, 0);
+            poseStack.translate(this.getX(), this.getY(), 0);
+            guiGraphics.blit(PAINT_WHEEL, 0, 0, 64, 0, 16, 16, 256, 256);
+            guiGraphics.fill(5, 5, this.getWidth()-5, this.getHeight()-5, 0xFF000000 | this.color);
+            poseStack.popPose();
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            PaintWheelScreen.this.colorPicker.setColor(this.color);
+
+            if (PaintWheelScreen.this.selectedColor != this) {
+                PaintWheelScreen.this.selectedColor = this;
+            } else {
+                PaintWheelScreen.this.selectedColor = null;
+            }
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
+        }
+    }
+
+    public class GenericPaletteButton extends AbstractWidget {
+        private final int vOffset;
+        private final Runnable onClick;
+
+        public GenericPaletteButton(Component message, int vOffset, Runnable onClick) {
+            super(0, 0, 20, 20, message);
+            this.vOffset = vOffset;
+            this.onClick = onClick;
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            guiGraphics.blit(PAINT_WHEEL, this.getX(), this.getY(), 0, this.vOffset, this.getWidth(), this.getHeight());
+
+            if (this.isMouseOver(mouseX, mouseY)) {
+                RenderSystem.enableBlend();
+                guiGraphics.setColor(1, 1, 1, 0.25f);
+                guiGraphics.fill(this.getX()+1, this.getY()+1, this.getX()+this.getWidth()-1, this.getY()+this.getHeight()-1, 1, 0xFFFFFFFF);
+                guiGraphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            this.onClick.run();
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
         }
     }
 }

@@ -25,7 +25,7 @@ public class PanelSkinBlockColor implements BlockColor {
 
                 float h = hsb[0];
                 float sat = Mth.clampedMap(hsb[1], 0, 1, 0, 0.5f);
-                float br = hsb[2];
+                float br = Mth.clampedMap(hsb[2], 0, 1, 0.25f, 1);
 
                 return Color.HSBtoRGB(h, sat, br);
             }

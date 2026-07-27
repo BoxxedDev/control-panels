@@ -2,5 +2,6 @@
   "single": "dashpanels:block/wall_nostromo/single",
   "left": "dashpanels:block/wall_nostromo/left",
   "center": "dashpanels:block/wall_nostromo/center",
-  "right": "dashpanels:block/wall_nostromo/right"
+  "right": "dashpanels:block/wall_nostromo/right",
+  "tintable": true
 }

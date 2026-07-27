@@ -76,6 +76,9 @@ public class PanelLangProvider extends LanguageProvider {
         addModuleConfig("name", "Name");
         addModuleConfig("output", "Output");
         addModuleConfig("inverted", "Inverted");
+
+        add("dashpanels.paint_wheel.apply", "Apply");
+        add("dashpanels.paint_wheel.apply_all", "Apply To All");
     }
 
     private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {

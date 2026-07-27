@@ -9,6 +9,8 @@
   "creativetab.dashpanels.modules": "§lModules",
   "dashpanels.configuration.click_for_module_hold": "Click for Module Hold",
   "dashpanels.configuration.show_module_tooltips": "Show Module Tooltips",
+  "dashpanels.paint_wheel.apply": "Apply",
+  "dashpanels.paint_wheel.apply_all": "Apply To All",
   "item.dashpanels.cable_stripper": "Cable Stripper",
   "item.dashpanels.control_lever": "Control Lever",
   "item.dashpanels.indicator_bulb": "Indicator Bulb",

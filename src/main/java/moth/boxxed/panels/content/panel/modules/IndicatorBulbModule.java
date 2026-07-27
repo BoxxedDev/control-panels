@@ -44,12 +44,11 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PreLoadedModel bulbModel = this.lit ? PanelPreloadedModels.INDICATOR_BULB_ON : PanelPreloadedModels.INDICATOR_BULB_OFF;
         int bulbLight = this.lit ? LightTexture.FULL_BRIGHT : packedLight;
-        RenderType bulbRenderType = this.lit ? PanelRendertypes.TRANSLUCENT_GLOW : RenderType.translucent();
 
         poseStack.pushPose();
         poseStack.translate(0, 0, 0.5/16f);
         PanelPreloadedModels.INDICATOR_BULB_BASE.render(poseStack, RenderType.solid(), packedLight);
-        bulbModel.render(poseStack, bulbRenderType, bulbLight, this.color.getTextureDiffuseColor());
+        bulbModel.render(poseStack, RenderType.translucent(), bulbLight, this.color.getTextureDiffuseColor());
         poseStack.popPose();
     }
 

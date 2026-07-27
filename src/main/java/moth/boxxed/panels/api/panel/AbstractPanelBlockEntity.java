@@ -10,6 +10,8 @@ import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.index.PanelBlocks;
+import moth.boxxed.panels.index.PanelItems;
+import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.util.Rect2d;
 import moth.boxxed.panels.util.RectUtil;
 import net.minecraft.client.Minecraft;
@@ -216,6 +218,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public ItemInteractionResult onItemUse(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (stack.is(PanelTags.Items.WRENCH)) return ItemInteractionResult.SUCCESS;
+        if (stack.is(PanelItems.PAINT_BRUSH.asItem())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
         if (hitModule != null) {
             ItemInteractionResult result = hitModule.onItemUse(stack, level, player);

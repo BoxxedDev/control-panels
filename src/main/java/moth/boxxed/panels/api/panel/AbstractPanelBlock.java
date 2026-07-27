@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,6 +111,19 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
             return !this.getBlockEntity(level, pos).removeSelectedModule(level, pos, player);
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        if (level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
+            String moduleName = pbe.getSelectedModule(player);
+            if (moduleName != null && pbe.getModule(moduleName) != null) {
+                Module module = pbe.getModule(moduleName);
+                return new ItemStack(module.type.associatedItem);
+            }
+        }
+
+        return super.getCloneItemStack(state, target, level, pos, player);
     }
 
     public enum Shape implements StringRepresentable {

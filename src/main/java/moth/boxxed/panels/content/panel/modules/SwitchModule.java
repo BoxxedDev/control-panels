@@ -2,6 +2,8 @@ package moth.boxxed.panels.content.panel.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
@@ -26,6 +28,9 @@ import net.neoforged.api.distmarker.OnlyIn;
 import java.util.function.BiConsumer;
 
 public class SwitchModule extends Module implements IInput, IModuleLuaObject {
+    private final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15);
+    private final ModuleConfigValue.BooleanValue inverted = new ModuleConfigValue.BooleanValue("inverted", false);
+
     private boolean switchState;
 
     public SwitchModule(int x, int y) {
@@ -71,7 +76,9 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
 
     @Override
     public int getAnalog() {
-        return this.switchState ? 15 : 0;
+        int outputValue = this.redstoneOutput.get();
+        boolean state = this.inverted.get() != this.switchState;
+        return state ? outputValue : 0;
     }
 
     @Override
@@ -87,5 +94,11 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
             }
             return false;
         });
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(redstoneOutput);
+        builder.add(inverted);
     }
 }

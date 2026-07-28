@@ -5,6 +5,7 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
@@ -13,7 +14,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class LabelModule extends Module {
     public LabelModule(int x, int y) {
-        super(PanelModules.LABEL.get(), x, y, 4, 2);
+        super(PanelModules.LABEL.get(), x, y);
     }
 
     @Override
@@ -25,10 +26,16 @@ public class LabelModule extends Module {
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Shapes.or(
-                Block.box(0, 0, 0, 5, 0.001, 1),
-                Block.box(-1, 0, 1, 4, 0.001, 2)
+                Block.box(1, 0, 0, 6, 0.001, 1),
+                Block.box(0, 0, 1, 5, 0.001, 2)
         );
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(1, 0, 6, 1)
+                .add(0, 1, 5, 2);
     }
 }

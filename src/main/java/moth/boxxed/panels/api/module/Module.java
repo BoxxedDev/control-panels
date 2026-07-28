@@ -9,11 +9,11 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -40,29 +40,33 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.joml.Matrix4f;
-import org.joml.Vector2i;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
-Base class for creating a custom moduleName
+Base class for creating a custom module
  */
 public abstract class Module {
-    private Vector2i pos;
-    private final Vector2i size;
+    @Deprecated(forRemoval = true, since = "2.0") private final Vector2i size;
+    @Deprecated(forRemoval = true, since = "2.0") public Rect2d rect;
 
-    public Rect2d rect;
     public AbstractPanelBlockEntity parentBlockEntity;
     public ModuleType<?> type;
+    private Vector2i pos;
     protected String name = "";
 
     private ModuleConfig config;
     protected ModuleConfigValue.StringValue nameConfig;
 
+    public Module(@Nonnull ModuleType<?> type, int x, int y) {
+        this.type = type;
+        this.pos = new Vector2i(x, y);
+        this.size = null;
+    }
+
+    @Deprecated(since = "2.0")
     public Module(@Nonnull ModuleType<?> type, int x, int y, int sizeX, int sizeY) {
         this.type = type;
         this.pos = new Vector2i(x, y);
@@ -72,7 +76,7 @@ public abstract class Module {
 
     @Override
     public String toString() {
-        return "Module:{pos:[" + pos.toString() + "], size:[" + size.toString() + "]}";
+        return "Module:{name:[ " + this.name + " ], type:[ " + ModulesRegistry.MODULE_REGISTRY.getKey(this.type) + " ]}";
     }
 
     public void setPos(int x, int y) {
@@ -87,24 +91,24 @@ public abstract class Module {
     public Vector2i getPos() {
         return pos;
     }
-    public Vector2i getSize() {
-        return this.size;
+    public Vector2d getSize() {
+        PolyVoxel shape = this.getShape();
+        return new Vector2d(
+                shape.getBounds().sizeX(),
+                shape.getBounds().sizeY()
+        );
     }
     public BlockPos getParentPos() {
         return this.parentBlockEntity.getBlockPos();
     }
 
-    public boolean inside(int x, int y) {
-        return this.rect.contains(x, y);
-    }
-
-    public boolean inside(Rect2d rect) {
-        return this.rect.contains(rect);
-    }
-
-    //TODO: add hit result parameter
+    @Deprecated(since = "2.0")
     public InteractionResult onUse(Level level, Player player) {
         return InteractionResult.PASS;
+    }
+
+    public InteractionResult onUse(ModuleHitResult result, Level level, Player player) {
+        return this.onUse(level, player);
     }
 
     private void compileConfig() {
@@ -183,22 +187,20 @@ public abstract class Module {
         LevelRenderer.renderShape(
                 poseStack,
                 consumer,
-                this.getShape(),
+                this.getVoxelShape(),
                 0, 0, 0, rgb.getRed()/255f, rgb.getGreen()/255f, rgb.getBlue()/255f, 0.4f
         );
         poseStack.popPose();
     }
 
-    public Rect2i getRect() {
-        return new Rect2i(
-                this.pos.x,
-                this.pos.y,
-                this.size.x,
-                this.size.y
-        );
-    }
-
-    public static Double clipModule(AbstractPanelBlockEntity pbe, Module module, Vec3 shapeOffset, Vec3 eyePosMoj, Vec3 viewVectorMoj, float partialTick) {
+    public static Double clipModule(
+            AbstractPanelBlockEntity pbe,
+            Module module,
+            Vec3 shapeOffset,
+            Vec3 eyePosMoj,
+            Vec3 viewVectorMoj,
+            float partialTick
+    ) {
         LocalPlayer player = Minecraft.getInstance().player;
 
         Vector3d eyePos = JOMLConversion.toJOML(eyePosMoj);
@@ -237,7 +239,7 @@ public abstract class Module {
         Vector3f localViewPos = pose.transformPosition(new Vector3f());
         Vector3f localViewDir = pose.transformDirection(new Vector3f((float) viewVector.x, (float) viewVector.y, (float) viewVector.z));
 
-        VoxelShape shape = module.getShape().move(shapeOffset.x, shapeOffset.y, shapeOffset.z);
+        VoxelShape shape = module.getVoxelShape().move(shapeOffset.x, shapeOffset.y, shapeOffset.z);
 
         eyePos.set(localViewPos);
         viewVector.set(localViewDir).mul(player.blockInteractionRange()).add(eyePos);
@@ -255,7 +257,12 @@ public abstract class Module {
 
     }
 
-    public abstract VoxelShape getShape();
+    public abstract VoxelShape getVoxelShape();
+
+    //TODO: Make abstract and reformat all the modules
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, this.size.x, this.size.y);
+    }
 
     public String getName() {
         return this.name;
@@ -310,5 +317,25 @@ public abstract class Module {
             module.loadData(this.moduleData, registries);
             return module;
         }
+    }
+
+    @Deprecated(forRemoval = true, since = "2.0")
+    public boolean inside(int x, int y) {
+        return this.rect.contains(x, y);
+    }
+
+    @Deprecated(forRemoval = true, since = "2.0")
+    public boolean inside(Rect2d rect) {
+        return this.rect.contains(rect);
+    }
+
+    @Deprecated(forRemoval = true, since = "2.0")
+    public Rect2i getRect() {
+        return new Rect2i(
+                this.pos.x,
+                this.pos.y,
+                this.size.x,
+                this.size.y
+        );
     }
 }

@@ -7,7 +7,7 @@ import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
-import moth.boxxed.panels.index.PanelRendertypes;
+import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,7 +30,7 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     public boolean lit;
 
     public IndicatorBulbModule(int x, int y) {
-        super(PanelModules.INDICATOR_BULB.get(), x, y, 1,2);
+        super(PanelModules.INDICATOR_BULB.get(), x, y);
         this.color = DyeColor.WHITE;
         this.lit = false;
     }
@@ -76,8 +76,13 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Block.box(0, 0, 0.5, 1, 1.5, 1.5);
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 1, 2);
     }
 
     @Override

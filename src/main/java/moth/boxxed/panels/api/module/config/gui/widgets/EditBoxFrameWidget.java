@@ -1,12 +1,9 @@
 package moth.boxxed.panels.api.module.config.gui.widgets;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.StringRepresentable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;

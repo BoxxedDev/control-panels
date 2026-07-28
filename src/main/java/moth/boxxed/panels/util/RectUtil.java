@@ -1,6 +1,7 @@
 package moth.boxxed.panels.util;
 
 import net.minecraft.client.renderer.Rect2i;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
 
 import java.awt.*;
@@ -36,5 +37,25 @@ public class RectUtil {
         Rectangle javaRectB = new Rectangle(b.getX(), b.getY(), b.getWidth(), b.getHeight());
 
         return javaRectA.intersects(javaRectB);
+    }
+
+    public static Vector2d clampAABBPosToAABB(FlatAABB area, FlatAABB inner) {
+        double retX = inner.minX;
+        double retY = inner.minY;
+
+        if (inner.maxX > area.maxX) {
+            retX = area.maxX-inner.sizeX();
+        }
+        if (inner.maxY > area.maxY) {
+            retY = area.maxY-inner.sizeY();
+        }
+        if (inner.minX < area.minX) {
+            retX = area.minX;
+        }
+        if (inner.minY < area.minY) {
+            retY = area.minY;
+        }
+
+        return  new Vector2d(retX, retY);
     }
 }

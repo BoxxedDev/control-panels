@@ -11,6 +11,7 @@ import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -128,11 +129,16 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Shapes.or(
                 Block.box(0.5, 0, -0.5, 5.5, 0.25, 6.5),
                 Block.box(-0.5, 0, 0.5, 6.5, 0.25, 5.5)
         );
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 6, 6);
     }
 
     @Override

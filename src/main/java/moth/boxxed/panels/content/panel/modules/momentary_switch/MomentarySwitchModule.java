@@ -11,6 +11,7 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
@@ -40,7 +40,7 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     private final ModuleConfigValue.BooleanValue inverted = new ModuleConfigValue.BooleanValue("inverted", false);
 
     public MomentarySwitchModule(int x, int y) {
-        super(PanelModules.MOMENTARY_SWITCH.get(), x, y, 3, 3);
+        super(PanelModules.MOMENTARY_SWITCH.get(), x, y);
         this.pressed = false;
         this.pressValue = 0;
     }
@@ -93,8 +93,13 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Block.box(0, 0, 0, 3, 1, 3);
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 3, 3);
     }
 
     @Override

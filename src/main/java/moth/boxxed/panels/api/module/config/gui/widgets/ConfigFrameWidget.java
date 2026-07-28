@@ -1,6 +1,5 @@
 package moth.boxxed.panels.api.module.config.gui.widgets;
 
-import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;

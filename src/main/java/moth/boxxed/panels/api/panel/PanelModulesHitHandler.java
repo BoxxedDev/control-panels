@@ -88,7 +88,7 @@ public class PanelModulesHitHandler {
 
         VoxelShape shape = Shapes.empty();
         for (Map.Entry<String, Module> moduleEntry : pbe.modules) {
-            VoxelShape moduleShape = moduleEntry.getValue().getShape();
+            VoxelShape moduleShape = moduleEntry.getValue().getVoxelShape();
             shape = Shapes.or(shape, moduleShape.move(
                     moduleEntry.getValue().getPos().x/16f,
                     0,

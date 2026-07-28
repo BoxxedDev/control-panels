@@ -10,6 +10,7 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -40,7 +41,7 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     private float renderStickY = 0;
 
     public JoystickModule(int x, int y) {
-        super(PanelModules.JOYSTICK.get(), x, y, 4, 4);
+        super(PanelModules.JOYSTICK.get(), x, y);
     }
 
     @Override
@@ -122,8 +123,13 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Block.box(0, 0, 0, 4, 5, 4);
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 4, 4);
     }
 
     @Override

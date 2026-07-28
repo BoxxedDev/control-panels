@@ -9,6 +9,7 @@ import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -34,7 +35,7 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     private boolean switchState;
 
     public SwitchModule(int x, int y) {
-        super(PanelModules.SWITCH.get(),  x, y, 2,3);
+        super(PanelModules.SWITCH.get(),  x, y);
         this.switchState = false;
     }
 
@@ -67,11 +68,16 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Shapes.or(
                 Block.box(0, 0, 1, 2, 1, 3),
                 Block.box(0.5, 0, 0, 1.5, 1, 1)
         );
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 2, 3);
     }
 
     @Override

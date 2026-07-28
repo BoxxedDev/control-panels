@@ -91,7 +91,7 @@ public class PanelSkinsClientManager {
                     JsonElement jsonelement = GsonHelper.fromJson(gson, reader, JsonElement.class);
                     JsonElement jsonelement1 = output.put(resourcelocation1, jsonelement);
                     if (jsonelement1 != null) {
-                        throw new IllegalStateException("Duplicate data file ignored with ID " + resourcelocation1);
+                        throw new IllegalStateException("Duplicate data file ignored with ID: " + resourcelocation1);
                     }
                 } catch (IllegalArgumentException | IOException | JsonParseException jsonparseexception) {
                     Dashpanels.LOGGER.error("Couldn't parse data file {} from {}", resourcelocation1, resourcelocation, jsonparseexception);

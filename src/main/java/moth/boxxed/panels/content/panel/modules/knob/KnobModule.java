@@ -10,6 +10,7 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -36,7 +37,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     private int angle = 0;
 
     public KnobModule(int x, int y) {
-        super(PanelModules.KNOB.get(), x, y, 2, 2);
+        super(PanelModules.KNOB.get(), x, y);
     }
 
     @Override
@@ -56,8 +57,13 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Block.box(0, 0, 0, 2, 2, 2);
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 2, 2);
     }
 
     @Override

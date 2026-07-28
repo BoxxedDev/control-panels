@@ -14,7 +14,6 @@ import org.joml.Math;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Finish this
 public class ModuleTooltipManager {
     private static final ResourceLocation DEFAULT_BG = Dashpanels.path("tooltip/background");
     private static final int padding = 4;

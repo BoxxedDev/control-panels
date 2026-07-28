@@ -2,7 +2,6 @@ package moth.boxxed.panels.api.module.config.gui;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.config.gui.widgets.ConfigFrameWidget;
 import moth.boxxed.panels.api.module.config.gui.widgets.EditBoxFrameWidget;
@@ -11,9 +10,7 @@ import moth.boxxed.panels.api.module.config.gui.widgets.ValuesButtonFrameWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;

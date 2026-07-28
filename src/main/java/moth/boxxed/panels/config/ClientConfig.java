@@ -1,6 +1,5 @@
 package moth.boxxed.panels.config;
 
-import moth.boxxed.panels.content.paintbrush.ColorPalette;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ClientConfig {

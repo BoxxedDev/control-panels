@@ -11,6 +11,7 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -40,7 +41,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     private final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15);
 
     public ControlLeverModule(int x, int y) {
-        super(PanelModules.CONTROL_LEVER.get(), x, y, 3, 5);
+        super(PanelModules.CONTROL_LEVER.get(), x, y);
     }
 
     @Override
@@ -84,8 +85,15 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Block.box(0, 0, 0, 3, 1, 5);
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(
+                0, 0, 3, 5
+        );
     }
 
     @Override

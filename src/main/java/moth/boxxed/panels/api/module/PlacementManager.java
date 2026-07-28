@@ -10,12 +10,12 @@ import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.network.packet.PlaceModulePacket;
+import moth.boxxed.panels.util.FlatAABB;
 import moth.boxxed.panels.util.RectUtil;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +33,7 @@ import org.joml.*;
 import java.lang.Math;
 
 public class PlacementManager {
-    public static void frame(Vec3 cameraPos, PoseStack poseStack, float partialTick) {
+    public static void render(Vec3 cameraPos, PoseStack poseStack, float partialTick) {
         HitResult hitResult = Minecraft.getInstance().hitResult;
         Level level = Minecraft.getInstance().level;
         Player player = Minecraft.getInstance().player;
@@ -64,14 +64,20 @@ public class PlacementManager {
             Vector2i position = pbe.getPosForModule(localSpace);
             Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).create(0, 0);
             position.sub(
-                    module.getSize().x==1 ? module.getSize().x : module.getSize().x/2,
-                    module.getSize().y==1 ? module.getSize().y : module.getSize().y/2
+                    (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
+                    (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
             );
 
             Vector2i contentAreaSize = pbe.getContentArea();
-            position = RectUtil.clampRectPosToArea(
-                    new Rect2i(0, 0, contentAreaSize.x(), contentAreaSize.y()),
-                    new Rect2i(position.x(), position.y(), module.getSize().x(), module.getSize().y())
+
+            Vector2d doublePos = RectUtil.clampAABBPosToAABB(
+                    new FlatAABB(0, 0, contentAreaSize.x(), contentAreaSize.y()),
+                    module.getShape().move(position.x, position.y).getBounds()
+            );
+
+            position = new Vector2i(
+                    (int) Math.floor(doublePos.x),
+                    (int) Math.floor(doublePos.y)
             );
             module.setPos(position);
 
@@ -99,11 +105,11 @@ public class PlacementManager {
             float otherColors = hitsOtherModule ? 0 : 1;
 
             Vector2f center = new Vector2f(
-                    module.getSize().x/32f,
-                    module.getSize().y/32f
+                    ((int) module.getSize().x)/32f,
+                    ((int) module.getSize().y)/32f
             );
             poseStack.rotateAround(Axis.YP.rotationDegrees(180), center.x, 0, center.y);
-            LevelRenderer.renderShape(poseStack, consumer, module.getShape(), 0, 0, 0, 1, otherColors, otherColors, pulse);
+            LevelRenderer.renderShape(poseStack, consumer, module.getVoxelShape(), 0, 0, 0, 1, otherColors, otherColors, pulse);
 
             poseStack.popPose();
             poseStack.popPose();
@@ -143,14 +149,20 @@ public class PlacementManager {
             Vector2i position = pbe.getPosForModule(localSpace);
             Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).create(0, 0);
             position.sub(
-                    module.getSize().x==1 ? module.getSize().x : module.getSize().x/2,
-                    module.getSize().y==1 ? module.getSize().y : module.getSize().y/2
+                    (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
+                    (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
             );
 
             Vector2i contentAreaSize = pbe.getContentArea();
-            position = RectUtil.clampRectPosToArea(
-                    new Rect2i(0, 0, contentAreaSize.x(), contentAreaSize.y()),
-                    new Rect2i(position.x(), position.y(), module.getSize().x(), module.getSize().y())
+
+            Vector2d doublePos = RectUtil.clampAABBPosToAABB(
+                    new FlatAABB(0, 0, contentAreaSize.x(), contentAreaSize.y()),
+                    module.getShape().move(position.x, position.y).getBounds()
+            );
+
+            position = new Vector2i(
+                    (int) Math.floor(doublePos.x),
+                    (int) Math.floor(doublePos.y)
             );
             module.setPos(position);
 

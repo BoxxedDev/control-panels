@@ -9,13 +9,11 @@ import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
-import moth.boxxed.panels.util.Rect2d;
-import moth.boxxed.panels.util.RectUtil;
+import moth.boxxed.panels.util.FlatAABB;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -23,10 +21,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.*;
+import net.minecraft.world.Clearable;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -67,13 +67,19 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean tryAddModule(String string, Module module) {
-        Rect2d tempRect = new Rect2d(0,0,16,16);
-        if (!tempRect.contains(module.rect))
-            return false;
+        Vector2i contentArea = this.getContentArea();
+        FlatAABB contentAABB = new FlatAABB(0, 0, contentArea.x, contentArea.y);
+//        Rect2d tempRect = new Rect2d(0,0,16,16);
 
-        for (Map.Entry<String, Module> existingModule : this.modules.entrySet()) {
-            if (existingModule.getValue().inside(module.rect) && existingModule.getKey().equals(string))
+        PolyVoxel moduleShape = module.getShape().move(module.getPos().x, module.getPos().y);
+//        if (!contentAABB.contains(moduleShape.getBounds()))
+//            return false;
+
+        for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
+            Module existingModule = entry.getValue();
+            if (existingModule.getShape().move(existingModule.getPos().x, existingModule.getPos().y).collides(moduleShape) || entry.getKey().equals(string)) {
                 return false;
+            }
         }
         this.addModule(string, module);
         return true;
@@ -283,17 +289,23 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean intersectsWithAnotherModule(Module module) {
-        Rect2i moduleRect = module.getRect();
+//        Rect2i moduleRect = module.getRect();
+        PolyVoxel polyVoxel = module.getShape().move(module.getPos().x, module.getPos().y);
         for (Map.Entry<String, Module> entry : this.modules) {
-            Rect2i otherModuleRect = entry.getValue().getRect();
-            if (RectUtil.intersects(moduleRect, otherModuleRect)) {
+            Module other = entry.getValue();
+            if (entry.getValue().getShape().move(other.getPos().x, other.getPos().y).collides(polyVoxel)) {
                 return true;
             }
+
+//            Rect2i otherModuleRect = entry.getValue().getRect();
+//            if (RectUtil.intersects(moduleRect, otherModuleRect)) {
+//                return true;
+//            }
         }
         return false;
     }
 
-    public boolean removeSelectedModule(Level level, BlockPos pos, Player player) {
+    public boolean removeSelectedModule(Player player) {
         String module = this.getSelectedModule(player);
         if (module != null) {
             this.setSelectedModule(player, null);

@@ -8,6 +8,7 @@ import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
@@ -33,7 +34,7 @@ public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObj
     public DyeColor color = DyeColor.WHITE;
 
     public SevenSegmentModule(int x, int y) {
-        super(PanelModules.SEVEN_SEGMENT.get(), x, y, 6, 4);
+        super(PanelModules.SEVEN_SEGMENT.get(), x, y);
     }
 
     @Override
@@ -94,8 +95,13 @@ public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObj
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Block.box(0, 0, 0, 6, 0.5, 4);
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(0, 0, 6, 4);
     }
 
     @Override

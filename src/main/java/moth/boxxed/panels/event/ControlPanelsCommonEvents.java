@@ -204,7 +204,7 @@ public class ControlPanelsCommonEvents {
                 state.getBlock() instanceof AbstractPanelBlock block &&
                 level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
             if (player.isShiftKeyDown()) {
-                if (pbe.removeSelectedModule(level, pos, player)) {
+                if (pbe.removeSelectedModule(player)) {
                     event.setCanceled(true);
                     event.setCancellationResult(ItemInteractionResult.SUCCESS);
                 }

@@ -65,8 +65,8 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
             individualModuleTransform.accept(module, poseStack);
             poseStack.pushPose();
 
-            float aroundX = module.getSize().x/32f;
-            float aroundY = module.getSize().y/32f;
+            float aroundX = ((int) module.getSize().x)/32f;
+            float aroundY = ((int) module.getSize().y)/32f;
             poseStack.rotateAround(Axis.YP.rotationDegrees(180), aroundX, 0, aroundY);
             module.render(panelBlockEntity, poseStack, partialTick, bufferSource, packedLight, packedOverlay);
             if (hit && !spectator && !guiHidden)

@@ -1,7 +1,6 @@
 package moth.boxxed.panels.api.module.config.gui.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.util.GuiUtil;
@@ -12,10 +11,8 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
-import org.joml.Math;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ValuesButtonFrameWidget<T> extends AbstractWidget implements ConfigFrameWidget<T> {

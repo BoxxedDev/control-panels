@@ -128,9 +128,9 @@ public class ControlPanelsClientEvents {
     }
 
     @SubscribeEvent
-    public static void onPreRender(RenderLevelStageEvent event) {
+    public static void onRenderLevelStage(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES)
-            PlacementManager.frame(event.getCamera().getPosition(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
+            PlacementManager.render(event.getCamera().getPosition(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
     }
 
     @SubscribeEvent

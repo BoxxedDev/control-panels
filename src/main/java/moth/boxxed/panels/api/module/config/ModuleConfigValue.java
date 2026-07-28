@@ -1,6 +1,5 @@
 package moth.boxxed.panels.api.module.config;
 
-import dev.engine_room.flywheel.backend.gl.array.VertexAttribute;
 import moth.boxxed.panels.api.module.config.gui.ConfigFrameBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -10,16 +9,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.core.lookup.JmxRuntimeInputArgumentsLookup;
-import org.checkerframework.common.value.qual.StringVal;
 import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -28,6 +23,7 @@ public abstract class ModuleConfigValue<T> {
     protected final T defaultValue;
     protected T value;
     protected boolean revertable = true;
+    protected Predicate<T> validator = Objects::nonNull;
 
     protected List<ValueChangedListener<T>> listeners = new ArrayList<>();
 
@@ -50,9 +46,11 @@ public abstract class ModuleConfigValue<T> {
     }
 
     public void set(T value) {
-        T oldValue = this.value;
-        this.value = value;
-        broadcastChange(oldValue);
+        if (this.validator.test(value)) {
+            T oldValue = this.value;
+            this.value = value;
+            broadcastChange(oldValue);
+        }
     }
 
     public T getDefault() {
@@ -88,6 +86,11 @@ public abstract class ModuleConfigValue<T> {
             if (listener != null)
                 listener.run(oldValue, this.value);
         });
+    }
+
+    public ModuleConfigValue<T> withValidator(Predicate<T> validator) {
+        this.validator = validator;
+        return this;
     }
 
     public abstract void buildGuiFrame(ConfigFrameBuilder builder);
@@ -159,8 +162,6 @@ public abstract class ModuleConfigValue<T> {
     }
 
     public static class StringValue extends ModuleConfigValue<String> {
-        protected Predicate<String> validator = Objects::nonNull;
-
         public StringValue(String name, @NonNull String defaultValue) {
             super(name, defaultValue);
         }
@@ -177,12 +178,6 @@ public abstract class ModuleConfigValue<T> {
             this.setWithoutValidation(tag.getString("value"));
         }
 
-        @Override
-        public void set(String value) {
-            if (this.validator.test(value))
-                super.set(value);
-        }
-
         public void setWithoutValidation(String value) {
             super.set(value);
         }
@@ -190,11 +185,6 @@ public abstract class ModuleConfigValue<T> {
         @Override
         public void buildGuiFrame(ConfigFrameBuilder builder) {
             builder.addEditBox(this, value -> value, ModuleConfigValue::set, 128);
-        }
-
-        public StringValue withValidator(Predicate<String> validator) {
-            this.validator = validator;
-            return this;
         }
     }
 

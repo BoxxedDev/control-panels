@@ -2,5 +2,6 @@
   "single": "dashpanels:block/ceiling_nostromo/single",
   "left": "dashpanels:block/ceiling_nostromo/left",
   "center": "dashpanels:block/ceiling_nostromo/center",
-  "right": "dashpanels:block/ceiling_nostromo/right"
+  "right": "dashpanels:block/ceiling_nostromo/right",
+  "tintable": true
 }

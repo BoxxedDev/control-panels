@@ -6,6 +6,7 @@
   "model": "dashpanels:models/block/ceiling_control_panel/single.obj",
   "mtl_override": "dashpanels:models/block/ceiling_control_panel/single.mtl",
   "shade_quads": true,
+  "render_type": "cutout",
   "textures": {
     "0": "dashpanels:block/ceiling_control_panel",
     "particle": "dashpanels:block/metal"
@@ -35,10 +36,10 @@
     },
     "gui": {
       "rotation": [30, -135, 0],
+      "translation": [0, -1, 0],
       "scale": [0.625, 0.625, 0.625]
     },
     "fixed": {
-      "translation": [0, 0, -3],
       "scale": [0.5, 0.5, 0.5]
     }
   }

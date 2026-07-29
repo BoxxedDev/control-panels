@@ -151,8 +151,8 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
 
     @Override
     public void addLines(TooltipContext context, List<Component> list) {
-        list.add(Component.literal("Pitch : %.1f".formatted(this.getAnglePitch())).withStyle(ChatFormatting.BLUE));
-        list.add(Component.literal("Yaw : %.1f".formatted(this.getAngleYaw())).withStyle(ChatFormatting.GREEN));
-        list.add(Component.literal("Roll : %.1f".formatted(this.getAngleRoll())).withStyle(ChatFormatting.RED));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.pitch", this.getAnglePitch()).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.yaw", this.getAngleYaw()).withStyle(ChatFormatting.GREEN));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.roll", this.getAngleRoll()).withStyle(ChatFormatting.RED));
     }
 }

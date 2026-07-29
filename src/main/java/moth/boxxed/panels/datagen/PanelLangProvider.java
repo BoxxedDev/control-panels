@@ -62,6 +62,13 @@ public class PanelLangProvider extends LanguageProvider {
         addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output moduleName");
         addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
 
+        //Modules
+        addTooltip("module.push_button", "Button: %d");
+
+        addTooltip("module.navball.pitch", "Pitch: %d");
+        addTooltip("module.navball.yaw", "Yaw: %d");
+        addTooltip("module.navball.roll", "Rool: %d");
+
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
         add("creativetab.dashpanels.dashpanels", "§lDashpanels");
         add("creativetab.dashpanels.modules", "§lModules");

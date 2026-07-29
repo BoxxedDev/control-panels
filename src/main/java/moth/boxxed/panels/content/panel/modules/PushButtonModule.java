@@ -162,6 +162,6 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
     @Override
     public void addLines(TooltipContext context, List<Component> list) {
         int i = (int) Math.clamp(Math.floor(Mth.clampedMap(context.hitResult().location().x, 0, this.buttonsAmount.get() * 0.125f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
-        list.add(Component.literal("Button: %d".formatted(i)));
+        list.add(Component.translatable("tooltip.dashpanels.module.push_button", i));
     }
 }

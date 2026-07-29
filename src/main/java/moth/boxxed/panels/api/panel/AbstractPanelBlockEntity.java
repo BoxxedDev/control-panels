@@ -2,26 +2,22 @@ package moth.boxxed.panels.api.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.ModuleMap;
-import moth.boxxed.panels.api.module.ModuleType;
-import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
-import moth.boxxed.panels.util.FlatAABB;
 import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.InteractionResult;
@@ -41,6 +37,7 @@ import org.joml.Vector2i;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember implements Clearable {
     public static final ModelProperty<ResourceLocation> SKIN_PROPERTY = new ModelProperty<>();
@@ -57,6 +54,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public PanelType panelType;
 
     private final Map<UUID, String> selectedModules = new HashMap<>();
+    private final Map<UUID, Vec3> hitPositions = new HashMap<>();
 
     public AbstractPanelBlockEntity(PanelType panelType, BlockEntityType<? extends AbstractPanelBlockEntity> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -67,8 +65,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean tryAddModule(String string, Module module) {
-        Vector2i contentArea = this.getContentArea();
-        FlatAABB contentAABB = new FlatAABB(0, 0, contentArea.x, contentArea.y);
+//        Vector2i contentArea = this.getContentArea();
+//        FlatAABB contentAABB = new FlatAABB(0, 0, contentArea.x, contentArea.y);
 //        Rect2d tempRect = new Rect2d(0,0,16,16);
 
         PolyVoxel moduleShape = module.getShape().move(module.getPos().x, module.getPos().y);
@@ -114,6 +112,16 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public Module getModule(String moduleName) {
         return this.modules.normalGet(moduleName);
+    }
+
+    public void renameModule(String originalName, String newName) {
+        Module module = this.modules.remove(originalName);
+        if (module != null) {
+            this.tryAddModule(newName, module);
+            Dashpanels.LOGGER.debug("Changed name from {} to {} | C: {}", originalName, newName, this.level.isClientSide);
+        }
+        setChanged();
+        blockChanged();
     }
 
     @Override
@@ -196,10 +204,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         }
     }
 
-    public void loadClient(CompoundTag tag, HolderLookup.Provider registries) {
-        this.loadAdditional(tag, registries);
-    }
-
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         super.tick(level, blockPos, blockState);
@@ -212,8 +216,10 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
-        if (hitModule != null) {
-            InteractionResult result = hitModule.onUse(level, player);
+        Vec3 hitPosition = this.hitPositions.get(player.getUUID());
+        if (hitModule != null && hitPosition != null) {
+            hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
+            InteractionResult result = hitModule.onUse(new ModuleHitResult(hitPosition), level, player);
             if (!level.isClientSide)
                 this.blockChanged();
             return result;
@@ -227,8 +233,10 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (stack.is(PanelTags.Items.WRENCH)) return ItemInteractionResult.SUCCESS;
         if (stack.is(PanelItems.PAINT_BRUSH.asItem())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
-        if (hitModule != null) {
-            ItemInteractionResult result = hitModule.onItemUse(stack, level, player);
+        Vec3 hitPosition = this.hitPositions.get(player.getUUID());
+        if (hitModule != null && hitPosition != null) {
+            hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
+            ItemInteractionResult result = hitModule.onItemUse(new ModuleHitResult(hitPosition), stack, level, player);
             if (!level.isClientSide)
                 this.blockChanged();
             return result;
@@ -243,21 +251,25 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    public void sendToMenu(RegistryFriendlyByteBuf buf) {
-        buf.writeBlockPos(this.getBlockPos());
-        CompoundTag tag = new CompoundTag();
-        this.saveAdditional(tag, buf.registryAccess());
-        buf.writeNbt(tag);
-        Set<String> takenNames = this.getOrCreate().compiledModules.keySet();
-        buf.writeCollection(takenNames, ByteBufCodecs.STRING_UTF8);
-    }
-
-    public void setSelectedModule(Player player, String string) {
+    public void setSelectedModule(Player player, Vec3 location, String string) {
         this.selectedModules.put(player.getUUID(), string);
+        this.hitPositions.put(player.getUUID(), location);
     }
 
     public String getSelectedModule(Player player) {
         return this.selectedModules.computeIfAbsent(player.getUUID(), player1 -> "");
+    }
+
+    public Map<UUID, String> getSelectedModules() {
+        return new HashMap<>(this.selectedModules);
+    }
+
+    public Vec3 getSelectedPosition(LocalPlayer player) {
+        return this.hitPositions.get(player.getUUID());
+    }
+
+    public Map<UUID, Vec3> getHitPositions() {
+        return new HashMap<>(this.hitPositions);
     }
 
     @Override
@@ -288,19 +300,29 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
                 .build();
     }
 
-    public boolean intersectsWithAnotherModule(Module module) {
-//        Rect2i moduleRect = module.getRect();
-        PolyVoxel polyVoxel = module.getShape().move(module.getPos().x, module.getPos().y);
+    public boolean collidesWithOther(Module module) {
+        PolyVoxel moduleVoxel = module.getShape().move(module.getPos().x, module.getPos().y);
         for (Map.Entry<String, Module> entry : this.modules) {
             Module other = entry.getValue();
-            if (entry.getValue().getShape().move(other.getPos().x, other.getPos().y).collides(polyVoxel)) {
+            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y);
+            if (otherVoxel.collides(moduleVoxel)) {
                 return true;
             }
+        }
+        return false;
+    }
 
-//            Rect2i otherModuleRect = entry.getValue().getRect();
-//            if (RectUtil.intersects(moduleRect, otherModuleRect)) {
-//                return true;
-//            }
+    public boolean polyVoxelCollidesModules(PolyVoxel polyVoxel, String... exceptions) {
+        Set<String> exceptionSet = Arrays.stream(exceptions).collect(Collectors.toSet());
+        for (Map.Entry<String, Module> entry : this.modules) {
+            if (exceptionSet.contains(entry.getKey()))
+                continue;
+            Module other = entry.getValue();
+            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y);
+            if (otherVoxel.collides(polyVoxel)) {
+                Dashpanels.LOGGER.debug("{} | {}", other.getName(), otherVoxel);
+                return true;
+            }
         }
         return false;
     }
@@ -308,7 +330,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public boolean removeSelectedModule(Player player) {
         String module = this.getSelectedModule(player);
         if (module != null) {
-            this.setSelectedModule(player, null);
+            this.setSelectedModule(player, null, null);
             Module removedModule = this.removeModule(module);
             if (!player.isCreative() && removedModule != null) {
                 ItemStack stack = new ItemStack(ModuleType.getItemFromType(removedModule.type));
@@ -335,10 +357,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return false;
     }
 
-    public Map<UUID, String> getSelectedModules() {
-        return new HashMap<>(this.selectedModules);
-    }
-
     public abstract void transformPanelClipping(PoseStack stack);
 
     public abstract boolean canPlaceModuleOnSurface(Vec3 position, Direction face);
@@ -350,14 +368,4 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public abstract void renderTransform(PoseStack poseStack);
 
     public abstract Vector2i getContentArea();
-
-    public void renameModule(String originalName, String newName) {
-        Module module = this.modules.remove(originalName);
-        if (module != null) {
-            this.tryAddModule(newName, module);
-            Dashpanels.LOGGER.debug("Changed name from {} to {} | C: {}", originalName, newName, this.level.isClientSide);
-        }
-        setChanged();
-        blockChanged();
-    }
 }

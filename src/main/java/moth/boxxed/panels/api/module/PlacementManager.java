@@ -101,7 +101,7 @@ public class PlacementManager {
             MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
 
-            boolean hitsOtherModule = pbe.intersectsWithAnotherModule(module);
+            boolean hitsOtherModule = pbe.collidesWithOther(module);
             float otherColors = hitsOtherModule ? 0 : 1;
 
             Vector2f center = new Vector2f(
@@ -166,7 +166,7 @@ public class PlacementManager {
             );
             module.setPos(position);
 
-            boolean hitsOtherModule = pbe.intersectsWithAnotherModule(module);
+            boolean hitsOtherModule = pbe.collidesWithOther(module);
 
             if (!hitsOtherModule) {
                 PacketDistributor.sendToServer(new PlaceModulePacket(pos, Module.ModuleInfo.fromModule(module, level.registryAccess())));

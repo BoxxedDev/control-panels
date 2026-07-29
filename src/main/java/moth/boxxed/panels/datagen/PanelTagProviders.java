@@ -38,6 +38,7 @@ public class PanelTagProviders {
                     .add(PanelItems.JOYSTICK_MODULE.getKey())
                     .add(PanelItems.LABEL_MODULE.getKey())
                     .add(PanelItems.SEVEN_SEGMENT_MODULE.getKey())
+                    .add(PanelItems.PUSH_BUTTON_MODULE.getKey())
             ;
             if (ModList.get().isLoaded("sable"))
                 tag(PanelTags.Items.MODULE)

@@ -5,8 +5,8 @@ import net.minecraft.world.phys.Vec3;
 //TODO: add more params/args/whatever records call it use
 /**
  *
- * @param position the local position from the top right of the module, relative to the block so on a 2x2 module at a position of (0, 0) the bottom right of it would be at (0.125, y, 0.125)
+ * @param location the local location from the top right of the module, relative to the block so on a 2x2 module at a location of (0, 0) the bottom right of it would be at (0.125, y, 0.125)
  */
-public record ModuleHitResult(Vec3 position) {
+public record ModuleHitResult(Vec3 location) {
 
 }

@@ -3,10 +3,7 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.panel.modules.IndicatorBulbModule;
-import moth.boxxed.panels.content.panel.modules.LabelModule;
-import moth.boxxed.panels.content.panel.modules.SevenSegmentModule;
-import moth.boxxed.panels.content.panel.modules.SwitchModule;
+import moth.boxxed.panels.content.panel.modules.*;
 import moth.boxxed.panels.content.panel.modules.control_lever.ControlLeverModule;
 import moth.boxxed.panels.content.panel.modules.joystick.JoystickModule;
 import moth.boxxed.panels.content.panel.modules.knob.KnobModule;
@@ -35,6 +32,8 @@ public class PanelModules {
             MODULES.register("label", () -> new ModuleType<>(LabelModule::new, PanelItems.LABEL_MODULE.get()));
     public static final Supplier<ModuleType<SevenSegmentModule>> SEVEN_SEGMENT =
             MODULES.register("seven_segment", () -> new ModuleType<>(SevenSegmentModule::new, PanelItems.SEVEN_SEGMENT_MODULE.get()));
+    public static final Supplier<ModuleType<PushButtonModule>> PUSH_BUTTON =
+            MODULES.register("push_button", () -> new ModuleType<>(PushButtonModule::new, PanelItems.PUSH_BUTTON_MODULE.get()));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

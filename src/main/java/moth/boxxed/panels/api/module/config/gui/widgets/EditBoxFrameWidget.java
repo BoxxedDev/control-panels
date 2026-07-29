@@ -12,13 +12,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class EditBoxFrameWidget<T> extends EditBox implements ConfigFrameWidget<T> {
-    protected final ModuleConfigValue<T> configValue;
-    protected final List<BiConsumer<ModuleConfigValue<T>, String>> setters = new ArrayList<>();
+public class EditBoxFrameWidget<T, R extends ModuleConfigValue<T, R>> extends EditBox implements ConfigFrameWidget<T, R> {
+    protected final R configValue;
+    protected final List<BiConsumer<R, String>> setters = new ArrayList<>();
     protected final Function<T, String> onSet;
     protected final ModuleConfigValue.ValueChangedListener<T> listener;
 
-    public EditBoxFrameWidget(ModuleConfigValue<T> configValue, Function<T, String> onSet, Predicate<String> filter, Font font, int width, int height, Component message) {
+    public EditBoxFrameWidget(R configValue, Function<T, String> onSet, Predicate<String> filter, Font font, int width, int height, Component message) {
         super(font, width, height, message);
         if (filter != null) {
             this.setFilter(filter);
@@ -32,7 +32,7 @@ public class EditBoxFrameWidget<T> extends EditBox implements ConfigFrameWidget<
         configValue.addChangeListener(this.listener);
     }
 
-    public EditBoxFrameWidget<T> valueSetter(BiConsumer<ModuleConfigValue<T>, String> setter) {
+    public EditBoxFrameWidget<T, R > valueSetter(BiConsumer<R, String> setter) {
         this.setters.add(setter);
         return this;
     }

@@ -45,7 +45,7 @@ public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigM
         this.centerY = this.height/2;
 
         this.list = new ArrayList<>();
-        for (ModuleIOInfo info : this.menu.map.filterIOModules()) {
+        for (ModuleIOInfo info : this.menu.modulesInfo) {
             if (info.type() == null) continue;
             if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) {
                 list.add(new Pair<>(info.name(), info.type()));

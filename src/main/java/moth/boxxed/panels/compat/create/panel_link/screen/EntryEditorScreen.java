@@ -56,8 +56,9 @@ public class EntryEditorScreen {
                 }
             }
         }
+
         this.moduleSelect = new StringEntryWidget(
-                this.leftPos + 13, this.topPos + 25, 90, 28,
+                this.leftPos + 13, this.topPos + 25, 88, 26,
                 entriesToShow,
                 Component.translatable("widget.dashpanels.panel_link.module_select")
         );

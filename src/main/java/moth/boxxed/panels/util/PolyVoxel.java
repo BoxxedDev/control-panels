@@ -79,4 +79,9 @@ public class PolyVoxel {
 
         return ret;
     }
+
+    @Override
+    public String toString() {
+        return "polyVoxel:{minX: %.4f, minY: %.4f, maxX: %.4f, maxY: %.4f}".formatted(this.bounds.minX, this.bounds.minY, this.bounds.maxX, this.bounds.maxY);
+    }
 }

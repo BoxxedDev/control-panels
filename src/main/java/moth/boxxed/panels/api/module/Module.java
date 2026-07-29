@@ -41,6 +41,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.*;
+import oshi.util.tuples.Pair;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -85,7 +86,8 @@ public abstract class Module {
 
     public void setPos(Vector2i vec) {
         this.pos = vec;
-        this.rect = new Rect2d(this.pos.x, this.pos.y, this.pos.x+this.size.x, this.pos.y+this.size.y);
+        if (this.size != null)
+            this.rect = new Rect2d(this.pos.x, this.pos.y, this.pos.x+this.size.x, this.pos.y+this.size.y);
     }
 
     public Vector2i getPos() {
@@ -107,8 +109,17 @@ public abstract class Module {
         return InteractionResult.PASS;
     }
 
-    public InteractionResult onUse(ModuleHitResult result, Level level, Player player) {
+    public InteractionResult onUse(ModuleHitResult hitResult, Level level, Player player) {
         return this.onUse(level, player);
+    }
+
+    @Deprecated(since = "2.0")
+    public ItemInteractionResult onItemUse(ItemStack stack, Level level, Player player) {
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    public ItemInteractionResult onItemUse(ModuleHitResult hitResult, ItemStack stack, Level level, Player player) {
+        return this.onItemUse(stack, level, player);
     }
 
     private void compileConfig() {
@@ -142,7 +153,7 @@ public abstract class Module {
 
         this.compileConfig();
         CompoundTag configTag = tag.getCompound("config");
-        for (ModuleConfigValue<?> configValue : this.config.getValues()) {
+        for (ModuleConfigValue<?, ?> configValue : this.config.getValues()) {
             if (configValue == null || !configTag.contains(configValue.getId()))
                 continue;
             CompoundTag valueTag = configTag.getCompound(configValue.getId());
@@ -159,7 +170,7 @@ public abstract class Module {
 
         CompoundTag configTag = new CompoundTag();
         this.compileConfig();
-        for (ModuleConfigValue<?> configValue : this.config.getValues()) {
+        for (ModuleConfigValue<?, ?> configValue : this.config.getValues()) {
             CompoundTag valueTag = new CompoundTag();
             configValue.save(valueTag, registries);
             configTag.put(configValue.getId(), valueTag);
@@ -175,25 +186,30 @@ public abstract class Module {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void render(AbstractPanelBlockEntity AbstractPanelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
+    public abstract void render(AbstractPanelBlockEntity pbe, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay);
 
+    @Deprecated(since = "2.0")
     @OnlyIn(Dist.CLIENT)
     public void renderOutline(PoseStack poseStack, float partialTick, int color) {
         MultiBufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer consumer = bs.getBuffer(RenderType.lines());
 
-        Color rgb = new Color(color);
         poseStack.pushPose();
         LevelRenderer.renderShape(
                 poseStack,
                 consumer,
                 this.getVoxelShape(),
-                0, 0, 0, rgb.getRed()/255f, rgb.getGreen()/255f, rgb.getBlue()/255f, 0.4f
+                0, 0, 0, ((color >> 16) & 0xFF)/255f, ((color >> 8) & 0xFF)/255f, (color & 0xFF)/255f, 0.4f
         );
         poseStack.popPose();
     }
 
-    public static Double clipModule(
+    @OnlyIn(Dist.CLIENT)
+    public void renderOutline(ModuleHitResult hitResult, PoseStack poseStack, float partialTick, int color) {
+        this.renderOutline(poseStack, partialTick, color);
+    }
+
+    public static Pair<Double, Vec3> clipModule(
             AbstractPanelBlockEntity pbe,
             Module module,
             Vec3 shapeOffset,
@@ -250,7 +266,7 @@ public abstract class Module {
             return null;
 
         Vec3 location = result.getLocation();
-        return eyePos.distanceSquared(location.x, location.y, location.z);
+        return new Pair<>(eyePos.distanceSquared(location.x, location.y, location.z), location);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
@@ -271,10 +287,6 @@ public abstract class Module {
     public void setName(String string) {
         this.name = string;
         this.nameConfig.set(string);
-    }
-
-    public ItemInteractionResult onItemUse(ItemStack stack, Level level, Player player) {
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     public void createConfig(ModuleConfig.Builder builder) {}

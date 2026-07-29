@@ -15,15 +15,15 @@ import net.minecraft.util.StringRepresentable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class ValuesButtonFrameWidget<T> extends AbstractWidget implements ConfigFrameWidget<T> {
-    protected final ModuleConfigValue<T> configValue;
+public class ValuesButtonFrameWidget<T, R extends ModuleConfigValue<T, R>> extends AbstractWidget implements ConfigFrameWidget<T, R> {
+    protected final R configValue;
     protected final Font font;
 
     protected final Supplier<T[]> valuesSupplier;
     protected final int valuesLength;
     protected int valueIndex;
 
-    public ValuesButtonFrameWidget(ModuleConfigValue<T> configValue, Supplier<T[]> valuesSupplier, Font font, int width, int height, Component message) {
+    public ValuesButtonFrameWidget(R configValue, Supplier<T[]> valuesSupplier, Font font, int width, int height, Component message) {
         super(0, 0, width, height, message);
         this.configValue = configValue;
         this.font = font;

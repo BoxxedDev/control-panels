@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.cable.stripped;
 
+import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;
@@ -67,12 +68,13 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new StrippedConfigMenu(containerId, getOrCreate().getCompiledModules(), this.getBlockPos(), this.boundModule);
+        this.getOrCreate().compileModules();
+        return new StrippedConfigMenu(containerId, getOrCreate().getCompiledModules().filterIOModules(), this.getBlockPos(), this.boundModule);
     }
 
     public void sendToMenu(RegistryFriendlyByteBuf buf) {
-        CompoundTag tag = getOrCreate().getCompiledModules().asTag(buf.registryAccess());
-        buf.writeNbt(tag);
+        this.getOrCreate().compileModules();
+        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules(), (buffer, val) -> ModuleIOInfo.STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, val));
         buf.writeBlockPos(this.getBlockPos());
         buf.writeUtf(this.boundModule);
     }

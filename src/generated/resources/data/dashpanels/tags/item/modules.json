@@ -8,6 +8,7 @@
     "dashpanels:joystick",
     "dashpanels:label",
     "dashpanels:seven_segment",
+    "dashpanels:push_button",
     "dashpanels:navball"
   ]
 }

@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 
@@ -34,9 +35,9 @@ public class ModuleConfigScreen extends Screen {
     private int scroll = 0;
     private final int maxScroll;
 
-    private final List<ConfigButton<?>> configButtons = new ArrayList<>();
+    private final List<ConfigButton<?, ?>> configButtons = new ArrayList<>();
 
-    private ModuleConfigValue<?> selectedValue;
+    private ModuleConfigValue<?, ?> selectedValue;
     private ConfigFrameBuilder frameBuilder;
 
     private int left = 10;
@@ -49,8 +50,8 @@ public class ModuleConfigScreen extends Screen {
 
         int maxScroll = 0;
         ModuleConfig config = module.getConfig();
-        for (ModuleConfigValue<?> configValue : config.getValues()) {
-            ConfigButton<?> button = new ConfigButton<>(configValue);
+        for (ModuleConfigValue<?, ?> configValue : config.getValues()) {
+            ConfigButton<?, ?> button = new ConfigButton<>(configValue);
             this.addWidget(button);
             this.configButtons.add(button);
             if (this.configButtons.size() > 8) {
@@ -72,8 +73,8 @@ public class ModuleConfigScreen extends Screen {
         }
         if (this.selectedValue != null && this.frameBuilder != null) {
             for (int i = 0; i < this.configButtons.size(); i++) {
-                ConfigButton<?> button = this.configButtons.get(i);
-                ModuleConfigValue<?> configValue = button.value;
+                ConfigButton<?, ?> button = this.configButtons.get(i);
+                ModuleConfigValue<?, ?> configValue = button.value;
                 if (this.selectedValue == configValue) {
                     int y = Math.clamp(top+16+i*16 - scroll, top+16, top+128);
                     guiGraphics.blit(CONFIG_SHEET, left+91, y, 96, 32, 16, 16, 256, 256);
@@ -100,7 +101,7 @@ public class ModuleConfigScreen extends Screen {
         guiGraphics.enableScissor(left, top+18, left+96,  top+142);
 
         for (int i = 0; i < this.configButtons.size(); i++) {
-            ConfigButton<?> button = this.configButtons.get(i);
+            ConfigButton<?, ?> button = this.configButtons.get(i);
             button.setX(left+7);
             button.setY(top+18 + i*16 - scroll);
             button.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
@@ -123,7 +124,7 @@ public class ModuleConfigScreen extends Screen {
 
         for (int row = 0; row <= this.frameBuilder.getRows(); row++) {
             for (int column = 0; column < this.frameBuilder.getColumns(); column++) {
-                ConfigFrameWidget<?> widget = this.frameBuilder.getWidgets().get(row, column);
+                ConfigFrameWidget<?, ? extends ModuleConfigValue<?, ?>> widget = this.frameBuilder.getWidgets().get(row, column);
                 if (widget == null)
                     continue;
 
@@ -144,7 +145,7 @@ public class ModuleConfigScreen extends Screen {
             }
         }
 
-        for (ConfigFrameWidget<?> widget : this.frameBuilder.getWidgets().values()) {
+        for (ConfigFrameWidget<?, ? extends ModuleConfigValue<?, ?>> widget : this.frameBuilder.getWidgets().values()) {
             widget.renderWidget(graphics, mouseX, mouseY, partialTick);
         }
     }
@@ -167,9 +168,9 @@ public class ModuleConfigScreen extends Screen {
         return false;
     }
 
-    private <T> void setSelectedValue(ModuleConfigValue<T> value) {
+    private <T, R extends ModuleConfigValue<T, R>> void setSelectedValue(R value) {
         if (this.frameBuilder != null) {
-            for (ConfigFrameWidget<?> widget : this.frameBuilder.getWidgets().values()) {
+            for (ConfigFrameWidget<?, ?> widget : this.frameBuilder.getWidgets().values()) {
                 this.removeWidget(widget);
                 widget.onRemove();
             }
@@ -180,7 +181,7 @@ public class ModuleConfigScreen extends Screen {
         this.frameBuilder = new ConfigFrameBuilder();
         this.selectedValue.buildGuiFrame(this.frameBuilder);
 
-        for (ConfigFrameWidget<?> widget : this.frameBuilder.getWidgets().values()) {
+        for (ConfigFrameWidget<?, ? extends ModuleConfigValue<?, ?>> widget : this.frameBuilder.getWidgets().values()) {
             this.addWidget(widget);
         }
     }
@@ -228,8 +229,8 @@ public class ModuleConfigScreen extends Screen {
         }
         Map<String, CompoundTag> mapToSend = new HashMap<>();
         RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
-        for (ConfigButton<?> button : this.configButtons) {
-            ModuleConfigValue<?> value = button.value;
+        for (ConfigButton<?, ?> button : this.configButtons) {
+            ModuleConfigValue<?, ?> value = button.value;
 
             CompoundTag tag = new CompoundTag();
             value.save(tag, registryAccess);
@@ -245,14 +246,14 @@ public class ModuleConfigScreen extends Screen {
         super.onClose();
     }
 
-    public class ConfigButton<T> extends AbstractWidget {
+    public class ConfigButton<T, R extends ModuleConfigValue<T, R>> extends AbstractWidget {
         private final boolean revertable;
         private final RevertableButton revertButton;
-        private final ModuleConfigValue<T> value;
+        private final R value;
 
-        public ConfigButton(ModuleConfigValue<T> value) {
+        public ConfigButton(@UnknownNullability ModuleConfigValue<?, ?> value) {
             super(0, 0, value.isRevertable() ? 66 : 82, 12, value.getName());
-            this.value = value;
+            this.value = (R) value;
 
             this.revertable = value.isRevertable();
             if (this.revertable) {

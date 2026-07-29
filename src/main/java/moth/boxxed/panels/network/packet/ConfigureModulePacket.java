@@ -41,7 +41,7 @@ public record ConfigureModulePacket(BlockPos pos, String moduleName, Map<String,
 
             module.setParentBE(pbe);
             RegistryAccess registryAccess = level.registryAccess();
-            for (ModuleConfigValue<?> value : module.getConfig().getValues()) {
+            for (ModuleConfigValue<?, ?> value : module.getConfig().getValues()) {
                 CompoundTag valueTag = this.configValues.get(value.getId());
                 if (valueTag == null)
                     continue;

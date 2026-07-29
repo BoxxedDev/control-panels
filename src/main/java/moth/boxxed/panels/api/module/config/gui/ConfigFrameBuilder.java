@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 public class ConfigFrameBuilder {
     public static final int PADDING = 4;
     
-    private final Table<Integer, Integer, ConfigFrameWidget<?>> widgets = HashBasedTable.create();
+    private final Table<Integer, Integer, ConfigFrameWidget<?, ? extends ModuleConfigValue<?, ?>>> widgets = HashBasedTable.create();
     private final Map<Integer, Integer> rowHeights = new HashMap<>();
     private final Map<Integer, Integer> columnWidths = new HashMap<>();
 
@@ -46,7 +46,7 @@ public class ConfigFrameBuilder {
         return this;
     }
 
-    public ConfigFrameBuilder addWidget(ConfigFrameWidget<?> widget) {
+    public ConfigFrameBuilder addWidget(ConfigFrameWidget<?, ? extends ModuleConfigValue<?, ?>> widget) {
         this.widgets.put(this.currentRow, this.currentColumn, widget);
         if (this.rowHeights.get(this.currentRow) != null) {
             this.rowHeights.put(this.currentRow, Math.max(this.rowHeights.get(this.currentRow), widget.getHeight()));
@@ -104,13 +104,13 @@ public class ConfigFrameBuilder {
         return this.rowHeights.get(row) == null ? 0 : this.rowHeights.get(row);
     }
 
-    public Table<Integer, Integer, ConfigFrameWidget<?>> getWidgets() {
+    public Table<Integer, Integer, ConfigFrameWidget<?, ? extends ModuleConfigValue<?, ?>>> getWidgets() {
         return this.widgets;
     }
 
     //Some util methods
-    public <T> ConfigFrameBuilder addValuesButton(ModuleConfigValue<T> value, Supplier<T[]> valuesSupplier, int width) {
-        ValuesButtonFrameWidget<T> widget = new ValuesButtonFrameWidget<>(
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addValuesButton(R value, Supplier<T[]> valuesSupplier, int width) {
+        ValuesButtonFrameWidget<T, R> widget = new ValuesButtonFrameWidget<>(
                 value,
                 valuesSupplier,
                 Minecraft.getInstance().font,
@@ -121,17 +121,17 @@ public class ConfigFrameBuilder {
         return this.addWidget(widget);
     }
 
-    public <T> ConfigFrameBuilder addValuesButton(ModuleConfigValue<T> value, T[] values, int width) {
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addValuesButton(R value, T[] values, int width) {
         return this.addValuesButton(value, () -> values, width);
     }
 
-    public <T> ConfigFrameBuilder addEditBox(
-            ModuleConfigValue<T> value,
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addEditBox(
+            R value,
             Function<T, String> onSet,
             Predicate<String> filter,
-            BiConsumer<ModuleConfigValue<T>, String> setter,
+            BiConsumer<R, String> setter,
             int width) {
-        EditBoxFrameWidget<T> editBox = new EditBoxFrameWidget<>(
+        EditBoxFrameWidget<T, R> editBox = new EditBoxFrameWidget<>(
                 value,
                 onSet,
                 filter,
@@ -144,11 +144,11 @@ public class ConfigFrameBuilder {
         return this;
     }
 
-    public <T> ConfigFrameBuilder addEditBox(ModuleConfigValue<T> value, Function<T, String> onSet, BiConsumer<ModuleConfigValue<T>, String> setter, int width) {
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addEditBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
         return this.addEditBox(value, onSet, null, setter, width);
     }
 
-    public <T> ConfigFrameBuilder addIntBox(ModuleConfigValue<T> value, Function<T, String> onSet, BiConsumer<ModuleConfigValue<T>, String> setter, int width) {
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addIntBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
         return this.addEditBox(
                 value,
                 onSet,
@@ -166,7 +166,7 @@ public class ConfigFrameBuilder {
                 width);
     }
 
-    public <T> ConfigFrameBuilder addDoubleBox(ModuleConfigValue<T> value, Function<T, String> onSet, BiConsumer<ModuleConfigValue<T>, String> setter, int width) {
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addDoubleBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
         return this.addEditBox(
                 value,
                 onSet,

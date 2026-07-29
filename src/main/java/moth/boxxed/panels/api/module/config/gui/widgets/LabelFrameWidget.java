@@ -1,12 +1,13 @@
 package moth.boxxed.panels.api.module.config.gui.widgets;
 
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
-public class LabelFrameWidget<T> extends AbstractWidget implements ConfigFrameWidget<T> {
+public class LabelFrameWidget<T, R extends ModuleConfigValue<T, R>> extends AbstractWidget implements ConfigFrameWidget<T, R> {
     protected final Font font;
     protected final int color;
 

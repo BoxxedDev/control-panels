@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public abstract class ModuleConfigValue<T> {
+public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
     protected final String name;
     protected final T defaultValue;
     protected T value;
@@ -73,8 +73,10 @@ public abstract class ModuleConfigValue<T> {
         return this.revertable;
     }
 
-    public void addChangeListener(ValueChangedListener<T> listener) {
+    @SuppressWarnings("unchecked")
+    public R addChangeListener(ValueChangedListener<T> listener) {
         this.listeners.add(listener);
+        return (R) this;
     }
 
     public void removeChangeListener(ValueChangedListener<T> listener) {
@@ -88,9 +90,10 @@ public abstract class ModuleConfigValue<T> {
         });
     }
 
-    public ModuleConfigValue<T> withValidator(Predicate<T> validator) {
+    @SuppressWarnings("unchecked")
+    public R withValidator(Predicate<T> validator) {
         this.validator = validator;
-        return this;
+        return (R) this;
     }
 
     public abstract void buildGuiFrame(ConfigFrameBuilder builder);
@@ -100,7 +103,7 @@ public abstract class ModuleConfigValue<T> {
         void run(T oldValue, T newValue);
     }
 
-    public static class BooleanValue extends ModuleConfigValue<Boolean> {
+    public static class BooleanValue extends ModuleConfigValue<Boolean, BooleanValue> {
         public BooleanValue(String name, boolean defaultValue) {
             super(name, defaultValue);
         }
@@ -123,7 +126,7 @@ public abstract class ModuleConfigValue<T> {
         }
     }
 
-    public static class IntValue extends ModuleConfigValue<Integer> {
+    public static class IntValue extends ModuleConfigValue<Integer, IntValue> {
         protected final int min;
         protected final int max;
 
@@ -161,7 +164,7 @@ public abstract class ModuleConfigValue<T> {
         }
     }
 
-    public static class StringValue extends ModuleConfigValue<String> {
+    public static class StringValue extends ModuleConfigValue<String, StringValue> {
         public StringValue(String name, @NonNull String defaultValue) {
             super(name, defaultValue);
         }
@@ -184,11 +187,11 @@ public abstract class ModuleConfigValue<T> {
 
         @Override
         public void buildGuiFrame(ConfigFrameBuilder builder) {
-            builder.addEditBox(this, value -> value, ModuleConfigValue::set, 128);
+            builder.addEditBox(this, value -> value, StringValue::set, 128);
         }
     }
 
-    public static class EnumValue<T extends Enum<T> & StringRepresentable> extends ModuleConfigValue<T> {
+    public static class EnumValue<T extends Enum<T> & StringRepresentable> extends ModuleConfigValue<T, EnumValue<T>> {
         private final StringRepresentable.EnumCodec<T> codec;
         private final Supplier<T[]> valuesSupplier;
 
@@ -224,7 +227,7 @@ public abstract class ModuleConfigValue<T> {
         }
     }
 
-    public static class Vec3Value extends ModuleConfigValue<Vec3> {
+    public static class Vec3Value extends ModuleConfigValue<Vec3, Vec3Value> {
         public Vec3Value(String name, @NonNull Vec3 defaultValue) {
             super(name, defaultValue);
         }

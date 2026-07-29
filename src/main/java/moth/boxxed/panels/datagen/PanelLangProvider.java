@@ -29,6 +29,8 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.JOYSTICK_MODULE, "Joystick");
         addItem(PanelItems.LABEL_MODULE, "Label");
         addItem(PanelItems.SEVEN_SEGMENT_MODULE, "Seven Segment");
+        addItem(PanelItems.PUSH_BUTTON_MODULE, "Push Button");
+
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 
@@ -76,6 +78,7 @@ public class PanelLangProvider extends LanguageProvider {
         addModuleConfig("name", "Name");
         addModuleConfig("output", "Output");
         addModuleConfig("inverted", "Inverted");
+        addModuleConfig("switches", "Switches");
 
         add("dashpanels.paint_wheel.apply", "Apply");
         add("dashpanels.paint_wheel.apply_all", "Apply To All");

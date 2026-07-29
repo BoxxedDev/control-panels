@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules.control_lever;
+package moth.boxxed.panels.content.modules.control_lever;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;

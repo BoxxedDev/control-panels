@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules.knob;
+package moth.boxxed.panels.content.modules.control_lever;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -9,35 +9,43 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
-    private static final ResourceLocation KNOB_SPRITE = Dashpanels.path("module/knob");
+public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLeverModule> {
+    private static final ResourceLocation LEVER_SPRITE = Dashpanels.path("module/control_lever");
 
     private float val = 0;
+    private int oldSignal = 0;
+    private int signal = 0;
 
-    private int oldAngle = 0;
-    private int angle = 0;
+    private float renderSignal = 0;
 
     @Override
     public void start() {
-        this.angle = module.getAngle();
-        this.val = this.angle/360f;
+        this.signal = module.getSignal();
+        this.val = this.signal/15f;
+
+        this.renderSignal = Mth.map((float) this.signal, 0, 15, 0, 112);
     }
 
     @Override
     public boolean activeMouseMove(double yaw, double pitch) {
-        this.val += (float) (yaw/360f);
+        this.val -= (float) (pitch/180f);
         this.val = Math.clamp(this.val, 0, 1);
-        this.angle = Math.clamp(Math.round(this.val*360), 0, 360);
-        if (this.oldAngle != angle) {
-            this.update(this.angle);
+        this.signal = Math.clamp(Math.round(this.val*15), 0, 15);
+        if (this.oldSignal != this.signal) {
+            this.update(this.signal);
         }
-        this.oldAngle = angle;
+        this.oldSignal = this.signal;
         return true;
     }
 
     @Override
+    public void tick() {
+        this.renderSignal = org.joml.Math.lerp(this.renderSignal, Mth.map((float) this.signal, 0, 15, 0, 112), 0.5f);
+    }
+
+    @Override
     public void renderGui(GuiGraphics graphics, float partialTick) {
-        int section = Math.round(Mth.map(angle, 0, 360, 0, 16));
+        int section = this.signal;
 
         int centerX = graphics.guiWidth()/2;
         int centerY = graphics.guiHeight()/2;
@@ -51,11 +59,11 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
                 GlStateManager.SourceFactor.ONE,
                 GlStateManager.DestFactor.ZERO
         );
-        graphics.blitSprite(KNOB_SPRITE, 289, 17, section*17, 0, x, y, 17, 17);
+        graphics.blitSprite(LEVER_SPRITE, 272, 17, section*17, 0, x, y, 17, 17);
         graphics.pose().pushPose();
         graphics.pose().translate(centerX, centerY+12, 0);
         graphics.pose().scale(0.5f,0.5f,0.5f);
-        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.angle), 0, 0, 0xAAFFFFFF);
+        graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(this.signal), 0, 0, 0xAAFFFFFF);
         graphics.pose().popPose();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();

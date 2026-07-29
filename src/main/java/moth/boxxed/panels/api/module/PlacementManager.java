@@ -108,7 +108,7 @@ public class PlacementManager {
                     ((int) module.getSize().x)/32f,
                     ((int) module.getSize().y)/32f
             );
-            poseStack.rotateAround(Axis.YP.rotationDegrees(180), center.x, 0, center.y);
+//            poseStack.rotateAround(Axis.YP.rotationDegrees(180), center.x, 0, center.y);
             LevelRenderer.renderShape(poseStack, consumer, module.getVoxelShape(), 0, 0, 0, 1, otherColors, otherColors, pulse);
 
             poseStack.popPose();

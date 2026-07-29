@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules.joystick;
+package moth.boxxed.panels.content.modules.joystick;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;

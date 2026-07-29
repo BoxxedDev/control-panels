@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules;
+package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.Module;
@@ -70,8 +70,8 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     @Override
     public VoxelShape getVoxelShape() {
         return Shapes.or(
-                Block.box(0, 0, 1, 2, 1, 3),
-                Block.box(0.5, 0, 0, 1.5, 1, 1)
+                Block.box(0, 0, 0, 2, 1, 2),
+                Block.box(0.5, 0, 1, 1.5, 1, 3)
         );
     }
 

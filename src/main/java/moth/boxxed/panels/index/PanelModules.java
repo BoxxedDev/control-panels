@@ -3,11 +3,11 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
-import moth.boxxed.panels.content.panel.modules.*;
-import moth.boxxed.panels.content.panel.modules.control_lever.ControlLeverModule;
-import moth.boxxed.panels.content.panel.modules.joystick.JoystickModule;
-import moth.boxxed.panels.content.panel.modules.knob.KnobModule;
-import moth.boxxed.panels.content.panel.modules.momentary_switch.MomentarySwitchModule;
+import moth.boxxed.panels.content.modules.*;
+import moth.boxxed.panels.content.modules.control_lever.ControlLeverModule;
+import moth.boxxed.panels.content.modules.joystick.JoystickModule;
+import moth.boxxed.panels.content.modules.knob.KnobModule;
+import moth.boxxed.panels.content.modules.momentary_switch.MomentarySwitchModule;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

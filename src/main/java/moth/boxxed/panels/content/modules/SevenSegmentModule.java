@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules;
+package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

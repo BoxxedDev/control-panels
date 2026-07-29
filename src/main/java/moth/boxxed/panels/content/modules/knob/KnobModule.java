@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules.knob;
+package moth.boxxed.panels.content.modules.knob;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

@@ -1,4 +1,4 @@
-package moth.boxxed.panels.content.panel.modules.momentary_switch;
+package moth.boxxed.panels.content.modules.momentary_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.IExternalUpdatable;

@@ -34,7 +34,7 @@ public class PanelLangProvider extends LanguageProvider {
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 
-        //Non moduleName stuff
+        //Non module stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
         addBlock(PanelBlocks.WALL_CONTROL_PANEL, "Wall Control Panel");
         addBlock(PanelBlocks.CEILING_CONTROL_PANEL, "Ceiling Control Panel");
@@ -54,7 +54,7 @@ public class PanelLangProvider extends LanguageProvider {
         addWidget("panel.write_name", "Write Name");
         addWidget("panel.edit_box.module_name", "Module Name");
         addWidget("stripped_cable.scrollbar", "Scroll Bar");
-        addWidget("panel_link.module_select", "Scroll to select moduleName");
+        addWidget("panel_link.module_select", "Scroll to select module");
 
         addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
 
@@ -78,7 +78,7 @@ public class PanelLangProvider extends LanguageProvider {
         addModuleConfig("name", "Name");
         addModuleConfig("output", "Output");
         addModuleConfig("inverted", "Inverted");
-        addModuleConfig("switches", "Switches");
+        addModuleConfig("buttons", "Buttons");
 
         add("dashpanels.paint_wheel.apply", "Apply");
         add("dashpanels.paint_wheel.apply_all", "Apply To All");

@@ -10,7 +10,7 @@ import java.util.List;
  * A hovering tooltip can be added to a moduleName to display an extra information when hovering (other than its name)
  */
 public interface IHoverTooltip {
-    void addLines(List<Component> list);
+    void addLines(TooltipContext context, List<Component> list);
 
     default ResourceLocation tooltipBackgroundSprite() {
         return Dashpanels.path("tooltip/background");

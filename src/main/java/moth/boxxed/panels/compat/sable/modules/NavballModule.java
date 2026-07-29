@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.companion.SubLevelAccess;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
+import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
@@ -149,7 +150,7 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     }
 
     @Override
-    public void addLines(List<Component> list) {
+    public void addLines(TooltipContext context, List<Component> list) {
         list.add(Component.literal("Pitch : %.1f".formatted(this.getAnglePitch())).withStyle(ChatFormatting.BLUE));
         list.add(Component.literal("Yaw : %.1f".formatted(this.getAngleYaw())).withStyle(ChatFormatting.GREEN));
         list.add(Component.literal("Roll : %.1f".formatted(this.getAngleRoll())).withStyle(ChatFormatting.RED));

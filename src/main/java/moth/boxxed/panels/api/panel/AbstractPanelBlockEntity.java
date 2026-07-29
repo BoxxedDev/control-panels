@@ -264,7 +264,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return new HashMap<>(this.selectedModules);
     }
 
-    public Vec3 getSelectedPosition(LocalPlayer player) {
+    public Vec3 getSelectedPosition(Player player) {
         return this.hitPositions.get(player.getUUID());
     }
 

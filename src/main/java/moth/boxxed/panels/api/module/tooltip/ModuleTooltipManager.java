@@ -20,19 +20,19 @@ public class ModuleTooltipManager {
 
     private static float tooltipTransparency = 0f;
 
-    public static void renderSelected(GuiGraphics graphics, Module module) {
+    public static void renderSelected(TooltipContext tooltipContext, GuiGraphics graphics, Module module) {
         Font font = Minecraft.getInstance().font;
         PoseStack stack = graphics.pose();
         List<Component> list = new ArrayList<>();
         list.add(Component.literal(module.getName()));
         ResourceLocation bg = DEFAULT_BG;
         if (module instanceof IHoverTooltip tooltip) {
-            tooltip.addLines(list);
+            tooltip.addLines(tooltipContext, list);
             bg = tooltip.tooltipBackgroundSprite();
         }
 
         int width = padding * 2;
-        int height = padding + ((list.size()==1 ? 1 : list.size()-1)*(font.lineHeight+padding));
+        int height = padding + ((list.size()==1 ? 1 : list.size())*(font.lineHeight+padding));
         for (Component component : list) {
             int w = font.width(component) + padding * 2;
             if (w > width)
@@ -51,7 +51,7 @@ public class ModuleTooltipManager {
 
         graphics.blitSprite(bg, 0,  -(height/2), width, height);
         for (int i = 0; i < list.size(); i++) {
-            graphics.drawString(font, list.get(i), padding, -(height/2) + padding + (i * font.lineHeight), 0xFFFFFF);
+            graphics.drawString(font, list.get(i), padding, -(height/2) + padding + (i * (font.lineHeight+padding)), 0xFFFFFF);
         }
 
         graphics.setColor(1, 1, 1, 1f);

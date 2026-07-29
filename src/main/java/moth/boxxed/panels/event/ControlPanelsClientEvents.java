@@ -3,10 +3,12 @@ package moth.boxxed.panels.event;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.module.tooltip.ModuleTooltipManager;
+import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelModulesHitHandler;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -58,8 +61,12 @@ public class ControlPanelsClientEvents {
             Player player = Minecraft.getInstance().player;
             if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof AbstractPanelBlockEntity pbe) {
                 Module module = pbe.getModule(pbe.getSelectedModule(player));
-                if (!pbe.getSelectedModule(player).isEmpty() && module != null) {
+                Vec3 hitPosition = pbe.getSelectedPosition(player);
+                if (!pbe.getSelectedModule(player).isEmpty() && module != null && hitPosition != null) {
                     ModuleTooltipManager.renderSelected(
+                            new TooltipContext(
+                                    new ModuleHitResult(hitPosition.subtract(module.getPos().x/16f, 0, module.getPos().y/16f))
+                            ),
                             event.getGuiGraphics(),
                             module
                     );

@@ -15,6 +15,7 @@ import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
+import moth.boxxed.panels.util.PreLoadedModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -97,11 +98,15 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
             PanelPreloadedModels.PUSH_BUTTON_BASE.render(poseStack, packedLight);
 
             float y = 0;
+            boolean selected = false;
             if (this.selectedButton != null) {
                 y = i-1 == this.selectedButton ? -0.25f : 0;
+                selected = i-1 == this.selectedButton;
             }
+
+            PreLoadedModel buttonModel = selected ? PanelPreloadedModels.PUSH_BUTTON_LIT : PanelPreloadedModels.PUSH_BUTTON;
             poseStack.translate(0, y/16f, 0);
-            PanelPreloadedModels.PUSH_BUTTON.render(poseStack, packedLight);
+            buttonModel.render(poseStack, packedLight);
 
             poseStack.popPose();
         }

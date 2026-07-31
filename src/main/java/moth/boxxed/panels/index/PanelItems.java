@@ -21,17 +21,21 @@ public class PanelItems {
     public static final DeferredItem<Item> WRENCH = ITEMS.register("wrench",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final DeferredItem<Item> SWITCH_MODULE = moduleItem("switch");
-    public static final DeferredItem<Item> KNOB_MODULE = moduleItem("knob");
-    public static final DeferredItem<Item> CONTROL_LEVER_MODULE = moduleItem("control_lever");
-    public static final DeferredItem<Item> INDICATOR_BULB_MODULE = moduleItem("indicator_bulb");
-    public static final DeferredItem<Item> MOMENTARY_SWITCH_MODULE = moduleItem("momentary_switch");
-    public static final DeferredItem<Item> JOYSTICK_MODULE = moduleItem("joystick");
-    public static final DeferredItem<Item> LABEL_MODULE = moduleItem("label");
-    public static final DeferredItem<Item> SEVEN_SEGMENT_MODULE = moduleItem("seven_segment");
-    public static final DeferredItem<Item> PUSH_BUTTON_MODULE = moduleItem("push_button");
+    public static final DeferredItem<Item> SWITCH_MODULE = item("switch");
+    public static final DeferredItem<Item> KNOB_MODULE = item("knob");
+    public static final DeferredItem<Item> CONTROL_LEVER_MODULE = item("control_lever");
+    public static final DeferredItem<Item> INDICATOR_BULB_MODULE = item("indicator_bulb");
+    public static final DeferredItem<Item> MOMENTARY_SWITCH_MODULE = item("momentary_switch");
+    public static final DeferredItem<Item> JOYSTICK_MODULE = item("joystick");
+    public static final DeferredItem<Item> LABEL_MODULE = item("label");
+    public static final DeferredItem<Item> SEVEN_SEGMENT_MODULE = item("seven_segment");
+    public static final DeferredItem<Item> PUSH_BUTTON_MODULE = item("push_button");
+    public static final DeferredItem<Item> KEY_SWITCH_MODULE = item("key_switch");
 
-    public static DeferredItem<Item> moduleItem(String name) {
+    public static final DeferredItem<Item> KEY_ITEM = ITEMS.register("key",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+
+    public static DeferredItem<Item> item(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));
     }
 

@@ -6,6 +6,7 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -27,14 +28,23 @@ public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModul
 
     @Override
     public void stop() {
-        this.update(0, 0, 0);
+        CompoundTag tag = new CompoundTag();
+        tag.putFloat("stick_x", 0);
+        tag.putFloat("stick_y", 0);
+        tag.putBoolean("triggered", false);
+        this.update(tag);
     }
 
     @Override
     public boolean attack(int action) {
         if (this.isActive()) {
             this.triggered = action==1;
-            this.update((int) (this.valX * 100), (int) (this.valY * 100), this.triggered ? 1 : 0);
+
+            CompoundTag tag = new CompoundTag();
+            tag.putFloat("stick_x", this.valX);
+            tag.putFloat("stick_y", this.valY);
+            tag.putBoolean("triggered", this.triggered);
+            this.update(tag);
         }
 
         return super.attack(action);
@@ -51,7 +61,11 @@ public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModul
         this.valY = Math.clamp(this.valY, -1, 1);
 
         if (oldValX != this.valX || oldValY != this.valY) {
-            this.update((int) (this.valX*100), (int) (this.valY*100), this.triggered ? 1 : 0);
+            CompoundTag tag = new CompoundTag();
+            tag.putFloat("stick_x", this.valX);
+            tag.putFloat("stick_y", this.valY);
+            tag.putBoolean("triggered", this.triggered);
+            this.update(tag);
         }
 
         return true;

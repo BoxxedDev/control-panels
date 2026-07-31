@@ -6,6 +6,7 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -32,7 +33,9 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
         this.val = Math.clamp(this.val, 0, 1);
         this.signal = Math.clamp(Math.round(this.val*15), 0, 15);
         if (this.oldSignal != this.signal) {
-            this.update(this.signal);
+            CompoundTag tag = new CompoundTag();
+            tag.putInt("signal", this.signal);
+            this.update(tag);
         }
         this.oldSignal = this.signal;
         return true;

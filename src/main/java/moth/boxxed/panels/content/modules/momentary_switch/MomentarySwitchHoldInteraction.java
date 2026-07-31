@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.modules.momentary_switch;
 
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
+import net.minecraft.nbt.CompoundTag;
 
 public class MomentarySwitchHoldInteraction extends ModuleHoldInteraction<MomentarySwitchModule> {
     @Override
@@ -10,11 +11,15 @@ public class MomentarySwitchHoldInteraction extends ModuleHoldInteraction<Moment
 
     @Override
     public void start() {
-        this.update(1);
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("pressed", true);
+        this.update(tag);
     }
 
     @Override
     public void stop() {
-        this.update(0);
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("pressed", false);
+        this.update(tag);
     }
 }

@@ -276,6 +276,7 @@ public abstract class Module {
     public abstract VoxelShape getVoxelShape();
 
     //TODO: Make abstract and reformat all the modules
+    //Currently not abstract as to not totally kill the creators of the addons adding a large amount of modules
     public PolyVoxel getShape() {
         return new PolyVoxel(0, 0, this.size.x, this.size.y);
     }

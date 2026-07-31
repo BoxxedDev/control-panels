@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -148,17 +149,15 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     }
 
     @Override
-    public void setNum(List<Integer> num) {
-        if (num.size() == 3) {
-            this.stickX = num.getFirst()/100f;
-            this.stickY = num.get(1)/100f;
-            this.triggered = num.getLast()==1;
-        }
-    }
-
-    @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
         consumer.accept("getStickX", args -> this.stickX);
         consumer.accept("getStickY", args -> this.stickY);
+    }
+
+    @Override
+    public void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries) {
+        this.stickX = tag.getFloat("stick_x");
+        this.stickY = tag.getFloat("stick_y");
+        this.triggered = tag.getBoolean("triggered");
     }
 }

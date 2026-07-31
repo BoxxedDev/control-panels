@@ -1,0 +1,22 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "dashpanels:block/push_button",
+		"particle": "dashpanels:block/push_button"
+	},
+	"elements": [
+		{
+			"from": [0.5, 0.5, 0.5],
+			"to": [1.5, 1.5, 2.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0.5, 0.5]},
+			"faces": {
+				"north": {"uv": [10, 2, 11, 3], "texture": "#0"},
+				"east": {"uv": [11, 3, 12, 5], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [10, 5, 11, 6], "texture": "#0"},
+				"west": {"uv": [9, 5, 10, 3], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [10, 3, 11, 5], "texture": "#0"}
+			}
+		}
+	]
+}

@@ -1,6 +1,7 @@
 package moth.boxxed.panels.event;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.datafixers.util.Either;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
@@ -21,11 +22,16 @@ import moth.boxxed.panels.content.panel.ceiling.CeilingPanelRenderer;
 import moth.boxxed.panels.content.panel.normal.PanelRenderer;
 import moth.boxxed.panels.content.panel.wall.WallPanelRenderer;
 import moth.boxxed.panels.index.PanelBlockEntities;
+import moth.boxxed.panels.index.PanelDataComponents;
 import moth.boxxed.panels.index.PanelShaders;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -37,6 +43,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.io.IOException;
 
@@ -144,6 +151,22 @@ public class ControlPanelsClientEvents {
     public static void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
         for (PanelType type : PanelType.values()) {
             event.register(new PanelSkinBlockColor(), type.block);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderTooltip(ItemTooltipEvent event) {
+        if (event.getItemStack().has(PanelDataComponents.BOUND_MODULE)) {
+            event.getToolTip().add(Component.literal("[i]").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD));
+
+            event.getToolTip().add(Component.translatable(
+                    "tooltip.dashpanels.key.bound_id",
+                    event.getItemStack().get(PanelDataComponents.BOUND_MODULE).uuid().toString()
+            ));
+
+            BlockPos pos = event.getItemStack().get(PanelDataComponents.BOUND_MODULE).pos();
+            String posString = "(%d, %d, %d)".formatted(pos.getX(), pos.getY(), pos.getZ());
+            event.getToolTip().add(Component.translatable("tooltip.dashpanels.key.bound_pos", posString));
         }
     }
 }

@@ -6,6 +6,7 @@ import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.modules.*;
 import moth.boxxed.panels.content.modules.control_lever.ControlLeverModule;
 import moth.boxxed.panels.content.modules.joystick.JoystickModule;
+import moth.boxxed.panels.content.modules.key_switch.KeySwitchModule;
 import moth.boxxed.panels.content.modules.knob.KnobModule;
 import moth.boxxed.panels.content.modules.momentary_switch.MomentarySwitchModule;
 import net.neoforged.bus.api.IEventBus;
@@ -34,6 +35,8 @@ public class PanelModules {
             MODULES.register("seven_segment", () -> new ModuleType<>(SevenSegmentModule::new, PanelItems.SEVEN_SEGMENT_MODULE.get()));
     public static final Supplier<ModuleType<PushButtonModule>> PUSH_BUTTON =
             MODULES.register("push_button", () -> new ModuleType<>(PushButtonModule::new, PanelItems.PUSH_BUTTON_MODULE.get()));
+    public static final Supplier<ModuleType<KeySwitchModule>> KEY_SWITCH =
+            MODULES.register("key_switch", () -> new ModuleType<>(KeySwitchModule::new, PanelItems.KEY_SWITCH_MODULE.get()));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

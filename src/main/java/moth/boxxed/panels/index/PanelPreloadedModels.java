@@ -35,7 +35,12 @@ public class PanelPreloadedModels {
             INDICATOR_BULB_OFF = regular("indicator_bulb/bulb_off"),
 
             PUSH_BUTTON_BASE = regular("push_button/base"),
-            PUSH_BUTTON = regular("push_button/button")
+            PUSH_BUTTON = regular("push_button/button"),
+            PUSH_BUTTON_LIT = regular("push_button/button_lit"),
+
+            KEY_SWITCH_BASE = regular("key_switch/base"),
+            KEY_SWITCH_HOLE = regular("key_switch/hole"),
+            KEY_SWITCH_KEY = regular("key_switch/key")
                     ;
 
     private static PreLoadedModel regular(String name) {

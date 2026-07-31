@@ -1,16 +1,15 @@
 package moth.boxxed.panels.api.panel;
 
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleType;
+import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -84,6 +83,10 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
             if (level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
                 if (level instanceof ServerLevel) {
                     Containers.dropContents(level, pos, pbe.container);
+
+                    for (Container container : pbe.subContainers) {
+                        Containers.dropContents(level, pos, container);
+                    }
                 }
             }
         }
@@ -104,7 +107,7 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         ItemStack inHandStack = player.getMainHandItem();
-        if (inHandStack.is(PanelTags.Items.WRENCH) || inHandStack.is(PanelTags.Items.MODULE)) {
+        if (inHandStack.is(PanelTags.Items.WRENCH) || ModuleType.isRegisteredModule(inHandStack.getItem())) {
             return !this.getBlockEntity(level, pos).removeSelectedModule(player);
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);

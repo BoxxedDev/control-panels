@@ -6,6 +6,7 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -19,7 +20,7 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
 
     @Override
     public void start() {
-        this.angle = module.getAngle();
+        this.angle = this.module.getAngle();
         this.val = this.angle/360f;
     }
 
@@ -29,7 +30,9 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
         this.val = Math.clamp(this.val, 0, 1);
         this.angle = Math.clamp(Math.round(this.val*360), 0, 360);
         if (this.oldAngle != angle) {
-            this.update(this.angle);
+            CompoundTag tag = new CompoundTag();
+            tag.putInt("angle", this.angle);
+            this.update(tag);
         }
         this.oldAngle = angle;
         return true;

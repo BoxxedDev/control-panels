@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -105,13 +106,6 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public void setNum(List<Integer> num) {
-        this.angle = num.getFirst();
-        float f = (angle+360)/360f;
-        this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, f);
-    }
-
-    @Override
     public int getAnalog() {
         return Math.round(Mth.map(this.angle, 0, 360, 0, 15));
     }
@@ -130,5 +124,12 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
             }
             return false;
         });
+    }
+
+    @Override
+    public void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries) {
+        this.angle = tag.getInt("angle");
+        float f = (angle+360)/360f;
+        this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, f);
     }
 }

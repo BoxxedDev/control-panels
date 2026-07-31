@@ -30,6 +30,7 @@ public class PanelModelProviders {
             toolItem(PanelItems.CABLE_STRIPPER.get());
             toolItem(PanelItems.PAINT_BRUSH.get());
             toolItem(PanelItems.WRENCH.get());
+            toolItem(PanelItems.KEY_ITEM.get());
         }
 
         public ItemModelBuilder toolItem(net.minecraft.world.item.Item item) {

@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -109,13 +110,6 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
         poseStack.popPose();
     }
 
-    @Override
-    public void setNum(List<Integer> num) {
-        this.signal = num.getFirst();
-        float f = (this.signal+15)/15f;
-        this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, f);
-    }
-
     public int getSignal() {
         return this.signal;
     }
@@ -143,5 +137,12 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     @Override
     public void createConfig(ModuleConfig.Builder builder) {
         builder.add(redstoneOutput);
+    }
+
+    @Override
+    public void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries) {
+        this.signal = tag.getInt("signal");
+        float f = (this.signal+15)/15f;
+        this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, f);
     }
 }

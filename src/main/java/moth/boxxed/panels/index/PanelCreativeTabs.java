@@ -30,30 +30,37 @@ public class PanelCreativeTabs {
                     .build()
     );
 
+    public static final CustomSectionTextured MAIN_SECTION = (CustomSectionTextured) new CustomSectionTextured(Dashpanels.path("dashpanels"))
+            .setTitle(Component.translatable("creativetab.dashpanels.dashpanels"));
+    public static final CustomSectionTextured MODULES_SECTION = (CustomSectionTextured) new CustomSectionTextured(Dashpanels.path("modules"))
+            .setTitle(Component.translatable("creativetab.dashpanels.modules"))
+            .setTexture(Dashpanels.path("dashpanels"));
+    public static final CustomSectionTextured TOOLS_SECTION = (CustomSectionTextured) new CustomSectionTextured(Dashpanels.path("extras"))
+            .setTitle(Component.translatable("creativetab.dashpanels.tools"))
+            .setTexture(Dashpanels.path("dashpanels"));
+
+    static {
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), MAIN_SECTION);
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), TOOLS_SECTION);
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), MODULES_SECTION);
+    }
+
     public static void addItems() {
-        CustomSectionTextured defaultSection = new CustomSectionTextured(Dashpanels.path("dashpanels"));
-        defaultSection.setTitle(Component.translatable("creativetab.dashpanels.dashpanels"));
-
-        defaultSection.addItemTag(PanelTags.Items.PANELS);
-        defaultSection.add(PanelBlocks.CABLE);
+        MAIN_SECTION.addItemTag(PanelTags.Items.PANELS);
+        MAIN_SECTION.add(PanelBlocks.CABLE);
         if (ModList.get().isLoaded("create")) {
-            defaultSection.add(PanelCreateRegistries.PANEL_LINK);
+            MAIN_SECTION.add(PanelCreateRegistries.PANEL_LINK);
         }
-
-        defaultSection.add(Items.AIR);
         
-        defaultSection.add(PanelItems.CABLE_STRIPPER);
-        defaultSection.add(PanelItems.WRENCH);
-        defaultSection.add(PanelItems.PAINT_BRUSH);
+        TOOLS_SECTION.add(PanelItems.CABLE_STRIPPER);
+        TOOLS_SECTION.add(PanelItems.WRENCH);
+        TOOLS_SECTION.add(PanelItems.PAINT_BRUSH);
 
-        defaultSection.setCentered(true);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), defaultSection);
+        TOOLS_SECTION.add(Items.AIR);
 
-        CustomSectionTextured modulesSection = new CustomSectionTextured(Dashpanels.path("dashpanels"));
-        modulesSection.setTitle(Component.translatable("creativetab.dashpanels.modules"));
-        modulesSection.setTexture(Dashpanels.path("dashpanels"));
+        TOOLS_SECTION.add(PanelItems.KEY_ITEM);
 
-        modulesSection.add(registryAccess -> {
+        MODULES_SECTION.add(registryAccess -> {
             List<ItemStack> ret = new ArrayList<>();
             ModulesRegistry.MODULE_REGISTRY.entrySet().forEach(
                     entry -> ret.add(new ItemStack(entry.getValue().associatedItem))
@@ -61,9 +68,6 @@ public class PanelCreativeTabs {
             ret.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getDisplayName().getString(), b.getDisplayName().getString()));
             return ret;
         });
-
-        modulesSection.setCentered(true);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), modulesSection);
     }
 
     public static void register(IEventBus eventBus) {

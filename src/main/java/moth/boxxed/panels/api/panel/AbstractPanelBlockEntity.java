@@ -15,14 +15,12 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Clearable;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,6 +42,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public ModuleMap modules;
     public SimpleContainer container;
+    public NonNullList<Container> subContainers;
 
     public ResourceLocation skin;
     public int skinColor = 0xFFFFFF;
@@ -61,6 +60,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         this.modules = new ModuleMap();
         //12*16 is 192 so like, I think that would be the max size.
         this.container = new SimpleContainer(192);
+        this.subContainers = NonNullList.create();
         this.panelType = panelType;
     }
 
@@ -98,11 +98,16 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public void reconstructItems() {
         this.container.clearContent();
+        this.subContainers.clear();
         for (Map.Entry<String, Module> entry : this.modules) {
             Module module = entry.getValue();
             this.container.addItem(
                     new ItemStack(module.type.associatedItem)
             );
+
+            if (module instanceof Container container) {
+                this.subContainers.add(container);
+            }
         }
     }
 
@@ -112,6 +117,15 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public Module getModule(String moduleName) {
         return this.modules.normalGet(moduleName);
+    }
+
+    public Module getModuleAt(int x, int y) {
+        for (Module module : this.modules.values()) {
+            if (module.getPos().x == x && module.getPos().y == y) {
+                return module;
+            }
+        }
+        return null;
     }
 
     public void renameModule(String originalName, String newName) {
@@ -220,8 +234,9 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (hitModule != null && hitPosition != null) {
             hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
             InteractionResult result = hitModule.onUse(new ModuleHitResult(hitPosition), level, player);
-            if (!level.isClientSide)
+            if (!level.isClientSide) {
                 this.blockChanged();
+            }
             return result;
         }
 
@@ -237,8 +252,9 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (hitModule != null && hitPosition != null) {
             hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
             ItemInteractionResult result = hitModule.onItemUse(new ModuleHitResult(hitPosition), stack, level, player);
-            if (!level.isClientSide)
+            if (!level.isClientSide) {
                 this.blockChanged();
+            }
             return result;
         }
 
@@ -275,6 +291,9 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     @Override
     public void clearContent() {
         this.container.clearContent();
+        for (Container subContainer : this.subContainers) {
+            subContainer.clearContent();
+        }
     }
 
     public void setSkin(ResourceLocation skin) {
@@ -332,6 +351,18 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (module != null) {
             this.setSelectedModule(player, null, null);
             Module removedModule = this.removeModule(module);
+
+            if (removedModule instanceof Container container) {
+                for (int i = 0; i < container.getContainerSize(); i++) {
+                    ItemStack stack = container.getItem(i);
+                    if (!stack.isEmpty()) {
+                        Inventory inventory = player.getInventory();
+                        int slot = inventory.getSlotWithRemainingSpace(stack);
+                        inventory.add(slot, stack);
+                    }
+                }
+            }
+
             if (!player.isCreative() && removedModule != null) {
                 ItemStack stack = new ItemStack(ModuleType.getItemFromType(removedModule.type));
                 Inventory inventory = player.getInventory();

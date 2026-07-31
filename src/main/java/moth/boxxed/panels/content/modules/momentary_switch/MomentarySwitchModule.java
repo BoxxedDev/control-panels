@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -108,20 +109,6 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     }
 
     @Override
-    public void setNum(List<Integer> num) {
-        this.pressed = num.getFirst()==1;
-        if (this.pressed) {
-            this.parentBlockEntity.getLevel().playSound(
-                    null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, 1f
-            );
-        } else {
-            this.parentBlockEntity.getLevel().playSound(
-                    null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.BLOCKS, 0.1f, 1f
-            );
-        }
-    }
-
-    @Override
     public InteractionResult onUse(Level level, Player player) {
         if (level.isClientSide && player.isLocalPlayer())
             if (!PanelHoldInteractions.MOMENTARY_SWITCH.isActive()) {
@@ -135,5 +122,19 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     public void createConfig(ModuleConfig.Builder builder) {
         builder.add(redstoneOutput);
         builder.add(inverted);
+    }
+
+    @Override
+    public void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries) {
+        this.pressed = tag.getBoolean("pressed");
+        if (this.pressed) {
+            this.parentBlockEntity.getLevel().playSound(
+                    null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, 1f
+            );
+        } else {
+            this.parentBlockEntity.getLevel().playSound(
+                    null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.BLOCKS, 0.1f, 1f
+            );
+        }
     }
 }

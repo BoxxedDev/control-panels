@@ -30,6 +30,7 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.LABEL_MODULE, "Label");
         addItem(PanelItems.SEVEN_SEGMENT_MODULE, "Seven Segment");
         addItem(PanelItems.PUSH_BUTTON_MODULE, "Push Button");
+        addItem(PanelItems.KEY_SWITCH_MODULE, "Key Switch");
 
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
@@ -45,6 +46,7 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
         addItem(PanelItems.PAINT_BRUSH, "Paint Brush");
         addItem(PanelItems.WRENCH, "Panel Wrench");
+        addItem(PanelItems.KEY_ITEM, "Key");
 
         if (ModList.get().isLoaded("create"))
             addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
@@ -62,16 +64,23 @@ public class PanelLangProvider extends LanguageProvider {
         addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output moduleName");
         addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
 
+        addTooltip("key.bound_id", "ID: §r%s");
+        addTooltip("key.bound_pos", "Block: §r%s");
+
         //Modules
         addTooltip("module.push_button", "Button: %d");
 
         addTooltip("module.navball.pitch", "Pitch: %d");
         addTooltip("module.navball.yaw", "Yaw: %d");
-        addTooltip("module.navball.roll", "Rool: %d");
+        addTooltip("module.navball.roll", "Roll: %d");
+
+        addTooltip("module.key_switch.key_id", "Bound Key: %s");
+        // -- //
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
         add("creativetab.dashpanels.dashpanels", "§lDashpanels");
         add("creativetab.dashpanels.modules", "§lModules");
+        add("creativetab.dashpanels.tools", "§lTools");
 
         addConfig(ClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
         addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");

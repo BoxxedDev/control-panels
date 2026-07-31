@@ -44,7 +44,6 @@ import org.joml.*;
 import oshi.util.tuples.Pair;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 
 /**
 Base class for creating a custom module

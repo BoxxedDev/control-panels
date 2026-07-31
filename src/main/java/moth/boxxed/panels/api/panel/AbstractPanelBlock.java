@@ -2,7 +2,6 @@ package moth.boxxed.panels.api.panel;
 
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleType;
-import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.util.BaseEntityBlock;

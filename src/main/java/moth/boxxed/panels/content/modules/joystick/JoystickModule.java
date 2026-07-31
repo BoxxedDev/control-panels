@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 
 public class JoystickModule extends Module implements IExternalUpdatable, IMultiInput, IModuleLuaObject {

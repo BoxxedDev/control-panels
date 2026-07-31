@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.cable.stripped.screen;
 
-import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import net.minecraft.core.BlockPos;

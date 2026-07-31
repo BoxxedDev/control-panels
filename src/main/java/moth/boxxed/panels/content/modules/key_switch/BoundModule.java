@@ -3,16 +3,9 @@ package moth.boxxed.panels.content.modules.key_switch;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import moth.boxxed.panels.util.ShortUUID;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipProvider;
-
-import java.util.function.Consumer;
 
 public record BoundModule(BlockPos pos, ShortUUID uuid) {
     public static final Codec<BoundModule> CODEC = RecordCodecBuilder.create(instance ->

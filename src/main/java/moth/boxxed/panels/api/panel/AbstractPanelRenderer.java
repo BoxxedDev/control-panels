@@ -3,7 +3,6 @@ package moth.boxxed.panels.api.panel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.SableCompanion;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.network.packet.SelectedModulePacket;

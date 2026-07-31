@@ -1,6 +1,5 @@
 package moth.boxxed.panels.api.module.io;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

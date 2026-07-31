@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 
 //TODO: Maybe make it so you can use this while hovering it with a scroll wheel

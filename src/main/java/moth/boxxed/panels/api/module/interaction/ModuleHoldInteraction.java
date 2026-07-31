@@ -12,8 +12,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
-
 public abstract class ModuleHoldInteraction<T extends Module> {
     protected T module;
     protected Player player;

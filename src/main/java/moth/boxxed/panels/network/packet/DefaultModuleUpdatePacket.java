@@ -12,8 +12,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
-import java.util.List;
-
 public record DefaultModuleUpdatePacket(BlockPos pos, String moduleName, CompoundTag tag) implements CustomPacketPayload {
     public static final Type<DefaultModuleUpdatePacket> TYPE = new Type<DefaultModuleUpdatePacket>(Dashpanels.path("update_module"));
 

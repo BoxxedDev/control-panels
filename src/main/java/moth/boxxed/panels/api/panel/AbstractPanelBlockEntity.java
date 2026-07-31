@@ -11,7 +11,6 @@ import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;

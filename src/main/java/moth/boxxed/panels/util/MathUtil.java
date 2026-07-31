@@ -23,7 +23,7 @@ public class MathUtil {
             }
         } else {
             pose.normal().scale(1.0F / scaleX, 1.0F / scaleY, 1.0F / scaleZ);
-            ((PoseStackPoseAccessor)(Object) pose).bends$setTrustedNormals(false);
+            ((PoseStackPoseAccessor)(Object) pose).panels$setTrustedNormals(false);
         }
     }
 }

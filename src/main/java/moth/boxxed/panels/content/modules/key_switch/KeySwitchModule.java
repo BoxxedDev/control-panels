@@ -2,6 +2,7 @@ package moth.boxxed.panels.content.modules.key_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
@@ -9,34 +10,48 @@ import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.index.*;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.ShortUUID;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ParticleUtils;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.Tags;
 import org.joml.Math;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
-public class KeySwitchModule extends Module implements IExternalUpdatable, IMultiInput, IHoverTooltip, Container {
+public class KeySwitchModule extends Module implements IExternalUpdatable, IMultiInput, IHoverTooltip, Container, IModuleLuaObject {
     protected ItemStack currentKeyStack = ItemStack.EMPTY;
     protected ShortUUID keyId;
+
+    protected UUID playerWhoFroze = null;
+
     protected boolean turned = false;
     protected float turn = 0;
 
@@ -80,7 +95,36 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
             }
         }
 
+        if (stack.is(Items.HONEYCOMB) && this.playerWhoFroze == null && this.keyId != null) {
+            stack.consume(1, player);
+            this.playerWhoFroze = player.getUUID();
+
+            if (level.isClientSide()) {
+                ParticleUtils.spawnParticlesOnBlockFaces(player.level(), this.getParentPos(), ParticleTypes.WAX_ON, UniformInt.of(3, 5));
+                level.playLocalSound(this.getParentPos(), SoundEvents.HONEYCOMB_WAX_ON, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+
         return super.onItemUse(hitResult, stack, level, player);
+    }
+
+    @Override
+    public boolean canRemove(Player player) {
+        if (player.getUUID().equals(this.playerWhoFroze)) {
+            this.playerWhoFroze = null;
+            if (player.level().isClientSide()) {
+                ParticleUtils.spawnParticlesOnBlockFaces(player.level(), this.getParentPos(), ParticleTypes.WAX_OFF, UniformInt.of(3, 5));
+                player.level().playLocalSound(this.getParentPos(), SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+            }
+            return false;
+        }
+
+        if (this.playerWhoFroze != null) {
+            return false;
+        }
+
+        return super.canRemove(player);
     }
 
     @Override
@@ -91,6 +135,10 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
         if (this.keyId != null) {
             this.keyId.put("key_id", tag);
         }
+        if (this.playerWhoFroze != null) {
+            tag.putUUID("froze", this.playerWhoFroze);
+        }
+
         tag.putBoolean("turned", this.turned);
         tag.putFloat("turn", this.turn);
 
@@ -110,6 +158,10 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
                 this.currentKeyStack = ItemStack.parse(registries, itemTag).orElse(ItemStack.EMPTY);
             }
         }
+        if (tag.contains("froze")) {
+            this.playerWhoFroze = tag.getUUID("froze");
+        }
+
         this.turned = tag.getBoolean("turned");
         this.turn = tag.getFloat("turn");
 
@@ -212,5 +264,11 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     @Override
     public void clearContent() {
         this.currentKeyStack = ItemStack.EMPTY;
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("keyInserted", args -> !this.currentKeyStack.isEmpty());
+        consumer.accept("keyTurned", args -> this.turned);
     }
 }

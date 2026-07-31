@@ -273,6 +273,10 @@ public abstract class Module {
 
     }
 
+    public void onRemove(Player player) {}
+
+    public boolean canRemove(Player player) {return true;}
+
     public abstract VoxelShape getVoxelShape();
 
     //TODO: Make abstract and reformat all the modules

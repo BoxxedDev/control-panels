@@ -51,12 +51,18 @@ public abstract class AbstractPanelBlock extends BaseEntityBlock {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         if (this.getBlockEntity(level, pos) != null) {
-            ItemStack itemInHand = player.getMainHandItem();
-//            if (itemInHand.is(PanelTags.Items.WRENCH)) {
-//                if (!removeSelectedModule(level, pos, player)) {
-//                    return ItemInteractionResult.SUCCESS;
-//                }
-//            }
+            if (stack.is(PanelTags.Items.WRENCH)) {
+                AbstractPanelBlockEntity pbe = this.getBlockEntity(level, pos);
+                if (player.isShiftKeyDown()) {
+                    if (pbe.removeSelectedModule(player)) {
+                        return ItemInteractionResult.SUCCESS;
+                    }
+                } else {
+                    if (pbe.openConfigureScreen(level, pos, player)) {
+                        return ItemInteractionResult.SUCCESS;
+                    }
+                }
+            }
 
             ItemInteractionResult result = this.getBlockEntity(level, pos).onItemUse(stack, state, level, pos, player, hitResult);
             if (result != null) {

@@ -349,8 +349,16 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     public boolean removeSelectedModule(Player player) {
         String module = this.getSelectedModule(player);
         if (module != null) {
+            Module actualModule = this.getModule(module);
+            if (actualModule != null && !actualModule.canRemove(player)) {
+                this.setChanged();
+                this.blockChanged();
+                return false;
+            }
+
             this.setSelectedModule(player, null, null);
             Module removedModule = this.removeModule(module);
+            removedModule.onRemove(player);
 
             if (removedModule instanceof Container container) {
                 for (int i = 0; i < container.getContainerSize(); i++) {

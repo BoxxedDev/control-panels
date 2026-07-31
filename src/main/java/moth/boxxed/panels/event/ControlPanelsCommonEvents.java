@@ -188,32 +188,31 @@ public class ControlPanelsCommonEvents {
         event.addListener(PanelSkinsServerManager.ReloadListener.INSTANCE);
     }
 
-    @SubscribeEvent
-    public static void useItemOnBlock(UseItemOnBlockEvent event) {
-        if (event.getUsePhase() != UseItemOnBlockEvent.UsePhase.ITEM_BEFORE_BLOCK)
-            return;
-
-        UseOnContext context = event.getUseOnContext();
-        BlockPos pos = context.getClickedPos();
-        Level level = context.getLevel();
-        Player player = context.getPlayer();
-        BlockState state = level.getBlockState(pos);
-        ItemStack itemInHand = player.getMainHandItem();
-
-        if (itemInHand.is(PanelTags.Items.WRENCH) &&
-                state.getBlock() instanceof AbstractPanelBlock block &&
-                level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
-            if (player.isShiftKeyDown()) {
-                if (pbe.removeSelectedModule(player)) {
-                    event.setCanceled(true);
-                    event.setCancellationResult(ItemInteractionResult.SUCCESS);
-                }
-            } else {
-                if (pbe.openConfigureScreen(level, pos, player)) {
-                    event.setCanceled(true);
-                    event.setCancellationResult(ItemInteractionResult.SUCCESS);
-                }
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void useItemOnBlock(UseItemOnBlockEvent event) {
+//        if (event.getUsePhase() != UseItemOnBlockEvent.UsePhase.BLOCK)
+//            return;
+//
+//        UseOnContext context = event.getUseOnContext();
+//        BlockPos pos = context.getClickedPos();
+//        Level level = context.getLevel();
+//        Player player = context.getPlayer();
+//        BlockState state = level.getBlockState(pos);
+//        ItemStack itemInHand = player.getMainHandItem();
+//
+//        if (itemInHand.is(PanelTags.Items.WRENCH) &&
+//                state.getBlock() instanceof AbstractPanelBlock &&
+//                level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
+//            Dashpanels.LOGGER.debug("{} | C: {}", event.getUsePhase(), level.isClientSide);
+//            if (player.isShiftKeyDown()) {
+//                if (pbe.removeSelectedModule(player)) {
+//                    event.cancelWithResult(ItemInteractionResult.SUCCESS);
+//                }
+//            } else {
+//                if (pbe.openConfigureScreen(level, pos, player)) {
+//                    event.cancelWithResult(ItemInteractionResult.SUCCESS);
+//                }
+//            }
+//        }
+//    }
 }

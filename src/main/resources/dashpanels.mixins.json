@@ -3,6 +3,7 @@
   "package": "moth.boxxed.panels.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ItemStackMixin",
     "VoxelShapeAccessor"
   ],
   "injectors": {

@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface PoseStackPoseAccessor {
     @Accessor("trustedNormals")
     @Mutable
-    void bends$setTrustedNormals(boolean bool);
+    void panels$setTrustedNormals(boolean bool);
 }

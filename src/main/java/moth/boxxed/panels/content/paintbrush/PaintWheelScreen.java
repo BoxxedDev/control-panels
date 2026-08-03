@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.AllSoundEvents;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.DashpanelsClient;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
@@ -14,6 +15,7 @@ import moth.boxxed.panels.api.panel.skin.ServerSkin;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.network.packet.SetPanelSkinPacket;
 import moth.boxxed.panels.util.MathUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,6 +27,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -35,11 +38,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
+//TODO: add narration stuff
 public class PaintWheelScreen extends Screen {
     public static final ResourceLocation PAINT_WHEEL = Dashpanels.path("textures/gui/paint_brush/paint_wheel.png");
 
@@ -67,7 +73,10 @@ public class PaintWheelScreen extends Screen {
     private List<PaletteColorButton> paletteColors = new ArrayList<>();
     private PaletteColorButton selectedColor;
 
+    private GenericPaletteButton savePaletteButton;
+    private GenericPaletteButton loadPaletteButton;
     private GenericPaletteButton addColorButton;
+    private GenericPaletteButton deleteColorButton;
 
     public PaintWheelScreen(ServerSkin skinsToDisplay, BlockPos clickedPos) {
         super(Component.literal("Paint Wheel"));
@@ -104,18 +113,28 @@ public class PaintWheelScreen extends Screen {
         this.hexInput = this.addWidget(
                 new HexInput(
                         Minecraft.getInstance().font,
-                        66, 16,
+                        66, 15,
                         Component.translatable("dashpanels.paint_wheel.hex_input")
                 )
         );
 //        this.hexInput.setFilter(s -> Pattern.compile("^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$").matcher(s).matches());
-        for (int color : DashpanelsClient.PALETTE_STORAGE.getDefaultPalette()) {
-            this.paletteColors.add(
-                    this.addWidget(
-                            new PaletteColorButton(color, Component.translatable("dashpanels.paint_wheel.palette_color"))
-                    )
-            );
-        }
+        this.reconstructPaletteColors(DashpanelsClient.PALETTE_STORAGE.getDefaultPalette());
+
+        this.savePaletteButton = this.addWidget(new GenericPaletteButton(
+                Component.translatable("dashpanels.paint_wheel.save_palette"),
+                32,
+                () -> {
+
+                }
+        ));
+
+        this.loadPaletteButton = this.addWidget(
+                new ExportPaletteButton(
+                        Component.translatable("dashpanels.paint_wheel.add_color"),
+                        64,
+                        null
+                )
+        );
 
         this.addColorButton = this.addWidget(new GenericPaletteButton(
                 Component.translatable("dashpanels.paint_wheel.add_color"),
@@ -129,6 +148,18 @@ public class PaintWheelScreen extends Screen {
                                         new PaletteColorButton(this.colorPicker.getColor(), Component.translatable("dashpanels.paint_wheel.palette_color"))
                                 )
                         );
+                    }
+                }
+        ));
+
+        this.deleteColorButton = this.addWidget(new GenericPaletteButton(
+                Component.translatable("dashpanels.paint_wheel.delete_color"),
+                128,
+                () -> {
+                    if (this.selectedColor != null) {
+                        this.removeWidget(this.selectedColor);
+                        this.paletteColors.remove(this.selectedColor);
+                        this.selectedColor = null;
                     }
                 }
         ));
@@ -155,6 +186,27 @@ public class PaintWheelScreen extends Screen {
                     )
             );
         }
+    }
+
+    private void reconstructPaletteColors(ColorPalette palette) {
+        if (palette == null)
+            return;
+
+        if (!this.paletteColors.isEmpty()) {
+            for (PaletteColorButton button : this.paletteColors) {
+                this.removeWidget(button);
+            }
+            this.paletteColors.clear();
+        }
+
+        for (int color : palette) {
+            this.paletteColors.add(
+                    this.addWidget(
+                            new PaletteColorButton(color, Component.translatable("dashpanels.paint_wheel.palette_color"))
+                    )
+            );
+        }
+        this.selectedColor = null;
     }
 
     @Override
@@ -213,7 +265,7 @@ public class PaintWheelScreen extends Screen {
             int left = 10;
             int top = this.centerY-80;
 
-            graphics.blit(PAINT_WHEEL, left, top, 32, 16, 102, 114, 256, 256);
+            graphics.blit(PAINT_WHEEL, left, top, 32, 16, 102, 113, 256, 256);
 
             this.colorPicker.setX(left+6);
             this.colorPicker.setY(top+6);
@@ -223,9 +275,21 @@ public class PaintWheelScreen extends Screen {
             this.hexInput.setY(top+92);
             this.hexInput.renderWidget(graphics, mouseX, mouseY, partialTick);
 
+            this.savePaletteButton.setX(left+78);
+            this.savePaletteButton.setY(top+26);
+            this.savePaletteButton.renderWidget(graphics, mouseX, mouseY, partialTick);
+
+            this.loadPaletteButton.setX(left+78);
+            this.loadPaletteButton.setY(top+47);
+            this.loadPaletteButton.renderWidget(graphics, mouseX, mouseY, partialTick);
+
             this.addColorButton.setX(left+78);
-            this.addColorButton.setY(top+76);
+            this.addColorButton.setY(top+68);
             this.addColorButton.renderWidget(graphics, mouseX, mouseY, partialTick);
+
+            this.deleteColorButton.setX(left+78);
+            this.deleteColorButton.setY(top+89);
+            this.deleteColorButton.renderWidget(graphics, mouseX, mouseY, partialTick);
 
             graphics.pose().pushPose();
             //Line it up ever so slightly...
@@ -402,7 +466,6 @@ public class PaintWheelScreen extends Screen {
         private float hue = 0;
         private float saturation = 0;
         private float brightness = 1;
-        private float alpha = 1;
 
         private final PickerGradient gradient = new PickerGradient(66, 66, 0.0f);
         private final HueGradient hueGradient = new HueGradient(66, 4);
@@ -429,8 +492,7 @@ public class PaintWheelScreen extends Screen {
             guiGraphics.blit(PAINT_WHEEL, hueMapped, this.getY()+this.getHeight()-8, 144, 0, 3, 4);
             guiGraphics.blit(PAINT_WHEEL, alphaMapped, this.getY()+this.getHeight()-4, 144, 4, 3, 4);
 
-            int alpha = Math.clamp(Math.round(this.alpha*255f), 0, 255);
-            int color = (alpha << 24) | Color.HSBtoRGB(this.hue, this.saturation, this.brightness) & 0xFFFFFF;
+            int color = 0xFF000000 | Color.HSBtoRGB(this.hue, this.saturation, this.brightness) & 0xFFFFFF;
             guiGraphics.fill(this.getX()+this.getWidth()+8, this.getY(), this.getX()+this.getWidth()+24, this.getY()+16, color);
         }
 
@@ -444,8 +506,6 @@ public class PaintWheelScreen extends Screen {
                 } else if (mouseY >= this.getY()+this.getHeight()-9 && mouseY <= this.getY()+this.getHeight()-3) {
                     this.hue = x;
                     this.gradient.setHue(this.hue);
-                } else if (mouseY >= this.getY()+this.getHeight()-5 && mouseY <= this.getY()+this.getHeight()+1) {
-                    this.alpha = x;
                 }
             }
         }
@@ -515,7 +575,7 @@ public class PaintWheelScreen extends Screen {
 
             TextureManager manager = Minecraft.getInstance().getTextureManager();
 
-            this.texture = new DynamicTexture(width, height, false);
+            this.texture = new DynamicTexture(width*4, height*4, false);
             this.texture.setFilter(true, false);
 
             manager.register(LOCATION, this.texture);
@@ -532,10 +592,10 @@ public class PaintWheelScreen extends Screen {
 
             int hsbColor = Color.HSBtoRGB(this.hue, 1, 1);
 
-            for (int y = 0; y < this.height; y++) {
-                float v = y/(this.height-1f);
-                for (int x = 0; x < this.width; x++) {
-                    float u = x/(this.width-1f);
+            for (int y = 0; y < this.height*4; y++) {
+                float v = y/(this.height*4-1f);
+                for (int x = 0; x < this.width*4; x++) {
+                    float u = x/(this.width*4-1f);
                     int color = bilinear(hsbColor, u, v);
                     image.setPixelRGBA(x, y, color);
                 }
@@ -557,8 +617,8 @@ public class PaintWheelScreen extends Screen {
                     x, y,
                     this.width, this.height,
                     0, 0,
-                    this.width, this.height,
-                    this.width, this.height
+                    this.width*4, this.height*4,
+                    this.width*4, this.height*4
             );
         }
 
@@ -603,7 +663,7 @@ public class PaintWheelScreen extends Screen {
         public HueGradient(int width, int height) {
             TextureManager manager = Minecraft.getInstance().getTextureManager();
 
-            this.texture = new DynamicTexture(width, height, false);
+            this.texture = new DynamicTexture(width*4, height, false);
             this.texture.setFilter(true, false);
 
             manager.register(LOCATION, this.texture);
@@ -620,8 +680,8 @@ public class PaintWheelScreen extends Screen {
             if (image == null)
                 return;
 
-            for (int x = 0; x < width; x++) {
-                int color = Color.HSBtoRGB(Mth.clampedMap(x, 0, width, 0f, 1f), 1f, 1f);
+            for (int x = 0; x < width*4; x++) {
+                int color = Color.HSBtoRGB(Mth.clampedMap(x, 0, width*4, 0f, 1f), 1f, 1f);
 
                 int r = (color >> 16) & 0xFF;
                 int g = (color >> 8) & 0xFF;
@@ -647,8 +707,8 @@ public class PaintWheelScreen extends Screen {
                     x, y,
                     this.width, this.height,
                     0, 0,
-                    this.width, this.height,
-                    this.width, this.height
+                    this.width*4, this.height*4,
+                    this.width*4, this.height*4
             );
         }
 
@@ -723,6 +783,128 @@ public class PaintWheelScreen extends Screen {
         @Override
         public void onClick(double mouseX, double mouseY, int button) {
             this.onClick.run();
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
+        }
+    }
+
+    public class ExportPaletteButton extends GenericPaletteButton {
+        private ValueScrollingWidget widget;
+        private boolean toggled = false;
+
+        public ExportPaletteButton(Component message, int vOffset, Runnable onClick) {
+            super(message, vOffset, onClick);
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            this.toggled = !this.toggled;
+            this.toggleWidget();
+
+            Dashpanels.LOGGER.debug(String.valueOf(this.toggled));
+        }
+
+        private void toggleWidget() {
+            if (this.toggled) {
+                Map<String, ColorPalette> paletteFileMap = DashpanelsClient.PALETTE_STORAGE.allPalettesInFiles();
+
+                this.widget = PaintWheelScreen.this.addWidget(
+                        new ValueScrollingWidget(
+                                paletteFileMap.keySet(),
+                                Component.translatable(""),
+                                (index, values) -> {
+                                    Map<String, ColorPalette> map = DashpanelsClient.PALETTE_STORAGE.allPalettesInFiles();
+                                    if (index >= 0) {
+                                        PaintWheelScreen.this.reconstructPaletteColors(map.get(values.get(index)));
+                                    }
+                                }
+                        )
+                );
+            } else {
+                PaintWheelScreen.this.removeWidget(this.widget);
+                this.widget = null;
+            }
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+
+            if (this.widget != null) {
+                this.widget.setX(this.getX()+25);
+                this.widget.setY(this.getY()-2);
+                this.widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+            }
+        }
+
+        @Override
+        public void setFocused(boolean focused) {
+//            if (!focused && this.widget != null) {
+//                this.toggled = false;
+//                toggleWidget();
+//            }
+//            super.setFocused(focused);
+        }
+    }
+
+    public class ValueScrollingWidget extends AbstractWidget {
+        private final BiConsumer<Integer, List<String>> onClick;
+        private final List<String> values;
+        private int index = -1;
+
+        public ValueScrollingWidget(Collection<String> textValues, Component message, BiConsumer<Integer, List<String>> onClick) {
+            super(0, 0, 80, 24, message);
+            this.values = textValues.stream().toList();
+            this.onClick = onClick;
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            guiGraphics.blit(PAINT_WHEEL, this.getX(), this.getY(), 32, 144, this.getWidth(), this.getHeight());
+
+            if (this.index >= 0) {
+                guiGraphics.enableScissor(this.getX()+7, this.getY()+7, this.getX()+this.getWidth()-7, this.getY()+this.getHeight()-7);
+                guiGraphics.drawScrollingString(PaintWheelScreen.this.font, Component.literal(this.values.get(this.index)), this.getX()+7, this.getX()+this.getWidth()-7, this.getY()+7, 0xFFFFFF);
+                guiGraphics.disableScissor();
+            }
+
+            if (this.isMouseOver(mouseX, mouseY)) {
+                List<Component> values = new ArrayList<>();
+                for (int i = 0; i < this.values.size(); i++) {
+                    String str = this.values.get(i);
+                    if (i==this.index) {
+                        values.add(Component.literal("-> "+str));
+                    } else {
+                        values.add(Component.literal(str).withStyle(ChatFormatting.DARK_GRAY));
+                    }
+                }
+
+                guiGraphics.renderTooltip(PaintWheelScreen.this.font, values, Optional.empty(), mouseX, mouseY);
+            }
+        }
+
+        @Override
+        public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+            if (this.isMouseOver(mouseX, mouseY)) {
+                int newIndex = (int) Math.clamp(this.index-scrollY, 0, this.values.size()-1);
+                if (newIndex != this.index) {
+                        Minecraft.getInstance()
+                                .getSoundManager()
+                                .play(SimpleSoundInstance.forUI(AllSoundEvents.SCROLL_VALUE.getMainEvent(),
+                                        1.5f + 0.1f * (this.index) / (this.values.size())));
+                        this.index = newIndex;
+                        return true;
+                }
+            }
+            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            this.onClick.accept(this.index, this.values);
         }
 
         @Override

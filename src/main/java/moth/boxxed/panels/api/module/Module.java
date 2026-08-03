@@ -189,7 +189,7 @@ public abstract class Module {
 
     @Deprecated(since = "2.0")
     @OnlyIn(Dist.CLIENT)
-    public void renderOutline(PoseStack poseStack, float partialTick, int color) {
+    public void renderOutline(PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
         MultiBufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer consumer = bs.getBuffer(RenderType.lines());
 
@@ -204,8 +204,8 @@ public abstract class Module {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void renderOutline(ModuleHitResult hitResult, PoseStack poseStack, float partialTick, int color) {
-        this.renderOutline(poseStack, partialTick, color);
+    public void renderOutline(ModuleHitResult hitResult, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
+        this.renderOutline(poseStack, bufferSource, partialTick, color);
     }
 
     public static Pair<Double, Vec3> clipModule(

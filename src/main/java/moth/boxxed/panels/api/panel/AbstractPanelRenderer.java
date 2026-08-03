@@ -80,7 +80,7 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
                 if (hitModule == module && hitPosition != null) {
                     hitResult = new ModuleHitResult(hitPosition.subtract(module.getPos().x/16f, 0, module.getPos().y/16f));
                 }
-                module.renderOutline(hitResult, poseStack, partialTick, hitModule == module ? 0xFFFFFF : 0x000000);
+                module.renderOutline(hitResult, poseStack, bufferSource, partialTick, hitModule == module ? 0xFFFFFF : 0x000000);
             }
             poseStack.popPose();
             poseStack.popPose();

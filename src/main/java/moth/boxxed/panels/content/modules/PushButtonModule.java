@@ -113,10 +113,9 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
     }
 
     @Override
-    public void renderOutline(ModuleHitResult hitResult, PoseStack poseStack, float partialTick, int color) {
+    public void renderOutline(ModuleHitResult hitResult, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
         if (hitResult != null) {
-            MultiBufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
-            VertexConsumer consumer = bs.getBuffer(RenderType.lines());
+            VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
 
             poseStack.pushPose();
             int i = (int) Math.clamp(Math.floor(Mth.clampedMap(hitResult.location().x, 0, this.buttonsAmount.get() * 0.125f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
@@ -129,7 +128,7 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
             );
             poseStack.popPose();
         }
-        super.renderOutline(hitResult, poseStack, partialTick, 0x000000);
+        super.renderOutline(hitResult, poseStack, bufferSource, partialTick, 0x000000);
     }
 
     @Override

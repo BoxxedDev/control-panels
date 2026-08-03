@@ -4,13 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
+import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreenOpener;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.util.PolyVoxel;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -28,6 +27,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.joml.Vector2i;
@@ -387,9 +388,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         String moduleName = this.getSelectedModule(player);
         if (moduleName != null && level.isClientSide()) {
             Module module = this.getModule(moduleName);
-            Minecraft.getInstance().tell(() -> {
-                Minecraft.getInstance().setScreen(new ModuleConfigScreen(module, pos));
-            });
+            ModuleConfigScreenOpener.open(module, pos);
             return true;
         }
         return false;

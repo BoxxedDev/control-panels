@@ -41,6 +41,15 @@ public class ControlPanelsCommonEvents {
     @SubscribeEvent
     public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("control_panels_1");
+
+        //Client
+        registrar.playToClient(
+                OpenPaintWheelPacket.TYPE,
+                OpenPaintWheelPacket.STREAM_CODEC,
+                ClientPayloadHandler::handleOpenPaintWheel
+        );
+
+        //Server
         registrar.playToServer(
                 ConfigureModulePacket.TYPE,
                 ConfigureModulePacket.STREAM_CODEC,
@@ -65,11 +74,6 @@ public class ControlPanelsCommonEvents {
                 SelectedModulePacket.TYPE,
                 SelectedModulePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSelectedModule
-        );
-        registrar.playToClient(
-                OpenPaintWheelPacket.TYPE,
-                OpenPaintWheelPacket.STREAM_CODEC,
-                ClientPayloadHandler::handleOpenPaintWheel
         );
         registrar.playToServer(
                 SetPanelSkinPacket.TYPE,

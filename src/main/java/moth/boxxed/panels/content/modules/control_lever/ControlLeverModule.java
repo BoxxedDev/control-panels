@@ -38,7 +38,12 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     private float indicatorRender = 0;
     private int signal = 0;
 
-    private final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15);
+    public final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15)
+            .addChangeListener((oldV, newV) -> {
+                if (this.signal > newV) {
+                    this.signal = newV;
+                }
+            });
 
     public ControlLeverModule(int x, int y) {
         super(PanelModules.CONTROL_LEVER.get(), x, y);

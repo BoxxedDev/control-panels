@@ -41,6 +41,12 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
 
     public abstract void load(CompoundTag tag, HolderLookup.Provider registries);
 
+    public void loadAndBroadcastChange(CompoundTag tag, HolderLookup.Provider registries) {
+        T oldValue = this.get();
+        this.load(tag, registries);
+        this.broadcastChange(oldValue);
+    }
+
     public T get() {
         return this.value;
     }
@@ -117,7 +123,7 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
         public void load(CompoundTag tag, HolderLookup.Provider registries) {
             if (!tag.contains("value"))
                 return;
-            this.set(tag.getBoolean("value"));
+            this.value = tag.getBoolean("value");
         }
 
         @Override
@@ -145,7 +151,7 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
         public void load(CompoundTag tag, HolderLookup.Provider registries) {
             if (!tag.contains("value"))
                 return;
-            this.set(Math.clamp(tag.getInt("value"), this.min, this.max));
+            this.value = Math.clamp(tag.getInt("value"), this.min, this.max);
         }
 
         @Override
@@ -178,11 +184,7 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
         public void load(CompoundTag tag, HolderLookup.Provider registries) {
             if (!tag.contains("value"))
                 return;
-            this.setWithoutValidation(tag.getString("value"));
-        }
-
-        public void setWithoutValidation(String value) {
-            super.set(value);
+            this.value = tag.getString("value");
         }
 
         @Override
@@ -217,7 +219,7 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
             RegistryOps<Tag> ops = registries.createSerializationContext(NbtOps.INSTANCE);
             var result = this.codec.decode(ops, tag.get("value"));
             if (result.isSuccess()) {
-                this.set(result.getOrThrow().getFirst());
+                this.value = result.getOrThrow().getFirst();
             }
         }
 
@@ -242,11 +244,11 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
         @Override
         public void load(CompoundTag tag, HolderLookup.Provider registries) {
             if (tag.contains("x") && tag.contains("y") && tag.contains("z")) {
-                this.set(new Vec3(
+                this.value = new Vec3(
                         tag.getDouble("x"),
                         tag.getDouble("y"),
                         tag.getDouble("z")
-                ));
+                );
             }
         }
 

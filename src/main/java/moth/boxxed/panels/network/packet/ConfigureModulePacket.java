@@ -46,7 +46,7 @@ public record ConfigureModulePacket(BlockPos pos, String moduleName, Map<String,
                 if (valueTag == null)
                     continue;
 
-                value.load(valueTag, registryAccess);
+                value.loadAndBroadcastChange(valueTag, registryAccess);
 
                 if (value.getId() == "name") {
                     pbe.renameModule(module.getName(), (String) value.get());

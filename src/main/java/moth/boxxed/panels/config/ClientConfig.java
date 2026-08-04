@@ -1,6 +1,13 @@
 package moth.boxxed.panels.config;
 
+import moth.boxxed.panels.DashpanelsClient;
+import moth.boxxed.panels.content.paintbrush.ColorPalette;
+import moth.boxxed.panels.content.paintbrush.ColorPaletteStorage;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class ClientConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
@@ -10,8 +17,12 @@ public class ClientConfig {
             .define("show_module_tooltips", true);
 
     public static final ModConfigSpec.BooleanValue CLICK_FOR_MODULE_HOLD = BUILDER
-            .comment("Click to hold a moduleName instead of holding the mouse button")
+            .comment("Click to hold a module instead of holding the mouse button")
             .define("click_for_module_hold", false);
+
+    public static final ModConfigSpec.ConfigValue<String> DEFAULT_PALETTE = BUILDER
+            .comment("Default palette that loads when you open the paint wheel screen")
+            .define("default_skin_palette", "default", (str) -> DashpanelsClient.PALETTE_STORAGE.validateName((String) str));
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.paintbrush;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.index.PanelPaths;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ColorPaletteStorage {
@@ -50,9 +52,8 @@ public class ColorPaletteStorage {
         }
     }
 
-    //TODO: Make config to change default palette
     public ColorPalette getDefaultPalette() {
-        return this.allPalettesInFiles().getOrDefault("default", DEFAULT_PALETTE);
+        return this.allPalettesInFiles().getOrDefault(ClientConfig.DEFAULT_PALETTE.get(), DEFAULT_PALETTE);
     }
 
     public Map<String, ColorPalette> allPalettesInFiles() {
@@ -77,5 +78,34 @@ public class ColorPaletteStorage {
             Dashpanels.LOGGER.error("Failed to walk through the palettes directory");
         }
         return ret;
+    }
+
+    public void storePalette(String name, ColorPalette palette) {
+        Path newPalettePath = PanelPaths.PALETTES.resolve(name + EXTENSION);
+
+        try {
+            Files.createDirectory(PanelPaths.PALETTES);
+        } catch (IOException ignored) {}
+
+        int i=0;
+        while (Files.exists(newPalettePath)) {
+            newPalettePath = PanelPaths.PALETTES.resolve(name + "("+i+")" + EXTENSION);
+            i++;
+        }
+
+        try {
+            Files.createFile(newPalettePath);
+
+            Files.write(newPalettePath, palette.byteArray());
+        } catch (FileAlreadyExistsException e) {
+            Dashpanels.LOGGER.info(name + " skin palette already exists");
+        } catch (IOException e) {
+            Dashpanels.LOGGER.error("An error occured while creating the {} skin palette: {}", name, e.getMessage());
+        }
+    }
+
+    public boolean validateName(String str) {
+        Set<String> files = this.allPalettesInFiles().keySet();
+        return files.contains(str);
     }
 }

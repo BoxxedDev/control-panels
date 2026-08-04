@@ -58,6 +58,15 @@ public class PanelLangProvider extends LanguageProvider {
         addWidget("stripped_cable.scrollbar", "Scroll Bar");
         addWidget("panel_link.module_select", "Scroll to select module");
 
+        add("dashpanels.paint_wheel.left_change", "Left Page Change");
+        add("dashpanels.paint_wheel.right_change", "Right Page Change");
+        add("dashpanels.paint_wheel.color_picker", "Color Picker");
+        add("dashpanels.paint_wheel.hex_input", "Hex Input");
+        add("dashpanels.paint_wheel.save_palette", "Save Palette");
+        add("dashpanels.paint_wheel.load_palette", "Load Palette");
+        add("dashpanels.paint_wheel.add_color", "Add Color");
+        add("dashpanels.paint_wheel.delete_color", "Delete Color");
+
         addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
 
         addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
@@ -84,6 +93,7 @@ public class PanelLangProvider extends LanguageProvider {
 
         addConfig(ClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
         addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
+        addConfig(ClientConfig.DEFAULT_PALETTE, "Default Skin Palette");
 
         addCustom("key", "delete_module", "Delete Module");
         addCustom("key", "select_module", "Select Module");

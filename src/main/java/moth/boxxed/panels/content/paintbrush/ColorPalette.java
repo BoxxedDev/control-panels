@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ColorPalette implements Iterable<Integer> {
-    public static final int MAX = 18;
+    public static final int MAX = 24;
 
     private final List<Integer> colors = new ArrayList<>();
 

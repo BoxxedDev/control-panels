@@ -40,17 +40,14 @@ import org.lwjgl.glfw.GLFW;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 //TODO: add narration stuff
 public class PaintWheelScreen extends Screen {
     public static final ResourceLocation PAINT_WHEEL = Dashpanels.path("textures/gui/paint_brush/paint_wheel.png");
 
-    private List<SkinButton> skins = new ArrayList<>();
-    private List<ClientSkin> availableSkins = new ArrayList<>();
+    private final List<SkinButton> skins = new ArrayList<>();
+    private final List<ClientSkin> availableSkins = new ArrayList<>();
     private ClientSkin currentSkin;
 
     private BlockPos pos;
@@ -70,7 +67,7 @@ public class PaintWheelScreen extends Screen {
 
     private ColorPicker colorPicker;
     private HexInput hexInput;
-    private List<PaletteColorButton> paletteColors = new ArrayList<>();
+    private final List<PaletteColorButton> paletteColors = new ArrayList<>();
     private PaletteColorButton selectedColor;
 
     private GenericPaletteButton savePaletteButton;
@@ -120,17 +117,15 @@ public class PaintWheelScreen extends Screen {
 //        this.hexInput.setFilter(s -> Pattern.compile("^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$").matcher(s).matches());
         this.reconstructPaletteColors(DashpanelsClient.PALETTE_STORAGE.getDefaultPalette());
 
-        this.savePaletteButton = this.addWidget(new GenericPaletteButton(
+        this.savePaletteButton = this.addWidget(new ExportPaletteButton(
                 Component.translatable("dashpanels.paint_wheel.save_palette"),
                 32,
-                () -> {
-
-                }
+                null
         ));
 
         this.loadPaletteButton = this.addWidget(
-                new ExportPaletteButton(
-                        Component.translatable("dashpanels.paint_wheel.add_color"),
+                new ImportPaletteButton(
+                        Component.translatable("dashpanels.paint_wheel.load_palette"),
                         64,
                         null
                 )
@@ -791,11 +786,11 @@ public class PaintWheelScreen extends Screen {
         }
     }
 
-    public class ExportPaletteButton extends GenericPaletteButton {
+    public class ImportPaletteButton extends GenericPaletteButton {
         private ValueScrollingWidget widget;
         private boolean toggled = false;
 
-        public ExportPaletteButton(Component message, int vOffset, Runnable onClick) {
+        public ImportPaletteButton(Component message, int vOffset, Runnable onClick) {
             super(message, vOffset, onClick);
         }
 
@@ -910,6 +905,53 @@ public class PaintWheelScreen extends Screen {
         @Override
         protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 
+        }
+    }
+
+    public class ExportPaletteButton extends GenericPaletteButton {
+        private boolean toggled = false;
+        private EditBox editBox;
+
+        public ExportPaletteButton(Component message, int vOffset, Runnable onClick) {
+            super(message, vOffset, onClick);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+
+            if (this.toggled && this.editBox != null) {
+                guiGraphics.blit(PAINT_WHEEL, this.getX()+25, this.getY()-2, 32, 144, 80, 24);
+                this.editBox.setX(this.getX()+31);
+                this.editBox.setY(this.getY()+4);
+                this.editBox.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+            }
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            this.toggled = !this.toggled;
+
+            if (this.toggled) {
+                this.editBox = PaintWheelScreen.this.addWidget(
+                        new EditBox(
+                                PaintWheelScreen.this.font,
+                                68, 12,
+                                Component.translatable("")
+                        )
+                );
+            } else {
+                if (!this.editBox.getValue().isBlank()) {
+                    ColorPalette palette = new ColorPalette();
+                    for (PaletteColorButton paletteColor : PaintWheelScreen.this.paletteColors) {
+                        palette.add(paletteColor.color);
+                    }
+                    DashpanelsClient.PALETTE_STORAGE.storePalette(this.editBox.getValue(), palette);
+                }
+
+                PaintWheelScreen.this.removeWidget(this.editBox);
+                this.editBox = null;
+            }
         }
     }
 }

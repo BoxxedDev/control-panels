@@ -3,14 +3,13 @@ package moth.boxxed.panels.compat.create;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateRegistries;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.WikiPage;
+import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.compat.PanelCompat;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
-import moth.boxxed.panels.index.PanelBlockEntities;
-import moth.boxxed.panels.index.PanelBlocks;
-import moth.boxxed.panels.index.PanelItems;
-import moth.boxxed.panels.index.PanelMenuTypes;
+import moth.boxxed.panels.index.*;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -46,6 +45,12 @@ public class PanelCreateRegistries implements PanelCompat {
                         )
                 );
         PanelItems.blockItem("panel_link", PANEL_LINK);
+
+        WikiableEntries.register(PANEL_LINK.getId(),
+                WikiPage.of(PANEL_LINK)
+                        .category(PanelWikiCategories.BLOCKS)
+        );
+
         PANEL_LINK_BE = PanelBlockEntities.BLOCK_ENTITY_TYPES.register(
                         "panel_link",
                         () -> BlockEntityType.Builder.of(PanelLinkBlockEntity::new, PANEL_LINK.get())

@@ -8,10 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import java.util.*;
 
 public class WikiableEntries {
+    private static final Map<ResourceLocation, ResourceLocation> OTHER_MAP = new HashMap<>();
     private static final Map<ResourceLocation, WikiPage> MAP = new HashMap<>();
     private static final Map<WikiCategory, List<WikiPage>> CATEGORY_PAGES_MAP = new HashMap<>();
 
-    //TODO: Set the wiki page
     public static void openForItem(ItemStack itemStack) {
         if (!existsForItem(itemStack))
             return;
@@ -35,12 +35,22 @@ public class WikiableEntries {
         ).add(wikiPage);
     }
 
+    public static void registerRedirect(ResourceLocation location, ResourceLocation other) {
+        OTHER_MAP.put(location, other);
+    }
+
     public static boolean existsForItem(ItemStack stack) {
-        return MAP.containsKey(BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem()));
+        return MAP.containsKey(BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem())) ||
+                MAP.containsKey(OTHER_MAP.get(BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem())));
     }
 
     public static WikiPage pageForItem(ItemStack stack) {
-        return MAP.get(BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem()));
+        ResourceLocation location = BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem());
+        if (OTHER_MAP.containsKey(location)) {
+            return MAP.get(OTHER_MAP.get(location));
+        }
+
+        return MAP.get(location);
     }
 
     public static Collection<WikiPage> getAllPages() {

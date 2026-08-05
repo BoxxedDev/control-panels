@@ -16,6 +16,7 @@
     "GameRendererMixin",
     "GuiMixin",
     "KeyboardHandlerMixin",
+    "ModListInfoPanelMixin",
     "MouseHandlerMixin",
     "PoseStackPoseAccessor"
   ]

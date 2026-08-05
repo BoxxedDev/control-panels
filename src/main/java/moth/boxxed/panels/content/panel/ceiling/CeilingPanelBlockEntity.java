@@ -32,7 +32,7 @@ public class CeilingPanelBlockEntity extends AbstractPanelBlockEntity {
         stack.pushPose();
         stack.translate(0, 0, 0.25f);
         stack.mulPose(Axis.XP.rotationDegrees(135));
-        stack.translate(0, 0, -1);
+        stack.translate(0, 0, -1.0625f);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CeilingPanelBlockEntity extends AbstractPanelBlockEntity {
     public Vector2i getPosForModule(Vec3 localSpace) {
         return new Vector2i(
                 (int) Math.round(Mth.map(localSpace.x, -0.5, 0.5, 0, 16)),
-                (int) Math.round(Mth.map(localSpace.z, 0.5, -0.25f, 0, 16))
+                (int) Math.round(Mth.map(localSpace.z, 0.5, -0.25f, 0, 17))
         );
     }
 
@@ -61,12 +61,12 @@ public class CeilingPanelBlockEntity extends AbstractPanelBlockEntity {
     public void renderTransform(PoseStack poseStack) {
         poseStack.translate(0, 0, 0.25f);
         poseStack.mulPose(Axis.XP.rotationDegrees(135));
-        poseStack.translate(0, 0, -1);
+        poseStack.translate(0, 0, -1.0625f);
     }
 
     @Override
     public Vector2i getContentArea() {
-        return new Vector2i(16, 16);
+        return new Vector2i(16, 17);
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class WikiScreen extends Screen {
     private static final ResourceLocation EXTRA_SPRITES = Dashpanels.path("textures/gui/wiki/sprites.png");
+    private static final int SIDEBAR_WIDTH = 96;
 
     private final Map<WikiCategory, SidebarDropDown> categoryDropdowns = new HashMap<>();
     private final List<SidebarButton> miscCategoryButtons = new ArrayList<>();
@@ -27,10 +28,18 @@ public class WikiScreen extends Screen {
 
     private WikiPage currentPage;
 
-    private static final int SIDEBAR_WIDTH = 96;
+    private int sidebarScroll = 0;
+    private int pageScroll = 0;
 
-    protected WikiScreen() {
+    private int maxSidebarScroll = 0;
+    private int maxPageScroll = 0;
+
+    private final CloseButton closeButton;
+
+    public WikiScreen() {
         super(Component.translatable("dashpanels.wiki.title"));
+
+        this.addWidget(this.closeButton = new CloseButton(Component.translatable("dashpanels.wiki.close")));
 
         for (WikiCategory category : WikiableEntries.getAllCategories()) {
             if (category.isMisc()) {
@@ -57,6 +66,8 @@ public class WikiScreen extends Screen {
     }
 
     public void setPage(WikiPage page) {
+        pageScroll = 0;
+
         if (page == this.currentPage) {
             this.currentPage = null;
             this.reconstructReferences();
@@ -108,6 +119,9 @@ public class WikiScreen extends Screen {
         //Render the gray background stuff
         guiGraphics.fill(0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight(), 0xC8404040);
 
+        this.closeButton.setX(guiGraphics.guiWidth()-20);
+        this.closeButton.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+
         this.renderSidebar(guiGraphics, mouseX, mouseY, partialTick);
         this.renderWikiPage(guiGraphics, mouseX, mouseY, partialTick);
     }
@@ -121,14 +135,19 @@ public class WikiScreen extends Screen {
         }
         allSideWidgets.addAll(this.miscCategoryButtons);
 
+        this.maxSidebarScroll = Math.max(0, (allSideWidgets.size()*16)-guiGraphics.guiHeight());
+
+        if (this.sidebarScroll > this.maxSidebarScroll)
+            this.sidebarScroll = this.maxSidebarScroll;
+
         for (int i = 0; i < allSideWidgets.size(); i++) {
             AbstractWidget widget = allSideWidgets.get(i);
             if (i%2==0) {
-                guiGraphics.fill(0, i*16, SIDEBAR_WIDTH, i*16 + 16, 0x18b5b5b5);
+                guiGraphics.fill(0, i*16 - sidebarScroll, SIDEBAR_WIDTH, i*16 + 16 - sidebarScroll, 0x18b5b5b5);
             }
 
             widget.setX(0);
-            widget.setY(i*16);
+            widget.setY(i*16 - sidebarScroll);
             widget.render(guiGraphics, mouseX, mouseY, partialTick);
         }
 
@@ -157,6 +176,7 @@ public class WikiScreen extends Screen {
         int referenceNum = 0;
         int spaceWidth = this.font.width(" ");
 
+        guiGraphics.enableScissor(left, top, guiGraphics.guiWidth(), guiGraphics.guiHeight());
         for (int i = 0; i < this.currentPage.getParagraphs(); i++) {
             String paragraphUnformatted = this.currentPage.getParagraph(i).getString();
 
@@ -201,24 +221,46 @@ public class WikiScreen extends Screen {
                 currentWidth += componentWidth + spaceWidth;
 
                 if (currentWidth >= pageWidth) {
-                    y += 9;
+                    y += 11;
                     currentWidth = componentWidth + spaceWidth;
                     lines += 1;
                 }
 
                 int offset = -(componentWidth+spaceWidth);
+
+                guiGraphics.drawString(this.font, component, left + 6 + currentWidth + offset, y-pageScroll, 0xFFFFFF);
+
                 if (componentBooleanPair.getB()) {
                     ReferenceButton ref = this.references.get(referenceNum);
                     ref.setX(left + 6 + currentWidth + offset);
-                    ref.setY(y);
+                    ref.setY(y-pageScroll);
                     referenceNum += 1;
                 }
-
-                guiGraphics.drawString(this.font, component, left + 6 + currentWidth + offset, y, 0xFFFFFF);
             }
 
-            top += lines*9+9;
+            top += lines*11+11;
         }
+        guiGraphics.disableScissor();
+
+        for (ReferenceButton reference : this.references) {
+            reference.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        }
+
+        this.maxPageScroll = Math.max(0, top-guiGraphics.guiHeight()-26);
+
+        if (this.pageScroll > this.maxPageScroll)
+            this.pageScroll = this.maxPageScroll;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (mouseX < SIDEBAR_WIDTH) {
+            this.sidebarScroll = Math.clamp(this.sidebarScroll - (int) (scrollY*12), 0, this.maxSidebarScroll);
+        } else {
+            this.pageScroll = Math.clamp(this.pageScroll - (int) (scrollY*12), 0, this.maxPageScroll);
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     public class SidebarButton extends AbstractWidget {
@@ -272,7 +314,7 @@ public class WikiScreen extends Screen {
             guiGraphics.drawScrollingString(WikiScreen.this.font, this.getMessage(), this.getX()+19, this.getX()+this.getWidth()-3, this.getY()+this.getHeight()/2-lineHeight, 0xFFFFFF);
 
             int uOffset = this.toggled ? 16 : 0;
-            guiGraphics.blit(EXTRA_SPRITES, this.getX()+5, this.getY()+5, uOffset, 0, 6, 6, 32, 16);
+            guiGraphics.blit(EXTRA_SPRITES, this.getX()+5, this.getY()+5, uOffset, 0, 6, 6, 32, 32);
         }
 
         @Override
@@ -310,12 +352,35 @@ public class WikiScreen extends Screen {
 
         @Override
         protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-
+            if (isMouseOver(mouseX, mouseY)) {
+                guiGraphics.renderTooltip(WikiScreen.this.font, Component.translatable("dashpanels.wiki.reference_tooltip", this.referencePage.getTitle()), mouseX, mouseY);
+            }
         }
 
         @Override
         public void onClick(double mouseX, double mouseY, int button) {
             WikiScreen.this.setPage(this.referencePage);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
+        }
+    }
+
+    public class CloseButton extends AbstractWidget {
+        public CloseButton(Component message) {
+            super(0, 0, 20, 20, message);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            guiGraphics.blit(EXTRA_SPRITES, this.getX(), this.getY(), 0, 12, this.getWidth(), this.getHeight(), 32, 32);
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            WikiScreen.this.onClose();
         }
 
         @Override

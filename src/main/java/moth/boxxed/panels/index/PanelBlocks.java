@@ -76,8 +76,17 @@ public class PanelBlocks {
             );
 
     static {
+        WikiableEntries.register(CONTROL_PANEL.getId(),
+                WikiPage.of(CONTROL_PANEL).category(PanelWikiCategories.BLOCKS)
+                        .addParagraph("The control panel is the main event of the mod. You can hold a module in your hand and place it on the panel.")
+                        .addParagraph("There isn't a wiki for the other panel types but the same applies to them as well.")
+        );
+        WikiableEntries.registerRedirect(WALL_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
+        WikiableEntries.registerRedirect(CEILING_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
+
         WikiableEntries.register(CABLE.getId(),
                 WikiPage.of(CABLE).category(PanelWikiCategories.BLOCKS)
+                        .addParagraph("The control cable allows you to bring redstone signals out of the control panel, as well connect control panels that aren't directly connected.")
         );
     }
 

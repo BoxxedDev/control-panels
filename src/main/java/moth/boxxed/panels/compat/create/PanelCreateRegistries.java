@@ -51,6 +51,8 @@ public class PanelCreateRegistries implements PanelCompat {
             WikiableEntries.register(PANEL_LINK.getId(),
                     WikiPage.of(PANEL_LINK)
                             .category(PanelWikiCategories.BLOCKS)
+                            .addParagraph("The panel link is an explicit compat block. If create is not installed this block is not there.")
+                            .addParagraph("If you use with an empty hand it will open a menu to configure the entries. Which correspond to a module in the connected network to be used for redstone links.")
             );
         }
 

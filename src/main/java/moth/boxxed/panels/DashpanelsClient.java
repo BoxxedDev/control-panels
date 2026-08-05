@@ -3,6 +3,7 @@ package moth.boxxed.panels;
 import moth.boxxed.panels.content.paintbrush.ColorPaletteStorage;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.index.PanelWikiPages;
 import moth.boxxed.panels.util.PreLoadedModelHandler;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -24,6 +25,7 @@ public class DashpanelsClient {
 
         PanelPreloadedModels.init();
         PanelKeybinds.init();
+        PanelWikiPages.init();
 
         modEventBus.addListener(PreLoadedModelHandler::registerAdditional);
         modEventBus.addListener(PreLoadedModelHandler::bakingCompleted);

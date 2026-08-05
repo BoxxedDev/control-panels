@@ -1,6 +1,7 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.IWikiPage;
 import moth.boxxed.panels.api.wiki.WikiPage;
 import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.content.cable.CableBlock;

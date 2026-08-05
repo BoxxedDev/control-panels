@@ -1,6 +1,7 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.ItemlessWikiPage;
 import moth.boxxed.panels.api.wiki.WikiPage;
 import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.content.cable.stripper.CableStripperItem;
@@ -39,7 +40,7 @@ public class PanelItems {
             () -> new Item(new Item.Properties().stacksTo(16)));
 
     static {
-        if (FMLLoader.getDist().isClient()) {
+        if (FMLLoader.getDist().isClient()) {;
             WikiableEntries.register(CABLE_STRIPPER.getId(),
                     WikiPage.of(CABLE_STRIPPER).category(PanelWikiCategories.TOOLS)
                             .addParagraph("Use on a dashpanels:cable to strip it. This will then make it a Stripped Cable.")
@@ -62,6 +63,7 @@ public class PanelItems {
                             .addParagraph("This key can be copied in the crafting table by putting a single paired key with non paired keys to copy the key.")
                             .addParagraph("A paired key can be cleared by putting it by itself in the crafting table"));
 
+            //Modules
             WikiableEntries.register(SWITCH_MODULE.getId(),
                     WikiPage.of(SWITCH_MODULE).category(PanelWikiCategories.MODULES)
                             .addParagraph("A simple flip switch, when right clicked it toggles. Works the same as a lever.")

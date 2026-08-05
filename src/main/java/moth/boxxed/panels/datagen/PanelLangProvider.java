@@ -120,6 +120,8 @@ public class PanelLangProvider extends LanguageProvider {
         add("dashpanels.wiki.category.modules", "Modules");
         add("dashpanels.wiki.category.blocks", "Blocks");
         add("dashpanels.wiki.category.special_items", "Special Items");
+
+        add("dashpanels.wiki.page.modules", "Modules");
     }
 
     private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {

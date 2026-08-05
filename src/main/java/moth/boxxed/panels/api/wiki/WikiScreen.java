@@ -11,10 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import oshi.util.tuples.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WikiScreen extends Screen {
     private static final ResourceLocation EXTRA_SPRITES = Dashpanels.path("textures/gui/wiki/sprites.png");
@@ -24,7 +21,7 @@ public class WikiScreen extends Screen {
     private final List<SidebarButton> miscCategoryButtons = new ArrayList<>();
     private final List<ReferenceButton> references = new ArrayList<>();
 
-    private WikiPage currentPage;
+    private IWikiPage currentPage;
 
     private int sidebarScroll = 0;
     private int pageScroll = 0;
@@ -41,8 +38,8 @@ public class WikiScreen extends Screen {
 
         for (WikiCategory category : WikiableEntries.getAllCategories()) {
             if (category.isMisc()) {
-                List<WikiPage> pages = WikiableEntries.getPagesInCategory(category);
-                for (WikiPage page : pages) {
+                List<IWikiPage> pages = WikiableEntries.getPagesInCategory(category);
+                for (IWikiPage page : pages) {
                     this.miscCategoryButtons.add(
                             this.addWidget(new SidebarButton(page))
                     );
@@ -50,9 +47,11 @@ public class WikiScreen extends Screen {
                 continue;
             }
 
-            List<WikiPage> pages = WikiableEntries.getPagesInCategory(category);
+            List<IWikiPage> pages = WikiableEntries.getPagesInCategory(category);
             if (pages.isEmpty())
                 continue;
+
+            pages.sort(Comparator.comparing(IWikiPage::getSidebarPriority).reversed());
 
             categoryDropdowns.put(
                     category,
@@ -63,7 +62,7 @@ public class WikiScreen extends Screen {
         }
     }
 
-    public void setPage(WikiPage page) {
+    public void setPage(IWikiPage page) {
         pageScroll = 0;
 
         if (page == this.currentPage) {
@@ -96,7 +95,7 @@ public class WikiScreen extends Screen {
 
                 if (candidate.length == 2) {
                     ResourceLocation location = ResourceLocation.parse(sub);
-                    WikiPage page = WikiableEntries.pageFor(location);
+                    IWikiPage page = WikiableEntries.pageFor(location);
                     if (WikiableEntries.exists(location) && page != null) {
                         Component pageTitle = page.getTitle();
                         int width = this.font.width(pageTitle);
@@ -185,7 +184,7 @@ public class WikiScreen extends Screen {
 
                 if (candidate.length == 2) {
                     ResourceLocation location = ResourceLocation.parse(sub);
-                    WikiPage page = WikiableEntries.pageFor(location);
+                    IWikiPage page = WikiableEntries.pageFor(location);
                     if (WikiableEntries.exists(location) && page != null) {
                         Component pageTitle = page.getTitle();
                         components.add(
@@ -244,7 +243,7 @@ public class WikiScreen extends Screen {
             reference.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
         }
 
-        this.maxPageScroll = Math.max(0, top-guiGraphics.guiHeight()-26);
+        this.maxPageScroll = Math.max(0, top-guiGraphics.guiHeight());
 
         if (this.pageScroll > this.maxPageScroll)
             this.pageScroll = this.maxPageScroll;
@@ -262,9 +261,9 @@ public class WikiScreen extends Screen {
     }
 
     public class SidebarButton extends AbstractWidget {
-        private final WikiPage wikiPage;
+        private final IWikiPage wikiPage;
 
-        public SidebarButton(WikiPage wikiPage) {
+        public SidebarButton(IWikiPage wikiPage) {
             super(0, 0, SIDEBAR_WIDTH-6, 16, wikiPage.getTitle());
             this.wikiPage = wikiPage;
         }
@@ -293,10 +292,10 @@ public class WikiScreen extends Screen {
 
         private final List<SidebarButton> subbuttons = new ArrayList<>();
 
-        public SidebarDropDown(List<WikiPage> pages, Component message) {
+        public SidebarDropDown(List<IWikiPage> pages, Component message) {
             super(0, 0, SIDEBAR_WIDTH-6, 15, message);
 
-            for (WikiPage page : pages) {
+            for (IWikiPage page : pages) {
                 SidebarButton button = new SidebarButton(page);
                 button.active = false;
                 button.visible = false;
@@ -341,9 +340,9 @@ public class WikiScreen extends Screen {
     }
 
     public class ReferenceButton extends AbstractWidget {
-        private final WikiPage referencePage;
+        private final IWikiPage referencePage;
 
-        public ReferenceButton(WikiPage referencePage, int width, Component message) {
+        public ReferenceButton(IWikiPage referencePage, int width, Component message) {
             super(0, 0, width, WikiScreen.this.font.lineHeight, message);
             this.referencePage = referencePage;
         }

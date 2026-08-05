@@ -9,8 +9,8 @@ import java.util.*;
 
 public class WikiableEntries {
     private static final Map<ResourceLocation, ResourceLocation> OTHER_MAP = new HashMap<>();
-    private static final Map<ResourceLocation, WikiPage> MAP = new HashMap<>();
-    private static final Map<WikiCategory, List<WikiPage>> CATEGORY_PAGES_MAP = new HashMap<>();
+    private static final Map<ResourceLocation, IWikiPage> MAP = new HashMap<>();
+    private static final Map<WikiCategory, List<IWikiPage>> CATEGORY_PAGES_MAP = new HashMap<>();
 
     public static void openForItem(ItemStack itemStack) {
         if (!existsForItem(itemStack))
@@ -25,7 +25,7 @@ public class WikiableEntries {
         });
     }
 
-    public static void register(ResourceLocation location, WikiPage wikiPage) {
+    public static <T extends IWikiPage> T register(ResourceLocation location, T wikiPage) {
         Objects.requireNonNull(location, "Location cannot be null");
         Objects.requireNonNull(wikiPage, "Wiki page cannot be null");
         MAP.put(location, wikiPage);
@@ -33,6 +33,7 @@ public class WikiableEntries {
                 wikiPage.getCategory(),
                 category -> new ArrayList<>()
         ).add(wikiPage);
+        return wikiPage;
     }
 
     public static void registerRedirect(ResourceLocation location, ResourceLocation other) {
@@ -44,7 +45,7 @@ public class WikiableEntries {
                 MAP.containsKey(OTHER_MAP.get(BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem())));
     }
 
-    public static WikiPage pageForItem(ItemStack stack) {
+    public static IWikiPage pageForItem(ItemStack stack) {
         ResourceLocation location = BuiltInRegistries.ITEM.getKeyOrNull(stack.getItem());
         if (OTHER_MAP.containsKey(location)) {
             return MAP.get(OTHER_MAP.get(location));
@@ -53,7 +54,7 @@ public class WikiableEntries {
         return MAP.get(location);
     }
 
-    public static Collection<WikiPage> getAllPages() {
+    public static Collection<IWikiPage> getAllPages() {
         return MAP.values();
     }
 
@@ -61,7 +62,7 @@ public class WikiableEntries {
         return CATEGORY_PAGES_MAP.keySet();
     }
 
-    public static List<WikiPage> getPagesInCategory(WikiCategory category) {
+    public static List<IWikiPage> getPagesInCategory(WikiCategory category) {
         return CATEGORY_PAGES_MAP.computeIfAbsent(category, c -> new ArrayList<>());
     }
 
@@ -69,7 +70,7 @@ public class WikiableEntries {
         return MAP.containsKey(location);
     }
 
-    public static WikiPage pageFor(ResourceLocation location) {
+    public static IWikiPage pageFor(ResourceLocation location) {
         return MAP.get(location);
     }
 }

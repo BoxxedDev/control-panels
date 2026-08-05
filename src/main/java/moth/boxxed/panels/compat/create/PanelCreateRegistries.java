@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -46,10 +47,12 @@ public class PanelCreateRegistries implements PanelCompat {
                 );
         PanelItems.blockItem("panel_link", PANEL_LINK);
 
-        WikiableEntries.register(PANEL_LINK.getId(),
-                WikiPage.of(PANEL_LINK)
-                        .category(PanelWikiCategories.BLOCKS)
-        );
+        if (FMLLoader.getDist().isClient()) {
+            WikiableEntries.register(PANEL_LINK.getId(),
+                    WikiPage.of(PANEL_LINK)
+                            .category(PanelWikiCategories.BLOCKS)
+            );
+        }
 
         PANEL_LINK_BE = PanelBlockEntities.BLOCK_ENTITY_TYPES.register(
                         "panel_link",

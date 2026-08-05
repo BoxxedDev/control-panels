@@ -1,7 +1,5 @@
 package moth.boxxed.panels.content.paintbrush;
 
-import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.panel.skin.ServerSkin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

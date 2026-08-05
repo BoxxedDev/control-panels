@@ -3,7 +3,6 @@ package moth.boxxed.panels.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.wiki.WikiScreen;
-import moth.boxxed.panels.api.wiki.WikiableEntries;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;

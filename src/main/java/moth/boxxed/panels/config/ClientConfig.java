@@ -1,13 +1,7 @@
 package moth.boxxed.panels.config;
 
 import moth.boxxed.panels.DashpanelsClient;
-import moth.boxxed.panels.content.paintbrush.ColorPalette;
-import moth.boxxed.panels.content.paintbrush.ColorPaletteStorage;
 import net.neoforged.neoforge.common.ModConfigSpec;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class ClientConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();

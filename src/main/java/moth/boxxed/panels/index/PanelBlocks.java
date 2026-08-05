@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -76,18 +77,20 @@ public class PanelBlocks {
             );
 
     static {
-        WikiableEntries.register(CONTROL_PANEL.getId(),
-                WikiPage.of(CONTROL_PANEL).category(PanelWikiCategories.BLOCKS)
-                        .addParagraph("The control panel is the main event of the mod. You can hold a module in your hand and place it on the panel.")
-                        .addParagraph("There isn't a wiki for the other panel types but the same applies to them as well.")
-        );
-        WikiableEntries.registerRedirect(WALL_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
-        WikiableEntries.registerRedirect(CEILING_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
+        if (FMLLoader.getDist().isClient()) {
+            WikiableEntries.register(CONTROL_PANEL.getId(),
+                    WikiPage.of(CONTROL_PANEL).category(PanelWikiCategories.BLOCKS)
+                            .addParagraph("The control panel is the main event of the mod. You can hold a module in your hand and place it on the panel.")
+                            .addParagraph("There isn't a wiki for the other panel types but the same applies to them as well.")
+            );
+            WikiableEntries.registerRedirect(WALL_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
+            WikiableEntries.registerRedirect(CEILING_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
 
-        WikiableEntries.register(CABLE.getId(),
-                WikiPage.of(CABLE).category(PanelWikiCategories.BLOCKS)
-                        .addParagraph("The control cable allows you to bring redstone signals out of the control panel, as well connect control panels that aren't directly connected.")
-        );
+            WikiableEntries.register(CABLE.getId(),
+                    WikiPage.of(CABLE).category(PanelWikiCategories.BLOCKS)
+                            .addParagraph("The control cable allows you to bring redstone signals out of the control panel, as well connect control panels that aren't directly connected.")
+            );
+        }
     }
 
     private static <T extends Block> DeferredBlock<T> registerBlockWithoutItem(String name, Supplier<T> block) {

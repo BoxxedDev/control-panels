@@ -35,7 +35,7 @@ public class PanelItems {
     public static final DeferredItem<Item> KEY_SWITCH_MODULE = item("key_switch");
 
     public static final DeferredItem<Item> KEY_ITEM = ITEMS.register("key",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new Item(new Item.Properties().stacksTo(16)));
 
     static {
         WikiableEntries.register(CABLE_STRIPPER.getId(),

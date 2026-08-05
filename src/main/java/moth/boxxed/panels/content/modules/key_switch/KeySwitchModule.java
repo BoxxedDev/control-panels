@@ -77,15 +77,22 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     public ItemInteractionResult onItemUse(ModuleHitResult hitResult, ItemStack stack, Level level, Player player) {
         if (currentKeyStack.isEmpty() && stack.is(PanelItems.KEY_ITEM)) {
             if (keyId == null && !stack.has(PanelDataComponents.BOUND_MODULE.get())) {
+                stack.shrink(1);
+
+                ItemStack newStack = new ItemStack(PanelItems.KEY_ITEM.get());
                 ShortUUID generatedId = ShortUUID.random();
-                stack.set(PanelDataComponents.BOUND_MODULE.get(), new BoundModule(this.getParentPos(), generatedId));
-                stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+                newStack.set(PanelDataComponents.BOUND_MODULE.get(), new BoundModule(this.getParentPos(), generatedId));
+                newStack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+
+                player.getInventory().add(newStack);
+
                 this.keyId = generatedId;
                 return ItemInteractionResult.SUCCESS;
             } else if (stack.has(PanelDataComponents.BOUND_MODULE.get())) {
                 BoundModule boundModule = stack.get(PanelDataComponents.BOUND_MODULE.get());
                 if (boundModule.pos().equals(this.getParentPos()) && boundModule.uuid().equals(this.keyId)) {
-                    this.currentKeyStack = stack.copyAndClear();
+                    this.currentKeyStack = stack.copyWithCount(1);
+                    stack.shrink(1);
                     return ItemInteractionResult.SUCCESS;
                 }
             }

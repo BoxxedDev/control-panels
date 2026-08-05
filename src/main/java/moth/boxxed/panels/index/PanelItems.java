@@ -1,6 +1,8 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.WikiPage;
+import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.content.cable.stripper.CableStripperItem;
 import moth.boxxed.panels.content.paintbrush.PaintbrushItem;
 import net.minecraft.world.item.BlockItem;
@@ -34,6 +36,18 @@ public class PanelItems {
 
     public static final DeferredItem<Item> KEY_ITEM = ITEMS.register("key",
             () -> new Item(new Item.Properties().stacksTo(1)));
+
+    static {
+        WikiableEntries.register(CABLE_STRIPPER.getId(),
+                WikiPage.of(CABLE_STRIPPER).category(PanelWikiCategories.TOOLS)
+                        .addParagraph("Use on a dashpanels:cable to strip it. This will then make it a Stripped Cable.")
+                        .addParagraph("Use on a Stripped Cable to configure it's module. To configure just scroll in the gui and click when you're on your selected module.")
+                        .addParagraph("Sneak use on a dashpanels:cable or a Stripped Cable to easily pick them up.")
+        );
+        WikiableEntries.register(PAINT_BRUSH.getId(), WikiPage.of(PAINT_BRUSH).category(PanelWikiCategories.TOOLS));
+        WikiableEntries.register(WRENCH.getId(), WikiPage.of(WRENCH).category(PanelWikiCategories.TOOLS));
+        WikiableEntries.register(KEY_ITEM.getId(), WikiPage.of(KEY_ITEM));
+    }
 
     public static DeferredItem<Item> item(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

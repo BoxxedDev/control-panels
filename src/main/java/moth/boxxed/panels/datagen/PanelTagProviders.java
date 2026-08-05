@@ -39,10 +39,9 @@ public class PanelTagProviders {
                     .add(PanelItems.LABEL_MODULE.getKey())
                     .add(PanelItems.SEVEN_SEGMENT_MODULE.getKey())
                     .add(PanelItems.PUSH_BUTTON_MODULE.getKey())
+                    .add(PanelItems.KEY_SWITCH_MODULE.getKey())
+                    .addOptional(Dashpanels.path("navball"))
             ;
-            if (ModList.get().isLoaded("sable"))
-                tag(PanelTags.Items.MODULE)
-                        .add(PanelSableRegistries.NAVBALL_MODULE.getKey());
 
             tag(PanelTags.Items.PANELS)
                     .add(fromBlock(PanelBlocks.CONTROL_PANEL.getKey()))

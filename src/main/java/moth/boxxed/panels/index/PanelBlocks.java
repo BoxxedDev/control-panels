@@ -1,6 +1,8 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.WikiPage;
+import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.panel.ceiling.CeilingPanelBlock;
@@ -72,6 +74,12 @@ public class PanelBlocks {
                                     .noOcclusion()
                     )
             );
+
+    static {
+        WikiableEntries.register(CABLE.getId(),
+                WikiPage.of(CABLE).category(PanelWikiCategories.BLOCKS)
+        );
+    }
 
     private static <T extends Block> DeferredBlock<T> registerBlockWithoutItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);

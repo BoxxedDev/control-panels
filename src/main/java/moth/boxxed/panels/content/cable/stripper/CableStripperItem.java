@@ -80,16 +80,16 @@ public class CableStripperItem extends Item {
         return InteractionResult.PASS;
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!tooltipFlag.hasShiftDown()) {
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.shift_to_expand"));
-        } else {
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_1"));
-            tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_2"));
-            tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_3"));
-        }
-    }
+//    @Override
+//    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+//        if (!tooltipFlag.hasShiftDown()) {
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.shift_to_expand"));
+//        } else {
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_1"));
+//            tooltipComponents.add(Component.empty());
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_2"));
+//            tooltipComponents.add(Component.empty());
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_3"));
+//        }
+//    }
 }

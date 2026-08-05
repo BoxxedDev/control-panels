@@ -16,6 +16,7 @@ import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.api.panel.model.PanelSkinBlockColor;
 import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
+import moth.boxxed.panels.api.wiki.WikiTooltipManager;
 import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.content.panel.ceiling.CeilingPanelRenderer;
 import moth.boxxed.panels.content.panel.normal.PanelRenderer;
@@ -93,6 +94,7 @@ public class ControlPanelsClientEvents {
     @SubscribeEvent
     public static void clientPreTick(ClientTickEvent.Pre event) {
         PanelModulesHitHandler.clearNear();
+        WikiTooltipManager.tick();
     }
 
     @SubscribeEvent
@@ -152,7 +154,7 @@ public class ControlPanelsClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderTooltip(ItemTooltipEvent event) {
+    public static void onTooltip(ItemTooltipEvent event) {
         if (event.getItemStack().has(PanelDataComponents.BOUND_MODULE)) {
             event.getToolTip().add(Component.literal("[i]").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD));
 
@@ -165,5 +167,7 @@ public class ControlPanelsClientEvents {
             String posString = "(%d, %d, %d)".formatted(pos.getX(), pos.getY(), pos.getZ());
             event.getToolTip().add(Component.translatable("tooltip.dashpanels.key.bound_pos", posString));
         }
+
+        WikiTooltipManager.addTooltip(event.getToolTip(), event.getItemStack());
     }
 }

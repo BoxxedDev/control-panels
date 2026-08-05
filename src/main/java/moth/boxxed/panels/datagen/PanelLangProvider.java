@@ -108,6 +108,13 @@ public class PanelLangProvider extends LanguageProvider {
 
         add("dashpanels.paint_wheel.apply", "Apply");
         add("dashpanels.paint_wheel.apply_all", "Apply To All");
+
+        add("dashpanels.wiki.hold_to_open", "Hold [%1$s] to Open Wiki");
+        add("dashpanels.wiki.select_page", "Select a page to view");
+
+        add("dashpanels.wiki.category.tools", "Tools");
+        add("dashpanels.wiki.category.modules", "Modules");
+        add("dashpanels.wiki.category.blocks", "Blocks");
     }
 
     private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {

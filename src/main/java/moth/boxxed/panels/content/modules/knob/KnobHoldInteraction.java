@@ -27,8 +27,8 @@ public class KnobHoldInteraction extends ModuleHoldInteraction<KnobModule> {
     @Override
     public boolean activeMouseMove(double yaw, double pitch) {
         this.val += (float) (yaw/360f);
-        this.val = Math.clamp(this.val, 0, 1);
-        this.angle = Math.clamp(Math.round(this.val*360), 0, 360);
+        this.val = Math.clamp(this.val, this.module.angleRange.get().getMinimum()/360f, this.module.angleRange.get().getMaximum()/360f);
+        this.angle = Math.clamp(Math.round(this.val*360), this.module.angleRange.get().getMinimum(), this.module.angleRange.get().getMaximum());
         if (this.oldAngle != angle) {
             CompoundTag tag = new CompoundTag();
             tag.putInt("angle", this.angle);

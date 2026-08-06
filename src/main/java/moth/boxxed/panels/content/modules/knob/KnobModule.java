@@ -5,6 +5,8 @@ import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
@@ -37,8 +39,23 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     private float renderAngle = 0;
     private int angle = 0;
 
+    public final ModuleConfigValue.IntRangeValue angleRange = new ModuleConfigValue.IntRangeValue("angle",
+            0, 360, 0, 360).addChangeListener(
+            (oldV, newV) -> {
+                this.angle = Math.clamp(newV.getMinimum(), newV.getMaximum(), this.angle);
+            }
+    );
+    public final ModuleConfigValue.IntRangeValue outputRange = new ModuleConfigValue.IntRangeValue("output",
+            0, 15, 0, 15);
+
     public KnobModule(int x, int y) {
         super(PanelModules.KNOB.get(), x, y);
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(angleRange);
+        builder.add(outputRange);
     }
 
     @Override
@@ -107,7 +124,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
 
     @Override
     public int getAnalog() {
-        return Math.round(Mth.map(this.angle, 0, 360, 0, 15));
+        return Math.round(Mth.map(this.angle, 0, 360, this.outputRange.get().getMinimum(), this.outputRange.get().getMaximum()));
     }
 
     @Override
@@ -118,7 +135,7 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
             if (args.count() != 1)
                 return false;
             if (args.get(0) instanceof Number number) {
-                this.angle = Math.clamp(number.intValue(), 0, 360);
+                this.angle = Math.clamp(number.intValue(), this.angleRange.get().getMinimum(), this.angleRange.get().getMaximum());
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }

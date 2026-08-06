@@ -2,6 +2,8 @@ package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
@@ -29,15 +31,24 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     public DyeColor color;
     public boolean lit;
 
+    private final ModuleConfigValue.BooleanValue togglable = new ModuleConfigValue.BooleanValue("togglable", false);
+
     public IndicatorBulbModule(int x, int y) {
         super(PanelModules.INDICATOR_BULB.get(), x, y);
         this.color = DyeColor.WHITE;
         this.lit = false;
     }
 
+    private int previousSignal = 0;
+
     @Override
     public void setAnalog(int signal) {
-        this.lit = signal > 0;
+        if (this.togglable.get() && signal != previousSignal) {
+            this.lit = !this.lit;
+        } else {
+            this.lit = signal > 0;
+        }
+        this.previousSignal = signal;
     }
 
     @Override
@@ -107,5 +118,10 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
             }
             return false;
         });
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(togglable);
     }
 }

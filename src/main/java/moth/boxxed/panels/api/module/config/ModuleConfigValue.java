@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.IntegerRange;
 import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
@@ -249,6 +250,63 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
             );
             builder.nextRow();
             builder.addLabel(Component.literal("%.2f - %.2f".formatted(this.min, this.max)));
+        }
+    }
+
+    public static class IntRangeValue extends ModuleConfigValue<IntegerRange, IntRangeValue> {
+        protected final int rangeMin;
+        protected final int rangeMax;
+
+        public IntRangeValue(String name, int defaultMin, int defaultMax, int rangeMin, int rangeMax) {
+            super(name, IntegerRange.of(defaultMin, defaultMax));
+            this.rangeMin = rangeMin;
+            this.rangeMax = rangeMax;
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putInt("range_min", this.value.getMinimum());
+            tag.putInt("range_max", this.value.getMaximum());
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            int min = tag.getInt("range_min");
+            int max = tag.getInt("range_max");
+            this.value = IntegerRange.of(min, max);
+        }
+
+        public void set(int min, int max) {
+            this.set(IntegerRange.of(min, max));
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addIntBox(
+                    this,
+                    value -> String.valueOf(value.getMinimum()),
+                    (intRangeValue, string) -> {
+                        try {
+                            int num = Integer.parseInt(string);
+                            intRangeValue.set(
+                                    Math.clamp(Math.min(num, intRangeValue.get().getMaximum()), this.rangeMin, this.rangeMax),
+                                    intRangeValue.get().getMaximum()
+                            );
+                        } catch (NumberFormatException ignored) {}
+                    }, 32);
+            builder.addLabel(Component.literal("-"));
+            builder.addIntBox(
+                    this,
+                    value -> String.valueOf(value.getMaximum()),
+                    (intRangeValue, string) -> {
+                        try {
+                            int num = Integer.parseInt(string);
+                            intRangeValue.set(
+                                    intRangeValue.get().getMinimum(),
+                                    Math.clamp(Math.max(num, intRangeValue.get().getMinimum()), this.rangeMin, this.rangeMax)
+                            );
+                        } catch (NumberFormatException ignored) {}
+                    }, 32);
         }
     }
 

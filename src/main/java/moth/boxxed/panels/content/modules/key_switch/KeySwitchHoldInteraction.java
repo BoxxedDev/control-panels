@@ -13,9 +13,19 @@ public class KeySwitchHoldInteraction extends ModuleHoldInteraction<KeySwitchMod
 
     @Override
     public void stop() {
-        boolean turned = this.turn >= 0.5f;
+        float turn;
+        boolean turned;
+
+        if (this.module.togglable.get()) {
+            turned = this.turn >= 0.5f;
+            turn = turned ? 1 : 0;
+        } else {
+            turned = false;
+            turn = 0;
+        }
+
         CompoundTag tag = new CompoundTag();
-        tag.putFloat("turn", turned ? 1 : 0);
+        tag.putFloat("turn", turn);
         tag.putBoolean("turned", turned);
         this.update(tag);
     }

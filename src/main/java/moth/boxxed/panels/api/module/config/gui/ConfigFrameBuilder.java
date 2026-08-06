@@ -89,7 +89,7 @@ public class ConfigFrameBuilder {
     }
 
     public int getColumnsWidth() {
-        int widths = (this.rows-1)*PADDING;
+        int widths = (this.columns-1)*PADDING;
         for (Integer width : this.columnWidths.values()) {
             widths += width;
         }

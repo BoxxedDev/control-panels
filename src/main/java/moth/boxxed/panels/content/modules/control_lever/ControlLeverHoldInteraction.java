@@ -30,8 +30,8 @@ public class ControlLeverHoldInteraction extends ModuleHoldInteraction<ControlLe
     @Override
     public boolean activeMouseMove(double yaw, double pitch) {
         this.val -= (float) (pitch/180f);
-        this.val = Math.clamp(this.val, 0, this.module.redstoneOutputMax.get()/15f);
-        this.signal = Math.clamp(Math.round(this.val*15), this.module.redstoneOutputMin.get(), this.module.redstoneOutputMax.get());
+        this.val = Math.clamp(this.val, this.module.outputRange.get().getMinimum()/15f, this.module.outputRange.get().getMaximum()/15f);
+        this.signal = Math.clamp(Math.round(this.val*15), this.module.outputRange.get().getMinimum(), this.module.outputRange.get().getMaximum());
         if (this.oldSignal != this.signal) {
             CompoundTag tag = new CompoundTag();
             tag.putInt("signal", this.signal);

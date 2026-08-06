@@ -66,12 +66,9 @@ public class PanelLangProvider extends LanguageProvider {
         add("dashpanels.paint_wheel.load_palette", "Load Palette");
         add("dashpanels.paint_wheel.add_color", "Add Color");
         add("dashpanels.paint_wheel.delete_color", "Delete Color");
-
-        addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
-
-        addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
-        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output moduleName");
-        addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
+        add("dashpanels.paint_wheel.apply", "Apply");
+        add("dashpanels.paint_wheel.apply_all", "Apply To All");
+        add("dashpanels.paint_wheel.author", "Author: %s");
 
         addTooltip("key.bound_id", "ID: §r%s");
         addTooltip("key.bound_pos", "Block: §r%s");
@@ -104,17 +101,13 @@ public class PanelLangProvider extends LanguageProvider {
 
         addModuleConfig("name", "Name");
         addModuleConfig("output", "Output");
-        addModuleConfig("output_max", "Max Output");
-        addModuleConfig("output_min", "Min Output");
         addModuleConfig("inverted", "Inverted");
         addModuleConfig("buttons", "Buttons");
         addModuleConfig("deadzone", "Deadzone");
         addModuleConfig("trigger_inverted", "Trigger Inverted");
         addModuleConfig("gap", "Gap");
-
-        add("dashpanels.paint_wheel.apply", "Apply");
-        add("dashpanels.paint_wheel.apply_all", "Apply To All");
-        add("dashpanels.paint_wheel.author", "Author: %s");
+        addModuleConfig("togglable", "Togglable");
+        addModuleConfig("angle", "Angle");
 
         //Skins
         add("dashpanels.paint_wheel.skin.default", "Default");

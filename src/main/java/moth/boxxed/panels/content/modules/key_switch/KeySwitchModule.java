@@ -6,6 +6,7 @@ import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
@@ -55,7 +56,7 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     protected float oldRenderTurn = 0;
     protected float renderTurn = 0;
 
-
+    public final ModuleConfigValue.BooleanValue togglable = new ModuleConfigValue.BooleanValue("togglable", true);
 
     public KeySwitchModule(int x, int y) {
         super(PanelModules.KEY_SWITCH.get(), x, y);
@@ -63,7 +64,7 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
 
     @Override
     public void createConfig(ModuleConfig.Builder builder) {
-        super.createConfig(builder);
+        builder.add(togglable);
     }
 
     @Override

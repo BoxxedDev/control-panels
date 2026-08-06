@@ -120,7 +120,7 @@ public class ModuleConfigScreen extends Screen {
     }
 
     public void renderFieldsWindow(GuiGraphics graphics, int left, int top, int mouseX, int mouseY, float partialTick) {
-        int frameWidth = 16 + this.frameBuilder.getColumnsWidth() + ConfigFrameBuilder.PADDING;
+        int frameWidth = 12 + this.frameBuilder.getColumnsWidth() + ConfigFrameBuilder.PADDING;
         int frameHeight = 16 + this.frameBuilder.getRowsHeight() + ConfigFrameBuilder.PADDING;
 
         GuiUtil.blitNineSlice(

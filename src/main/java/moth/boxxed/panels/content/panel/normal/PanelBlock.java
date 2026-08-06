@@ -40,7 +40,24 @@ public class PanelBlock extends AbstractPanelBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+//        if (FMLLoader.getDist().isClient() && level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
+//            ClientSkin clientSkin = PanelSkinsClientManager.MAP.get(pbe.skin);
+//            if (clientSkin != null && clientSkin.shape().isPresent()) {
+//                VoxelShape shape = Shapes.empty();
+//                for (SkinShape.Bounds bounds : clientSkin.shape().get()) {
+//                    shape = Shapes.or(shape, bounds.toVoxelShape(true, state.getValue(FACING)));
+//                }
+//                Dashpanels.LOGGER.debug("Side");
+//                return shape;
+//            }
+//        }
+
         return PanelShapes.PANEL_SHAPE.get(state.getValue(FACING));
+    }
+
+    @Override
+    protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return super.getVisualShape(state, level, pos, context);
     }
 
     @Override

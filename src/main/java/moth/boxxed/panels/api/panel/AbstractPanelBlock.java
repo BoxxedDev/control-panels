@@ -15,7 +15,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -104,11 +103,6 @@ public abstract class AbstractPanelBlock extends ModulesNetworkMemberBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(SHAPE);
         builder.add(FACING);
-    }
-
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return super.getRenderShape(state);
     }
 
     @Override

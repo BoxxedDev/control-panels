@@ -37,7 +37,6 @@ public class ColorPalette implements Iterable<Integer> {
             int r = Byte.toUnsignedInt(bytes[i*3+1]);
             int g = Byte.toUnsignedInt(bytes[i*3+2]);
             int b = Byte.toUnsignedInt(bytes[i*3+3]);
-            Dashpanels.LOGGER.debug("R: {} | G: {} | B: {}", r, g, b);
             ret.add(r << 16 | g << 8 | b);
         }
         return ret;

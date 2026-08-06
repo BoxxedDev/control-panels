@@ -130,7 +130,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         Module module = this.modules.remove(originalName);
         if (module != null) {
             this.tryAddModule(newName, module);
-            Dashpanels.LOGGER.debug("Changed name from {} to {} | C: {}", originalName, newName, this.level.isClientSide);
         }
         setChanged();
         blockChanged();

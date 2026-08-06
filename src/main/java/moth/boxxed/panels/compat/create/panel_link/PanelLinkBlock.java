@@ -76,13 +76,9 @@ public class PanelLinkBlock extends ModulesNetworkMemberBlock implements IWrench
             BlockPos neighborPos = pos.relative(direction);
             BlockState neighborState = level.getBlockState(neighborPos);
 
-            boolean check1 = neighborState.getBlock() instanceof ModulesNetworkMemberBlock otherMember;
-            boolean check2 = this.isConnecting(level, pos, ret, direction);
-            boolean check3 = check1 && ((ModulesNetworkMemberBlock) neighborState.getBlock()).isConnecting(level, neighborPos, neighborState, direction.getOpposite());
-            Dashpanels.LOGGER.debug("{} | {} | {} | {}", direction, check1, check2, check3);
             ret = ret.setValue(
                     directionPropertyMap.get(direction),
-                    check1 && check2 && check3
+                    neighborState.getBlock() instanceof ModulesNetworkMemberBlock otherMember && this.isConnecting(level, pos, ret, direction) && otherMember.isConnecting(level, neighborPos, neighborState, direction.getOpposite())
             );
         }
 

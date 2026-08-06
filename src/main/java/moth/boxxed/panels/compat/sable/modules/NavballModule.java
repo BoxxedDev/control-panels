@@ -113,12 +113,9 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
 
     @Override
     public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
-
         PanelPreloadedModels.NAVBALL_BASE.render(poseStack, RenderType.solid(), packedLight);
         poseStack.pushPose();
-        poseStack.translate( 0.1875f,0,  0.1875f);
+        poseStack.translate( 3.5/16f,0,  3.5/16f);
         Quaternionf quat = new Quaternionf();
         ClientSubLevelAccess clientSubLevel = SableCompanion.INSTANCE.getContainingClient(panelBlockEntity);
         if (clientSubLevel != null)
@@ -132,14 +129,15 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     @Override
     public VoxelShape getVoxelShape() {
         return Shapes.or(
-                Block.box(0.5, 0, -0.5, 5.5, 0.25, 6.5),
-                Block.box(-0.5, 0, 0.5, 6.5, 0.25, 5.5)
+                Block.box(1, 0, 0, 6, 0.25, 7),
+                Block.box(0, 0, 1, 7, 0.25, 6)
         );
     }
 
     @Override
     public PolyVoxel getShape() {
-        return new PolyVoxel(0, 0, 6, 6);
+        return new PolyVoxel(1, 0, 6, 7)
+                .add(0, 1, 7, 6);
     }
 
     @Override

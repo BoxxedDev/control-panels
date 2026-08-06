@@ -43,8 +43,10 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
 
     @Override
     public void setAnalog(int signal) {
-        if (this.togglable.get() && signal != previousSignal) {
-            this.lit = !this.lit;
+        if (this.togglable.get()) {
+            if (previousSignal == 0 && signal != previousSignal) {
+                this.lit = !this.lit;
+            }
         } else {
             this.lit = signal > 0;
         }

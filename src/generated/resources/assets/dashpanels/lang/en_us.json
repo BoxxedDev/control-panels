@@ -10,6 +10,7 @@
   "creativetab.dashpanels.tools": "§lTools",
   "dashpanels.configuration.click_for_module_hold": "Click for Module Hold",
   "dashpanels.configuration.default_skin_palette": "Default Skin Palette",
+  "dashpanels.configuration.module_tooltips_hud": "Disable Module Tooltips When Hud is Hidden",
   "dashpanels.configuration.show_module_tooltips": "Show Module Tooltips",
   "dashpanels.module_config.move_module": "Move Module",
   "dashpanels.paint_wheel.add_color": "Add Color",

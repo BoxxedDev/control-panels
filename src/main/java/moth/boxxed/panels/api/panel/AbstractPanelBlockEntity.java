@@ -141,17 +141,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return this.modules;
     }
 
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-//        tag.putInt("modules_size", this.modules.size());
-//        for (int i=0; i<this.modules.size(); i++) {
-//            Map.Entry<String, Module> moduleEntry = this.modules.entrySet().stream().toList().get(i);
-//            CompoundTag subTag = new CompoundTag();
-//            if (moduleEntry.getValue().saveData(subTag, registries)) {
-//                tag.put("module_%d".formatted(i), subTag);
-//            }
-//        }
+    public void saveExternal(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag modulesTag = new ListTag(this.modules.size());
         for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
             CompoundTag subTag = new CompoundTag();
@@ -171,10 +161,17 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        this.saveExternal(tag, registries);
+    }
+
+    @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         int size = tag.getInt("modules_size");
         this.clearModules();
+        //TODO: remove this in a future patch so it's always new loading without this extra boolean tag
         if (tag.contains("new_loading")) {
             ListTag listTag = tag.getList("modules", 10);
             for (Tag moduleTag : listTag) {

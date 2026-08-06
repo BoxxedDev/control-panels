@@ -92,6 +92,7 @@ public class PanelLangProvider extends LanguageProvider {
         add("creativetab.dashpanels.tools", "§lTools");
 
         addConfig(ClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
+        addConfig(ClientConfig.DISABLE_MODULE_TOOLTIPS_HUD, "Disable Module Tooltips When Hud is Hidden");
         addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
         addConfig(ClientConfig.DEFAULT_PALETTE, "Default Skin Palette");
 

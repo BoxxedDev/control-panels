@@ -57,25 +57,29 @@ public class ControlPanelsClientEvents {
         }
 
         boolean active = false;
+
         if (ClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
                 !ModuleHoldInteractionManager.isActive() &&
                 Minecraft.getInstance().hitResult != null &&
                 Minecraft.getInstance().hitResult.getType().equals(HitResult.Type.BLOCK)) {
-            BlockHitResult blockHitResult = (BlockHitResult) Minecraft.getInstance().hitResult;
-            Level level = Minecraft.getInstance().level;
-            Player player = Minecraft.getInstance().player;
-            if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof AbstractPanelBlockEntity pbe) {
-                Module module = pbe.getModule(pbe.getSelectedModule(player));
-                Vec3 hitPosition = pbe.getSelectedPosition(player);
-                if (!pbe.getSelectedModule(player).isEmpty() && module != null && hitPosition != null) {
-                    ModuleTooltipManager.renderSelected(
-                            new TooltipContext(
-                                    new ModuleHitResult(hitPosition.subtract(module.getPos().x/16f, 0, module.getPos().y/16f))
-                            ),
-                            event.getGuiGraphics(),
-                            module
-                    );
-                    active = true;
+
+            if (!(Minecraft.getInstance().options.hideGui && ClientConfig.DISABLE_MODULE_TOOLTIPS_HUD.get())) {
+                BlockHitResult blockHitResult = (BlockHitResult) Minecraft.getInstance().hitResult;
+                Level level = Minecraft.getInstance().level;
+                Player player = Minecraft.getInstance().player;
+                if (level.getBlockEntity(blockHitResult.getBlockPos()) instanceof AbstractPanelBlockEntity pbe) {
+                    Module module = pbe.getModule(pbe.getSelectedModule(player));
+                    Vec3 hitPosition = pbe.getSelectedPosition(player);
+                    if (!pbe.getSelectedModule(player).isEmpty() && module != null && hitPosition != null) {
+                        ModuleTooltipManager.renderSelected(
+                                new TooltipContext(
+                                        new ModuleHitResult(hitPosition.subtract(module.getPos().x/16f, 0, module.getPos().y/16f))
+                                ),
+                                event.getGuiGraphics(),
+                                module
+                        );
+                        active = true;
+                    }
                 }
             }
         }

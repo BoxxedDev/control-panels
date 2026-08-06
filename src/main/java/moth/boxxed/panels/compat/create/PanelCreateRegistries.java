@@ -2,7 +2,10 @@ package moth.boxxed.panels.compat.create;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateRegistries;
+import com.simibubi.create.api.schematic.nbt.SafeNbtWriterRegistry;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.api.wiki.WikiPage;
 import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.compat.PanelCompat;
@@ -10,12 +13,16 @@ import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
 import moth.boxxed.panels.index.*;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -70,8 +77,21 @@ public class PanelCreateRegistries implements PanelCompat {
 //        PANEL_DISPLAY_SOURCE = DISPLAY_SOURCES.register("panel", PanelDisplaySource::new);
     }
 
+    private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (PanelType panelType : PanelType.values()) {
+                SafeNbtWriterRegistry.REGISTRY.register(panelType.blockEntity, (be, tag, registries) -> {
+                    if (be instanceof AbstractPanelBlockEntity pbe) {
+                        pbe.saveExternal(tag, registries);
+                    }
+                });
+            }
+        });
+    }
+
     @Override
     public void busInit(IEventBus bus) {
+        bus.addListener(this::commonSetup);
 //        DISPLAY_SOURCES.register(bus);
     }
 

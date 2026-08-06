@@ -2,9 +2,9 @@ package moth.boxxed.panels.api.panel;
 
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleType;
+import moth.boxxed.panels.api.network.ModulesNetworkMemberBlock;
 import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.index.PanelTags;
-import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
@@ -27,7 +27,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractPanelBlock extends BaseEntityBlock {
+public abstract class AbstractPanelBlock extends ModulesNetworkMemberBlock {
     public static final EnumProperty<PanelBlock.Shape> SHAPE = EnumProperty.create("shape", PanelBlock.Shape.class);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 

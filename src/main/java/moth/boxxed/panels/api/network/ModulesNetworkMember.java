@@ -40,8 +40,6 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
         return this.network != null;
     }
 
-    public abstract boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to);
-
     public void networkUpdate(ModulesNetwork modulesNetwork) {
         modulesNetwork.compileModules();
         setChanged();

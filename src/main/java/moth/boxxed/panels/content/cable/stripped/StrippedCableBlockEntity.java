@@ -2,9 +2,7 @@ package moth.boxxed.panels.content.cable.stripped;
 
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
-import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;
-import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
@@ -41,24 +39,6 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
         super.loadAdditional(tag, registries);
         if (tag.contains("configured_module"))
             this.boundModule = tag.getString("configured_module");
-    }
-
-    @Override
-    public boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to) {
-        if (!(from.getBlock() instanceof StrippedCableBlock)) return false;
-
-        BlockPos otherPos = other.getBlockPos();
-        BlockPos pos = getBlockPos();
-        BlockPos delta = otherPos.subtract(pos);
-        Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
-        Direction fromDirection = from.getValue(StrippedCableBlock.FACING);
-
-        if (direction.getAxis().isVertical())
-            return false;
-        if (!fromDirection.getOpposite().equals(direction))
-            return false;
-        return (to.getBlock() instanceof CableBlock) ||
-                (to.getBlock() instanceof PanelBlock && fromDirection.getOpposite().equals(to.getValue(PanelBlock.FACING)));
     }
 
     @Override

@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
@@ -29,6 +28,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.List;
@@ -41,14 +41,25 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
             .withValidator(i -> {
                 if (this.parentBlockEntity == null)
                     return false;
-                if (this.getPos().x+(i*2) > 16)
+                if (this.getPos().x+generateShapeWidth(i, this.buttonGap.get()) > 16)
                     return false;
 
-                PolyVoxel polyVoxel = new PolyVoxel(0, 0, i*2,3)
-                                .move(this.getPos().x, this.getPos().y);
-                Dashpanels.LOGGER.debug(polyVoxel.toString());
                 return !this.parentBlockEntity.polyVoxelCollidesModules(
-                        new PolyVoxel(0, 0, i*2,3)
+                        this.generateShape(i, this.buttonGap.get())
+                                .move(this.getPos().x, this.getPos().y),
+                        this.name
+                );
+            });
+
+    protected ModuleConfigValue.IntValue buttonGap = new ModuleConfigValue.IntValue("gap", 0, 0, 2)
+            .withValidator(i -> {
+                if (this.parentBlockEntity == null)
+                    return false;
+                if (this.getPos().x+generateShapeWidth(this.buttonsAmount.get(), i) > 16)
+                    return false;
+
+                return !this.parentBlockEntity.polyVoxelCollidesModules(
+                        this.generateShape(this.buttonsAmount.get(), i)
                                 .move(this.getPos().x, this.getPos().y),
                         this.name
                 );
@@ -60,7 +71,7 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
 
     @Override
     public InteractionResult onUse(ModuleHitResult hitResult, Level level, Player player) {
-        int selectedSwitch = (int) Math.clamp(Math.floor(Mth.clampedMap(hitResult.location().x, 0, this.buttonsAmount.get() * 0.125f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
+        int selectedSwitch = (int) Math.clamp(Math.floor(Mth.clampedMap(hitResult.location().x, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
         if (this.selectedButton != null && this.selectedButton == selectedSwitch) {
             this.selectedButton = null;
             level.playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, 0.5f);
@@ -93,7 +104,7 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
         for (int i = 1; i < this.buttonsAmount.get()+1; i++) {
             poseStack.pushPose();
 
-            poseStack.translate(((this.buttonsAmount.get()-i)*2)/16f, 0, 0);
+            poseStack.translate((this.buttonsAmount.get()-i)*2/16f + ((this.buttonsAmount.get()-i)*this.buttonGap.get()/16f), 0, 0);
             PanelPreloadedModels.PUSH_BUTTON_BASE.render(poseStack, packedLight);
 
             float y = 0;
@@ -117,8 +128,8 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
 
             poseStack.pushPose();
-            int i = (int) Math.clamp(Math.floor(Mth.clampedMap(hitResult.location().x, 0, this.buttonsAmount.get() * 0.125f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
-            poseStack.translate(i*2/16f, 0, 0);
+            int i = (int) Math.clamp(Math.floor(Mth.clampedMap(hitResult.location().x, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
+            poseStack.translate(i*2/16f + i*this.buttonGap.get()/16f, 0, 0);
             LevelRenderer.renderShape(
                     poseStack,
                     consumer,
@@ -132,16 +143,45 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
 
     @Override
     public VoxelShape getVoxelShape() {
-        return Block.box(0, 0, 0, this.buttonsAmount.get()*2, 1, 3);
+        if (this.buttonGap.get() == 0)
+            return Block.box(0, 0, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get()), 1, 3);
+
+        VoxelShape ret = Block.box(0, 0, 0, 2, 1, 3);
+        for (int i = 1; i < this.buttonsAmount.get(); i++) {
+            int x = i*2 + this.buttonGap.get()*(i);
+            ret = Shapes.or(
+                    ret,
+                    Block.box(x, 0, 0, x+2, 1, 3)
+            );
+        }
+        return ret;
     }
 
     @Override
     public PolyVoxel getShape() {
-        return new PolyVoxel(0, 0, this.buttonsAmount.get()*2,3);
+        if (this.buttonsAmount.get()==0)
+            return new PolyVoxel(0, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get()), 3);
+
+        return generateShape(this.buttonsAmount.get(), this.buttonGap.get());
+    }
+
+    protected int generateShapeWidth(int buttonAmount, int gap) {
+        return buttonAmount*2 + gap*(buttonAmount-1);
+    }
+
+    protected PolyVoxel generateShape(int buttonAmount, int gap) {
+        PolyVoxel ret = new PolyVoxel();
+
+        for (int i = 0; i < buttonAmount; i++) {
+            int x = i*2 + gap*(i);
+            ret.add(x, 0, x+2, 3);
+        }
+        return ret;
     }
 
     @Override
     public void getValues(BiConsumer<String, AnalogResult> consumer) {
+        consumer.accept("Selected Button", () -> this.selectedButton != null ? this.selectedButton+1 : 0);
         for (int i = 1; i < this.buttonsAmount.get()+1; i++) {
             int finalI = i;
             consumer.accept("Button %d".formatted(i), () -> {
@@ -154,17 +194,29 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
 
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-
+        consumer.accept("buttonAmount", args -> this.buttonsAmount.get());
+        consumer.accept("selectedButton", args -> this.selectedButton != null ? this.selectedButton : -1);
+        consumer.accept("setSelectedButton", args -> {
+            if (args.count() != 1)
+                return false;
+            if (args.get(0) instanceof Number number) {
+                this.selectedButton = Math.clamp(number.intValue(), 0, this.buttonsAmount.get()-1);
+                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
     public void createConfig(ModuleConfig.Builder builder) {
         builder.add(buttonsAmount);
+        builder.add(buttonGap);
     }
 
     @Override
     public void addLines(TooltipContext context, List<Component> list) {
-        int i = (int) Math.clamp(Math.floor(Mth.clampedMap(context.hitResult().location().x, 0, this.buttonsAmount.get() * 0.125f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
+        int i = (int) Math.clamp(Math.floor(Mth.clampedMap(context.hitResult().location().x, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
         list.add(Component.translatable("tooltip.dashpanels.module.push_button", i));
     }
 }

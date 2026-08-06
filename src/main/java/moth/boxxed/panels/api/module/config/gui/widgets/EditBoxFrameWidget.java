@@ -65,6 +65,9 @@ public class EditBoxFrameWidget<T, R extends ModuleConfigValue<T, R>> extends Ed
 
     @Override
     public void onRemove() {
+        this.setters.forEach(
+                consumer -> consumer.accept(this.configValue, this.getValue())
+        );
         this.configValue.removeChangeListener(this.listener);
     }
 }

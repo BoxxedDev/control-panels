@@ -142,8 +142,10 @@ public class ControlPanelsClientEvents {
 
     @SubscribeEvent
     public static void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES)
-            PlacementManager.render(event.getCamera().getPosition(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+            PlacementManager.render(event.getCamera().getPosition(), event.getPoseStack());
+            PlacementManager.renderMovingModule(event.getCamera().getPosition(), event.getPoseStack());
+        }
     }
 
     @SubscribeEvent

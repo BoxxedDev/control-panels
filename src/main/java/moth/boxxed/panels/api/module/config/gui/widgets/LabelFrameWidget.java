@@ -19,7 +19,7 @@ public class LabelFrameWidget<T, R extends ModuleConfigValue<T, R>> extends Abst
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.drawString(this.font, this.getMessage(), this.getX(), this.getY()+this.font.lineHeight/2, this.color);
+        guiGraphics.drawString(this.font, this.getMessage(), this.getX(), this.getY()+2, this.color);
     }
 
     @Override

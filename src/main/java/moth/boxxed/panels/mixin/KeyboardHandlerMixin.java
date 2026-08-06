@@ -1,8 +1,10 @@
 package moth.boxxed.panels.mixin;
 
+import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,6 +24,13 @@ public class KeyboardHandlerMixin {
     )
     public void panels$keyPress(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
         if (this.minecraft.player != null && !this.minecraft.player.isSpectator()) {
+            if (PlacementManager.isMovingModule()) {
+                if (key == GLFW.GLFW_KEY_ESCAPE) {
+                    PlacementManager.stopMoving();
+                }
+                ci.cancel();
+            }
+
             if (ModuleHoldInteractionManager.beforeKeyInput(key, scanCode, action, modifiers)) {
                 ci.cancel();
             }

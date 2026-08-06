@@ -4,6 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
+import moth.boxxed.panels.api.module.config.gui.ConfigFrameBuilder;
 import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.BiConsumer;
 
@@ -40,8 +44,34 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     private float renderStickX = 0;
     private float renderStickY = 0;
 
+    public final DeadzoneValue deadzoneValue = new DeadzoneValue(
+            "deadzone",
+            new Deadzone(0, 0, 0, 0)
+    );
+    public final ModuleConfigValue.IntValue output = new ModuleConfigValue.IntValue(
+            "output",
+            15,
+            1, 15
+    );
+    public final ModuleConfigValue.BooleanValue inverted = new ModuleConfigValue.BooleanValue(
+            "inverted",
+            false
+    );
+    public final ModuleConfigValue.BooleanValue triggerInverted = new ModuleConfigValue.BooleanValue(
+            "trigger_inverted",
+            false
+    );
+
     public JoystickModule(int x, int y) {
         super(PanelModules.JOYSTICK.get(), x, y);
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(deadzoneValue);
+        builder.add(output);
+        builder.add(inverted);
+        builder.add(triggerInverted);
     }
 
     @Override
@@ -91,8 +121,14 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
         this.lastRenderStickX = this.renderStickX;
         this.lastRenderStickY = this.renderStickY;
         this.lastRenderTriggered = this.renderTriggered;
-        this.renderStickX = org.joml.Math.lerp(this.renderStickX, this.stickX, 0.5f);
-        this.renderStickY = org.joml.Math.lerp(this.renderStickY, this.stickY, 0.5f);
+
+        Deadzone deadzone = this.deadzoneValue.get();
+        boolean insideRect = this.stickX < -deadzone.left || this.stickX > deadzone.right || this.stickY < -deadzone.bottom || this.stickY > deadzone.top;
+        float targetX = insideRect ? this.stickX : 0;
+        float targetY = insideRect ? this.stickY : 0;
+
+        this.renderStickX = org.joml.Math.lerp(this.renderStickX, targetX, 0.5f);
+        this.renderStickY = org.joml.Math.lerp(this.renderStickY, targetY, 0.5f);
         this.renderTriggered = org.joml.Math.lerp(this.renderTriggered, this.triggered?0:1, 0.5f);
     }
 
@@ -134,23 +170,33 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
 
     @Override
     public void getValues(BiConsumer<String, AnalogResult> consumer) {
-        int analogRight = (int) Mth.map(Math.max(stickX, 0), 0, 1, 0, 15);
-        int analogLeft = (int) Mth.map(-Math.min(stickX, 0), 0, 1, 0, 15);
-        int analogTop = (int) Mth.map(Math.max(stickY, 0), 0, 1, 0, 15);
-        int analogBottom = (int) Mth.map(-Math.min(stickY, 0), 0, 1, 0, 15);
-        int analogTrigger = this.triggered ? 15 : 0;
+        Deadzone deadzone = this.deadzoneValue.get();
+        boolean insideRect = this.stickX < -deadzone.left || this.stickX > deadzone.right || this.stickY < -deadzone.bottom || this.stickY > deadzone.top;
+        float targetX = insideRect ? this.stickX : 0;
+        float targetY = insideRect ? this.stickY : 0;
 
-        consumer.accept("right", () -> analogRight);
-        consumer.accept("left", () -> analogLeft);
-        consumer.accept("top", () -> analogTop);
-        consumer.accept("bottom", () -> analogBottom);
+        int analogRight = (int) Mth.map(Math.max(targetX, 0), 0, 1, 0, this.output.get());
+        int analogLeft = (int) Mth.map(-Math.min(targetX, 0), 0, 1, 0, this.output.get());
+        int analogTop = (int) Mth.map(Math.max(targetY, 0), 0, 1, 0, this.output.get());
+        int analogBottom = (int) Mth.map(-Math.min(targetY, 0), 0, 1, 0, this.output.get());
+        int analogTrigger = this.triggered != this.triggerInverted.get() ? this.output.get() : 0;
+
+        consumer.accept("right", () -> this.inverted.get() ? this.output.get() - analogRight : analogRight);
+        consumer.accept("left", () -> this.inverted.get() ? this.output.get() - analogLeft : analogLeft);
+        consumer.accept("top", () -> this.inverted.get() ? this.output.get() - analogTop : analogTop);
+        consumer.accept("bottom", () -> this.inverted.get() ? this.output.get() - analogBottom : analogBottom);
         consumer.accept("trigger", () -> analogTrigger);
     }
 
     @Override
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getStickX", args -> this.stickX);
-        consumer.accept("getStickY", args -> this.stickY);
+        consumer.accept("stickX", args -> this.stickX);
+        consumer.accept("stickY", args -> this.stickY);
+        consumer.accept("triggered", args -> this.triggered);
+        consumer.accept("deadzone", args -> new Float[]{
+                deadzoneValue.get().left, deadzoneValue.get().right,
+                    deadzoneValue.get().top, deadzoneValue.get().bottom
+        });
     }
 
     @Override
@@ -159,4 +205,120 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
         this.stickY = tag.getFloat("stick_y");
         this.triggered = tag.getBoolean("triggered");
     }
+
+    public static class DeadzoneValue extends ModuleConfigValue<Deadzone, DeadzoneValue> {
+        public DeadzoneValue(String name, JoystickModule.@NonNull Deadzone defaultValue) {
+            super(name, defaultValue);
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putFloat("left", this.value.left);
+            tag.putFloat("right", this.value.right);
+            tag.putFloat("top", this.value.top);
+            tag.putFloat("bottom", this.value.bottom);
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            float left = tag.getFloat("left");
+            float right = tag.getFloat("right");
+            float top = tag.getFloat("top");
+            float bottom = tag.getFloat("bottom");
+            this.value = new Deadzone(left, right, top, bottom);
+        }
+
+        @Override
+        public void set(Deadzone value) {
+            super.set(new Deadzone(
+                    Math.clamp(value.left, 0, 1),
+                    Math.clamp(value.right, 0, 1),
+                    Math.clamp(value.top, 0, 1),
+                    Math.clamp(value.bottom, 0, 1)
+            ));
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addEmpty();
+            builder.addFloatBox(
+                    this,
+                    deadzone -> String.valueOf(deadzone.top),
+                    (value, string) -> {
+                        try {
+                            Deadzone originalDeadzone = value.get();
+                            float top = Float.parseFloat(string);
+                            value.set(
+                                    new Deadzone(originalDeadzone.left,
+                                            originalDeadzone.right,
+                                            top,
+                                            originalDeadzone.bottom)
+                            );
+                        } catch (NumberFormatException e) {
+
+                        }
+                    }, 24
+            );
+            builder.nextRow();
+            builder.addFloatBox(
+                    this,
+                    deadzone -> String.valueOf(deadzone.left),
+                    (value, string) -> {
+                        try {
+                            Deadzone originalDeadzone = value.get();
+                            float left = Float.parseFloat(string);
+                            value.set(
+                                    new Deadzone(left,
+                                            originalDeadzone.right,
+                                            originalDeadzone.top,
+                                            originalDeadzone.bottom)
+                            );
+                        } catch (NumberFormatException e) {
+
+                        }
+                    }, 24
+            );
+            builder.addEmpty();
+            builder.addFloatBox(
+                    this,
+                    deadzone -> String.valueOf(deadzone.right),
+                    (value, string) -> {
+                        try {
+                            Deadzone originalDeadzone = value.get();
+                            float right = Float.parseFloat(string);
+                            value.set(
+                                    new Deadzone(originalDeadzone.left,
+                                            right,
+                                            originalDeadzone.top,
+                                            originalDeadzone.bottom)
+                            );
+                        } catch (NumberFormatException e) {
+
+                        }
+                    }, 24
+            );
+            builder.nextRow();
+            builder.addEmpty();
+            builder.addFloatBox(
+                    this,
+                    deadzone -> String.valueOf(deadzone.bottom),
+                    (value, string) -> {
+                        try {
+                            Deadzone originalDeadzone = value.get();
+                            float bottom = Float.parseFloat(string);
+                            value.set(
+                                    new Deadzone(originalDeadzone.left,
+                                            originalDeadzone.right,
+                                            originalDeadzone.top,
+                                            bottom)
+                            );
+                        } catch (NumberFormatException e) {
+
+                        }
+                    }, 24
+            );
+        }
+    }
+
+    public record Deadzone(float left, float right, float top, float bottom) { }
 }

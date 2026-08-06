@@ -103,11 +103,18 @@ public class PanelLangProvider extends LanguageProvider {
 
         addModuleConfig("name", "Name");
         addModuleConfig("output", "Output");
+        addModuleConfig("output_max", "Max Output");
+        addModuleConfig("output_min", "Min Output");
         addModuleConfig("inverted", "Inverted");
         addModuleConfig("buttons", "Buttons");
+        addModuleConfig("deadzone", "Deadzone");
+        addModuleConfig("trigger_inverted", "Trigger Inverted");
+        addModuleConfig("gap", "Gap");
 
         add("dashpanels.paint_wheel.apply", "Apply");
         add("dashpanels.paint_wheel.apply_all", "Apply To All");
+
+        add("dashpanels.module_config.move_module", "Move Module");
 
         add("dashpanels.wiki", "Wiki");
         add("dashpanels.wiki.title", "Wiki");

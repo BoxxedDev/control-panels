@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
+import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.network.packet.SelectedModulePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -36,6 +37,8 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
         if (hit) {
             for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {
                 Module module = entry.getValue();
+                if (PlacementManager.isMovingModule(module))
+                    continue;
                 Vec3 eyePos = SableCompanion.INSTANCE.getEyePositionInterpolated(player, partialTick);
                 Pair<Double, Vec3> result = Module.clipModule(
                         panelBlockEntity,
@@ -65,8 +68,11 @@ public abstract class AbstractPanelRenderer<T extends AbstractPanelBlockEntity> 
 
         BiConsumer<Module, PoseStack> individualModuleTransform = panelBlockEntity.getIndividualModuleTransform();
         for (Map.Entry<String, Module> entry : panelBlockEntity.getModules()) {
-            poseStack.pushPose();
             Module module = entry.getValue();
+            if (PlacementManager.isMovingModule(module))
+                continue;
+
+            poseStack.pushPose();
             individualModuleTransform.accept(module, poseStack);
             poseStack.pushPose();
 

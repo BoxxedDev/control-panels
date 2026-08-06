@@ -321,6 +321,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         PolyVoxel moduleVoxel = module.getShape().move(module.getPos().x, module.getPos().y);
         for (Map.Entry<String, Module> entry : this.modules) {
             Module other = entry.getValue();
+            if (other == module)
+                continue;
             PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y);
             if (otherVoxel.collides(moduleVoxel)) {
                 return true;
@@ -337,7 +339,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             Module other = entry.getValue();
             PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y);
             if (otherVoxel.collides(polyVoxel)) {
-                Dashpanels.LOGGER.debug("{} | {}", other.getName(), otherVoxel);
                 return true;
             }
         }
@@ -385,6 +386,13 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean openConfigureScreen(Level level, BlockPos pos, Player player) {
+        if (level.isClientSide()) {
+            if (PlacementManager.isMovingModule()) {
+                PlacementManager.stopMoving();
+                return true;
+            }
+        }
+
         String moduleName = this.getSelectedModule(player);
         if (moduleName != null && level.isClientSide()) {
             Module module = this.getModule(moduleName);

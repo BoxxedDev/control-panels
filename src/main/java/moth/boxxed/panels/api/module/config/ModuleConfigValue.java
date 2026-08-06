@@ -167,6 +167,88 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
             },
                     32
             );
+            builder.nextRow();
+            builder.addLabel(Component.literal("%d - %d".formatted(this.min, this.max)));
+        }
+    }
+
+    public static class FloatValue extends ModuleConfigValue<Float, FloatValue> {
+        protected final float min;
+        protected final float max;
+
+        public FloatValue(String name, float defaultValue, float min, float max) {
+            super(name, defaultValue);
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putFloat("value", this.value);
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (!tag.contains("value"))
+                return;
+            this.value = Math.clamp(tag.getFloat("value"), this.min, this.max);
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addIntBox(
+                    this,
+                    String::valueOf,
+                    (value, string) -> {
+                        try {
+                            float num = Float.parseFloat(string);
+                            value.set(Math.clamp(num, this.min, this.max));
+                        } catch (NumberFormatException ignored) {}
+                    },
+                    32
+            );
+            builder.nextRow();
+            builder.addLabel(Component.literal("%.2f - %.2f".formatted(this.min, this.max)));
+        }
+    }
+
+    public static class DoubleValue extends ModuleConfigValue<Double, DoubleValue> {
+        protected final double min;
+        protected final double max;
+
+        public DoubleValue(String name, double defaultValue, double min, double max) {
+            super(name, defaultValue);
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putDouble("value", this.value);
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            if (!tag.contains("value"))
+                return;
+            this.value = Math.clamp(tag.getDouble("value"), this.min, this.max);
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addIntBox(
+                    this,
+                    String::valueOf,
+                    (value, string) -> {
+                        try {
+                            double num = Double.parseDouble(string);
+                            value.set(Math.clamp(num, this.min, this.max));
+                        } catch (NumberFormatException ignored) {}
+                    },
+                    32
+            );
+            builder.nextRow();
+            builder.addLabel(Component.literal("%.2f - %.2f".formatted(this.min, this.max)));
         }
     }
 

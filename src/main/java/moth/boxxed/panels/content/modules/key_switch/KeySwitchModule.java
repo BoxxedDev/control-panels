@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
@@ -54,8 +55,15 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     protected float oldRenderTurn = 0;
     protected float renderTurn = 0;
 
+
+
     public KeySwitchModule(int x, int y) {
         super(PanelModules.KEY_SWITCH.get(), x, y);
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        super.createConfig(builder);
     }
 
     @Override
@@ -273,5 +281,6 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
         consumer.accept("keyInserted", args -> !this.currentKeyStack.isEmpty());
         consumer.accept("keyTurned", args -> this.turned);
+        consumer.accept("keyId", args -> this.keyId.toString());
     }
 }

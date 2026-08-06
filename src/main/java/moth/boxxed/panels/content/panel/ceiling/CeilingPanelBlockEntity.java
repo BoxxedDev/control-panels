@@ -3,12 +3,8 @@ package moth.boxxed.panels.content.panel.ceiling;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.network.ModulesNetworkMember;
-import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
-import moth.boxxed.panels.content.cable.CableBlock;
-import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.content.panel.wall.WallPanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -67,24 +63,5 @@ public class CeilingPanelBlockEntity extends AbstractPanelBlockEntity {
     @Override
     public Vector2i getContentArea() {
         return new Vector2i(16, 17);
-    }
-
-    @Override
-    public boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to) {
-        if (!(from.getBlock() instanceof CeilingPanelBlock)) return false;
-
-        BlockPos otherPos = other.getBlockPos();
-        BlockPos pos = getBlockPos();
-        BlockPos delta = otherPos.subtract(pos);
-        Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
-        Direction fromDirection = from.getValue(CeilingPanelBlock.FACING);
-
-        if (direction.equals(Direction.DOWN) && (to.getBlock() instanceof WallPanelBlock || to.getBlock() instanceof PanelBlock) && to.getValue(AbstractPanelBlock.FACING) == fromDirection)
-            return true;
-        if ((fromDirection.getOpposite()==direction || direction==Direction.UP) && to.getBlock() instanceof CableBlock)
-            return true;
-        return (fromDirection.getClockWise()==direction || fromDirection.getCounterClockWise()==direction) &&
-                to.getBlock() instanceof CeilingPanelBlock &&
-                from.getValue(CeilingPanelBlock.FACING) == to.getValue(CeilingPanelBlock.FACING);
     }
 }

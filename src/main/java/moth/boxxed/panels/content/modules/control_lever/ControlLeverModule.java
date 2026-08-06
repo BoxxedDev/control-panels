@@ -38,12 +38,18 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     private float indicatorRender = 0;
     private int signal = 0;
 
-    public final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15)
+    public final ModuleConfigValue.IntValue redstoneOutputMax = new ModuleConfigValue.IntValue("output_max", 15, 0, 15)
             .addChangeListener((oldV, newV) -> {
                 if (this.signal > newV) {
                     this.signal = newV;
                 }
-            });
+            }).withValidator(i -> i>this.redstoneOutputMin.get());
+    public final ModuleConfigValue.IntValue redstoneOutputMin = new ModuleConfigValue.IntValue("output_min", 0, 0, 15)
+            .addChangeListener((oldV, newV) -> {
+                if (this.signal < newV) {
+                    this.signal = newV;
+                }
+            }).withValidator(i -> i<this.redstoneOutputMax.get());
 
     public ControlLeverModule(int x, int y) {
         super(PanelModules.CONTROL_LEVER.get(), x, y);
@@ -130,7 +136,7 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
             if (args.count() != 1)
                 return false;
             if (args.get(0) instanceof Number number) {
-                this.signal = Math.clamp(0, 15, number.intValue());
+                this.signal = Math.clamp(this.redstoneOutputMin.get(), this.redstoneOutputMax.get(), number.intValue());
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }
@@ -140,7 +146,8 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
 
     @Override
     public void createConfig(ModuleConfig.Builder builder) {
-        builder.add(redstoneOutput);
+        builder.add(redstoneOutputMin);
+        builder.add(redstoneOutputMax);
     }
 
     @Override

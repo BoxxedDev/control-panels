@@ -7,9 +7,9 @@ import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.io.IMultiOutput;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.network.ModulesNetwork;
+import moth.boxxed.panels.api.network.ModulesNetworkMemberBlock;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
-import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +37,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StrippedCableBlock extends BaseEntityBlock {
+public class StrippedCableBlock extends ModulesNetworkMemberBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public static final VoxelShape NORTH_SHAPE = Shapes.or(
@@ -67,6 +67,15 @@ public class StrippedCableBlock extends BaseEntityBlock {
 
     public StrippedCableBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean isConnecting(LevelReader level, BlockPos pos, BlockState state, Direction face) {
+        Direction fromDirection = state.getValue(StrippedCableBlock.FACING);
+
+        if (face.getAxis().isVertical())
+            return false;
+        return fromDirection.getOpposite() == face;
     }
 
     @Override

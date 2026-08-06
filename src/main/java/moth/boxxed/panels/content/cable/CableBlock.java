@@ -1,10 +1,7 @@
 package moth.boxxed.panels.content.cable;
 
-import moth.boxxed.panels.api.panel.AbstractPanelBlock;
-import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
-import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
+import moth.boxxed.panels.api.network.ModulesNetworkMemberBlock;
 import moth.boxxed.panels.index.PanelItems;
-import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +14,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,13 +26,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.fml.ModList;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CableBlock extends BaseEntityBlock {
+public class CableBlock extends ModulesNetworkMemberBlock {
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
@@ -69,6 +66,11 @@ public class CableBlock extends BaseEntityBlock {
     }
 
     @Override
+    public boolean isConnecting(LevelReader level, BlockPos pos, BlockState state, Direction face) {
+        return true;
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(NORTH);
         builder.add(EAST);
@@ -92,23 +94,18 @@ public class CableBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState ret = this.defaultBlockState();
+        BlockPos pos = context.getClickedPos();
+        Level level = context.getLevel();
 
         for (Direction direction : Direction.values()) {
             if (direction==Direction.DOWN) continue;
 
-            BlockPos neighborPos = context.getClickedPos().relative(direction);
-            BlockState neighborState = context.getLevel().getBlockState(neighborPos);
-
-            boolean check1 = neighborState.getBlock() instanceof CableBlock;
-            boolean check2 = neighborState.getBlock() instanceof AbstractPanelBlock && (neighborState.getValue(AbstractPanelBlock.FACING)==direction || direction==Direction.UP);
-            boolean check3 = neighborState.getBlock() instanceof StrippedCableBlock && neighborState.getValue(StrippedCableBlock.FACING)==direction;
-            boolean check4 = false;
-            if (ModList.get().isLoaded("create"))
-                check4 = neighborState.getBlock() instanceof PanelLinkBlock && !direction.getAxis().isVertical();
+            BlockPos neighborPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(neighborPos);
 
             ret = ret.setValue(
                     directionPropertyMap.get(direction),
-                    check1 || check2 || check3 || check4
+                    neighborState.getBlock() instanceof ModulesNetworkMemberBlock otherMember && this.isConnecting(level, pos, ret, direction) && otherMember.isConnecting(level, neighborPos, neighborState, direction.getOpposite())
             );
         }
 
@@ -117,20 +114,12 @@ public class CableBlock extends BaseEntityBlock {
 
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos p3) {
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         if (direction==Direction.DOWN) return state;
-
-        boolean check1 = neighborState.hasBlockEntity() && state.hasBlockEntity();
-        boolean check2 = neighborState.getBlock() instanceof CableBlock;
-        boolean check3 = neighborState.getBlock() instanceof AbstractPanelBlock && (neighborState.getValue(AbstractPanelBlock.FACING)==direction || direction==Direction.UP);
-        boolean check4 = neighborState.getBlock() instanceof StrippedCableBlock && neighborState.getValue(StrippedCableBlock.FACING)==direction;
-        boolean check5 = false;
-        if (ModList.get().isLoaded("create"))
-            check5 = neighborState.getBlock() instanceof PanelLinkBlock && !direction.getAxis().isVertical();
 
         return state.setValue(
                 directionPropertyMap.get(direction),
-                check1 && (check2 || check3 || check4 || check5)
+                neighborState.getBlock() instanceof ModulesNetworkMemberBlock otherMember && this.isConnecting(level, pos, state, direction) && otherMember.isConnecting(level, neighborPos, neighborState, direction.getOpposite())
         );
     }
 

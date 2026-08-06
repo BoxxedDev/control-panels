@@ -148,6 +148,26 @@ public class ConfigFrameBuilder {
         return this.addEditBox(value, onSet, null, setter, width);
     }
 
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addShortBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
+        return this.addEditBox(
+                value,
+                t -> {
+                    return String.valueOf(onSet.apply(t));
+                },
+                s -> {
+                    if (s.isEmpty() || s.equals("-"))
+                        return true;
+                    try {
+                        Short.parseShort(s);
+                        return true;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                },
+                setter,
+                width);
+    }
+
     public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addIntBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
         return this.addEditBox(
                 value,
@@ -166,6 +186,24 @@ public class ConfigFrameBuilder {
                 width);
     }
 
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addLongBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
+        return this.addEditBox(
+                value,
+                onSet,
+                s -> {
+                    if (s.isEmpty() || s.equals("-"))
+                        return true;
+                    try {
+                        Long.parseLong(s);
+                        return true;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                },
+                setter,
+                width);
+    }
+
     public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addDoubleBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
         return this.addEditBox(
                 value,
@@ -175,6 +213,24 @@ public class ConfigFrameBuilder {
                         return true;
                     try {
                         Double.parseDouble(s);
+                        return true;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                },
+                setter,
+                width);
+    }
+
+    public <T, R extends ModuleConfigValue<T, R>> ConfigFrameBuilder addFloatBox(R value, Function<T, String> onSet, BiConsumer<R, String> setter, int width) {
+        return this.addEditBox(
+                value,
+                onSet,
+                s -> {
+                    if (s.isEmpty() || s.equals("-"))
+                        return true;
+                    try {
+                        Float.parseFloat(s);
                         return true;
                     } catch (NumberFormatException e) {
                         return false;

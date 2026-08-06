@@ -3,6 +3,7 @@ package moth.boxxed.panels.api.module.config.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.config.gui.widgets.ConfigFrameWidget;
@@ -36,6 +37,7 @@ public class ModuleConfigScreen extends Screen {
     private final int maxScroll;
 
     private final List<ConfigButton<?, ?>> configButtons = new ArrayList<>();
+    private final MoveModuleButton moveModuleButton;
 
     private ModuleConfigValue<?, ?> selectedValue;
     private ConfigFrameBuilder frameBuilder;
@@ -47,6 +49,9 @@ public class ModuleConfigScreen extends Screen {
         super(Component.literal(module.getName()));
         this.pos = pos;
         this.moduleToConfigure = module;
+
+        this.moveModuleButton = new MoveModuleButton(Component.translatable("dashpanels.module_config.move_module"));
+        this.addWidget(this.moveModuleButton);
 
         int maxScroll = 0;
         ModuleConfig config = module.getConfig();
@@ -84,6 +89,10 @@ public class ModuleConfigScreen extends Screen {
             }
         }
 
+        this.moveModuleButton.setX(left+2);
+        this.moveModuleButton.setY(top+146);
+        this.moveModuleButton.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+
         renderTitle(guiGraphics, left, top);
 //        GuiUtil.blitNineSlice(guiGraphics, TOP_BOTTOM_BAR,
 //                left+100, top, 100, 100,
@@ -94,7 +103,7 @@ public class ModuleConfigScreen extends Screen {
     }
 
     public void renderTitle(GuiGraphics guiGraphics, int left, int top) {
-        guiGraphics.drawScrollingString(this.font, Component.literal(this.moduleToConfigure.getName()), left+6, left+90, top+3, 0xEFFFFF);
+        guiGraphics.drawScrollingString(this.font, Component.literal(this.moduleToConfigure.getName()), left+6, left+90, top+4, 0xEFFFFF);
     }
 
     public void renderConfigValues(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY, float partialTick) {
@@ -203,6 +212,11 @@ public class ModuleConfigScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.moveModuleButton.mouseClicked(mouseX, mouseY, button)) {
+            this.setFocused(this.moveModuleButton);
+            return true;
+        }
+
         if (!(mouseY >= this.top+16 && mouseY <= this.top+144)) {
             return true;
         }
@@ -223,6 +237,13 @@ public class ModuleConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        if (this.frameBuilder != null) {
+            for (ConfigFrameWidget<?, ?> widget : this.frameBuilder.getWidgets().values()) {
+                this.removeWidget(widget);
+                widget.onRemove();
+            }
+        }
+
         if (Minecraft.getInstance().level == null) {
             super.onClose();
             return;
@@ -240,6 +261,8 @@ public class ModuleConfigScreen extends Screen {
                 new ConfigureModulePacket(
                         this.pos,
                         this.moduleToConfigure.getName(),
+                        this.moduleToConfigure.getPos().x,
+                        this.moduleToConfigure.getPos().y,
                         mapToSend
                 )
         );
@@ -341,6 +364,35 @@ public class ModuleConfigScreen extends Screen {
 
                 super.onClick(mouseX, mouseY, button);
             }
+        }
+    }
+
+    public class MoveModuleButton extends AbstractWidget {
+        public MoveModuleButton(Component message) {
+            super(0, 0, 66, 12, message);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+            guiGraphics.blit(CONFIG_SHEET, this.getX(), this.getY(), 112,48, this.width, this.height);
+            guiGraphics.drawScrollingString(ModuleConfigScreen.this.font, this.getMessage(), this.getX()+3, this.getX()+this.width-3, this.getY()+2, 0xEFFFFF);
+            if (this.isMouseOver(mouseX, mouseY)) {
+                RenderSystem.enableBlend();
+                guiGraphics.setColor(1, 1, 1, 0.25f);
+                guiGraphics.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 1, 0xFFFFFFFF);
+                guiGraphics.setColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+            }
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
+            PlacementManager.startMovingModule(ModuleConfigScreen.this, ModuleConfigScreen.this.moduleToConfigure);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
         }
     }
 }

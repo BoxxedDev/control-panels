@@ -8,6 +8,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -17,6 +18,24 @@ import org.jetbrains.annotations.Nullable;
 public class PanelBlock extends AbstractPanelBlock {
     public PanelBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean isConnecting(LevelReader level, BlockPos pos, BlockState state, Direction face) {
+        BlockPos otherPos = pos.relative(face);
+        BlockState to = level.getBlockState(otherPos);
+        Direction fromDirection = state.getValue(PanelBlock.FACING);
+
+        if (to.getBlock() instanceof AbstractPanelBlock) {
+            boolean facingCheck = to.getValue(AbstractPanelBlock.FACING) == fromDirection;
+            boolean sideCheck = (fromDirection.getClockWise() == face || fromDirection.getCounterClockWise() == face) &&
+                    to.getBlock() instanceof PanelBlock;
+            boolean aboveCheck = face == Direction.UP && (!(to.getBlock() instanceof PanelBlock));
+
+            return facingCheck && (sideCheck || aboveCheck);
+        }
+
+        return face == fromDirection.getOpposite() || face == Direction.DOWN;
     }
 
     @Override

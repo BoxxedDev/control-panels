@@ -5,9 +5,7 @@ import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
-import moth.boxxed.panels.content.cable.CableBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -27,18 +25,6 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
 
     public PanelLinkBlockEntity(BlockPos pos, BlockState state) {
         super(PanelCreateRegistries.PANEL_LINK_BE.get(), pos, state);
-    }
-
-    @Override
-    public boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to) {
-        if (!(from.getBlock() instanceof PanelLinkBlock)) return false;
-
-        BlockPos otherPos = other.getBlockPos();
-        BlockPos pos = getBlockPos();
-        BlockPos delta = otherPos.subtract(pos);
-        Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
-
-        return to.getBlock() instanceof CableBlock && (!direction.getAxis().isVertical());
     }
 
     @Override

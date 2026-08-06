@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
+import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.network.packet.PlaceModulePacket;
@@ -33,7 +34,166 @@ import org.joml.*;
 import java.lang.Math;
 
 public class PlacementManager {
-    public static void render(Vec3 cameraPos, PoseStack poseStack, float partialTick) {
+    private static Module movingModule = null;
+    private static Vector2i movingOldPos = null;
+    private static ModuleConfigScreen oldScreen = null;
+
+    public static void startMovingModule(ModuleConfigScreen screen, Module module) {
+        movingModule = module;
+        movingOldPos = module.getPos();
+        oldScreen = screen;
+        Minecraft.getInstance().setScreen(null);
+    }
+
+    public static boolean isMovingModule(Module module) {
+        return movingModule == module;
+    }
+
+    public static boolean isMovingModule() {
+        return movingModule != null;
+    }
+
+    public static void stopMoving() {
+        if (!tryPlaceMovingModule()) {
+            movingModule.setPos(movingOldPos);
+        }
+
+        movingModule = null;
+        movingOldPos = null;
+        Minecraft.getInstance().setScreen(oldScreen);
+        oldScreen = null;
+    }
+
+    public static void renderMovingModule(Vec3 cameraPos, PoseStack poseStack) {
+        if (!isMovingModule())
+            return;
+
+        HitResult hitResult = Minecraft.getInstance().hitResult;
+        Level level = Minecraft.getInstance().level;
+        Player player = Minecraft.getInstance().player;
+        if (level == null)
+            return;
+        if (player == null)
+            return;
+
+        if (!(hitResult instanceof BlockHitResult blockHitResult))
+            return;
+
+        BlockPos pos = blockHitResult.getBlockPos();
+        BlockState blockState = level.getBlockState(pos);
+        if (!(blockState.getBlock() instanceof AbstractPanelBlock &&
+                level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe)) {
+            return;
+        }
+
+        Direction blockDirection = blockState.getValue(AbstractPanelBlock.FACING);
+        Quaternionf blockRotation = Axis.YP.rotationDegrees(blockDirection.toYRot());
+        Vec3 localSpace = blockHitResult.getLocation().subtract(pos.getBottomCenter());
+        localSpace = new Vec3(blockRotation.transform(localSpace.toVector3f()));
+
+        if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
+            Vector2i position = pbe.getPosForModule(localSpace);
+            position.sub(
+                    (int) (movingModule.getSize().x<=1 ? movingModule.getSize().x : movingModule.getSize().x/2),
+                    (int) (movingModule.getSize().y<=1 ? movingModule.getSize().y : movingModule.getSize().y/2)
+            );
+
+            Vector2i contentAreaSize = pbe.getContentArea();
+
+            Vector2d doublePos = RectUtil.clampAABBPosToAABB(
+                    new FlatAABB(0, 0, contentAreaSize.x(), contentAreaSize.y()),
+                    movingModule.getShape().move(position.x, position.y).getBounds()
+            );
+
+            position = new Vector2i(
+                    (int) Math.floor(doublePos.x),
+                    (int) Math.floor(doublePos.y)
+            );
+            movingModule.setPos(position);
+
+            poseStack.pushPose();
+
+            ClientSubLevelAccess subLevel = SableCompanion.INSTANCE.getContainingClient(pos);
+            transformPoseToPlot(subLevel, poseStack, cameraPos);
+            Vec3 translation = sublevelTranslation(Vec3.atLowerCornerOf(pos));
+            poseStack.translate(pos.getX()-cameraPos.x()-translation.x, pos.getY()-cameraPos.y()-translation.y, pos.getZ()-cameraPos.z()-translation.z);
+
+            poseStack.pushPose();
+            poseStack.rotateAround(Axis.YP.rotationDegrees(blockDirection.toYRot() + (blockDirection.getAxis()== Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
+            poseStack.pushPose();
+            pbe.renderTransform(poseStack);
+            poseStack.pushPose();
+            pbe.getIndividualModuleTransform().accept(movingModule, poseStack);
+
+            double d0 = Util.getMillis()/300f;
+            float pulse = (float) Mth.map(Math.sin(d0), -1, 1, 0.5, 1);
+
+            MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
+
+            boolean hitsOtherModule = pbe.collidesWithOther(movingModule);
+            float otherColors = hitsOtherModule ? 0 : 1;
+
+            LevelRenderer.renderShape(poseStack, consumer, movingModule.getVoxelShape(), 0, 0, 0, 1, otherColors, otherColors, pulse);
+
+            poseStack.popPose();
+            poseStack.popPose();
+            poseStack.popPose();
+            poseStack.popPose();
+        }
+    }
+
+    public static boolean tryPlaceMovingModule() {
+        HitResult hitResult = Minecraft.getInstance().hitResult;
+        Level level = Minecraft.getInstance().level;
+        Player player = Minecraft.getInstance().player;
+        if (level == null)
+            return false;
+        if (player == null)
+            return false;
+
+        if (!(hitResult instanceof BlockHitResult blockHitResult))
+            return false;
+
+        BlockPos pos = blockHitResult.getBlockPos();
+        BlockState blockState = level.getBlockState(pos);
+        if (!(blockState.getBlock() instanceof AbstractPanelBlock &&
+                level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe)) {
+            return false;
+        }
+
+        Direction blockDirection = blockState.getValue(AbstractPanelBlock.FACING);
+        Quaternionf blockRotation = Axis.YP.rotationDegrees(blockDirection.toYRot());
+        Vec3 localSpace = blockHitResult.getLocation().subtract(pos.getBottomCenter());
+        localSpace = new Vec3(blockRotation.transform(localSpace.toVector3f()));
+
+        if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
+            Vector2i position = pbe.getPosForModule(localSpace);
+            position.sub(
+                    (int) (movingModule.getSize().x<=1 ? movingModule.getSize().x : movingModule.getSize().x/2),
+                    (int) (movingModule.getSize().y<=1 ? movingModule.getSize().y : movingModule.getSize().y/2)
+            );
+
+            Vector2i contentAreaSize = pbe.getContentArea();
+
+            Vector2d doublePos = RectUtil.clampAABBPosToAABB(
+                    new FlatAABB(0, 0, contentAreaSize.x(), contentAreaSize.y()),
+                    movingModule.getShape().move(position.x, position.y).getBounds()
+            );
+
+            position = new Vector2i(
+                    (int) Math.floor(doublePos.x),
+                    (int) Math.floor(doublePos.y)
+            );
+            movingModule.setPos(position);
+
+            return !pbe.collidesWithOther(movingModule);
+        }
+
+        return false;
+    }
+
+    public static void render(Vec3 cameraPos, PoseStack poseStack) {
         HitResult hitResult = Minecraft.getInstance().hitResult;
         Level level = Minecraft.getInstance().level;
         Player player = Minecraft.getInstance().player;

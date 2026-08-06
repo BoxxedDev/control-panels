@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.panel.ceiling;
 
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
+import moth.boxxed.panels.content.panel.normal.PanelBlock;
 import moth.boxxed.panels.index.PanelShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -17,6 +19,24 @@ import org.jetbrains.annotations.Nullable;
 public class CeilingPanelBlock extends AbstractPanelBlock {
     public CeilingPanelBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean isConnecting(LevelReader level, BlockPos pos, BlockState state, Direction face) {
+        BlockPos otherPos = pos.relative(face);
+        BlockState to = level.getBlockState(otherPos);
+        Direction fromDirection = state.getValue(PanelBlock.FACING);
+
+        if (to.getBlock() instanceof AbstractPanelBlock) {
+            boolean facingCheck = to.getValue(AbstractPanelBlock.FACING) == fromDirection;
+            boolean sideCheck = (fromDirection.getClockWise() == face || fromDirection.getCounterClockWise() == face) &&
+                    to.getBlock() instanceof CeilingPanelBlock;
+            boolean belowCheck = face == Direction.DOWN && (!(to.getBlock() instanceof CeilingPanelBlock));
+
+            return facingCheck && (sideCheck || belowCheck);
+        }
+
+        return face == fromDirection.getOpposite() || face == Direction.UP;
     }
 
     @Override

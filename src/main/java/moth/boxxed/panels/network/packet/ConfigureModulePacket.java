@@ -17,11 +17,13 @@ import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public record ConfigureModulePacket(BlockPos pos, String moduleName, Map<String, CompoundTag> configValues) implements CustomPacketPayload {
+public record ConfigureModulePacket(BlockPos pos, String moduleName, int moduleX, int moduleY, Map<String, CompoundTag> configValues) implements CustomPacketPayload {
     public static final Type<ConfigureModulePacket> TYPE = new Type<>(Dashpanels.path("configure_module_packet"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ConfigureModulePacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, ConfigureModulePacket::pos,
             ByteBufCodecs.STRING_UTF8, ConfigureModulePacket::moduleName,
+            ByteBufCodecs.INT, ConfigureModulePacket::moduleX,
+            ByteBufCodecs.INT, ConfigureModulePacket::moduleY,
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.fromCodec(CompoundTag.CODEC)), ConfigureModulePacket::configValues,
             ConfigureModulePacket::new
     );
@@ -40,6 +42,7 @@ public record ConfigureModulePacket(BlockPos pos, String moduleName, Map<String,
                 return;
 
             module.setParentBE(pbe);
+            module.setPos(this.moduleX, this.moduleY);
             RegistryAccess registryAccess = level.registryAccess();
             for (ModuleConfigValue<?, ?> value : module.getConfig().getValues()) {
                 CompoundTag valueTag = this.configValues.get(value.getId());

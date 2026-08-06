@@ -13,6 +13,7 @@ import net.minecraft.util.Mth;
 public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModule> {
     private static final ResourceLocation CROSSHAIR = Dashpanels.path("module/joystick/crosshair");
     private static final ResourceLocation INDICATOR = Dashpanels.path("module/joystick/indicator");
+    private static final ResourceLocation DEADZONE = Dashpanels.path("module/joystick/deadzone");
 
     private float valX = 0;
     private float valY = 0;
@@ -91,6 +92,20 @@ public class JoystickHoldInteraction extends ModuleHoldInteraction<JoystickModul
         );
         graphics.blitSprite(CROSSHAIR, leftPos, topPos, 21, 21);
         graphics.blitSprite(INDICATOR, indicatorX, indicatorY, 3, 3);
+
+        JoystickModule.Deadzone deadzone = this.module.deadzoneValue.get();
+        if (deadzone.left() > 0 || deadzone.right() > 0 || deadzone.top() > 0 || deadzone.bottom() > 0) {
+            int zoneLeft = (int) (deadzone.left()*10);
+            int zoneTop = (int) (deadzone.top()*10);
+            int zoneRight = (int) (deadzone.right()*10);
+            int zoneBottom = (int) (deadzone.bottom()*10);
+
+            int width = zoneLeft+zoneRight+1;
+            int height = zoneTop+zoneBottom+1;
+
+            graphics.blitSprite(DEADZONE, leftPos+10-zoneLeft, topPos+10-zoneTop, width, height);
+        }
+
         graphics.pose().pushPose();
         graphics.pose().translate(centerX, centerY+16, 0);
         graphics.pose().scale(0.5f,0.5f,0.5f);

@@ -386,11 +386,13 @@ public class PaintWheelScreen extends Screen {
 
     public class SkinButton extends AbstractWidget {
         protected final ClientSkin skin;
+        protected final ResourceLocation skinLocation;
         protected float scale = 1;
 
         public SkinButton(ClientSkin skin, Component message) {
             super(0, 0, 28, 28, message);
             this.skin = skin;
+            this.skinLocation = PanelSkinsClientManager.REVERSE_MAP.get(skin);
         }
 
         @Override
@@ -407,6 +409,21 @@ public class PaintWheelScreen extends Screen {
             if (this.skin != null) {
                 BakedModel model = this.skin.getItemBakedModel();
                 renderNonExistentItem(model, guiGraphics, this.getX()+6, this.getY()+6);
+
+                if (this.isMouseOver(mouseX, mouseY)) {
+                    List<Component> components = new ArrayList<>();
+                    components.add(Component.translatableWithFallback("%s.paint_wheel.skin.%s"
+                            .formatted(this.skinLocation.getNamespace(),
+                                    this.skinLocation.getPath().replace('/', '.')
+                            ),
+                            this.skinLocation.toString()
+                    ));
+                    if (this.skin.author().isPresent()) {
+                        components.add(Component.empty());
+                        components.add(Component.translatable("dashpanels.paint_wheel.author", this.skin.author().orElse("")));
+                    }
+                    guiGraphics.renderTooltip(PaintWheelScreen.this.font, components, Optional.empty(), mouseX, mouseY);
+                }
             }
         }
 

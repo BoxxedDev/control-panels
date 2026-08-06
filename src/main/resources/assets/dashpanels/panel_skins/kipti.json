@@ -2,5 +2,6 @@
   "single": "dashpanels:block/control_panel_kipti/single",
   "left": "dashpanels:block/control_panel_kipti/left",
   "center": "dashpanels:block/control_panel_kipti/center",
-  "right": "dashpanels:block/control_panel_kipti/right"
+  "right": "dashpanels:block/control_panel_kipti/right",
+  "author": "Kipti"
 }

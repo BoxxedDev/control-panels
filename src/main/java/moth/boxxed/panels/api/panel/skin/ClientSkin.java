@@ -19,7 +19,8 @@ public record ClientSkin(ResourceLocation single,
                          ResourceLocation left,
                          ResourceLocation center,
                          ResourceLocation right,
-                         Optional<Boolean> tintable) {
+                         Optional<Boolean> tintable,
+                         Optional<String> author) {
     private static final ResourceLocation DEFAULT_SINGLE = Dashpanels.path("block/control_panel/single");
     private static final ResourceLocation DEFAULT_LEFT = Dashpanels.path("block/control_panel/left");
     private static final ResourceLocation DEFAULT_CENTER = Dashpanels.path("block/control_panel/center");
@@ -29,7 +30,8 @@ public record ClientSkin(ResourceLocation single,
             DEFAULT_LEFT,
             DEFAULT_CENTER,
             DEFAULT_RIGHT,
-            Optional.of(false)
+            Optional.of(false),
+            Optional.of("Boxxed")
     );
 
     public static final Codec<ClientSkin> CODEC = RecordCodecBuilder.create(
@@ -38,7 +40,8 @@ public record ClientSkin(ResourceLocation single,
                     ResourceLocation.CODEC.fieldOf("left").orElse(DEFAULT_LEFT).forGetter(ClientSkin::left),
                     ResourceLocation.CODEC.fieldOf("center").orElse(DEFAULT_CENTER).forGetter(ClientSkin::center),
                     ResourceLocation.CODEC.fieldOf("right").orElse(DEFAULT_RIGHT).forGetter(ClientSkin::right),
-                    Codec.BOOL.optionalFieldOf("tintable").forGetter(ClientSkin::tintable)
+                    Codec.BOOL.optionalFieldOf("tintable").forGetter(ClientSkin::tintable),
+                    Codec.STRING.optionalFieldOf("author").forGetter(ClientSkin::author)
             ).apply(instance, ClientSkin::new)
     );
 

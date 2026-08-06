@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 public class PanelSkinsClientManager {
     public static final Map<ResourceLocation, ClientSkin> MAP = new HashMap<>();
+    public static final Map<ClientSkin, ResourceLocation> REVERSE_MAP = new HashMap<>();
 
     public static class ReloadListener extends ContextAwareReloadListener implements PreparableReloadListener {
         public static final ReloadListener INSTANCE = new ReloadListener(
@@ -111,6 +112,7 @@ public class PanelSkinsClientManager {
                     if (result.isSuccess()) {
                         ClientSkin clientSkin = result.getOrThrow();
                         PanelSkinsClientManager.MAP.put(location, clientSkin);
+                        PanelSkinsClientManager.REVERSE_MAP.put(clientSkin, location);
                         clientSkin.registerModels(bakery);
                         loaded++;
                         continue;

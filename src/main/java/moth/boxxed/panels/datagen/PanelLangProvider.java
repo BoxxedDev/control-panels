@@ -113,6 +113,19 @@ public class PanelLangProvider extends LanguageProvider {
 
         add("dashpanels.paint_wheel.apply", "Apply");
         add("dashpanels.paint_wheel.apply_all", "Apply To All");
+        add("dashpanels.paint_wheel.author", "Author: %s");
+
+        //Skins
+        add("dashpanels.paint_wheel.skin.default", "Default");
+        add("dashpanels.paint_wheel.skin.kipti", "Kipti");
+        add("dashpanels.paint_wheel.skin.nostromo", "Nostromo");
+
+        add("dashpanels.paint_wheel.skin.ceiling", "Default - Ceiling");
+        add("dashpanels.paint_wheel.skin.ceiling_nostromo", "Nostromo - Ceiling");
+
+        add("dashpanels.paint_wheel.skin.wall", "Default - Wall");
+        add("dashpanels.paint_wheel.skin.wall_kipti", "Kipti - Wall");
+        add("dashpanels.paint_wheel.skin.wall_nostromo", "Nostromo - Wall");
 
         add("dashpanels.module_config.move_module", "Move Module");
 

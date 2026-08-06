@@ -3,5 +3,6 @@
   "left": "dashpanels:block/wall_nostromo/left",
   "center": "dashpanels:block/wall_nostromo/center",
   "right": "dashpanels:block/wall_nostromo/right",
-  "tintable": true
+  "tintable": true,
+  "author": "MrUranium"
 }

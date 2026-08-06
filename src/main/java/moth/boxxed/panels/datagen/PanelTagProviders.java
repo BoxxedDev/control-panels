@@ -9,7 +9,10 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -34,8 +37,23 @@ public class PanelTagProviders {
                     .add(PanelItems.JOYSTICK_MODULE.getKey())
                     .add(PanelItems.LABEL_MODULE.getKey())
                     .add(PanelItems.SEVEN_SEGMENT_MODULE.getKey())
+                    .add(PanelItems.PUSH_BUTTON_MODULE.getKey())
+                    .add(PanelItems.KEY_SWITCH_MODULE.getKey())
                     .addOptional(Dashpanels.path("navball"))
             ;
+
+            tag(PanelTags.Items.PANELS)
+                    .add(fromBlock(PanelBlocks.CONTROL_PANEL.getKey()))
+                    .add(fromBlock(PanelBlocks.WALL_CONTROL_PANEL.getKey()))
+                    .add(fromBlock(PanelBlocks.CEILING_CONTROL_PANEL.getKey()));
+
+            tag(PanelTags.Items.WRENCH)
+                    .add(PanelItems.WRENCH.getKey())
+                    .addOptional(ResourceLocation.fromNamespaceAndPath("create", "wrench"));
+        }
+
+        protected static ResourceKey<Item> fromBlock(ResourceKey<Block> blockKey) {
+            return ResourceKey.create(Registries.ITEM, blockKey.location());
         }
     }
 
@@ -47,6 +65,7 @@ public class PanelTagProviders {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .add(PanelBlocks.WALL_CONTROL_PANEL.getKey())
                     .add(PanelBlocks.CONTROL_PANEL.getKey())
                     .add(PanelBlocks.CABLE.getKey())
                     .add(PanelBlocks.STRIPPED_CABLE.getKey());
@@ -56,6 +75,11 @@ public class PanelTagProviders {
                 tag(BlockTags.MINEABLE_WITH_AXE)
                         .add(PanelCreateRegistries.PANEL_LINK.getKey());
             }
+
+            tag(PanelTags.Blocks.PANELS)
+                    .add(PanelBlocks.CONTROL_PANEL.getKey())
+                    .add(PanelBlocks.WALL_CONTROL_PANEL.getKey())
+                    .add(PanelBlocks.CEILING_CONTROL_PANEL.getKey());
         }
     }
 }

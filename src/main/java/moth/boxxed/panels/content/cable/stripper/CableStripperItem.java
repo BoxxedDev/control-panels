@@ -4,16 +4,14 @@ import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.CableBlockEntity;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
+import moth.boxxed.panels.content.panel.normal.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -80,16 +78,16 @@ public class CableStripperItem extends Item {
         return InteractionResult.PASS;
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!tooltipFlag.hasShiftDown()) {
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.shift_to_expand"));
-        } else {
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_1"));
-            tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_2"));
-            tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_3"));
-        }
-    }
+//    @Override
+//    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+//        if (!tooltipFlag.hasShiftDown()) {
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.shift_to_expand"));
+//        } else {
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_1"));
+//            tooltipComponents.add(Component.empty());
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_2"));
+//            tooltipComponents.add(Component.empty());
+//            tooltipComponents.add(Component.translatable("tooltip.dashpanels.cable_stripper_info_3"));
+//        }
+//    }
 }

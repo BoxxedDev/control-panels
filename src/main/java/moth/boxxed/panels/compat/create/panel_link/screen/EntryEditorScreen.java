@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import moth.boxxed.panels.api.module.ModuleIOInfo;
-import moth.boxxed.panels.api.module.ModuleIOType;
+import moth.boxxed.panels.api.module.io.ModuleIOInfo;
+import moth.boxxed.panels.api.module.io.ModuleIOType;
 import moth.boxxed.panels.compat.create.panel_link.ModuleLinkEntries;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -56,8 +56,9 @@ public class EntryEditorScreen {
                 }
             }
         }
+
         this.moduleSelect = new StringEntryWidget(
-                this.leftPos + 13, this.topPos + 25, 90, 28,
+                this.leftPos + 13, this.topPos + 25, 88, 26,
                 entriesToShow,
                 Component.translatable("widget.dashpanels.panel_link.module_select")
         );

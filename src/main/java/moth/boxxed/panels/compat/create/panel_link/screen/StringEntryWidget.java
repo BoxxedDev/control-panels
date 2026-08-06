@@ -65,8 +65,11 @@ public class StringEntryWidget extends AbstractSimiWidget {
     protected void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         Font font = Minecraft.getInstance().font;
         int y = this.getY()+(this.getHeight()/2)-(font.lineHeight);
-        if (this.currentIndex >= 0)
-            graphics.drawString(font, this.getCurrent(), this.getX()+2, y, 0xFFFFFF);
+        if (this.currentIndex >= 0) {
+            graphics.enableScissor(this.getX()+2, this.getY(), this.getX()+this.getWidth()-2, this.getY()+this.getHeight());
+            graphics.drawScrollingString(font, Component.literal(this.getCurrent()), this.getX() + 2, this.getX()+this.getWidth()-2, y, 0xFFFFFF);
+            graphics.disableScissor();
+        }
     }
 
     @Override

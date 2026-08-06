@@ -41,6 +41,8 @@ public class Dashpanels {
         PanelModules.register(modEventBus);
         PanelMenuTypes.register(modEventBus);
         PanelCreativeTabs.register(modEventBus);
+        PanelDataComponents.register(modEventBus);
+        PanelRecipeSerializers.register(modEventBus);
 
         PanelTags.init();
 

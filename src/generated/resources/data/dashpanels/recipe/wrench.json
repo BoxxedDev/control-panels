@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "H": {
+      "tag": "c:leathers"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "I",
+    "H",
+    "I"
+  ],
+  "result": {
+    "count": 1,
+    "id": "dashpanels:wrench"
+  }
+}

@@ -32,9 +32,14 @@ public class PanelRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
-        controlPanel().save(output);
+        controlPanel(output);
         cable().save(output);
+
         wireStripper().save(output);
+        wrench().save(output);
+        paintBrush().save(output);
+        key(output);
+
         if (ModList.get().isLoaded("create"))
             panelLink().save(output);
         modules(output);
@@ -49,6 +54,8 @@ public class PanelRecipeProvider extends RecipeProvider {
         module(PanelItems.JOYSTICK_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
         module(PanelItems.LABEL_MODULE.get(), Ingredient.of(Items.PAPER), 4, output);
         module(PanelItems.SEVEN_SEGMENT_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
+        module(PanelItems.PUSH_BUTTON_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 1, output);
+        module(PanelItems.KEY_SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
         if (ModList.get().isLoaded("sable"))
             module(PanelSableRegistries.NAVBALL_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
     }
@@ -71,44 +78,6 @@ public class PanelRecipeProvider extends RecipeProvider {
         );
     }
 
-    private static void modulesOld(RecipeOutput output) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.SWITCH_MODULE.get(), 4)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('N', Tags.Items.NUGGETS_IRON)
-                .pattern("N")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.KNOB_MODULE.get(), 4)
-                .define('W', ItemTags.WOOL)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern("W")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CONTROL_LEVER_MODULE.get(), 2)
-                .define('W', ItemTags.WOOL)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern(" W")
-                .pattern("II")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.INDICATOR_BULB_MODULE.get(), 2)
-                .define('G', Tags.Items.GLASS_PANES)
-                .define('I', Tags.Items.NUGGETS_IRON)
-                .pattern("G")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.MOMENTARY_SWITCH_MODULE.get(), 2)
-                .define('B', ItemTags.STONE_BUTTONS)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern("B")
-                .pattern("I")
-                .unlockedBy("has_panel", has(PanelBlocks.CONTROL_PANEL))
-                .save(output);
-    }
-
     private static ShapedRecipeBuilder panelLink() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelCreateRegistries.PANEL_LINK.get(), 1)
                 .define('L', AllBlocks.REDSTONE_LINK)
@@ -119,15 +88,36 @@ public class PanelRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_link", has(AllBlocks.REDSTONE_LINK));
     }
 
-    private static ShapedRecipeBuilder controlPanel() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelBlocks.CONTROL_PANEL.get(), 1)
+    private static void controlPanel(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelBlocks.CONTROL_PANEL.get(), 1)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('R', Items.REDSTONE)
                 .define('P', ItemTags.PLANKS)
                 .pattern("I  ")
                 .pattern("IPP")
                 .pattern("IRI")
-                .unlockedBy("has_redstone", has(Items.REDSTONE));
+                .unlockedBy("has_redstone", has(Items.REDSTONE))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelBlocks.WALL_CONTROL_PANEL.get(), 1)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('R', Items.REDSTONE)
+                .define('P', ItemTags.PLANKS)
+                .pattern("I ")
+                .pattern("RP")
+                .pattern("I ")
+                .unlockedBy("has_redstone", has(Items.REDSTONE))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelBlocks.CEILING_CONTROL_PANEL.get(), 1)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('R', Items.REDSTONE)
+                .define('P', ItemTags.PLANKS)
+                .pattern("IRI")
+                .pattern("RP ")
+                .pattern("I  ")
+                .unlockedBy("has_redstone", has(Items.REDSTONE))
+                .save(output);
     }
     private static ShapedRecipeBuilder cable() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelBlocks.CABLE.get(), 6)
@@ -141,10 +131,44 @@ public class PanelRecipeProvider extends RecipeProvider {
     private static ShapedRecipeBuilder wireStripper() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.CABLE_STRIPPER.get(), 1)
                 .define('I', Tags.Items.INGOTS_IRON)
-                .define('H', ItemTags.WOOL)
+                .define('H', Tags.Items.LEATHERS)
                 .pattern("I I")
                 .pattern(" I ")
                 .pattern("H H")
-                .unlockedBy("has_wool", has(ItemTags.WOOL));
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS));
+    }
+    private static ShapedRecipeBuilder wrench() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.WRENCH.get(), 1)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('H', Tags.Items.LEATHERS)
+                .pattern("I")
+                .pattern("H")
+                .pattern("I")
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS));
+    }
+    private static ShapedRecipeBuilder paintBrush() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.PAINT_BRUSH.get(), 1)
+                .define('S', Tags.Items.STRINGS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('H', Tags.Items.LEATHERS)
+                .pattern("SSS")
+                .pattern(" I ")
+                .pattern(" H ")
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS));
+    }
+
+    private static void key(RecipeOutput output) {
+         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, PanelItems.KEY_ITEM.get(), 1)
+                .define('I', Tags.Items.NUGGETS_IRON)
+                .define('H', Tags.Items.LEATHERS)
+                .pattern("H")
+                .pattern("I")
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS))
+                 .save(output);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, PanelItems.KEY_ITEM.get())
+                .requires(PanelItems.KEY_ITEM)
+                .unlockedBy("has_key", has(PanelItems.KEY_ITEM))
+                .save(output, "dashpanels:key_clear");
     }
 }

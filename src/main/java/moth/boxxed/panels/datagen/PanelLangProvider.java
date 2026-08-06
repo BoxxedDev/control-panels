@@ -3,12 +3,14 @@ package moth.boxxed.panels.datagen;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
+import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class PanelLangProvider extends LanguageProvider {
@@ -27,14 +29,25 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.JOYSTICK_MODULE, "Joystick");
         addItem(PanelItems.LABEL_MODULE, "Label");
         addItem(PanelItems.SEVEN_SEGMENT_MODULE, "Seven Segment");
+        addItem(PanelItems.PUSH_BUTTON_MODULE, "Push Button");
+        addItem(PanelItems.KEY_SWITCH_MODULE, "Key Switch");
+
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
 
         //Non module stuff
         addBlock(PanelBlocks.CONTROL_PANEL, "Control Panel");
+        addBlock(PanelBlocks.WALL_CONTROL_PANEL, "Wall Control Panel");
+        addBlock(PanelBlocks.CEILING_CONTROL_PANEL, "Ceiling Control Panel");
+
         addBlock(PanelBlocks.CABLE, "Control Cable");
         addBlock(PanelBlocks.STRIPPED_CABLE, "Stripped Cable");
+
         addItem(PanelItems.CABLE_STRIPPER, "Cable Stripper");
+        addItem(PanelItems.PAINT_BRUSH, "Paint Brush");
+        addItem(PanelItems.WRENCH, "Panel Wrench");
+        addItem(PanelItems.KEY_ITEM, "Key");
+
         if (ModList.get().isLoaded("create"))
             addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
 
@@ -45,23 +58,92 @@ public class PanelLangProvider extends LanguageProvider {
         addWidget("stripped_cable.scrollbar", "Scroll Bar");
         addWidget("panel_link.module_select", "Scroll to select module");
 
-        addTooltip("shift_to_expand", "§3Hold §b[Shift] §r§3for more info");
+        add("dashpanels.paint_wheel.left_change", "Left Page Change");
+        add("dashpanels.paint_wheel.right_change", "Right Page Change");
+        add("dashpanels.paint_wheel.color_picker", "Color Picker");
+        add("dashpanels.paint_wheel.hex_input", "Hex Input");
+        add("dashpanels.paint_wheel.save_palette", "Save Palette");
+        add("dashpanels.paint_wheel.load_palette", "Load Palette");
+        add("dashpanels.paint_wheel.add_color", "Add Color");
+        add("dashpanels.paint_wheel.delete_color", "Delete Color");
+        add("dashpanels.paint_wheel.apply", "Apply");
+        add("dashpanels.paint_wheel.apply_all", "Apply To All");
+        add("dashpanels.paint_wheel.author", "Author: %s");
 
-        addTooltip("cable_stripper_info_1", "§bRight-click §3a normal cable to strip it");
-        addTooltip("cable_stripper_info_2", "§bRight-click §3a stripped cable to change its configured input or output module");
-        addTooltip("cable_stripper_info_3", "§bSneak Right-click §3to pick up normal cables or stripped cables");
+        addTooltip("key.bound_id", "ID: §r%s");
+        addTooltip("key.bound_pos", "Block: §r%s");
+
+        //Modules
+        addTooltip("module.push_button", "Button: %d");
+
+        addTooltip("module.navball.pitch", "Pitch: %d");
+        addTooltip("module.navball.yaw", "Yaw: %d");
+        addTooltip("module.navball.roll", "Roll: %d");
+
+        addTooltip("module.key_switch.key_id", "Bound Key: %s");
+        // -- //
 
         addCreativeTab(PanelCreativeTabs.PANEL_TAB.get(), "Dashpanels");
         add("creativetab.dashpanels.dashpanels", "§lDashpanels");
         add("creativetab.dashpanels.modules", "§lModules");
+        add("creativetab.dashpanels.tools", "§lTools");
 
-        add("dashpanels.configuration.showModuleTooltips", "Show Module Tooltips");
+        addConfig(ClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
+        addConfig(ClientConfig.DISABLE_MODULE_TOOLTIPS_HUD, "Disable Module Tooltips When Hud is Hidden");
+        addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
+        addConfig(ClientConfig.DEFAULT_PALETTE, "Default Skin Palette");
 
         addCustom("key", "delete_module", "Delete Module");
         addCustom("key", "select_module", "Select Module");
         addCustom("key", "move_module", "Move Module");
         addCustom("key", "hold_move_camera", "Move Camera While Holding");
         add("key.categories.dashpanels", "Dashpanels");
+
+        addModuleConfig("name", "Name");
+        addModuleConfig("output", "Output");
+        addModuleConfig("inverted", "Inverted");
+        addModuleConfig("buttons", "Buttons");
+        addModuleConfig("deadzone", "Deadzone");
+        addModuleConfig("trigger_inverted", "Trigger Inverted");
+        addModuleConfig("gap", "Gap");
+        addModuleConfig("togglable", "Togglable");
+        addModuleConfig("angle", "Angle");
+
+        //Skins
+        add("dashpanels.paint_wheel.skin.default", "Default");
+        add("dashpanels.paint_wheel.skin.kipti", "Kipti");
+        add("dashpanels.paint_wheel.skin.nostromo", "Nostromo");
+
+        add("dashpanels.paint_wheel.skin.ceiling", "Default - Ceiling");
+        add("dashpanels.paint_wheel.skin.ceiling_nostromo", "Nostromo - Ceiling");
+
+        add("dashpanels.paint_wheel.skin.wall", "Default - Wall");
+        add("dashpanels.paint_wheel.skin.wall_kipti", "Kipti - Wall");
+        add("dashpanels.paint_wheel.skin.wall_nostromo", "Nostromo - Wall");
+
+        add("dashpanels.module_config.move_module", "Move Module");
+
+        add("dashpanels.wiki", "Wiki");
+        add("dashpanels.wiki.title", "Wiki");
+        add("dashpanels.wiki.close", "Close Wiki");
+        add("dashpanels.wiki.hold_to_open", "Hold [%1$s] to Open Wiki");
+        add("dashpanels.wiki.select_page", "Select a page to view");
+        add("dashpanels.wiki.reference_tooltip", "Click to go to %s's wiki page");
+
+        add("dashpanels.wiki.category.tools", "Tools");
+        add("dashpanels.wiki.category.modules", "Modules");
+        add("dashpanels.wiki.category.blocks", "Blocks");
+        add("dashpanels.wiki.category.special_items", "Special Items");
+
+        add("dashpanels.wiki.page.modules", "Modules");
+    }
+
+    private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {
+        String nameKey = Dashpanels.MOD_ID + ".configuration";
+        for (String path : configValue.getPath()) {
+            nameKey = nameKey.concat("." + path);
+        }
+        add(nameKey, string);
     }
 
     private void addWidget(String key, String string) {
@@ -78,5 +160,9 @@ public class PanelLangProvider extends LanguageProvider {
 
     private void addCreativeTab(CreativeModeTab tab, String string) {
         add(tab.getDisplayName().getString(), string);
+    }
+
+    private void addModuleConfig(String valueName, String string) {
+        add("module_config.value.%s".formatted(valueName), string);
     }
 }

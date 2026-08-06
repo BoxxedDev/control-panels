@@ -4,7 +4,7 @@ import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
 import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class PanelDisplaySource extends DisplaySource {
     @Override
     public void initConfigurationWidgets(DisplayLinkContext context, ModularGuiLineBuilder builder, boolean isFirstLine) {
-        if (!(context.getSourceBlockEntity() instanceof PanelBlockEntity pbe)) return;
+        if (!(context.getSourceBlockEntity() instanceof AbstractPanelBlockEntity pbe)) return;
 
         if (!pbe.getModules().isEmpty()) {
             if (isFirstLine) {
@@ -39,7 +39,7 @@ public class PanelDisplaySource extends DisplaySource {
     private List<Component> compileModules(DisplayLinkContext context) {
         List<Component> ret = new ArrayList<>();
 
-        if (!(context.getSourceBlockEntity() instanceof PanelBlockEntity pbe))
+        if (!(context.getSourceBlockEntity() instanceof AbstractPanelBlockEntity pbe))
             return ret;
         List<String> keyList = new ArrayList<>(pbe.getModules().keySet());
         keyList.sort(null);

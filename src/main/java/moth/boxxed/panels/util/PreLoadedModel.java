@@ -2,6 +2,7 @@ package moth.boxxed.panels.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -12,13 +13,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//Flat lighting fix by Exaskye (thank you, you are a saint)
+//Flat lighting fix by Exaskye on github (thank you, you are a saint)
 public class PreLoadedModel {
     public static final Map<ResourceLocation, PreLoadedModel> ALL_MODELS = new HashMap<>();
 
@@ -37,27 +37,42 @@ public class PreLoadedModel {
         return this.model;
     }
 
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
-        render(poseStack, bufferSource, renderType, packedLight, -1);
+    public void render(PoseStack poseStack, int packedLight) {
+        render(poseStack, RenderType.cutout(), packedLight);
     }
 
+    @Deprecated
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight) {
+        render(poseStack, renderType, packedLight);
+    }
+
+    @Deprecated
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, int packedLight, int colorPacked) {
-        float red = ((colorPacked >> 16) & 0xFF)/255f;
-        float green = ((colorPacked >> 8) & 0xFF)/255f;
-        float blue = (colorPacked & 0xFF)/255f;
-        
-        // remap chunk bakery render types to entity rendering render types
+        render(poseStack, renderType, packedLight, colorPacked);
+    }
+
+    public void render(PoseStack poseStack, RenderType renderType, int packedLight) {
+        render(poseStack, renderType, packedLight, 0xFFFFFF);
+    }
+
+    public void render(PoseStack poseStack, RenderType renderType, int packedLight, int colorPacked) {
+        float red = ((colorPacked >> 16) & 0xFF) / 255f;
+        float green = ((colorPacked >> 8) & 0xFF) / 255f;
+        float blue = (colorPacked & 0xFF) / 255f;
+
+        // remap chunk bakery render types to entity render types
         // if this is not done, all normals are ignored and lighting looks flat
-        if (renderType == RenderType.SOLID) {
+        if (renderType == RenderType.solid()) {
             renderType = Sheets.solidBlockSheet();
-        } else if (renderType == RenderType.TRANSLUCENT) {
+        } else if (renderType == RenderType.translucent()) {
             renderType = Sheets.translucentCullBlockSheet();
-        } else if (renderType == RenderType.CUTOUT) {
+        } else if (renderType == RenderType.cutout()) {
             renderType = Sheets.cutoutBlockSheet();
-        } else if (renderType == RenderType.CUTOUT_MIPPED) {
+        } else if (renderType == RenderType.cutoutMipped()) {
             renderType = Sheets.cutoutBlockSheet();
         }
 
+        MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer consumer = bufferSource.getBuffer(renderType);
 
         RandomSource randomsource = RandomSource.create();
@@ -65,11 +80,19 @@ public class PreLoadedModel {
 
         for (Direction direction : Direction.values()) {
             randomsource.setSeed(fixedSeed);
-            renderQuadList(poseStack.last(), consumer, red, green, blue, model.getQuads(null, direction, randomsource, ModelData.EMPTY, renderType), packedLight, OverlayTexture.NO_OVERLAY);
+            renderQuadList(poseStack.last(), consumer,
+                    red, green, blue,
+                    model.getQuads(null, direction, randomsource),
+                    packedLight, OverlayTexture.NO_OVERLAY
+            );
         }
 
         randomsource.setSeed(fixedSeed);
-        renderQuadList(poseStack.last(), consumer, red, green, blue, model.getQuads(null, null, randomsource, ModelData.EMPTY, renderType), packedLight, OverlayTexture.NO_OVERLAY);
+        renderQuadList(poseStack.last(), consumer,
+                red, green, blue,
+                model.getQuads(null, null, randomsource),
+                packedLight, OverlayTexture.NO_OVERLAY
+        );
     }
 
     private static void renderQuadList(

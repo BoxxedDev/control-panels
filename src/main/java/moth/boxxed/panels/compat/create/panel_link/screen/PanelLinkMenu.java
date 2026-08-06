@@ -1,7 +1,7 @@
 package moth.boxxed.panels.compat.create.panel_link.screen;
 
 import com.simibubi.create.foundation.gui.menu.GhostItemMenu;
-import moth.boxxed.panels.api.module.ModuleIOInfo;
+import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import net.minecraft.client.Minecraft;

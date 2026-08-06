@@ -4,13 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
-import moth.boxxed.panels.api.module.IHoverTooltip;
-import moth.boxxed.panels.api.module.IMultiInput;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.io.IMultiInput;
+import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
+import moth.boxxed.panels.api.module.tooltip.TooltipContext;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
-import moth.boxxed.panels.content.panel.PanelBlockEntity;
 import moth.boxxed.panels.index.PanelPreloadedModels;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -18,7 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Quaterniondc;
@@ -110,29 +111,32 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     }
 
     @Override
-    public void render(PanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        Level level = panelBlockEntity.getLevel();
-        BlockState state = panelBlockEntity.getBlockState();
-
-        PanelPreloadedModels.NAVBALL_BASE.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+    public void render(AbstractPanelBlockEntity panelBlockEntity, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        PanelPreloadedModels.NAVBALL_BASE.render(poseStack, RenderType.solid(), packedLight);
         poseStack.pushPose();
-        poseStack.translate( 0.1875f,0,  0.1875f);
+        poseStack.translate( 3.5/16f,0,  3.5/16f);
         Quaternionf quat = new Quaternionf();
         ClientSubLevelAccess clientSubLevel = SableCompanion.INSTANCE.getContainingClient(panelBlockEntity);
         if (clientSubLevel != null)
             quat.set(clientSubLevel.renderPose(partialTick).orientation());
         poseStack.mulPose(quat);
 //        Dashpanels.LOGGER.debug("\nRoll : {}\nPitch : {}\nYaw : {}", this.getAngleRoll(), this.getAnglePitch(), this.getAngleYaw());
-        PanelPreloadedModels.NAVBALL.render(poseStack, bufferSource, RenderType.solid(), packedLight);
+        PanelPreloadedModels.NAVBALL.render(poseStack, RenderType.solid(), packedLight);
         poseStack.popPose();
     }
 
     @Override
-    public VoxelShape getShape() {
+    public VoxelShape getVoxelShape() {
         return Shapes.or(
-                Block.box(0.5, 0, -0.5, 5.5, 0.25, 6.5),
-                Block.box(-0.5, 0, 0.5, 6.5, 0.25, 5.5)
+                Block.box(1, 0, 0, 6, 0.25, 7),
+                Block.box(0, 0, 1, 7, 0.25, 6)
         );
+    }
+
+    @Override
+    public PolyVoxel getShape() {
+        return new PolyVoxel(1, 0, 6, 7)
+                .add(0, 1, 7, 6);
     }
 
     @Override
@@ -143,9 +147,9 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     }
 
     @Override
-    public void addLines(List<Component> list) {
-        list.add(Component.literal("Pitch : %.1f".formatted(this.getAnglePitch())).withStyle(ChatFormatting.BLUE));
-        list.add(Component.literal("Yaw : %.1f".formatted(this.getAngleYaw())).withStyle(ChatFormatting.GREEN));
-        list.add(Component.literal("Roll : %.1f".formatted(this.getAngleRoll())).withStyle(ChatFormatting.RED));
+    public void addLines(TooltipContext context, List<Component> list) {
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.pitch", this.getAnglePitch()).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.yaw", this.getAngleYaw()).withStyle(ChatFormatting.GREEN));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.roll", this.getAngleRoll()).withStyle(ChatFormatting.RED));
     }
 }

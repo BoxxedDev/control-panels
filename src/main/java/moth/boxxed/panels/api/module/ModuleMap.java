@@ -1,5 +1,6 @@
 package moth.boxxed.panels.api.module;
 
+import moth.boxxed.panels.api.module.io.*;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import net.minecraft.core.HolderLookup;
@@ -55,7 +56,7 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
     public List<ModuleIOInfo> filterIOModules() {
         List<ModuleIOInfo> ret = new ArrayList<>();
         for (Map.Entry<String, Module> entry : this) {
-            if (entry.getValue() instanceof IInput      ||     entry.getValue() instanceof IOutput ||
+            if (entry.getValue() instanceof IInput ||     entry.getValue() instanceof IOutput ||
                 entry.getValue() instanceof IMultiInput || entry.getValue() instanceof IMultiOutput) {
                 ret.add(new ModuleIOInfo(
                         entry.getKey(),

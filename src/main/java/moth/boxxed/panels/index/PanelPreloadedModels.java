@@ -29,12 +29,23 @@ public class PanelPreloadedModels {
 
             LABEL = regular("label"),
 
-            SEVEN_SEGMENT = regular("seven_segment");
+            SEVEN_SEGMENT = regular("seven_segment"),
 
-    //Too lazy rn to find a way to change the texture automatically on render
-    public static final PreLoadedModel
             INDICATOR_BULB_ON = regular("indicator_bulb/bulb_on"),
-            INDICATOR_BULB_OFF = regular("indicator_bulb/bulb_off");
+            INDICATOR_BULB_OFF = regular("indicator_bulb/bulb_off"),
+
+            PUSH_BUTTON_BASE = regular("push_button/base"),
+            PUSH_BUTTON = regular("push_button/button"),
+            PUSH_BUTTON_LIT = regular("push_button/button_lit"),
+
+            KEY_SWITCH_BASE = regular("key_switch/base"),
+            KEY_SWITCH_HOLE = regular("key_switch/hole"),
+            KEY_SWITCH_KEY = regular("key_switch/key"),
+
+            EMERGENCY_BUTTON_BASE = regular("emergency_button/base"),
+            EMERGENCY_BUTTON_COVER = regular("emergency_button/cover"),
+            EMERGENCY_BUTTON_BUTTON = regular("emergency_button/button")
+                    ;
 
     private static PreLoadedModel regular(String name) {
         return PreLoadedModel.create(Dashpanels.path("block/" + name));

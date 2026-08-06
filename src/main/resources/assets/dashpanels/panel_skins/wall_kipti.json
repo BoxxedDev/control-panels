@@ -1,0 +1,7 @@
+{
+  "single": "dashpanels:block/wall_control_panel_kipti/single",
+  "left": "dashpanels:block/wall_control_panel_kipti/left",
+  "center": "dashpanels:block/wall_control_panel_kipti/center",
+  "right": "dashpanels:block/wall_control_panel_kipti/right",
+  "author": "Kipti"
+}

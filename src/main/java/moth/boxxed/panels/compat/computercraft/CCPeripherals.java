@@ -20,6 +20,8 @@ public class CCPeripherals implements PanelCompat {
     @Override
     public void init() {
         this.addPeripheral(PanelBlockEntities.PANEL, NetworkMemberPeripheral::new);
+        this.addPeripheral(PanelBlockEntities.WALL_PANEL, NetworkMemberPeripheral::new);
+        this.addPeripheral(PanelBlockEntities.CEILING_PANEL, NetworkMemberPeripheral::new);
         this.addPeripheral(PanelBlockEntities.CABLE, NetworkMemberPeripheral::new);
     }
 

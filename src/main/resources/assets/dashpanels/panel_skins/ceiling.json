@@ -1,0 +1,7 @@
+{
+  "single": "dashpanels:block/ceiling_control_panel/single",
+  "left": "dashpanels:block/ceiling_control_panel/left",
+  "center": "dashpanels:block/ceiling_control_panel/center",
+  "right": "dashpanels:block/ceiling_control_panel/right",
+  "author": "Boxxed"
+}

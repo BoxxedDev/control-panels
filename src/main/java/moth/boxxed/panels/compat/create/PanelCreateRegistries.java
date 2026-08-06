@@ -2,21 +2,25 @@ package moth.boxxed.panels.compat.create;
 
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateRegistries;
+import com.simibubi.create.api.schematic.nbt.SafeNbtWriterRegistry;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.api.panel.PanelType;
+import moth.boxxed.panels.api.wiki.WikiPage;
+import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.compat.PanelCompat;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
-import moth.boxxed.panels.index.PanelBlockEntities;
-import moth.boxxed.panels.index.PanelBlocks;
-import moth.boxxed.panels.index.PanelItems;
-import moth.boxxed.panels.index.PanelMenuTypes;
+import moth.boxxed.panels.index.*;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -46,6 +50,16 @@ public class PanelCreateRegistries implements PanelCompat {
                         )
                 );
         PanelItems.blockItem("panel_link", PANEL_LINK);
+
+        if (FMLLoader.getDist().isClient()) {
+            WikiableEntries.register(PANEL_LINK.getId(),
+                    WikiPage.of(PANEL_LINK)
+                            .category(PanelWikiCategories.BLOCKS)
+                            .addParagraph("The panel link is an explicit compat block. If create is not installed this block is not there.")
+                            .addParagraph("If you use with an empty hand it will open a menu to configure the entries. Which correspond to a module in the connected network to be used for redstone links.")
+            );
+        }
+
         PANEL_LINK_BE = PanelBlockEntities.BLOCK_ENTITY_TYPES.register(
                         "panel_link",
                         () -> BlockEntityType.Builder.of(PanelLinkBlockEntity::new, PANEL_LINK.get())
@@ -60,8 +74,21 @@ public class PanelCreateRegistries implements PanelCompat {
 //        PANEL_DISPLAY_SOURCE = DISPLAY_SOURCES.register("panel", PanelDisplaySource::new);
     }
 
+    private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (PanelType panelType : PanelType.values()) {
+                SafeNbtWriterRegistry.REGISTRY.register(panelType.blockEntity, (be, tag, registries) -> {
+                    if (be instanceof AbstractPanelBlockEntity pbe) {
+                        pbe.saveExternal(tag, registries);
+                    }
+                });
+            }
+        });
+    }
+
     @Override
     public void busInit(IEventBus bus) {
+        bus.addListener(this::commonSetup);
 //        DISPLAY_SOURCES.register(bus);
     }
 

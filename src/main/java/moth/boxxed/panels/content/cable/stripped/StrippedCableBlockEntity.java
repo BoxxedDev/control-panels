@@ -1,9 +1,8 @@
 package moth.boxxed.panels.content.cable.stripped;
 
+import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
-import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedConfigMenu;
-import moth.boxxed.panels.content.panel.PanelBlock;
 import moth.boxxed.panels.index.PanelBlockEntities;
 import moth.boxxed.panels.index.PanelBlocks;
 import net.minecraft.core.BlockPos;
@@ -43,36 +42,19 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
     }
 
     @Override
-    public boolean isConnected(ModulesNetworkMember other, BlockState from, BlockState to) {
-        if (!(from.getBlock() instanceof StrippedCableBlock)) return false;
-
-        BlockPos otherPos = other.getBlockPos();
-        BlockPos pos = getBlockPos();
-        BlockPos delta = otherPos.subtract(pos);
-        Direction direction = Direction.fromDelta(delta.getX(), delta.getY(), delta.getZ());
-        Direction fromDirection = from.getValue(StrippedCableBlock.FACING);
-
-        if (direction.getAxis().isVertical())
-            return false;
-        if (!fromDirection.getOpposite().equals(direction))
-            return false;
-        return (to.getBlock() instanceof CableBlock) ||
-                (to.getBlock() instanceof PanelBlock && fromDirection.getOpposite().equals(to.getValue(PanelBlock.FACING)));
-    }
-
-    @Override
     public Component getDisplayName() {
         return Component.translatable(PanelBlocks.CONTROL_PANEL.get().getDescriptionId());
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new StrippedConfigMenu(containerId, getOrCreate().getCompiledModules(), this.getBlockPos(), this.boundModule);
+        this.getOrCreate().compileModules();
+        return new StrippedConfigMenu(containerId, getOrCreate().getCompiledModules().filterIOModules(), this.getBlockPos(), this.boundModule);
     }
 
     public void sendToMenu(RegistryFriendlyByteBuf buf) {
-        CompoundTag tag = getOrCreate().getCompiledModules().asTag(buf.registryAccess());
-        buf.writeNbt(tag);
+        this.getOrCreate().compileModules();
+        buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules(), (buffer, val) -> ModuleIOInfo.STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, val));
         buf.writeBlockPos(this.getBlockPos());
         buf.writeUtf(this.boundModule);
     }

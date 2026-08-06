@@ -1,14 +1,19 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.WikiPage;
+import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.content.cable.CableBlock;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlock;
-import moth.boxxed.panels.content.panel.PanelBlock;
+import moth.boxxed.panels.content.panel.ceiling.CeilingPanelBlock;
+import moth.boxxed.panels.content.panel.normal.PanelBlock;
+import moth.boxxed.panels.content.panel.wall.WallPanelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -27,6 +32,27 @@ public class PanelBlocks {
                                     .noOcclusion()
                     )
             );
+    public static final DeferredBlock<WallPanelBlock> WALL_CONTROL_PANEL =
+            registerBlock("wall_control_panel",
+                    () -> new WallPanelBlock(
+                            BlockBehaviour.Properties.of()
+                                    .strength(1f, 20f)
+                                    .sound(SoundType.NETHERITE_BLOCK)
+                                    .mapColor(MapColor.COLOR_GRAY)
+                                    .noOcclusion()
+                    )
+            );
+    public static final DeferredBlock<CeilingPanelBlock> CEILING_CONTROL_PANEL =
+            registerBlock("ceiling_control_panel",
+                    () -> new CeilingPanelBlock(
+                            BlockBehaviour.Properties.of()
+                                    .strength(1f, 20f)
+                                    .sound(SoundType.NETHERITE_BLOCK)
+                                    .mapColor(MapColor.COLOR_GRAY)
+                                    .noOcclusion()
+                    )
+            );
+
     public static final DeferredBlock<CableBlock> CABLE =
             registerBlock("cable",
                     () -> new CableBlock(
@@ -49,6 +75,23 @@ public class PanelBlocks {
                                     .noOcclusion()
                     )
             );
+
+    static {
+        if (FMLLoader.getDist().isClient()) {
+            WikiableEntries.register(CONTROL_PANEL.getId(),
+                    WikiPage.of(CONTROL_PANEL).category(PanelWikiCategories.BLOCKS)
+                            .addParagraph("The control panel is the main event of the mod. You can hold a module in your hand and place it on the panel.")
+                            .addParagraph("There isn't a wiki for the other panel types but the same applies to them as well.")
+            );
+            WikiableEntries.registerRedirect(WALL_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
+            WikiableEntries.registerRedirect(CEILING_CONTROL_PANEL.getId(), CONTROL_PANEL.getId());
+
+            WikiableEntries.register(CABLE.getId(),
+                    WikiPage.of(CABLE).category(PanelWikiCategories.BLOCKS)
+                            .addParagraph("The control cable allows you to bring redstone signals out of the control panel, as well connect control panels that aren't directly connected.")
+            );
+        }
+    }
 
     private static <T extends Block> DeferredBlock<T> registerBlockWithoutItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);

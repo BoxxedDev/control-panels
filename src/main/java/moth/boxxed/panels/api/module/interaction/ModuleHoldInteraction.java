@@ -1,16 +1,16 @@
 package moth.boxxed.panels.api.module.interaction;
 
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.config.ClientConfig;
 import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.List;
 
 public abstract class ModuleHoldInteraction<T extends Module> {
     protected T module;
@@ -28,7 +28,7 @@ public abstract class ModuleHoldInteraction<T extends Module> {
 
     public abstract boolean activeMouseMove(double yaw, double pitch);
 
-    public void startHold(Level level, Player player, T module) {
+    public final void startHold(Level level, Player player, T module) {
         this.module = module;
         this.player = player;
         this.level = level;
@@ -76,9 +76,13 @@ public abstract class ModuleHoldInteraction<T extends Module> {
     }
 
     public boolean use(int action) {
-        if (action == GLFW.GLFW_RELEASE && this.isActive()) {
+        boolean pressAgain = ClientConfig.CLICK_FOR_MODULE_HOLD.get() && action == GLFW.GLFW_PRESS;
+        boolean release = !ClientConfig.CLICK_FOR_MODULE_HOLD.get() && action == GLFW.GLFW_RELEASE;
+        if ((pressAgain || release) && this.isActive()) {
             this.release();
             ModuleHoldInteractionManager.stop();
+            if (pressAgain)
+                return true;
         }
         return false;
     }
@@ -95,8 +99,8 @@ public abstract class ModuleHoldInteraction<T extends Module> {
 
     }
 
-    protected void update(Integer... values) {
-        PacketDistributor.sendToServer(new DefaultModuleUpdatePacket(this.module.getParentPos(), this.module.getName(), List.of(values)));
+    protected void update(CompoundTag tag) {
+        PacketDistributor.sendToServer(new DefaultModuleUpdatePacket(this.module.getParentPos(), this.module.getName(), tag));
     }
 
     public boolean keyPress(int key, int scanCode, int modifiers) {

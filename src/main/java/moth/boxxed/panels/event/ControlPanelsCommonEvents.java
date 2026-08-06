@@ -1,14 +1,15 @@
 package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.panel.skin.PanelSkinsServerManager;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
-import moth.boxxed.panels.content.panel.screen.PanelScreen;
 import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelMenuTypes;
+import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.*;
 import net.minecraft.client.KeyMapping;
@@ -22,6 +23,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -39,17 +41,26 @@ public class ControlPanelsCommonEvents {
     @SubscribeEvent
     public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("control_panels_1");
+
+        //Client
+        registrar.playToClient(
+                OpenPaintWheelPacket.TYPE,
+                OpenPaintWheelPacket.STREAM_CODEC,
+                ClientPayloadHandler::handleOpenPaintWheel
+        );
+
+        //Server
         registrar.playToServer(
-                SavePanelModulesPacket.TYPE,
-                SavePanelModulesPacket.STREAM_CODEC,
-                ServerPayloadHandler::handleSavePanelModules
+                ConfigureModulePacket.TYPE,
+                ConfigureModulePacket.STREAM_CODEC,
+                ServerPayloadHandler::handleConfigureModule
         );
         registrar.playToServer(
                 DefaultModuleUpdatePacket.TYPE,
                 DefaultModuleUpdatePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleDefaultUpdate
         );
-        registrar.playBidirectional(
+        registrar.playToServer(
                 ConfigureStrippedCablePacket.TYPE,
                 ConfigureStrippedCablePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleStrippedConfig
@@ -64,6 +75,17 @@ public class ControlPanelsCommonEvents {
                 SelectedModulePacket.STREAM_CODEC,
                 ServerPayloadHandler::handleSelectedModule
         );
+        registrar.playToServer(
+                SetPanelSkinPacket.TYPE,
+                SetPanelSkinPacket.STREAM_CODEC,
+                ServerPayloadHandler::handleSetPanelSkin
+        );
+        registrar.playToServer(
+                PlaceModulePacket.TYPE,
+                PlaceModulePacket.STREAM_CODEC,
+                ServerPayloadHandler::handlePlaceModule
+        );
+
         //Compat packet
         if (ModList.get().isLoaded("create"))
             registrar.playToServer(
@@ -75,7 +97,6 @@ public class ControlPanelsCommonEvents {
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(PanelMenuTypes.PANEL.get(), PanelScreen::new);
         event.register(PanelMenuTypes.STRIPPED_CONFIG.get(), StrippedCableScreen::new);
         if (ModList.get().isLoaded("create"))
             event.register(PanelCreateRegistries.PANEL_LINK_MENU.get(), PanelLinkScreen::new);
@@ -154,4 +175,37 @@ public class ControlPanelsCommonEvents {
             event.register(keyMapping);
         }
     }
+
+    @SubscribeEvent
+    public static void addReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(PanelSkinsServerManager.ReloadListener.INSTANCE);
+    }
+
+//    @SubscribeEvent
+//    public static void useItemOnBlock(UseItemOnBlockEvent event) {
+//        if (event.getUsePhase() != UseItemOnBlockEvent.UsePhase.BLOCK)
+//            return;
+//
+//        UseOnContext context = event.getUseOnContext();
+//        BlockPos pos = context.getClickedPos();
+//        Level level = context.getLevel();
+//        Player player = context.getPlayer();
+//        BlockState state = level.getBlockState(pos);
+//        ItemStack itemInHand = player.getMainHandItem();
+//
+//        if (itemInHand.is(PanelTags.Items.WRENCH) &&
+//                state.getBlock() instanceof AbstractPanelBlock &&
+//                level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
+//            Dashpanels.LOGGER.debug("{} | C: {}", event.getUsePhase(), level.isClientSide);
+//            if (player.isShiftKeyDown()) {
+//                if (pbe.removeSelectedModule(player)) {
+//                    event.cancelWithResult(ItemInteractionResult.SUCCESS);
+//                }
+//            } else {
+//                if (pbe.openConfigureScreen(level, pos, player)) {
+//                    event.cancelWithResult(ItemInteractionResult.SUCCESS);
+//                }
+//            }
+//        }
+//    }
 }

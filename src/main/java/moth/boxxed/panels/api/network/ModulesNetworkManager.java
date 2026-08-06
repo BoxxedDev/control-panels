@@ -97,17 +97,21 @@ public class ModulesNetworkManager {
             BlockEntity other = level.getBlockEntity(pos.relative(direction));
             if (!(other instanceof ModulesNetworkMember otherMember))
                 continue;
-            if (isConnected(member, otherMember)) {
+            if (isConnected(member, otherMember, direction)) {
                 ret.add(otherMember);
             }
         }
         return ret;
     }
 
-    public static boolean isConnected(ModulesNetworkMember from, ModulesNetworkMember to) {
+    public static boolean isConnected(ModulesNetworkMember from, ModulesNetworkMember to, Direction direction) {
         BlockState fromState = from.getBlockState();
+        if (!(fromState.getBlock() instanceof ModulesNetworkMemberBlock fromBlock))
+            return false;
         BlockState toState = to.getBlockState();
-        return from.isConnected(to, fromState, toState) && to.isConnected(from, toState, fromState);
+        if (!(toState.getBlock() instanceof ModulesNetworkMemberBlock toBlock))
+            return false;
+        return fromBlock.isConnecting(from.getLevel(), from.getBlockPos(), fromState, direction) && toBlock.isConnecting(to.getLevel(), to.getBlockPos(), toState, direction.getOpposite());
     }
 
     public static boolean hasNetwork(Level level, ModulesNetwork network) {

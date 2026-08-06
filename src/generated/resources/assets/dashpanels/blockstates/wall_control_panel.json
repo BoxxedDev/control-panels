@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,shape=center": {
+      "model": "dashpanels:block/wall_control_panel/center",
+      "y": 90
+    },
+    "facing=east,shape=left": {
+      "model": "dashpanels:block/wall_control_panel/left",
+      "y": 90
+    },
+    "facing=east,shape=right": {
+      "model": "dashpanels:block/wall_control_panel/right",
+      "y": 90
+    },
+    "facing=east,shape=single": {
+      "model": "dashpanels:block/wall_control_panel/single",
+      "y": 90
+    },
+    "facing=north,shape=center": {
+      "model": "dashpanels:block/wall_control_panel/center"
+    },
+    "facing=north,shape=left": {
+      "model": "dashpanels:block/wall_control_panel/left"
+    },
+    "facing=north,shape=right": {
+      "model": "dashpanels:block/wall_control_panel/right"
+    },
+    "facing=north,shape=single": {
+      "model": "dashpanels:block/wall_control_panel/single"
+    },
+    "facing=south,shape=center": {
+      "model": "dashpanels:block/wall_control_panel/center",
+      "y": 180
+    },
+    "facing=south,shape=left": {
+      "model": "dashpanels:block/wall_control_panel/left",
+      "y": 180
+    },
+    "facing=south,shape=right": {
+      "model": "dashpanels:block/wall_control_panel/right",
+      "y": 180
+    },
+    "facing=south,shape=single": {
+      "model": "dashpanels:block/wall_control_panel/single",
+      "y": 180
+    },
+    "facing=west,shape=center": {
+      "model": "dashpanels:block/wall_control_panel/center",
+      "y": 270
+    },
+    "facing=west,shape=left": {
+      "model": "dashpanels:block/wall_control_panel/left",
+      "y": 270
+    },
+    "facing=west,shape=right": {
+      "model": "dashpanels:block/wall_control_panel/right",
+      "y": 270
+    },
+    "facing=west,shape=single": {
+      "model": "dashpanels:block/wall_control_panel/single",
+      "y": 270
+    }
+  }
+}

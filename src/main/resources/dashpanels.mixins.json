@@ -3,6 +3,8 @@
   "package": "moth.boxxed.panels.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ItemStackMixin",
+    "VoxelShapeAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -14,6 +16,8 @@
     "GameRendererMixin",
     "GuiMixin",
     "KeyboardHandlerMixin",
-    "MouseHandlerMixin"
+    "ModListInfoPanelMixin",
+    "MouseHandlerMixin",
+    "PoseStackPoseAccessor"
   ]
 }

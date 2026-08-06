@@ -5,12 +5,11 @@ import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.util.CustomSectionTextured;
 import net.mcexpanded.fancytabsections.FancyTabSections;
-import net.mcexpanded.fancytabsections.Section.SectionTextured;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -31,35 +30,44 @@ public class PanelCreativeTabs {
                     .build()
     );
 
+    public static final CustomSectionTextured MAIN_SECTION = (CustomSectionTextured) new CustomSectionTextured(Dashpanels.path("dashpanels"))
+            .setTitle(Component.translatable("creativetab.dashpanels.dashpanels"));
+    public static final CustomSectionTextured MODULES_SECTION = (CustomSectionTextured) new CustomSectionTextured(Dashpanels.path("modules"))
+            .setTitle(Component.translatable("creativetab.dashpanels.modules"))
+            .setTexture(Dashpanels.path("dashpanels"));
+    public static final CustomSectionTextured TOOLS_SECTION = (CustomSectionTextured) new CustomSectionTextured(Dashpanels.path("extras"))
+            .setTitle(Component.translatable("creativetab.dashpanels.tools"))
+            .setTexture(Dashpanels.path("dashpanels"));
+
+    static {
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), MAIN_SECTION);
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), TOOLS_SECTION);
+        FancyTabSections.addSection(Dashpanels.path("dashpanels"), MODULES_SECTION);
+    }
+
     public static void addItems() {
-        CustomSectionTextured defaultSection = new CustomSectionTextured(Dashpanels.path("dashpanels"));
-        defaultSection.setTitle(Component.translatable("creativetab.dashpanels.dashpanels"));
-
-        defaultSection.add(PanelBlocks.CONTROL_PANEL);
-        defaultSection.add(PanelBlocks.CABLE);
-        defaultSection.add(PanelItems.CABLE_STRIPPER);
+        MAIN_SECTION.addItemTag(PanelTags.Items.PANELS);
+        MAIN_SECTION.add(PanelBlocks.CABLE);
         if (ModList.get().isLoaded("create")) {
-            defaultSection.add(PanelCreateRegistries.PANEL_LINK);
+            MAIN_SECTION.add(PanelCreateRegistries.PANEL_LINK);
         }
+        
+        TOOLS_SECTION.add(PanelItems.CABLE_STRIPPER);
+        TOOLS_SECTION.add(PanelItems.WRENCH);
+        TOOLS_SECTION.add(PanelItems.PAINT_BRUSH);
 
-        defaultSection.setCentered(true);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), defaultSection);
+        TOOLS_SECTION.add(Items.AIR);
 
-        CustomSectionTextured modulesSection = new CustomSectionTextured(Dashpanels.path("dashpanels"));
-        modulesSection.setTitle(Component.translatable("creativetab.dashpanels.modules"));
-        modulesSection.setTexture(Dashpanels.path("dashpanels"));
+        TOOLS_SECTION.add(PanelItems.KEY_ITEM);
 
-        modulesSection.add(registryAccess -> {
+        MODULES_SECTION.add(registryAccess -> {
             List<ItemStack> ret = new ArrayList<>();
             ModulesRegistry.MODULE_REGISTRY.entrySet().forEach(
-                    entry -> ret.add(new ItemStack(entry.getValue().associatedItem.get()))
+                    entry -> ret.add(new ItemStack(entry.getValue().associatedItem))
             );
             ret.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getDisplayName().getString(), b.getDisplayName().getString()));
             return ret;
         });
-
-        modulesSection.setCentered(true);
-        FancyTabSections.addSection(Dashpanels.path("dashpanels"), modulesSection);
     }
 
     public static void register(IEventBus eventBus) {

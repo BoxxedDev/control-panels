@@ -19,6 +19,7 @@ public class MouseHandlerMixin {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
             if (ModuleHoldInteractionManager.onMouseMove(j, k*l)) {
                 ci.cancel();
+                return;
             }
         }
     }
@@ -28,8 +29,9 @@ public class MouseHandlerMixin {
             cancellable = true)
     private void panels$onPress(long windowPointer, int button, int action, int modifiers, CallbackInfo ci) {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
-            if (ModuleHoldInteractionManager.beforeMouseInput(button, action)) {
+            if (ModuleHoldInteractionManager.beforeMouseInput(button, action) || ModuleHoldInteractionManager.isActive()) {
                 ci.cancel();
+                return;
             }
         }
     }

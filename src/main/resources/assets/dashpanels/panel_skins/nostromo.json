@@ -1,0 +1,8 @@
+{
+  "single": "dashpanels:block/nostromo/single",
+  "left": "dashpanels:block/nostromo/left",
+  "center": "dashpanels:block/nostromo/center",
+  "right": "dashpanels:block/nostromo/right",
+  "tintable": true,
+  "author": "MrUranium"
+}

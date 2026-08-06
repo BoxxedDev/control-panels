@@ -1,7 +1,9 @@
 package moth.boxxed.panels.api.module;
 
-import java.util.List;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 
 public interface IExternalUpdatable {
-    void setNum(List<Integer> num);
+    void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries);
 }

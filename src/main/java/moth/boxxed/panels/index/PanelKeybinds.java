@@ -12,32 +12,18 @@ import java.util.Set;
 public class PanelKeybinds {
     public static final Set<KeyMapping> MAPPINGS = new HashSet<>();
 
-    public static final KeyMapping DELETE_MODULE_MAPPING = register(new KeyMapping(
-            "key.dashpanels.delete_module",
-            KeyConflictContext.GUI,
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_D,
-            "key.categories.dashpanels"
-    ));
-    public static final KeyMapping SELECT_MODULE_MAPPING = register(new KeyMapping(
-            "key.dashpanels.select_module",
-            KeyConflictContext.GUI,
-            InputConstants.Type.MOUSE,
-            GLFW.GLFW_MOUSE_BUTTON_RIGHT,
-            "key.categories.dashpanels"
-    ));
-    public static final KeyMapping MOVE_MODULE_MAPPING = register(new KeyMapping(
-            "key.dashpanels.move_module",
-            KeyConflictContext.GUI,
-            InputConstants.Type.MOUSE,
-            GLFW.GLFW_MOUSE_BUTTON_LEFT,
-            "key.categories.dashpanels"
-    ));
     public static final KeyMapping HOLD_MOVE_CAMERA = register(new KeyMapping(
             "key.dashpanels.hold_move_camera",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
+            "key.categories.dashpanels"
+    ));
+    public static final KeyMapping HOLD_TO_OPEN_WIKI = register(new KeyMapping(
+            "key.dashpanels.hold_to_open_wiki",
+            KeyConflictContext.GUI,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_V,
             "key.categories.dashpanels"
     ));
 

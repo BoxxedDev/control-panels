@@ -1,7 +1,5 @@
 package moth.boxxed.panels.util;
 
-import net.minecraft.client.renderer.Rect2i;
-
 public class Rect2d {
     public double minX;
     public double minY;
@@ -33,11 +31,11 @@ public class Rect2d {
         return !(this.maxX <= other.minX || this.minX >= other.maxX || this.maxY <= other.minY || this.minY >= other.maxY);
     }
 
-    public Rect2i toRect2i() {
-        return new Rect2i((int) this.minX, (int) this.minY, (int) this.width, (int) this.height);
+    public net.minecraft.client.renderer.Rect2i toRect2i() {
+        return new net.minecraft.client.renderer.Rect2i((int) this.minX, (int) this.minY, (int) this.width, (int) this.height);
     }
 
-    public static Rect2d fromRect2i(Rect2i rect2i) {
+    public static Rect2d fromRect2i(net.minecraft.client.renderer.Rect2i rect2i) {
         return new Rect2d(rect2i.getX(), rect2i.getY(), rect2i.getX()+ rect2i.getWidth(), rect2i.getY()+ rect2i.getHeight());
     }
 }

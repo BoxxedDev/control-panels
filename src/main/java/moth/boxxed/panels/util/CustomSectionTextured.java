@@ -7,8 +7,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
-import java.awt.*;
-
 public class CustomSectionTextured extends SectionTextured {
     int secondaryTextColor = 0xC2C2C2;
 

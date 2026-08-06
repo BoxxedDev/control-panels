@@ -1,11 +1,15 @@
 package moth.boxxed.panels.content.cable.stripped;
 
-import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleMap;
+import moth.boxxed.panels.api.module.io.IInput;
+import moth.boxxed.panels.api.module.io.IMultiInput;
+import moth.boxxed.panels.api.module.io.IMultiOutput;
+import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.network.ModulesNetwork;
+import moth.boxxed.panels.api.network.ModulesNetworkMemberBlock;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelItems;
-import moth.boxxed.panels.util.BaseEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +21,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -33,7 +39,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StrippedCableBlock extends BaseEntityBlock {
+public class StrippedCableBlock extends ModulesNetworkMemberBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public static final VoxelShape NORTH_SHAPE = Shapes.or(
@@ -63,6 +69,15 @@ public class StrippedCableBlock extends BaseEntityBlock {
 
     public StrippedCableBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public boolean isConnecting(LevelReader level, BlockPos pos, BlockState state, Direction face) {
+        Direction fromDirection = state.getValue(StrippedCableBlock.FACING);
+
+        if (face.getAxis().isVertical())
+            return false;
+        return fromDirection.getOpposite() == face;
     }
 
     @Override
@@ -140,7 +155,7 @@ public class StrippedCableBlock extends BaseEntityBlock {
             if (module instanceof IMultiOutput output) {
                 Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
                 output.setValues(runnableMap::put);
-                String extension = be.boundModule.substring(module.name.length()+3);
+                String extension = be.boundModule.substring(module.getName().length()+3);
                 if (level.hasNeighborSignal(pos)) {
                     runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
                 } else {
@@ -181,5 +196,15 @@ public class StrippedCableBlock extends BaseEntityBlock {
     @Override
     public @org.jetbrains.annotations.Nullable PushReaction getPistonPushReaction(BlockState state) {
         return PushReaction.IGNORE;
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 }

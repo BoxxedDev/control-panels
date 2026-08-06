@@ -1,0 +1,8 @@
+{
+  "panel": "wall",
+  "skins": [
+    "dashpanels:wall",
+    "dashpanels:wall_kipti",
+    "dashpanels:wall_nostromo"
+  ]
+}

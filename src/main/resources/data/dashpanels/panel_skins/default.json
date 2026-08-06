@@ -1,0 +1,8 @@
+{
+  "panel": "default",
+  "skins": [
+    "dashpanels:default",
+    "dashpanels:kipti",
+    "dashpanels:nostromo"
+  ]
+}

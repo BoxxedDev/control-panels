@@ -1,7 +1,13 @@
 package moth.boxxed.panels.content.panel.normal;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.api.panel.skin.ClientSkin;
+import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
+import moth.boxxed.panels.api.panel.skin.SkinShape;
 import moth.boxxed.panels.index.PanelShapes;
+import moth.boxxed.panels.util.HalfHalfVoxelShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -12,7 +18,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.Nullable;
 
 public class PanelBlock extends AbstractPanelBlock {
@@ -40,17 +48,16 @@ public class PanelBlock extends AbstractPanelBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-//        if (FMLLoader.getDist().isClient() && level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
-//            ClientSkin clientSkin = PanelSkinsClientManager.MAP.get(pbe.skin);
-//            if (clientSkin != null && clientSkin.shape().isPresent()) {
-//                VoxelShape shape = Shapes.empty();
-//                for (SkinShape.Bounds bounds : clientSkin.shape().get()) {
-//                    shape = Shapes.or(shape, bounds.toVoxelShape(true, state.getValue(FACING)));
-//                }
-//                Dashpanels.LOGGER.debug("Side");
-//                return shape;
-//            }
-//        }
+        if (FMLLoader.getDist().isClient() && level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
+            ClientSkin clientSkin = PanelSkinsClientManager.MAP.get(pbe.skin);
+            if (clientSkin != null && clientSkin.shape().isPresent()) {
+                VoxelShape shape = Shapes.empty();
+                for (SkinShape.Bounds bounds : clientSkin.shape().get().bounds()) {
+                    shape = Shapes.or(shape, bounds.toVoxelShape(clientSkin.shape().get().directional().orElse(true), state.getValue(FACING)));
+                }
+                return new HalfHalfVoxelShape(PanelShapes.PANEL_SHAPE.get(state.getValue(FACING)), shape);
+            }
+        }
 
         return PanelShapes.PANEL_SHAPE.get(state.getValue(FACING));
     }

@@ -28,8 +28,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -129,7 +132,7 @@ public class ControlPanelsClientEvents {
 
     @SubscribeEvent
     public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(PanelSkinsClientManager.ReloadListener.INSTANCE);
+//        event.registerReloadListener(PanelSkinsClientManager.ReloadListener.INSTANCE);
     }
 
     @SubscribeEvent
@@ -156,6 +159,16 @@ public class ControlPanelsClientEvents {
     public static void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
         for (PanelType type : PanelType.values()) {
             event.register(new PanelSkinBlockColor(), type.block);
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerAdditional(ModelEvent.RegisterAdditional event) {
+        ResourceManager manager = Minecraft.getInstance().getResourceManager();
+        PanelSkinsClientManager.compileClientSkins(manager);
+
+        for (ResourceLocation modelLocation : PanelSkinsClientManager.getAllSkinModelLocations()) {
+            event.register(ModelResourceLocation.standalone(modelLocation));
         }
     }
 

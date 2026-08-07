@@ -90,6 +90,10 @@ public class PaintWheelScreen extends Screen {
         ResourceLocation skin = pbe.skin;
         if (PanelSkinsClientManager.MAP.containsKey(skin) && PanelSkinsClientManager.MAP.get(skin) != null) {
             this.currentSkin = PanelSkinsClientManager.MAP.get(skin);
+
+            if (this.currentSkin == null) {
+                this.currentSkin = ClientSkin.DEFAULT;
+            }
         }
 
         this.pos = clickedPos;

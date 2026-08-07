@@ -74,13 +74,26 @@ public class StringEntryWidget extends AbstractSimiWidget {
 
     @Override
     public List<Component> getToolTip() {
-        List<Component> list = new ArrayList<>();
-        list.add(Component.translatable("widget.dashpanels.panel_link.module_select"));
-        for (String string : this.available) {
-            String prefix = this.available.indexOf(string) == this.currentIndex ? "-> " : "   ";
-            ChatFormatting formatting = this.available.indexOf(string) == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
-            list.add(Component.literal(prefix.concat(string)).withStyle(formatting));
+        if (this.isHovered()) {
+            List<Component> list = new ArrayList<>();
+            list.add(Component.translatable("widget.dashpanels.panel_link.module_select"));
+
+            if (this.currentIndex-2 > 0) {
+                list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
+            }
+            for (int i = Math.max(0, this.currentIndex-2); i < Math.min(this.available.size(), this.currentIndex+3); i++) {
+                String string = this.available.get(i);
+                String prefix = this.available.indexOf(string) == this.currentIndex ? "-> " : "   ";
+                ChatFormatting formatting = this.available.indexOf(string) == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
+                list.add(Component.literal(prefix.concat(string)).withStyle(formatting));
+            }
+            if (this.currentIndex+3 < this.available.size()) {
+                list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
+            }
+
+            return list;
         }
-        return list;
+
+        return super.getToolTip();
     }
 }

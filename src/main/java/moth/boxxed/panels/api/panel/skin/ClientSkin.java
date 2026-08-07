@@ -6,9 +6,7 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -20,7 +18,8 @@ public record ClientSkin(ResourceLocation single,
                          ResourceLocation center,
                          ResourceLocation right,
                          Optional<Boolean> tintable,
-                         Optional<String> author) {
+                         Optional<String> author,
+                         Optional<SkinShape> shape) {
     private static final ResourceLocation DEFAULT_SINGLE = Dashpanels.path("block/control_panel/single");
     private static final ResourceLocation DEFAULT_LEFT = Dashpanels.path("block/control_panel/left");
     private static final ResourceLocation DEFAULT_CENTER = Dashpanels.path("block/control_panel/center");
@@ -31,7 +30,8 @@ public record ClientSkin(ResourceLocation single,
             DEFAULT_CENTER,
             DEFAULT_RIGHT,
             Optional.of(false),
-            Optional.of("Boxxed")
+            Optional.of("Boxxed"),
+            Optional.empty()
     );
 
     public static final Codec<ClientSkin> CODEC = RecordCodecBuilder.create(
@@ -41,7 +41,8 @@ public record ClientSkin(ResourceLocation single,
                     ResourceLocation.CODEC.fieldOf("center").orElse(DEFAULT_CENTER).forGetter(ClientSkin::center),
                     ResourceLocation.CODEC.fieldOf("right").orElse(DEFAULT_RIGHT).forGetter(ClientSkin::right),
                     Codec.BOOL.optionalFieldOf("tintable").forGetter(ClientSkin::tintable),
-                    Codec.STRING.optionalFieldOf("author").forGetter(ClientSkin::author)
+                    Codec.STRING.optionalFieldOf("author").forGetter(ClientSkin::author),
+                    SkinShape.CODEC.optionalFieldOf("shape").forGetter(ClientSkin::shape)
             ).apply(instance, ClientSkin::new)
     );
 
@@ -52,13 +53,6 @@ public record ClientSkin(ResourceLocation single,
         locations.add(this.center);
         locations.add(this.right);
         return locations;
-    }
-
-    public void registerModels(ModelBakery bakery) {
-        for (ResourceLocation location : compileLocations()) {
-            UnbakedModel unbakedModel = bakery.getModel(location);
-            bakery.registerModel(ModelResourceLocation.standalone(location), unbakedModel);
-        }
     }
 
     public BakedModel getItemBakedModel() {
@@ -90,5 +84,14 @@ public record ClientSkin(ResourceLocation single,
                     this.center.equals(other.center) &&
                     this.right.equals(other.right);
         }
+    }
+
+    public List<ResourceLocation> allModels() {
+        return List.of(
+                this.single,
+                this.left,
+                this.center,
+                this.right
+        );
     }
 }

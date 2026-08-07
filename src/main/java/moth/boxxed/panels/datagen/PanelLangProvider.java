@@ -93,10 +93,8 @@ public class PanelLangProvider extends LanguageProvider {
         addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
         addConfig(ClientConfig.DEFAULT_PALETTE, "Default Skin Palette");
 
-        addCustom("key", "delete_module", "Delete Module");
-        addCustom("key", "select_module", "Select Module");
-        addCustom("key", "move_module", "Move Module");
         addCustom("key", "hold_move_camera", "Move Camera While Holding");
+        addCustom("key", "hold_to_open_wiki", "Hold to Open Wiki");
         add("key.categories.dashpanels", "Dashpanels");
 
         addModuleConfig("name", "Name");

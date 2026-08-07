@@ -8,6 +8,7 @@ import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
 import moth.boxxed.panels.api.panel.skin.SkinShape;
 import moth.boxxed.panels.index.PanelShapes;
 import moth.boxxed.panels.util.HalfHalfVoxelShape;
+import moth.boxxed.panels.util.OutlinedVoxelShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,11 +18,16 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.Nullable;
+import oshi.util.tuples.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PanelBlock extends AbstractPanelBlock {
     public PanelBlock(Properties properties) {
@@ -51,11 +57,27 @@ public class PanelBlock extends AbstractPanelBlock {
         if (FMLLoader.getDist().isClient() && level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe) {
             ClientSkin clientSkin = PanelSkinsClientManager.MAP.get(pbe.skin);
             if (clientSkin != null && clientSkin.shape().isPresent()) {
-                VoxelShape shape = Shapes.empty();
-                for (SkinShape.Bounds bounds : clientSkin.shape().get().bounds()) {
-                    shape = Shapes.or(shape, bounds.toVoxelShape(clientSkin.shape().get().directional().orElse(true), state.getValue(FACING)));
+                if (clientSkin.shape().get().bounds().isPresent()) {
+                    VoxelShape shape = Shapes.empty();
+                    for (SkinShape.Bounds bounds : clientSkin.shape().get().bounds().get()) {
+                        shape = Shapes.or(shape, bounds.toVoxelShape(clientSkin.shape().get().directional(), state.getValue(FACING)));
+                    }
+                    return new HalfHalfVoxelShape(
+                            PanelShapes.PANEL_SHAPE.get(state.getValue(FACING)),
+                            shape
+                    );
+                } else if (clientSkin.shape().get().lines().isPresent()) {
+                    List<Pair<Vec3, Vec3>> list = new ArrayList<>();
+                    for (SkinShape.Line line : clientSkin.shape().get().lines().get()) {
+                        list.add(line.toPair());
+                    }
+
+                    return new OutlinedVoxelShape(
+                            PanelShapes.PANEL_SHAPE.get(state.getValue(FACING)),
+                            list
+                            );
                 }
-                return new HalfHalfVoxelShape(PanelShapes.PANEL_SHAPE.get(state.getValue(FACING)), shape);
+
             }
         }
 

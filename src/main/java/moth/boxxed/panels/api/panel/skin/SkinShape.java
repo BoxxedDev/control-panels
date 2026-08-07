@@ -1,45 +1,61 @@
 package moth.boxxed.panels.api.panel.skin;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
+import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//TODO: fix
-public record SkinShape(Optional<Boolean> directional, List<Bounds> bounds) {
+public record SkinShape(boolean directional, Optional<List<Bounds>> bounds, Optional<List<Line>> lines) {
     public static final Codec<SkinShape> CODEC = RecordCodecBuilder.create(instance ->
                 instance.group(
-                        Codec.BOOL.optionalFieldOf("directional").forGetter(SkinShape::directional),
-                        Codec.list(Codec.list(Codec.DOUBLE, 6,6), 1, 20).fieldOf("bounds").forGetter(SkinShape::boundsListInList)
+                        Codec.BOOL.optionalFieldOf("directional", true).forGetter(SkinShape::directional),
+                        Codec.xor(
+                                Codec.list(Codec.list(Codec.DOUBLE, 6,6), 1, 20),
+                                Codec.list(Line.CODEC, 1, 20)
+                        ).fieldOf("bounds").forGetter(SkinShape::boundsEither)
                 ).apply(instance, SkinShape::fromCodec));
 
-    public static SkinShape fromCodec(Optional<Boolean> directional, List<List<Double>> boundsListInList) {
-        List<Bounds> boundsList = new ArrayList<>();
+    public static SkinShape fromCodec(boolean directional, Either<List<List<Double>>, List<Line>> either) {
+        Optional<List<Bounds>> optionalBounds = Optional.empty();
+        Optional<List<Line>> optionalLines = Optional.empty();
 
-        for (List<Double> doubleList : boundsListInList) {
-            boundsList.add(Bounds.fromList(doubleList));
+        if (either.left().isPresent()) {
+            List<Bounds> list = new ArrayList<>();
+            for (List<Double> doubleList : either.left().get()) {
+                list.add(Bounds.fromList(doubleList));
+            }
+
+            optionalBounds = Optional.of(list);
+        } else if (either.right().isPresent()) {
+            optionalLines = Optional.of(either.right().get());
         }
 
-        return new SkinShape(directional, boundsList);
+
+        return new SkinShape(directional, optionalBounds, optionalLines);
     }
 
-    public List<List<Double>> boundsListInList() {
-        List<List<Double>> ret = new ArrayList<>();
-
-        for (Bounds bound : this.bounds) {
-            ret.add(bound.asList());
+    public Either<List<List<Double>>, List<Line>> boundsEither() {
+        if (this.bounds.isPresent()) {
+            List<List<Double>> listInList = new ArrayList<>();
+            for (Bounds bound : this.bounds.get()) {
+                listInList.add(bound.asList());
+            }
+            return Either.left(listInList);
+        } else if (this.lines.isPresent()) {
+            return Either.right(this.lines.get());
         }
-
-        return ret;
+        return null;
     }
 
     public record Bounds(double x1, double y1, double z1, double x2, double y2, double z2) {
@@ -101,6 +117,49 @@ public record SkinShape(Optional<Boolean> directional, List<Bounds> bounds) {
                     list.get(3),
                     list.get(4),
                     list.get(5)
+            );
+        }
+    }
+
+    public record Line(double x1, double y1, double z1, double x2, double y2, double z2) {
+        public static final Codec<Line> CODEC = RecordCodecBuilder.create(instance ->
+                instance.group(
+                        Codec.DOUBLE.listOf(3, 3).fieldOf("p1").forGetter(Line::pointOne),
+                        Codec.DOUBLE.listOf(3, 3).fieldOf("p2").forGetter(Line::pointTwo)
+                ).apply(instance, Line::fromCodec)
+        );
+
+        public List<Double> pointOne() {
+            return List.of(
+                    this.x1,
+                    this.y1,
+                    this.z1
+            );
+        }
+
+        public List<Double> pointTwo() {
+            return List.of(
+                    this.x2,
+                    this.y2,
+                    this.z2
+            );
+        }
+
+        public static Line fromCodec(List<Double> pointOne, List<Double> pointTwo) {
+            return new Line(
+                    pointOne.get(0),
+                    pointOne.get(1),
+                    pointOne.get(2),
+                    pointTwo.get(0),
+                    pointTwo.get(1),
+                    pointTwo.get(2)
+            );
+        }
+
+        public Pair<Vec3, Vec3> toPair() {
+            return new Pair<>(
+                    new Vec3(this.x1/16, this.y1/16, this.z1/16),
+                    new Vec3(this.x2/16, this.y2/16, this.z2/16)
             );
         }
     }

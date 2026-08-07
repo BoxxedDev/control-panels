@@ -6,6 +6,7 @@ import moth.boxxed.panels.network.packet.DefaultModuleUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -17,6 +18,7 @@ public abstract class ModuleHoldInteraction<T extends Module> {
     protected Player player;
     protected Level level;
     protected HoldGuiContext context = new HoldGuiContext();
+    protected BlockPos pos;
 
     public boolean onMouseMove(double yaw, double pitch) {
         if (this.isActive()) {
@@ -30,10 +32,19 @@ public abstract class ModuleHoldInteraction<T extends Module> {
 
     public final void startHold(Level level, Player player, T module) {
         this.module = module;
+        this.pos = this.module.getParentPos();
         this.player = player;
         this.level = level;
         this.context = new HoldGuiContext();
         ModuleHoldInteractionManager.start(this);
+    }
+
+    public final boolean stillValid() {
+        if (this.isActive()) {
+            double reach = this.player.blockInteractionRange() + 2d;
+            return this.player.distanceToSqr(this.pos.getCenter()) <= reach * reach;
+        }
+        return false;
     }
 
     public void start() {
@@ -49,7 +60,7 @@ public abstract class ModuleHoldInteraction<T extends Module> {
         return ModuleHoldInteractionManager.isActive(this);
     }
 
-    public boolean chooseInput(int button, int action) {
+    public final boolean chooseInput(int button, int action) {
         Options options = Minecraft.getInstance().options;
         if (options.keyUse.matchesMouse(button)) {
             return this.use(action);
@@ -99,7 +110,7 @@ public abstract class ModuleHoldInteraction<T extends Module> {
 
     }
 
-    protected void update(CompoundTag tag) {
+    protected final void update(CompoundTag tag) {
         PacketDistributor.sendToServer(new DefaultModuleUpdatePacket(this.module.getParentPos(), this.module.getName(), tag));
     }
 

@@ -91,11 +91,7 @@ public class ControlPanelsClientEvents {
 
     @SubscribeEvent
     public static void clientPostTick(ClientTickEvent.Post event) {
-        for (ModuleHoldInteraction<?> interaction : ModuleHoldInteractionManager.INTERACTIONS) {
-            if (interaction.isActive()) {
-                interaction.tick();
-            }
-        }
+        ModuleHoldInteractionManager.tick();
     }
 
     @SubscribeEvent

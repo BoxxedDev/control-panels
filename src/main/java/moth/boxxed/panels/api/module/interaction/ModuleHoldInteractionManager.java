@@ -86,6 +86,18 @@ public class ModuleHoldInteractionManager {
         return false;
     }
 
+    public static void tick() {
+        for (ModuleHoldInteraction<?> interaction : ModuleHoldInteractionManager.INTERACTIONS) {
+            if (interaction.isActive()) {
+                if (interaction.stillValid()) {
+                    interaction.tick();
+                } else {
+                    stop();
+                }
+            }
+        }
+    }
+
     public static <T extends ModuleHoldInteraction<?>> T register(T interaction) {
         INTERACTIONS.add(interaction);
         return interaction;

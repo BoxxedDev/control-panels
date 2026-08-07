@@ -88,12 +88,9 @@ public class PaintWheelScreen extends Screen {
         }
 
         ResourceLocation skin = pbe.skin;
+        this.currentSkin = ClientSkin.DEFAULT;
         if (PanelSkinsClientManager.MAP.containsKey(skin) && PanelSkinsClientManager.MAP.get(skin) != null) {
             this.currentSkin = PanelSkinsClientManager.MAP.get(skin);
-
-            if (this.currentSkin == null) {
-                this.currentSkin = ClientSkin.DEFAULT;
-            }
         }
 
         this.pos = clickedPos;
@@ -209,6 +206,18 @@ public class PaintWheelScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
+            double reach = Minecraft.getInstance().player.blockInteractionRange() + 2d;
+            if (Minecraft.getInstance().player.distanceToSqr(this.pos.getCenter()) > reach * reach ||
+                !(Minecraft.getInstance().level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity)
+            ) {
+                this.onClose();
+            }
+        }
+    }
+
+    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBlurredBackground(partialTick);
 
@@ -260,7 +269,7 @@ public class PaintWheelScreen extends Screen {
     }
 
     private void renderColorPicker(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        if (this.currentSkin.tintable().orElse(false)) {
+        if (this.currentSkin != null && this.currentSkin.tintable().orElse(false)) {
             int left = 10;
             int top = this.centerY-80;
 

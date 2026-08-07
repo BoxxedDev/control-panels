@@ -7,6 +7,7 @@ import moth.boxxed.panels.api.module.PlacementManager;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.config.gui.widgets.ConfigFrameWidget;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.network.packet.ConfigureModulePacket;
 import moth.boxxed.panels.util.GuiUtil;
 import net.minecraft.client.Minecraft;
@@ -100,6 +101,18 @@ public class ModuleConfigScreen extends Screen {
 //                256, 256,
 //                6, 6, 6, 6);
         renderConfigValues(guiGraphics, left, top, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    public void tick() {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
+            double reach = Minecraft.getInstance().player.blockInteractionRange() + 2d;
+            if (Minecraft.getInstance().player.distanceToSqr(this.pos.getCenter()) > reach * reach ||
+                    !(Minecraft.getInstance().level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity)
+            ) {
+                this.onClose();
+            }
+        }
     }
 
     public void renderTitle(GuiGraphics guiGraphics, int left, int top) {

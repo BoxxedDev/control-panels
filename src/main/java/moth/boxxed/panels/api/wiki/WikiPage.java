@@ -74,7 +74,7 @@ public class WikiPage implements IWikiPage {
 
         IWikiPage.Paragraph paragraph = this.paragraphs.get(index);
         return Component.translatableWithFallback(
-                "%s.%s".formatted(this.itemLikeSupplier.get().asItem().getDescriptionId(), paragraph.fallback()),
+                "%s.wiki.%s".formatted(this.itemLikeSupplier.get().asItem().getDescriptionId(), paragraph.fallback()),
                 paragraph.paragraph()
         );
     }

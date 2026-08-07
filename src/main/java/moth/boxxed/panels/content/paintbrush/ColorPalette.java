@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.paintbrush;
 
-import moth.boxxed.panels.Dashpanels;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;

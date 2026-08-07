@@ -1,7 +1,6 @@
 package moth.boxxed.panels.compat.create.panel_link;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.network.ModulesNetworkMemberBlock;
 import moth.boxxed.panels.content.cable.CableBlock;
 import net.minecraft.core.BlockPos;

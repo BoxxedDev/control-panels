@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.panel.normal;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.skin.ClientSkin;

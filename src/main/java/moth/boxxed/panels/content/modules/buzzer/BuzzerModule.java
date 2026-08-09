@@ -16,7 +16,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BuzzerModule extends Module implements IOutput {
     public BuzzerModule(int x, int y) {
-        super(PanelModules.BUZZER.get(), x, y);
+        super(null, x, y);
     }
 
     @Override

@@ -65,6 +65,8 @@ public record IOEntry(String name, ModuleIOType type, Optional<String> extension
             if (ioType != null) {
                 return new IOEntry(old.name(), ioType, old.extension());
             }
+        } else {
+            return old;
         }
         return null;
     }

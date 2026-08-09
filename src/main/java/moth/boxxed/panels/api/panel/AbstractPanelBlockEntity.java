@@ -113,7 +113,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public Module getModule(String moduleName) {
-        return this.modules.normalGet(moduleName);
+        return this.modules.get(moduleName);
     }
 
     public Module getModuleAt(int x, int y) {
@@ -168,19 +168,35 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         int size = tag.getInt("modules_size");
-        this.clearModules();
         //TODO: remove this in a future patch so it's always new loading without this extra boolean tag
         if (tag.contains("new_loading")) {
+            Set<String> modulesLoaded = new HashSet<>();
             ListTag listTag = tag.getList("modules", 10);
             for (Tag moduleTag : listTag) {
                 String typeString = ((CompoundTag) moduleTag).getString("type");
-                ResourceLocation typeId = ResourceLocation.parse(typeString);
-                Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
-                module.setParentBE(this);
-                module.loadData((CompoundTag) moduleTag, registries);
-                this.addModule(module.getName(), module);
+                String name = ((CompoundTag) moduleTag).getString("name");
+
+                if (this.modules.containsKey(name)) {
+                    Module module = this.getModule(name);
+                    module.loadData((CompoundTag) moduleTag, registries);
+                    module.setParentBE(this);
+                } else {
+                    ResourceLocation typeId = ResourceLocation.parse(typeString);
+                    Module module = Objects.requireNonNull(ModulesRegistry.MODULE_REGISTRY.get(typeId)).create(0, 0);
+                    module.setParentBE(this);
+                    module.loadData((CompoundTag) moduleTag, registries);
+                    this.addModule(module.getName(), module);
+                }
+                modulesLoaded.add(name);
+            }
+
+            for (String toRemove : this.modules.keySet().stream()
+                    .filter(str -> !modulesLoaded.contains(str))
+                    .collect(Collectors.toSet())) {
+                this.removeModule(toRemove);
             }
         } else {
+            this.clearModules();
             for (int i=0; i<size; i++) {
                 CompoundTag subTag = (CompoundTag) tag.get("module_%d".formatted(i));
                 if (subTag == null) continue;

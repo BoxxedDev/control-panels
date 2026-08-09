@@ -76,6 +76,11 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
         rebuildEntryWidgets();
     }
 
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+    }
+
     public void addAllWidgets() {
         this.addWidget(this.confirm);
         this.addWidget(this.add);

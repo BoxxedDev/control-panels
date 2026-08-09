@@ -204,6 +204,9 @@ public class ModuleLinkEntries {
 
         private void setEntryIfNull(Module actualModule) {
             IOEntry newEntry = IOEntry.newEntryIfTypeNull(this.entry, actualModule);
+            if (newEntry == null) {
+                this.parentalBE.getModuleEntries().set(this.entry, null);
+            }
         }
 
         @Override

@@ -6,9 +6,13 @@ import moth.boxxed.panels.content.cable.CableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -38,9 +42,10 @@ public class PanelLinkBlock extends ModulesNetworkMemberBlock implements IWrench
             Block.box(1, 0, 1, 15, 7, 15),
             Block.box(2, 7, 2, 14, 12, 14)
     );
-    public static final VoxelShape COLLISION_SHAPE = Block.box(1,0,1,15,12,15);
+    public static final VoxelShape COLLISION_SHAPE = Block.box(1, 0, 1, 15, 12, 15);
 
     public static final Map<Direction, BooleanProperty> directionPropertyMap = new HashMap<>();
+
     static {
         directionPropertyMap.put(Direction.NORTH, CableBlock.NORTH);
         directionPropertyMap.put(Direction.SOUTH, CableBlock.SOUTH);
@@ -105,17 +110,29 @@ public class PanelLinkBlock extends ModulesNetworkMemberBlock implements IWrench
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        openMenu(level, pos, player);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack heldItem = player.getItemInHand(hand);
 
-        return super.useWithoutItem(state, level, pos, player, hitResult);
+        if (heldItem.isEmpty() && hand == InteractionHand.MAIN_HAND && openMenu(level, pos, player)) {
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
-    private void openMenu(Level level, BlockPos pos, Player player) {
+    private boolean openMenu(Level level, BlockPos pos, Player player) {
         if (level.getBlockEntity(pos) instanceof PanelLinkBlockEntity be && player instanceof ServerPlayer serverPlayer) {
             be.getModuleEntries().validate(be.getOrCreate());
-            serverPlayer.openMenu(be, be::sendToMenu);
+            return serverPlayer.openMenu(be, be::sendToMenu).isPresent();
         }
+        return false;
+    }
+
+    //TODO: make it so it'll drop the configured panel link
+    //further more make it so when you place it, it validates all the stuff in the network
+    @Override
+    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+        return IWrenchable.super.onSneakWrenched(state, context);
     }
 
     @Override

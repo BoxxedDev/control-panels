@@ -12,7 +12,6 @@ import net.minecraft.network.codec.StreamCodec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 //The pair left will be input so multi input and just input, right will be output.
 public record ModuleIOInfo(String name, Either<ModuleIOType, Pair<ModuleIOType, ModuleIOType>> type, List<IOEntry> ioEntries) {
@@ -52,20 +51,6 @@ public record ModuleIOInfo(String name, Either<ModuleIOType, Pair<ModuleIOType, 
                     new IOEntry(value.getName(), ModuleIOType.MULTI_OUTPUT, Optional.of(extension))
             ));
         return toReturn;
-    }
-
-    public static boolean hasMulti(ModuleIOInfo info) {
-        boolean check1 = info.type.left().isPresent() && (info.type.left().get() == ModuleIOType.MULTI_OUTPUT || info.type.left().get() == ModuleIOType.MULTI_INPUT);
-        boolean check2 = false;
-
-        if (info.type.right().isPresent()) {
-            Pair<ModuleIOType, ModuleIOType> pair = info.type.right().get();
-            ModuleIOType left = pair.getFirst();
-            ModuleIOType right = pair.getSecond();
-            check2 = left == ModuleIOType.MULTI_INPUT || right == ModuleIOType.MULTI_OUTPUT;
-        }
-
-        return check1 || check2;
     }
 
     public static ModuleIOInfo create(String name, Module module) {

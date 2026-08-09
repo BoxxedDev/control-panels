@@ -32,7 +32,7 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.PUSH_BUTTON_MODULE, "Push Button");
         addItem(PanelItems.KEY_SWITCH_MODULE, "Key Switch");
         addItem(PanelItems.EMERGENCY_BUTTON_MODULE, "Emergency Button");
-        addItem(PanelItems.BUZZER_MODULE, "Buzzer");
+//        addItem(PanelItems.BUZZER_MODULE, "Buzzer");
 
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");

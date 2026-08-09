@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.modules.buzzer;
 
+import moth.boxxed.panels.index.PanelSounds;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -12,8 +13,8 @@ import net.minecraft.util.RandomSource;
 import org.jspecify.annotations.Nullable;
 
 public class BuzzSoundInstance extends AbstractTickableSoundInstance {
-    protected BuzzSoundInstance(SoundEvent event, SoundSource source, RandomSource randomSource) {
-        super(event, source, randomSource);
+    protected BuzzSoundInstance(RandomSource randomSource) {
+        super(PanelSounds.BUZZ.get(), SoundSource.BLOCKS, SoundInstance.createUnseededRandom());
     }
 
     @Override

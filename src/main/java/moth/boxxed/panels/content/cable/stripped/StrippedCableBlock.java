@@ -116,21 +116,19 @@ public class StrippedCableBlock extends ModulesNetworkMemberBlock {
         if (module == null) return 0;
         be.setConfig(IOEntry.newEntryIfTypeNull(be.boundEntry, module));
         if (be.boundEntry == null) return 0;
-        switch (module) {
-            case IInput input when (!(module instanceof IMultiInput)) -> {
-                return Math.clamp(input.getAnalog(), 0, 15);
-            }
-            case IMultiInput input when (!(module instanceof IInput)) && be.boundEntry.extension().isPresent() -> {
-                Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
-                input.getValues(resultMap::put);
-                String extension = be.boundEntry.extension().get();
-                IMultiInput.AnalogResult result = resultMap.get(extension);
-                if (result != null) {
-                    return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
-                }
-            }
-            default -> {
-                return 0;
+
+        if (be.boundEntry.type() == ModuleIOType.OUTPUT || be.boundEntry.type() == ModuleIOType.MULTI_OUTPUT)
+            return 0;
+
+        if (be.boundEntry.type() == ModuleIOType.INPUT && module instanceof IInput input) {
+            return Math.clamp(input.getAnalog(), 0, 15);
+        } else if (be.boundEntry.type() == ModuleIOType.MULTI_INPUT && module instanceof IMultiInput input) {
+            Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
+            input.getValues(resultMap::put);
+            String extension = be.boundEntry.extension().get();
+            IMultiInput.AnalogResult result = resultMap.get(extension);
+            if (result != null) {
+                return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
             }
         }
         return 0;
@@ -154,26 +152,26 @@ public class StrippedCableBlock extends ModulesNetworkMemberBlock {
             if (module == null) return;
             be.setConfig(IOEntry.newEntryIfTypeNull(be.boundEntry, module));
             if (be.boundEntry == null) return;
-            switch (module) {
-                case IOutput output when (!(module instanceof IMultiOutput)) -> {
-                    if (level.hasNeighborSignal(pos)) {
-                        output.setAnalog(level.getBestNeighborSignal(pos));
-                    } else {
-                        output.setAnalog(0);
-                    }
-                    module.parentBlockEntity.networkUpdate(module.parentBlockEntity.getOrCreate());
+
+            if (be.boundEntry.type() == ModuleIOType.INPUT || be.boundEntry.type() == ModuleIOType.MULTI_INPUT)
+                return;
+
+            if (be.boundEntry.type() == ModuleIOType.OUTPUT && module instanceof IOutput output) {
+                if (level.hasNeighborSignal(pos)) {
+                    output.setAnalog(level.getBestNeighborSignal(pos));
+                } else {
+                    output.setAnalog(0);
                 }
-                case IMultiOutput output when (!(module instanceof IOutput)) && be.boundEntry.extension().isPresent() -> {
-                    Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
-                    output.setValues(runnableMap::put);
-                    String extension = be.boundEntry.extension().get();
-                    if (level.hasNeighborSignal(pos)) {
-                        runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
-                    } else {
-                        runnableMap.get(extension).setAnalog(0);
-                    }
+                module.parentBlockEntity.networkUpdate(module.parentBlockEntity.getOrCreate());
+            } else if (be.boundEntry.type() == ModuleIOType.MULTI_OUTPUT && module instanceof IMultiOutput output) {
+                Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
+                output.setValues(runnableMap::put);
+                String extension = be.boundEntry.extension().get();
+                if (level.hasNeighborSignal(pos)) {
+                    runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
+                } else {
+                    runnableMap.get(extension).setAnalog(0);
                 }
-                default -> {}
             }
         }
     }

@@ -57,11 +57,6 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     }
 
     @Override
-    public void networkUpdate(ModulesNetwork modulesNetwork) {
-        super.networkUpdate(modulesNetwork);
-    }
-
-    @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         super.tick(level, blockPos, blockState);
         this.entries.updateNetworks(level);

@@ -140,7 +140,9 @@ public class ModuleLinkEntries {
     public void addAllToNetworks(Level level) {
         if (!level.isClientSide) {
             for (ModuleEntry entry : new ArrayList<>(this.entryMap.values())) {
-                Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
+//                if (!Create.REDSTONE_LINK_NETWORK_HANDLER.getNetworkOf(level, entry).contains(entry)) {
+                    Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
+//                }
             }
         }
     }
@@ -228,8 +230,12 @@ public class ModuleLinkEntries {
             return 0;
         }
 
+        private int prevPower = -1;
+
         @Override
         public void setReceivedStrength(int power) {
+            if (power == prevPower)
+                return;
             if (this.parentalBE == null)
                 return;
             Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.entry.name());
@@ -246,6 +252,7 @@ public class ModuleLinkEntries {
                     runnableMap.get(extension).setAnalog(power);
                 actualModule.parentBlockEntity.networkUpdate(actualModule.parentBlockEntity.getOrCreate());
             }
+            this.prevPower = power;
         }
 
         @Override

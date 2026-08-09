@@ -97,7 +97,8 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput {
 
     @Override
     public void setAnalog(int signal) {
-        if (previousInputSignal == 0 && signal != previousInputSignal) {
+        if (signal > 0) {
+            Dashpanels.LOGGER.debug("Yeagh");
             this.open = !this.open;
             if (!this.open) {
                 this.pressed = false;

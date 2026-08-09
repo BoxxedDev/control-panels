@@ -4,14 +4,19 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
+import moth.boxxed.panels.api.module.io.IOEntry;
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.api.module.io.ModuleIOType;
 import moth.boxxed.panels.compat.create.panel_link.ModuleLinkEntries;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class EntryEditorScreen {
@@ -19,7 +24,7 @@ public class EntryEditorScreen {
 
     public IconButton confirm;
     public IconButton cancel;
-    public StringEntryWidget moduleSelect;
+    public IOEntryWidget moduleSelect;
 
     private int leftPos;
     private int topPos;
@@ -44,21 +49,19 @@ public class EntryEditorScreen {
                 });
         this.cancel = new IconButton(this.leftPos + 176, this.topPos + 25, AllIcons.I_TRASH)
                 .withCallback(this::finishEmpty);
-        Set<String> entriesToShow = new HashSet<>();
-        for (ModuleIOInfo info : this.parent.getMenu().modulesInfo) {
-            if (info.type() == null) continue;
-            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) {
-                entriesToShow.add(info.name());
-            } else {
-                String start = info.name();
-                for (String extension : info.multiExtension()) {
-                    entriesToShow.add(start.concat(" - " + extension));
-                }
-            }
+
+        List<IOEntry> entriesToShow = new ArrayList<>();
+        List<ModuleIOInfo> infos = new ArrayList<>(this.parent.getMenu().modulesInfo);
+        infos.sort(Comparator.comparing(ModuleIOInfo::name));
+        for (ModuleIOInfo info : infos) {
+            if (info == null) continue;
+            List<IOEntry> ioEntries = new ArrayList<>(info.ioEntries());
+            ioEntries.sort(Comparator.comparing(a -> a.extension().orElse("")));
+            entriesToShow.addAll(ioEntries);
         }
 
-        this.moduleSelect = new StringEntryWidget(
-                this.leftPos + 13, this.topPos + 25, 88, 26,
+        this.moduleSelect = new IOEntryWidget(
+                this.leftPos + 29, this.topPos + 25, 73, 26,
                 entriesToShow,
                 Component.translatable("widget.dashpanels.panel_link.module_select")
         );
@@ -80,7 +83,17 @@ public class EntryEditorScreen {
         stack.translate(0, 0, 2);
         this.confirm.render(graphics, mouseX, mouseY, partialTick);
         this.cancel.render(graphics, mouseX, mouseY, partialTick);
+
         this.moduleSelect.render(graphics, mouseX, mouseY, partialTick);
+        if (this.moduleSelect.getCurrent() != null) {
+            Font font = Minecraft.getInstance().font;
+            Component type = this.moduleSelect.getCurrent().type() == ModuleIOType.INPUT ^ this.moduleSelect.getCurrent().type() == ModuleIOType.MULTI_INPUT ?
+                    Component.literal("O").withStyle(ChatFormatting.RED) :
+                    Component.literal("I").withStyle(ChatFormatting.GREEN);
+            int y = topPos+39-(font.lineHeight);
+            graphics.drawCenteredString(font, type, leftPos+18, y, 0xFFFFFF);
+        }
+
         stack.popPose();
     }
 
@@ -104,11 +117,11 @@ public class EntryEditorScreen {
     public PseudoEntry startModification(ModuleLinkEntries.ModuleEntry entryToModify, Consumer<ModuleLinkEntries.ModuleEntry> consumer) {
         PseudoEntry pseudoEntry = new PseudoEntry();
         if (entryToModify != null) {
-            pseudoEntry.change(entryToModify.getModule())
+            pseudoEntry.change(entryToModify.getEntry())
                     .first(entryToModify.first())
                     .second(entryToModify.second());
 
-            this.parent.getEntriesToAdd().getMap().remove(entryToModify.getModule());
+            this.parent.getEntriesToAdd().getMap().remove(entryToModify.getEntry());
         } else {
             pseudoEntry.first = RedstoneLinkNetworkHandler.Frequency.EMPTY;
             pseudoEntry.second = RedstoneLinkNetworkHandler.Frequency.EMPTY;
@@ -118,7 +131,7 @@ public class EntryEditorScreen {
         this.parent.addWidget(this.confirm);
         this.parent.addWidget(this.cancel);
         this.parent.addWidget(this.moduleSelect);
-        this.moduleSelect.setCurrentString(pseudoEntry.module);
+        this.moduleSelect.setCurrentEntry(pseudoEntry.moduleEntry);
 
         this.entryConsumer = consumer;
 
@@ -135,7 +148,7 @@ public class EntryEditorScreen {
         public RedstoneLinkNetworkHandler.Frequency first;
         public RedstoneLinkNetworkHandler.Frequency second;
 
-        public String module;
+        public IOEntry moduleEntry;
 
         public PseudoEntry first(RedstoneLinkNetworkHandler.Frequency first) {
             this.first = first;
@@ -147,14 +160,14 @@ public class EntryEditorScreen {
             return this;
         }
 
-        public PseudoEntry change(String module) {
-            this.module = module;
+        public PseudoEntry change(IOEntry entry) {
+            this.moduleEntry = entry;
             return this;
         }
 
         public void finish() {
             this.change(EntryEditorScreen.this.moduleSelect.getCurrent());
-            if (this.module != null && !this.module.isEmpty()) {
+            if (this.moduleEntry != null) {
                 this.first(
                         RedstoneLinkNetworkHandler.Frequency.of(
                                 EntryEditorScreen.this.parent.getMenu().ghostInventory.getStackInSlot(0)
@@ -169,7 +182,7 @@ public class EntryEditorScreen {
                 ModuleLinkEntries.ModuleEntry entry = new ModuleLinkEntries.ModuleEntry(
                         this.first,
                         this.second,
-                        this.module,
+                        EntryEditorScreen.this.moduleSelect.getCurrent(),
                         EntryEditorScreen.this.parent.getMenu().contentHolder.getBlockPos()
                 );
                 EntryEditorScreen.this.entryConsumer.accept(entry);

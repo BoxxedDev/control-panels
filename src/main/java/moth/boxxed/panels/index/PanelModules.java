@@ -4,6 +4,7 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.content.modules.*;
+import moth.boxxed.panels.content.modules.buzzer.BuzzerModule;
 import moth.boxxed.panels.content.modules.control_lever.ControlLeverModule;
 import moth.boxxed.panels.content.modules.joystick.JoystickModule;
 import moth.boxxed.panels.content.modules.key_switch.KeySwitchModule;
@@ -37,6 +38,10 @@ public class PanelModules {
             MODULES.register("push_button", () -> new ModuleType<>(PushButtonModule::new, PanelItems.PUSH_BUTTON_MODULE.get()));
     public static final Supplier<ModuleType<KeySwitchModule>> KEY_SWITCH =
             MODULES.register("key_switch", () -> new ModuleType<>(KeySwitchModule::new, PanelItems.KEY_SWITCH_MODULE.get()));
+    public static final Supplier<ModuleType<EmergencyButtonModule>> EMERGENCY_BUTTON =
+            MODULES.register("emergency_button", () -> new ModuleType<>(EmergencyButtonModule::new, PanelItems.EMERGENCY_BUTTON_MODULE.get()));
+//    public static final Supplier<ModuleType<BuzzerModule>> BUZZER =
+//            MODULES.register("buzzer", () -> new ModuleType<>(BuzzerModule::new, PanelItems.BUZZER_MODULE.get()));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

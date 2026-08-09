@@ -1,34 +1,89 @@
 package moth.boxxed.panels.api.module.io;
 
+import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.util.ListStreamCodec;
+import moth.boxxed.panels.util.StreamCodecUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-public record ModuleIOInfo(String name, ModuleIOType type, List<String> multiExtension) {
+//The pair left will be input so multi input and just input, right will be output.
+public record ModuleIOInfo(String name, Either<ModuleIOType, Pair<ModuleIOType, ModuleIOType>> type, List<IOEntry> ioEntries) {
     public static final StreamCodec<RegistryFriendlyByteBuf, ModuleIOInfo> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, ModuleIOInfo::name,
-            ModuleIOType.STREAM_CODEC, ModuleIOInfo::type,
-            new StreamCodec<>() {
-                @Override
-                public void encode(RegistryFriendlyByteBuf buffer, List<String> value) {buffer.writeCollection(value, ByteBufCodecs.STRING_UTF8);}
-                @Override
-                public List<String> decode(RegistryFriendlyByteBuf buffer) {return buffer.readCollection(ArrayList::new, ByteBufCodecs.STRING_UTF8);}
-            }, ModuleIOInfo::multiExtension,
+            ByteBufCodecs.either(
+                    ModuleIOType.STREAM_CODEC,
+                    StreamCodecUtil.pair(
+                            ModuleIOType.STREAM_CODEC,
+                            ModuleIOType.STREAM_CODEC
+                    )
+            ), ModuleIOInfo::type,
+            ListStreamCodec.of(IOEntry.STREAM_CODEC), ModuleIOInfo::ioEntries,
             ModuleIOInfo::new
     );
 
-    public static List<String> getMultiExtensionsIfAny(Module value) {
-        if (value instanceof IInput || value instanceof IOutput) return new ArrayList<>();
-
-        List<String> toReturn = new ArrayList<>();
+    public static List<IOEntry> compileIOEntries(Module value) {
+        List<IOEntry> toReturn = new ArrayList<>();
+        if (value instanceof IInput)
+            toReturn.add(new IOEntry(
+                    value.getName(),
+                    ModuleIOType.INPUT,
+                    Optional.empty()
+            ));
+        if (value instanceof IOutput)
+            toReturn.add(new IOEntry(
+                    value.getName(),
+                    ModuleIOType.OUTPUT,
+                    Optional.empty()
+            ));
         if (value instanceof IMultiInput multiInput)
-            multiInput.getValues((extension, result) -> toReturn.add(extension));
+            multiInput.getValues((extension, result) -> toReturn.add(
+                        new IOEntry(value.getName(), ModuleIOType.MULTI_INPUT, Optional.of(extension))
+                ));
         if (value instanceof IMultiOutput multiOutput)
-            multiOutput.setValues((extension, runnable) -> toReturn.add(extension));
+            multiOutput.setValues((extension, runnable) -> toReturn.add(
+                    new IOEntry(value.getName(), ModuleIOType.MULTI_OUTPUT, Optional.of(extension))
+            ));
         return toReturn;
+    }
+
+    public static boolean hasMulti(ModuleIOInfo info) {
+        boolean check1 = info.type.left().isPresent() && (info.type.left().get() == ModuleIOType.MULTI_OUTPUT || info.type.left().get() == ModuleIOType.MULTI_INPUT);
+        boolean check2 = false;
+
+        if (info.type.right().isPresent()) {
+            Pair<ModuleIOType, ModuleIOType> pair = info.type.right().get();
+            ModuleIOType left = pair.getFirst();
+            ModuleIOType right = pair.getSecond();
+            check2 = left == ModuleIOType.MULTI_INPUT || right == ModuleIOType.MULTI_OUTPUT;
+        }
+
+        return check1 || check2;
+    }
+
+    public static ModuleIOInfo create(String name, Module module) {
+        boolean isBothTypes = (module instanceof IInput ^ module instanceof IMultiInput) && (module instanceof IOutput ^ module instanceof IMultiOutput);
+        if (isBothTypes) {
+            ModuleIOType left = module instanceof IInput ? ModuleIOType.INPUT : ModuleIOType.MULTI_INPUT;
+            ModuleIOType right = module instanceof IOutput ? ModuleIOType.OUTPUT : ModuleIOType.MULTI_OUTPUT;
+            return new ModuleIOInfo(
+                    name,
+                    Either.right(new Pair<>(left, right)),
+                    compileIOEntries(module)
+            );
+        } else {
+            return new ModuleIOInfo(
+                    name,
+                    Either.left(ModuleIOType.decide(module)),
+                    compileIOEntries(module)
+            );
+        }
     }
 }

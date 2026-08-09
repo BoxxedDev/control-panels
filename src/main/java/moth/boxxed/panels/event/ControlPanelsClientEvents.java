@@ -18,6 +18,7 @@ import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
 import moth.boxxed.panels.api.wiki.WikiTooltipManager;
 import moth.boxxed.panels.config.ClientConfig;
+import moth.boxxed.panels.content.modules.key_switch.BoundModuleTooltipManager;
 import moth.boxxed.panels.content.panel.ceiling.CeilingPanelRenderer;
 import moth.boxxed.panels.content.panel.normal.PanelRenderer;
 import moth.boxxed.panels.content.panel.wall.WallPanelRenderer;
@@ -170,19 +171,7 @@ public class ControlPanelsClientEvents {
 
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
-        if (event.getItemStack().has(PanelDataComponents.BOUND_MODULE)) {
-            event.getToolTip().add(Component.literal("[i]").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD));
-
-            event.getToolTip().add(Component.translatable(
-                    "tooltip.dashpanels.key.bound_id",
-                    event.getItemStack().get(PanelDataComponents.BOUND_MODULE).uuid().toString()
-            ));
-
-            BlockPos pos = event.getItemStack().get(PanelDataComponents.BOUND_MODULE).pos();
-            String posString = "(%d, %d, %d)".formatted(pos.getX(), pos.getY(), pos.getZ());
-            event.getToolTip().add(Component.translatable("tooltip.dashpanels.key.bound_pos", posString));
-        }
-
+        BoundModuleTooltipManager.addTooltip(event.getToolTip(), event.getItemStack());
         WikiTooltipManager.addTooltip(event.getToolTip(), event.getItemStack());
     }
 }

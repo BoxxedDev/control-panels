@@ -56,51 +56,47 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
     public List<ModuleIOInfo> filterIOModules() {
         List<ModuleIOInfo> ret = new ArrayList<>();
         for (Map.Entry<String, Module> entry : this) {
-            if (entry.getValue() instanceof IInput ||     entry.getValue() instanceof IOutput ||
-                entry.getValue() instanceof IMultiInput || entry.getValue() instanceof IMultiOutput) {
-                ret.add(new ModuleIOInfo(
-                        entry.getKey(),
-                        ModuleIOType.decide(entry.getValue()),
-                        ModuleIOInfo.getMultiExtensionsIfAny(entry.getValue())
-                ));
+            if ((entry.getValue() instanceof IInput ^ entry.getValue() instanceof IMultiInput) ||
+                    (entry.getValue() instanceof IOutput ^ entry.getValue() instanceof IMultiOutput)) {
+                ret.add(ModuleIOInfo.create(entry.getKey(), entry.getValue()));
             }
         }
         return ret;
     }
 
-    @Override
-    public Module get(Object key) {
-        if (!(key instanceof String str)) return null;
-        if (str.isEmpty()) return null;
-        for (ModuleIOInfo info : this.filterIOModules()) {
-            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
-            if (str.length() < info.name().length()) continue;
-            String sub = str.substring(0, info.name().length());
-            if (sub.equals(info.name())) {
-                return super.get(sub);
-            }
-        }
-        return super.get(key);
-    }
+//    @Override
+//    public Module get(Object key) {
+//        if (!(key instanceof String str)) return null;
+//        if (str.isEmpty()) return null;
+//        for (ModuleIOInfo info : this.filterIOModules()) {
+//            if (!ModuleIOInfo.hasMulti(info)) continue;
+//            if (str.length() < info.name().length()) continue;
+//            String sub = str.substring(0, info.name().length());
+//            if (sub.equals(info.name())) {
+//                return super.get(sub);
+//            }
+//        }
+//        return super.get(key);
+//    }
 
     public Module normalGet(Object key) {
         return super.get(key);
     }
 
-    @Override
-    public boolean containsKey(Object key) {
-        if (!(key instanceof String str)) return false;
-        if (str.isEmpty()) return false;
-        for (ModuleIOInfo info : this.filterIOModules()) {
-            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
-            if (str.length() < info.name().length()) continue;
-            String sub = str.substring(0, info.name().length());
-            if (sub.equals(info.name())) {
-                return super.containsKey(sub);
-            }
-        }
-        return super.containsKey(key);
-    }
+//    @Override
+//    public boolean containsKey(Object key) {
+//        if (!(key instanceof String str)) return false;
+//        if (str.isEmpty()) return false;
+//        for (ModuleIOInfo info : this.filterIOModules()) {
+//            if (info.type() == ModuleIOType.INPUT || info.type() == ModuleIOType.OUTPUT) continue;
+//            if (str.length() < info.name().length()) continue;
+//            String sub = str.substring(0, info.name().length());
+//            if (sub.equals(info.name())) {
+//                return super.containsKey(sub);
+//            }
+//        }
+//        return super.containsKey(key);
+//    }
 
     public boolean normalContainsKey(Object key) {
         return super.containsKey(key);

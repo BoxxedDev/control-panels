@@ -1,0 +1,8 @@
+{
+  "buzz": {
+    "sounds": [
+      "dashpanels:buzz"
+    ],
+    "subtitle": "sounds.dashpanels.buzzer.buzz"
+  }
+}

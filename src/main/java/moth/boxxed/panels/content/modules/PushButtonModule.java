@@ -2,6 +2,7 @@ package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
@@ -187,7 +188,7 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
             consumer.accept("Button %d".formatted(i), () -> {
                 if (this.selectedButton == null)
                     return 0;
-                return finalI == this.selectedButton ? 15 : 0;
+                return finalI == this.selectedButton+1 ? 15 : 0;
             });
         }
     }

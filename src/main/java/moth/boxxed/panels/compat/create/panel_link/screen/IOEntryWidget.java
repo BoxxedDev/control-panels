@@ -1,6 +1,9 @@
 package moth.boxxed.panels.compat.create.panel_link.screen;
 
 import com.simibubi.create.AllSoundEvents;
+import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.io.IOEntry;
+import moth.boxxed.panels.api.module.io.ModuleIOType;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -8,43 +11,43 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
-public class StringEntryWidget extends AbstractSimiWidget {
-    private List<String> available;
+public class IOEntryWidget extends AbstractSimiWidget {
+    private List<IOEntry> available;
     private int currentIndex = 0;
     private int priorIndex = 0;
 
-    public StringEntryWidget(int x, int y, int width, int height, Collection<String> available, Component message) {
+    public IOEntryWidget(int x, int y, int width, int height, Collection<IOEntry> available, Component message) {
         super(x, y, width, height, message);
         this.setAvailable(available);
     }
 
-    public void setAvailable(Collection<String> available) {
+    public void setAvailable(Collection<IOEntry> available) {
         this.available = new ArrayList<>(available);
-        this.available.sort(null);
+        this.available.sort(Comparator.comparing(IOEntry::name));
     }
 
-    public void setCurrentString(String string) {
-        if (this.available.contains(string)) {
-            this.currentIndex = this.available.indexOf(string);
+    public void setCurrentEntry(IOEntry entry) {
+        if (this.available.contains(entry)) {
+            this.currentIndex = this.available.indexOf(entry);
             return;
         }
         this.currentIndex = -1;
     }
 
-    public String getCurrent() {
+    public IOEntry getCurrent() {
         if (this.currentIndex == -1) {
             return null;
         }
         if (this.available.isEmpty())
-            return "";
-        if (this.available.get(this.currentIndex) != null)
-            return this.available.get(this.currentIndex);
-        return "";
+            return null;
+        return this.available.get(this.currentIndex);
     }
 
     @Override
@@ -65,9 +68,9 @@ public class StringEntryWidget extends AbstractSimiWidget {
     protected void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         Font font = Minecraft.getInstance().font;
         int y = this.getY()+(this.getHeight()/2)-(font.lineHeight);
-        if (this.currentIndex >= 0) {
+        if (this.currentIndex >= 0 && this.getCurrent() != null) {
             graphics.enableScissor(this.getX()+2, this.getY(), this.getX()+this.getWidth()-2, this.getY()+this.getHeight());
-            graphics.drawScrollingString(font, Component.literal(this.getCurrent()), this.getX() + 2, this.getX()+this.getWidth()-2, y, 0xFFFFFF);
+            graphics.drawScrollingString(font, Component.literal(this.getCurrent().toString()), this.getX() + 2, this.getX()+this.getWidth()-2, y, 0xFFFFFF);
             graphics.disableScissor();
         }
     }
@@ -81,11 +84,18 @@ public class StringEntryWidget extends AbstractSimiWidget {
             if (this.currentIndex-2 > 0) {
                 list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
             }
+
             for (int i = Math.max(0, this.currentIndex-2); i < Math.min(this.available.size(), this.currentIndex+3); i++) {
-                String string = this.available.get(i);
-                String prefix = this.available.indexOf(string) == this.currentIndex ? "-> " : "   ";
-                ChatFormatting formatting = this.available.indexOf(string) == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
-                list.add(Component.literal(prefix.concat(string)).withStyle(formatting));
+                IOEntry entry = this.available.get(i);
+
+                String prefix = i == this.currentIndex ? "-> " : "   ";
+                ChatFormatting formatting = i == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
+
+                Component suffix = entry.type() == ModuleIOType.INPUT ^ entry.type() == ModuleIOType.MULTI_INPUT ?
+                        Component.literal("I").withStyle(ChatFormatting.GREEN) :
+                        Component.literal("O").withStyle(ChatFormatting.RED);
+
+                list.add(Component.literal(prefix + entry + " | ").withStyle(formatting).append(suffix));
             }
             if (this.currentIndex+3 < this.available.size()) {
                 list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));

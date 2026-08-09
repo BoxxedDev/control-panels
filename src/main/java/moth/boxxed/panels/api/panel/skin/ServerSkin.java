@@ -23,7 +23,7 @@ public record ServerSkin(PanelType type, Set<ResourceLocation> skins) {
     );
     public static final StreamCodec<FriendlyByteBuf, ServerSkin> STREAM_CODEC = StreamCodec.composite(
             PanelType.STREAM_CODEC, ServerSkin::type,
-            new ListStreamCodec<>(ResourceLocation.STREAM_CODEC), ServerSkin::skinsList,
+            ListStreamCodec.of(ResourceLocation.STREAM_CODEC), ServerSkin::skinsList,
             ServerSkin::fromCodec
     );
 

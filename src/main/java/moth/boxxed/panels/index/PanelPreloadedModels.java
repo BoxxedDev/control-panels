@@ -44,7 +44,9 @@ public class PanelPreloadedModels {
 
             EMERGENCY_BUTTON_BASE = regular("emergency_button/base"),
             EMERGENCY_BUTTON_COVER = regular("emergency_button/cover"),
-            EMERGENCY_BUTTON_BUTTON = regular("emergency_button/button")
+            EMERGENCY_BUTTON_BUTTON = regular("emergency_button/button"),
+
+            BUZZER = regular("buzzer")
                     ;
 
     private static PreLoadedModel regular(String name) {

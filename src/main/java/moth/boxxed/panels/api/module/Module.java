@@ -71,7 +71,6 @@ public abstract class Module {
         this.type = type;
         this.pos = new Vector2i(x, y);
         this.size = new Vector2i(sizeX, sizeY);
-        this.rect = new Rect2d(this.pos.x, this.pos.y, this.pos.x+this.size.x, this.pos.y+this.size.y);
     }
 
     @Override
@@ -99,8 +98,13 @@ public abstract class Module {
                 shape.getBounds().sizeY()
         );
     }
+
     public BlockPos getParentPos() {
         return this.parentBlockEntity.getBlockPos();
+    }
+
+    public Level getLevel() {
+        return this.parentBlockEntity.getLevel();
     }
 
     @Deprecated(since = "2.0")
@@ -280,9 +284,7 @@ public abstract class Module {
 
     //TODO: Make abstract and reformat all the modules
     //Currently not abstract as to not totally kill the creators of the addons adding a large amount of modules
-    public PolyVoxel getShape() {
-        return new PolyVoxel(0, 0, this.size.x, this.size.y);
-    }
+    public abstract PolyVoxel getShape();
 
     public String getName() {
         return this.name;

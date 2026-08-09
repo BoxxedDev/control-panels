@@ -1,6 +1,7 @@
 package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.io.IOEntry;
 import moth.boxxed.panels.compat.create.panel_link.ModuleLinkEntries;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -15,11 +16,11 @@ import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public record PanelLinkSaveEntriesPacket(Map<String, ModuleLinkEntries.ModuleEntry> entries, BlockPos pos) implements CustomPacketPayload {
+public record PanelLinkSaveEntriesPacket(Map<IOEntry, ModuleLinkEntries.ModuleEntry> entries, BlockPos pos) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<PanelLinkSaveEntriesPacket> TYPE = new CustomPacketPayload.Type<>(Dashpanels.path("send_entries_to_panel_link"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PanelLinkSaveEntriesPacket> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ModuleLinkEntries.ModuleEntry.STREAM_CODEC), PanelLinkSaveEntriesPacket::entries,
+            ByteBufCodecs.map(HashMap::new, IOEntry.STREAM_CODEC, ModuleLinkEntries.ModuleEntry.STREAM_CODEC), PanelLinkSaveEntriesPacket::entries,
             BlockPos.STREAM_CODEC, PanelLinkSaveEntriesPacket::pos,
             PanelLinkSaveEntriesPacket::new);
 

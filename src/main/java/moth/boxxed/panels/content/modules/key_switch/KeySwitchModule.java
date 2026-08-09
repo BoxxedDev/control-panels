@@ -204,7 +204,7 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
 
     @Override
     public VoxelShape getVoxelShape() {
-        return Block.box(-0.5, 0, -0.5, 2.5, 2, 2.5);
+        return Block.box(-0.5, 0, -0.5, 2.5, 1, 2.5);
     }
 
     @Override

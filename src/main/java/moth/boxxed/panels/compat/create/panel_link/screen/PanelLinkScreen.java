@@ -8,15 +8,22 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.io.IOEntry;
+import moth.boxxed.panels.api.module.io.ModuleIOType;
 import moth.boxxed.panels.compat.create.panel_link.ModuleLinkEntries;
 import moth.boxxed.panels.network.packet.PanelLinkSaveEntriesPacket;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.element.ScreenElement;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Math;
@@ -156,14 +163,14 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
             if (newEntry != null) {
                 ModuleEntryWidget current = null;
                 for (ModuleEntryWidget entry : this.entryWidgets) {
-                    if (Objects.equals(entry.entry.getModule(), newEntry.getModule())) {
+                    if (Objects.equals(entry.entry.getEntry(), newEntry.getEntry())) {
                         current = entry;
                         break;
                     }
                 }
 
                 if (current != null) {
-                    this.entriesToAdd.set(newEntry.getModule(), newEntry);
+                    this.entriesToAdd.set(newEntry.getEntry(), newEntry);
                     current.entry = newEntry;
                 } else {
                     this.addEntry(newEntry);
@@ -174,12 +181,12 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
     }
 
     private void addEntry(ModuleLinkEntries.ModuleEntry newEntry) {
-        this.entriesToAdd.set(newEntry.getModule(), newEntry);
+        this.entriesToAdd.set(newEntry.getEntry(), newEntry);
         rebuildEntryWidgets();
     }
 
     private void removeEntry(ModuleEntryWidget moduleEntryWidget) {
-        this.entriesToAdd.set(moduleEntryWidget.entry.getModule(), null);
+        this.entriesToAdd.set(moduleEntryWidget.entry.getEntry(), null);
         rebuildEntryWidgets();
     }
 
@@ -189,7 +196,7 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
         }
 
         this.entryWidgets.clear();
-        for (Map.Entry<String, ModuleLinkEntries.ModuleEntry> entry : this.entriesToAdd.getMap().entrySet()) {
+        for (Map.Entry<IOEntry, ModuleLinkEntries.ModuleEntry> entry : this.entriesToAdd.getMap().entrySet()) {
             ModuleEntryWidget widget = new ModuleEntryWidget(entry.getValue());
             widget.enableInnerWidgets();
             this.entryWidgets.add(widget);
@@ -264,7 +271,40 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
 
             graphics.blit(MAIN, 0, 0, 0, 158, 194, 30);
 
-            graphics.drawString(PanelLinkScreen.this.font, this.entry.getModule(), 8, 11, 0xFFFFFF);
+            Component text = Component.literal(this.entry.getEntry().toString());
+            int maxX = 94;
+            int minX = 25;
+            int maxWidth = maxX - minX;
+            int textWidth = font.width(text.getVisualOrderText());
+            int centerX = (minX + maxX) / 2;
+            int minY = 10;
+            int maxY = minY+font.lineHeight;
+            if (textWidth <= maxWidth) {
+                graphics.drawString(font, text, minX, minY, 0xFFFFFF);
+            } else {
+                int i = font.width(text);
+                int j = (minY + maxY - 9) / 2 + 1;
+                int k = maxX - minX;
+                if (i > k) {
+                    int l = i - k;
+                    double d0 = (double) Util.getMillis() / 1000.0;
+                    double d1 = java.lang.Math.max((double)l * 0.5, 3.0);
+                    double d2 = java.lang.Math.sin((java.lang.Math.PI / 2) * java.lang.Math.cos((java.lang.Math.PI * 2) * d0 / d1)) / 2.0 + 0.5;
+                    double d3 = Mth.lerp(d2, 0.0, (double)l);
+                    graphics.enableScissor(x+minX, 0, x+maxX, graphics.guiHeight());
+                    graphics.drawString(font, text, minX - (int)d3, j, 0xFFFFFF);
+                    graphics.disableScissor();
+                } else {
+                    int i1 = Mth.clamp(centerX, minX + i / 2, maxX - i / 2);
+                    graphics.drawCenteredString(font, text, i1, j, 0xFFFFFF);
+                }
+            }
+
+            Font font = Minecraft.getInstance().font;
+            Component type = this.entry.getEntry().type() == ModuleIOType.INPUT ^ this.entry.getEntry().type() == ModuleIOType.MULTI_INPUT ?
+                    Component.literal("O").withStyle(ChatFormatting.RED) :
+                    Component.literal("I").withStyle(ChatFormatting.GREEN);
+            graphics.drawCenteredString(font, type, 12, (minY + maxY - 9) / 2 + 1, 0xFFFFFF);
 
             stack.pushPose();
             stack.translate(147, 6, 0);

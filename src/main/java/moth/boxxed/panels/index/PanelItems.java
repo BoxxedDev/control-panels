@@ -34,6 +34,8 @@ public class PanelItems {
     public static final DeferredItem<Item> SEVEN_SEGMENT_MODULE = item("seven_segment");
     public static final DeferredItem<Item> PUSH_BUTTON_MODULE = item("push_button");
     public static final DeferredItem<Item> KEY_SWITCH_MODULE = item("key_switch");
+    public static final DeferredItem<Item> EMERGENCY_BUTTON_MODULE = item("emergency_button");
+//    public static final DeferredItem<Item> BUZZER_MODULE = item("buzzer");
 
     public static final DeferredItem<Item> KEY_ITEM = ITEMS.register("key",
             () -> new Item(new Item.Properties().stacksTo(16)));
@@ -111,6 +113,10 @@ public class PanelItems {
                             .addParagraph("The first pairing module. Pairs with the dashpanels:key .")
                             .addParagraph("Has config options.")
             );
+            WikiableEntries.register(EMERGENCY_BUTTON_MODULE.getId(),
+                    WikiPage.of(EMERGENCY_BUTTON_MODULE).category(PanelWikiCategories.MODULES)
+                            .addParagraph("A toggling button with a cover")
+                            .addParagraph("Has config options."));
         }
     }
 

@@ -222,7 +222,8 @@ public class PlacementManager {
 
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
-            Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).create(0, 0);
+            //TODO: Make a selection thing similar to clutter no more
+            Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).getFirst().create(0, 0);
             position.sub(
                     (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
                     (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
@@ -307,7 +308,8 @@ public class PlacementManager {
 
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
-            Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).create(0, 0);
+            //TODO: Make a selection thing similar to clutter no more
+            Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).getFirst().create(0, 0);
             position.sub(
                     (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
                     (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)

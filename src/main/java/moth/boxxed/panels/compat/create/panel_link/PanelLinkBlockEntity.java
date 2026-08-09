@@ -30,7 +30,11 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.entries = ModuleLinkEntries.fromTag(tag.getList("module_entries", 10), registries, this);
+        if (tag.contains("module_io_entries")) {
+            this.entries = ModuleLinkEntries.fromTag(tag.getList("module_io_entries", 10), registries, this);
+        } else if (tag.contains("module_entries")) {
+            this.entries = ModuleLinkEntries.fromOldTag(tag.getList("module_entries", 10), registries, this);
+        }
         for (ModuleLinkEntries.ModuleEntry entry : this.entries.getMap().values()) {
             entry.setPos(this.getBlockPos());
             entry.setBe(this);
@@ -40,7 +44,7 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.put("module_entries", this.entries.asTag(registries));
+        tag.put("module_io_entries", this.entries.asTag(registries));
     }
 
     public void loadClient(CompoundTag tag, RegistryAccess registryAccess) {

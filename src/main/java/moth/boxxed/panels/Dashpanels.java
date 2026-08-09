@@ -43,6 +43,7 @@ public class Dashpanels {
         PanelCreativeTabs.register(modEventBus);
         PanelDataComponents.register(modEventBus);
         PanelRecipeSerializers.register(modEventBus);
+        PanelSounds.register(modEventBus);
 
         PanelTags.init();
 

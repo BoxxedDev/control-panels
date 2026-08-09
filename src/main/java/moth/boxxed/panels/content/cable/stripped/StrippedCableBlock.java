@@ -1,11 +1,9 @@
 package moth.boxxed.panels.content.cable.stripped;
 
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
-import moth.boxxed.panels.api.module.io.IInput;
-import moth.boxxed.panels.api.module.io.IMultiInput;
-import moth.boxxed.panels.api.module.io.IMultiOutput;
-import moth.boxxed.panels.api.module.io.IOutput;
+import moth.boxxed.panels.api.module.io.*;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMemberBlock;
 import moth.boxxed.panels.index.PanelBlocks;
@@ -109,22 +107,30 @@ public class StrippedCableBlock extends ModulesNetworkMemberBlock {
     protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         StrippedCableBlockEntity be = getBlockEntity(level, pos);
         if (be == null) return 0;
+        if (be.boundEntry == null) return 0;
         ModulesNetwork network = be.getOrCreate();
         if (network == null) return 0;
         network.compileModules();
         ModuleMap map = network.getCompiledModules();
-        Module module = map.get(be.boundModule);
+        Module module = map.get(be.boundEntry.name());
         if (module == null) return 0;
-        if (map.get(be.boundModule) instanceof IInput input) {
-            return Math.clamp(input.getAnalog(), 0, 15);
-        }
-        if (map.get(be.boundModule) instanceof IMultiInput input) {
-            Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
-            input.getValues(resultMap::put);
-            String extension = be.boundModule.substring(module.getName().length()+3);
-            IMultiInput.AnalogResult result = resultMap.get(extension);
-            if (result != null) {
-                return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
+        be.setConfig(IOEntry.newEntryIfTypeNull(be.boundEntry, module));
+        if (be.boundEntry == null) return 0;
+        switch (module) {
+            case IInput input when (!(module instanceof IMultiInput)) -> {
+                return Math.clamp(input.getAnalog(), 0, 15);
+            }
+            case IMultiInput input when (!(module instanceof IInput)) && be.boundEntry.extension().isPresent() -> {
+                Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
+                input.getValues(resultMap::put);
+                String extension = be.boundEntry.extension().get();
+                IMultiInput.AnalogResult result = resultMap.get(extension);
+                if (result != null) {
+                    return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
+                }
+            }
+            default -> {
+                return 0;
             }
         }
         return 0;
@@ -140,27 +146,34 @@ public class StrippedCableBlock extends ModulesNetworkMemberBlock {
         if (!level.isClientSide()) {
             StrippedCableBlockEntity be = getBlockEntity(level, pos);
             if (be == null) return;
+            if (be.boundEntry == null) return;
             ModulesNetwork network = be.getOrCreate();
             if (network == null) return;
             ModuleMap map = network.getCompiledModules();
-            Module module = map.get(be.boundModule);
-            if (module instanceof IOutput output) {
-                if (level.hasNeighborSignal(pos)) {
-                    output.setAnalog(level.getBestNeighborSignal(pos));
-                } else {
-                    output.setAnalog(0);
+            Module module = map.get(be.boundEntry.name());
+            if (module == null) return;
+            be.setConfig(IOEntry.newEntryIfTypeNull(be.boundEntry, module));
+            if (be.boundEntry == null) return;
+            switch (module) {
+                case IOutput output when (!(module instanceof IMultiOutput)) -> {
+                    if (level.hasNeighborSignal(pos)) {
+                        output.setAnalog(level.getBestNeighborSignal(pos));
+                    } else {
+                        output.setAnalog(0);
+                    }
+                    module.parentBlockEntity.networkUpdate(module.parentBlockEntity.getOrCreate());
                 }
-                module.parentBlockEntity.networkUpdate(module.parentBlockEntity.getOrCreate());
-            }
-            if (module instanceof IMultiOutput output) {
-                Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
-                output.setValues(runnableMap::put);
-                String extension = be.boundModule.substring(module.getName().length()+3);
-                if (level.hasNeighborSignal(pos)) {
-                    runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
-                } else {
-                    runnableMap.get(extension).setAnalog(0);
+                case IMultiOutput output when (!(module instanceof IOutput)) && be.boundEntry.extension().isPresent() -> {
+                    Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
+                    output.setValues(runnableMap::put);
+                    String extension = be.boundEntry.extension().get();
+                    if (level.hasNeighborSignal(pos)) {
+                        runnableMap.get(extension).setAnalog(level.getBestNeighborSignal(pos));
+                    } else {
+                        runnableMap.get(extension).setAnalog(0);
+                    }
                 }
+                default -> {}
             }
         }
     }

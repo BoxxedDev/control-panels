@@ -126,6 +126,10 @@ public class ControlPanelsCommonEvents {
                 event.includeClient(),
                 new PanelLangProvider(output)
         );
+        generator.addProvider(
+                event.includeClient(),
+                new PanelSoundsProvider(output, existingFileHelper)
+        );
 
         //Server
         generator.addProvider(

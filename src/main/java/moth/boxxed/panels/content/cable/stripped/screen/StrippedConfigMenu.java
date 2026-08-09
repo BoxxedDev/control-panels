@@ -1,5 +1,6 @@
 package moth.boxxed.panels.content.cable.stripped.screen;
 
+import moth.boxxed.panels.api.module.io.IOEntry;
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import net.minecraft.core.BlockPos;
@@ -14,19 +15,19 @@ import java.util.List;
 public class StrippedConfigMenu extends AbstractContainerMenu {
     public List<ModuleIOInfo> modulesInfo;
     public BlockPos pos;
-    public String initialConfig;
+    public IOEntry initialConfig;
 
     public StrippedConfigMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf extraData) {
         super(PanelMenuTypes.STRIPPED_CONFIG.get(), containerId);
-        init(extraData.readList(buffer -> ModuleIOInfo.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer)), extraData.readBlockPos(), extraData.readUtf());
+        init(extraData.readList(buffer -> ModuleIOInfo.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer)), extraData.readBlockPos(), IOEntry.STREAM_CODEC.decode(extraData));
     }
 
-    public StrippedConfigMenu(int containerId, List<ModuleIOInfo> modulesInfo, BlockPos pos, String initialConfig) {
+    public StrippedConfigMenu(int containerId, List<ModuleIOInfo> modulesInfo, BlockPos pos, IOEntry initialConfig) {
         super(PanelMenuTypes.STRIPPED_CONFIG.get(), containerId);
         init(modulesInfo, pos, initialConfig);
     }
 
-    private void init(List<ModuleIOInfo> map, BlockPos pos, String initialConfig) {
+    private void init(List<ModuleIOInfo> map, BlockPos pos, IOEntry initialConfig) {
         this.modulesInfo = map;
         this.pos = pos;
         this.initialConfig = initialConfig;

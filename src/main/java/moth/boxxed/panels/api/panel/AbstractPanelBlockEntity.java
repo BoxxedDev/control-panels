@@ -413,6 +413,22 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         return false;
     }
 
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        for (Module module : this.modules.values()) {
+            module.onUnloaded();
+        }
+    }
+
+    @Override
+    public void remove() {
+        for (Module module : this.modules.values()) {
+            module.onRemove(null);
+        }
+        super.remove();
+    }
+
     public abstract void transformPanelClipping(PoseStack stack);
 
     public abstract boolean canPlaceModuleOnSurface(Vec3 position, Direction face);

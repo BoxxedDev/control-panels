@@ -40,8 +40,8 @@ public class PanelModules {
             MODULES.register("key_switch", () -> new ModuleType<>(KeySwitchModule::new, PanelItems.KEY_SWITCH_MODULE.get()));
     public static final Supplier<ModuleType<EmergencyButtonModule>> EMERGENCY_BUTTON =
             MODULES.register("emergency_button", () -> new ModuleType<>(EmergencyButtonModule::new, PanelItems.EMERGENCY_BUTTON_MODULE.get()));
-//    public static final Supplier<ModuleType<BuzzerModule>> BUZZER =
-//            MODULES.register("buzzer", () -> new ModuleType<>(BuzzerModule::new, PanelItems.BUZZER_MODULE.get()));
+    public static final Supplier<ModuleType<BuzzerModule>> BUZZER =
+            MODULES.register("buzzer", () -> new ModuleType<>(BuzzerModule::new, PanelItems.BUZZER_MODULE.get()));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

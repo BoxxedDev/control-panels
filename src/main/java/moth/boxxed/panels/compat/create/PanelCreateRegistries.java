@@ -12,6 +12,7 @@ import moth.boxxed.panels.compat.PanelCompat;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlock;
 import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
+import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
 import moth.boxxed.panels.index.*;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.SoundType;
@@ -83,6 +84,18 @@ public class PanelCreateRegistries implements PanelCompat {
                     }
                 });
             }
+
+            SafeNbtWriterRegistry.REGISTRY.register(PANEL_LINK_BE.get(), (be, tag, registries) -> {
+                if (be instanceof PanelLinkBlockEntity plbe) {
+                    plbe.saveExternal(tag, registries);
+                }
+            });
+
+            SafeNbtWriterRegistry.REGISTRY.register(PanelBlockEntities.STRIPPED_CABLE.get(), (be, tag, registries) -> {
+                if (be instanceof StrippedCableBlockEntity scbe) {
+                    scbe.saveExternal(tag, registries);
+                }
+            });
         });
     }
 

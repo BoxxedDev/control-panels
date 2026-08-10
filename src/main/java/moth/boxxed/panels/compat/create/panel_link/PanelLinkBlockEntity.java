@@ -46,6 +46,10 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         tag.put("module_io_entries", this.entries.asTag(registries));
     }
 
+    public void saveExternal(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.put("module_io_entries", this.entries.asTag(registries));
+    }
+
     public void loadClient(CompoundTag tag, RegistryAccess registryAccess) {
         this.loadAdditional(tag, registryAccess);
     }

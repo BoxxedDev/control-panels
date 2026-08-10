@@ -42,6 +42,14 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
         }
     }
 
+    public void saveExternal(CompoundTag tag, HolderLookup.Provider registries) {
+        if (this.boundEntry != null) {
+            Tag entryTag = this.boundEntry.asTag(registries);
+            if (entryTag != null)
+                tag.put("configured_entry", entryTag);
+        }
+    }
+
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);

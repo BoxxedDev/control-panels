@@ -13,10 +13,7 @@ import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 import oshi.util.tuples.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class NetworkMemberPeripheral implements IPeripheral {
@@ -45,26 +42,26 @@ public class NetworkMemberPeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public List<IDynamicLuaObject> getModules() {
+    public Map<String, IDynamicLuaObject> getModules() {
         this.blockEntity.getOrCreate().compileModules();
-        List<IDynamicLuaObject> ret = new ArrayList<>();
+        Map<String, IDynamicLuaObject> ret = new HashMap<>();
         for (Map.Entry<String, IModuleLuaObject> entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaMap().entrySet())
-            ret.add(fromModuleLuaObject(entry.getValue()));
-        return ret.reversed();
+            ret.put(entry.getKey(), fromModuleLuaObject(entry.getValue()));
+        return ret;
     }
 
     @LuaFunction
-    public List<IDynamicLuaObject> getModulesOfType(final String typeName) {
+    public Map<String, IDynamicLuaObject> getModulesOfType(final String typeName) {
         this.blockEntity.getOrCreate().compileModules();
-        List<IDynamicLuaObject> ret = new ArrayList<>();
+        Map<String, IDynamicLuaObject> ret = new HashMap<>();
         for (Map.Entry<String, IModuleLuaObject> entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaMap().entrySet()) {
             if (entry.getValue() instanceof Module module) {
                 ResourceLocation location = ModulesRegistry.MODULE_REGISTRY.getKey(module.type);
                 if (location != null && location.getPath().equals(typeName))
-                    ret.add(fromModuleLuaObject(entry.getValue()));
+                    ret.put(entry.getKey(), fromModuleLuaObject(entry.getValue()));
             }
         }
-        return ret.reversed();
+        return ret;
     }
 
     @LuaFunction

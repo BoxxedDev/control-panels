@@ -21,7 +21,7 @@ public class ModulesNetwork {
         this.members.forEach(this::addMember);
     }
     public void addMember(ModulesNetworkMember member) {
-        if (member.getLevel().isClientSide)
+        if (member.getLevel() == null)
             return;
         if (!member.getLevel().isLoaded(member.getBlockPos()))
             return;
@@ -41,8 +41,6 @@ public class ModulesNetwork {
         members.forEach(this::removeMember);
     }
     public void removeMember(ModulesNetworkMember member) {
-        if (member.getLevel().isClientSide)
-            return;
         this.members.remove(member);
 //        ControlPanels.LOGGER.debug("Removed member {} from network {}", member, this.id);
         if (this.members.isEmpty()) {

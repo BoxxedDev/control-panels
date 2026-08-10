@@ -24,10 +24,8 @@ public class KeyboardHandlerMixin {
     )
     public void panels$keyPress(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
         if (this.minecraft.player != null && !this.minecraft.player.isSpectator()) {
-            if (PlacementManager.isMovingModule()) {
-                if (key == GLFW.GLFW_KEY_ESCAPE) {
-                    PlacementManager.stopMoving();
-                }
+            if (PlacementManager.isMovingModule() && key == GLFW.GLFW_KEY_ESCAPE) {
+                PlacementManager.stopMoving();
                 ci.cancel();
             }
 

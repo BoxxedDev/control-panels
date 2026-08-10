@@ -270,9 +270,14 @@ public class ModuleConfigScreen extends Screen {
             value.save(tag, registryAccess);
             mapToSend.put(value.getId(), tag);
         }
+        Optional<BlockPos> newParentPos = this.moduleToConfigure.parentBlockEntity.getBlockPos().equals(this.pos) ?
+                Optional.empty() :
+                Optional.of(this.moduleToConfigure.parentBlockEntity.getBlockPos());
+
         PacketDistributor.sendToServer(
                 new ConfigureModulePacket(
                         this.pos,
+                        newParentPos,
                         this.moduleToConfigure.getName(),
                         this.moduleToConfigure.getPos().x,
                         this.moduleToConfigure.getPos().y,

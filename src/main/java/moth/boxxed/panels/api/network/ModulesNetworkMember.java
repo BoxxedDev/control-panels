@@ -53,8 +53,7 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
 
     @Override
     public void init() {
-        if (!getLevel().isClientSide)
-            ModulesNetworkManager.handleAddingMember(this);
+        ModulesNetworkManager.handleAddingMember(this);
     }
 
     @Override

@@ -48,8 +48,6 @@ public class ModulesNetworkManager {
     public static void handleAddingMember(ModulesNetworkMember member) {
         BlockPos pos = member.getBlockPos();
         Level level = member.getLevel();
-        if (level.isClientSide)
-            return;
         if (!level.isLoaded(pos))
             return;
 

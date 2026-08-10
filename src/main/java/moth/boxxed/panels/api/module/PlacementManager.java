@@ -7,7 +7,10 @@ import dev.ryanhcode.sable.companion.ClientSubLevelAccess;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
+import moth.boxxed.panels.api.network.ModulesNetwork;
+import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.network.packet.PlaceModulePacket;
@@ -37,11 +40,13 @@ public class PlacementManager {
     private static Module movingModule = null;
     private static Vector2i movingOldPos = null;
     private static ModuleConfigScreen oldScreen = null;
+    private static AbstractPanelBlockEntity oldParent = null;
 
     public static void startMovingModule(ModuleConfigScreen screen, Module module) {
         movingModule = module;
         movingOldPos = module.getPos();
         oldScreen = screen;
+        oldParent = module.parentBlockEntity;
         Minecraft.getInstance().setScreen(null);
     }
 
@@ -56,12 +61,20 @@ public class PlacementManager {
     public static void stopMoving() {
         if (!tryPlaceMovingModule()) {
             movingModule.setPos(movingOldPos);
+            movingModule.setParentBE(oldParent);
         }
+
+        if (movingModule.parentBlockEntity != oldParent) {
+            oldParent.removeModule(movingModule.name);
+            movingModule.parentBlockEntity.addModule(movingModule.name, movingModule);
+        }
+
+        Minecraft.getInstance().setScreen(oldScreen);
 
         movingModule = null;
         movingOldPos = null;
-        Minecraft.getInstance().setScreen(oldScreen);
         oldScreen = null;
+        oldParent = null;
     }
 
     public static void renderMovingModule(Vec3 cameraPos, PoseStack poseStack) {
@@ -186,6 +199,7 @@ public class PlacementManager {
                     (int) Math.floor(doublePos.y)
             );
             movingModule.setPos(position);
+            movingModule.setParentBE(pbe);
 
             return !pbe.collidesWithOther(movingModule);
         }

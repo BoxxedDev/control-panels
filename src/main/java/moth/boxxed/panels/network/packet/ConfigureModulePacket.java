@@ -16,11 +16,13 @@ import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public record ConfigureModulePacket(BlockPos pos, String moduleName, int moduleX, int moduleY, Map<String, CompoundTag> configValues) implements CustomPacketPayload {
+public record ConfigureModulePacket(BlockPos pos, Optional<BlockPos> newParentPos, String moduleName, int moduleX, int moduleY, Map<String, CompoundTag> configValues) implements CustomPacketPayload {
     public static final Type<ConfigureModulePacket> TYPE = new Type<>(Dashpanels.path("configure_module_packet"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ConfigureModulePacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, ConfigureModulePacket::pos,
+            ByteBufCodecs.optional(BlockPos.STREAM_CODEC), ConfigureModulePacket::newParentPos,
             ByteBufCodecs.STRING_UTF8, ConfigureModulePacket::moduleName,
             ByteBufCodecs.INT, ConfigureModulePacket::moduleX,
             ByteBufCodecs.INT, ConfigureModulePacket::moduleY,
@@ -41,7 +43,15 @@ public record ConfigureModulePacket(BlockPos pos, String moduleName, int moduleX
             if (module == null)
                 return;
 
-            module.setParentBE(pbe);
+            AbstractPanelBlockEntity otherPbe = null;
+            if (this.newParentPos.isPresent() && level.getBlockEntity(newParentPos.get()) instanceof AbstractPanelBlockEntity) {
+                otherPbe = (AbstractPanelBlockEntity) level.getBlockEntity(newParentPos.get());
+                module = pbe.removeModule(moduleName);
+                otherPbe.addModule(moduleName, module);
+            } else {
+                module.setParentBE(pbe);
+            }
+
             module.setPos(this.moduleX, this.moduleY);
             RegistryAccess registryAccess = level.registryAccess();
             for (ModuleConfigValue<?, ?> value : module.getConfig().getValues()) {
@@ -52,13 +62,18 @@ public record ConfigureModulePacket(BlockPos pos, String moduleName, int moduleX
                 value.loadAndBroadcastChange(valueTag, registryAccess);
 
                 if (value.getId() == "name") {
-                    pbe.renameModule(module.getName(), (String) value.get());
+                    module.parentBlockEntity.renameModule(module.getName(), (String) value.get());
                     continue;
                 }
             }
 
             pbe.setChanged();
             pbe.blockChanged();
+
+            if (otherPbe != null) {
+                otherPbe.setChanged();
+                otherPbe.blockChanged();
+            }
         }
     }
 }

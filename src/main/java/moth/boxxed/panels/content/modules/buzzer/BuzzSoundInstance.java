@@ -46,6 +46,6 @@ public class BuzzSoundInstance extends AbstractTickableSoundInstance {
     }
 
     public void setPitch(float p) {
-        this.pitch = Mth.lerp(0.05f, this.pitch, p);
+        this.pitch = p;
     }
 }

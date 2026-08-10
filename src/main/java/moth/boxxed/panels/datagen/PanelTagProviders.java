@@ -39,6 +39,8 @@ public class PanelTagProviders {
                     .add(PanelItems.SEVEN_SEGMENT_MODULE.getKey())
                     .add(PanelItems.PUSH_BUTTON_MODULE.getKey())
                     .add(PanelItems.KEY_SWITCH_MODULE.getKey())
+                    .add(PanelItems.EMERGENCY_BUTTON_MODULE.getKey())
+                    .add(PanelItems.BUZZER_MODULE.getKey())
                     .addOptional(Dashpanels.path("navball"))
             ;
 
@@ -66,6 +68,7 @@ public class PanelTagProviders {
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .add(PanelBlocks.WALL_CONTROL_PANEL.getKey())
+                    .add(PanelBlocks.CEILING_CONTROL_PANEL.getKey())
                     .add(PanelBlocks.CONTROL_PANEL.getKey())
                     .add(PanelBlocks.CABLE.getKey())
                     .add(PanelBlocks.STRIPPED_CABLE.getKey());

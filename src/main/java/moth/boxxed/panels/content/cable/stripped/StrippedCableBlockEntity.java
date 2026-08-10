@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class StrippedCableBlockEntity extends ModulesNetworkMember implements MenuProvider {
@@ -82,10 +83,12 @@ public class StrippedCableBlockEntity extends ModulesNetworkMember implements Me
         IOEntry.STREAM_CODEC.encode(buf, this.boundEntry != null ? this.boundEntry : new IOEntry("", ModuleIOType.INPUT, Optional.empty()));
     }
 
-    public void setConfig(IOEntry module) {
-        this.boundEntry = module;
-        setChanged();
-        blockChanged();
+    public void setConfig(IOEntry entry) {
+        if (!Objects.equals(entry, this.boundEntry)) {
+            this.boundEntry = entry;
+            setChanged();
+            blockChanged();
+        }
     }
 
     @Override

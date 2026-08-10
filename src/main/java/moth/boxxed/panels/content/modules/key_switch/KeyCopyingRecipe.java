@@ -36,7 +36,7 @@ public class KeyCopyingRecipe extends CustomRecipe {
             }
         }
 
-        return keysWithNbt == 1;
+        return keysWithNbt == 1 && writableKeys >= 1;
     }
 
     @Override

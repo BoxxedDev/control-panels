@@ -10,6 +10,8 @@
     "dashpanels:seven_segment",
     "dashpanels:push_button",
     "dashpanels:key_switch",
+    "dashpanels:emergency_button",
+    "dashpanels:buzzer",
     {
       "id": "dashpanels:navball",
       "required": false

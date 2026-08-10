@@ -41,7 +41,7 @@ public abstract class ModuleHoldInteraction<T extends Module> {
 
     public final boolean stillValid() {
         if (this.isActive()) {
-            double reach = this.player.blockInteractionRange() + 2d;
+            double reach = this.player.blockInteractionRange()-2d;
             return this.player.distanceToSqr(this.pos.getCenter()) <= reach * reach;
         }
         return false;

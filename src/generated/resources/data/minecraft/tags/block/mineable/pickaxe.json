@@ -1,6 +1,7 @@
 {
   "values": [
     "dashpanels:wall_control_panel",
+    "dashpanels:ceiling_control_panel",
     "dashpanels:control_panel",
     "dashpanels:cable",
     "dashpanels:stripped_cable",

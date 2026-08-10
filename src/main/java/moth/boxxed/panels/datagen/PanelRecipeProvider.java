@@ -56,6 +56,8 @@ public class PanelRecipeProvider extends RecipeProvider {
         module(PanelItems.SEVEN_SEGMENT_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 4, output);
         module(PanelItems.PUSH_BUTTON_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 1, output);
         module(PanelItems.KEY_SWITCH_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
+        module(PanelItems.EMERGENCY_BUTTON_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 1, output);
+        module(PanelItems.BUZZER_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 3, output);
         if (ModList.get().isLoaded("sable"))
             module(PanelSableRegistries.NAVBALL_MODULE.get(), Ingredient.of(Tags.Items.INGOTS_IRON), 2, output);
     }

@@ -136,6 +136,11 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
             return false;
         }
 
+        if (this.keyId != null) {
+            this.keyId = null;
+            return false;
+        }
+
         return super.canRemove(player);
     }
 
@@ -204,12 +209,12 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
 
     @Override
     public VoxelShape getVoxelShape() {
-        return Block.box(-0.5, 0, -0.5, 2.5, 1, 2.5);
+        return Block.box(0, 0, 0, 3, 1, 3);
     }
 
     @Override
     public PolyVoxel getShape() {
-        return new PolyVoxel(0, 0, 2, 2);
+        return new PolyVoxel(0, 0, 3, 3);
     }
 
     @Override

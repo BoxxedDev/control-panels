@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class WikiableEntries {
     private static final Map<ResourceLocation, ResourceLocation> OTHER_MAP = new HashMap<>();
@@ -72,5 +73,17 @@ public class WikiableEntries {
 
     public static IWikiPage pageFor(ResourceLocation location) {
         return MAP.get(location);
+    }
+
+    public static void collectLang(BiConsumer<String, String> keyValueConsumer) {
+        for (IWikiPage wikiPage : getAllPages()) {
+            for (int i = 0; i < wikiPage.getParagraphs(); i++) {
+                IWikiPage.ParagraphTranslation paragraphTranslation = wikiPage.getParagraphTranslation(i);
+                keyValueConsumer.accept(
+                        paragraphTranslation.key(),
+                        paragraphTranslation.value()
+                );
+            }
+        }
     }
 }

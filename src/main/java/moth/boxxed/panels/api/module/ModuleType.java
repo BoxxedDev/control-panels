@@ -1,9 +1,5 @@
 package moth.boxxed.panels.api.module;
 
-import moth.boxxed.panels.api.module.io.IInput;
-import moth.boxxed.panels.api.module.io.IMultiInput;
-import moth.boxxed.panels.api.module.io.IMultiOutput;
-import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

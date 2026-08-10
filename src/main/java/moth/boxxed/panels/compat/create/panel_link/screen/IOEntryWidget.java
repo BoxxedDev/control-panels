@@ -1,7 +1,6 @@
 package moth.boxxed.panels.compat.create.panel_link.screen;
 
 import com.simibubi.create.AllSoundEvents;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.io.IOEntry;
 import moth.boxxed.panels.api.module.io.ModuleIOType;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
@@ -11,7 +10,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;

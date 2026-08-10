@@ -148,6 +148,10 @@ public class ControlPanelsCommonEvents {
                 event.includeServer(),
                 new PanelRecipeProvider(output, lookupProvider)
         );
+        generator.addProvider(
+                event.includeServer(),
+                new PanelAdvancementProvider(output, lookupProvider, existingFileHelper)
+        );
     }
 
     @SubscribeEvent

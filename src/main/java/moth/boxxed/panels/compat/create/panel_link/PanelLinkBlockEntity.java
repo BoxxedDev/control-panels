@@ -1,7 +1,6 @@
 package moth.boxxed.panels.compat.create.panel_link;
 
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
-import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;

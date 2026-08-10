@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "has_control_panel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dashpanels:control_panel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "dashpanels:textures/gui/advancement.png",
+    "description": {
+      "translate": "advancements.dashpanels.root.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "dashpanels:control_panel"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.dashpanels.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_control_panel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

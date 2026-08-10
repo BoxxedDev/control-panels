@@ -1,0 +1,36 @@
+{
+  "parent": "dashpanels:root",
+  "criteria": {
+    "has_wrench": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dashpanels:wrench"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "dashpanels:textures/gui/advancement.png",
+    "description": {
+      "translate": "advancements.dashpanels.wrench.desc"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "dashpanels:wrench"
+    },
+    "title": {
+      "translate": "advancements.dashpanels.wrench.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_wrench"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

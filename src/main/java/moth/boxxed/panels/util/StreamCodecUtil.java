@@ -2,8 +2,6 @@ package moth.boxxed.panels.util;
 
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.ByteBuf;
-import moth.boxxed.panels.api.module.io.ModuleIOType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 public class StreamCodecUtil {

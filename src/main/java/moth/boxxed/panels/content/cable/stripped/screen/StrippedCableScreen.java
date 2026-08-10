@@ -16,12 +16,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
-import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 public class StrippedCableScreen extends AbstractContainerScreen<StrippedConfigMenu> {
     public static final ResourceLocation GUI = Dashpanels.path("textures/gui/container/stripped_cable_config.png");

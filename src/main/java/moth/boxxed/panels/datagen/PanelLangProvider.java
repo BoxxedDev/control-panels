@@ -1,6 +1,7 @@
 package moth.boxxed.panels.datagen;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.config.ClientConfig;
@@ -32,7 +33,7 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.PUSH_BUTTON_MODULE, "Push Button");
         addItem(PanelItems.KEY_SWITCH_MODULE, "Key Switch");
         addItem(PanelItems.EMERGENCY_BUTTON_MODULE, "Emergency Button");
-//        addItem(PanelItems.BUZZER_MODULE, "Buzzer");
+        addItem(PanelItems.BUZZER_MODULE, "Buzzer");
 
         if (ModList.get().isLoaded("sable"))
             addItem(PanelSableRegistries.NAVBALL_MODULE, "Navball");
@@ -136,6 +137,14 @@ public class PanelLangProvider extends LanguageProvider {
         add("dashpanels.wiki.category.special_items", "Special Items");
 
         add("dashpanels.wiki.page.modules", "Modules");
+
+        add("advancements.dashpanels.root.title", "Dashpanels!");
+        add("advancements.dashpanels.root.desc", "Don't be too much of a control freak.");
+
+        add("advancements.dashpanels.first_module.title", "First Module");
+        add("advancements.dashpanels.first_module.desc", "The key point of the mod");
+
+        WikiableEntries.collectLang(this::add);
     }
 
     private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {

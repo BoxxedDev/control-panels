@@ -74,9 +74,18 @@ public class ItemlessWikiPage implements IWikiPage {
 
         IWikiPage.Paragraph paragraph = this.paragraphs.get(index);
         return Component.translatableWithFallback(
-                "%s.%s".formatted(this.titleTranslation, paragraph.fallback()),
+                "%s.wiki.%s".formatted(this.titleTranslation, paragraph.translation()),
                 paragraph.paragraph()
         );
+    }
+
+    @Override
+    public ParagraphTranslation getParagraphTranslation(int index) {
+        if (index >= this.getParagraphs())
+            return null;
+
+        IWikiPage.Paragraph paragraph = this.paragraphs.get(index);
+        return new ParagraphTranslation("%s.wiki.%s".formatted(this.titleTranslation, paragraph.translation()), paragraph.paragraph());
     }
 
     @Override

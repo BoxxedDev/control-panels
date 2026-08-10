@@ -12,9 +12,13 @@ public interface IWikiPage {
 
     Component getParagraph(int index);
 
+    ParagraphTranslation getParagraphTranslation(int index);
+
     int getParagraphs();
 
     int getSidebarPriority();
 
-    record Paragraph(String fallback, String paragraph) {}
+    record Paragraph(String translation, String paragraph) {}
+
+    record ParagraphTranslation(String key, String value) {}
 }

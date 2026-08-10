@@ -1,9 +1,7 @@
 package moth.boxxed.panels.api.module.io;
 
 import moth.boxxed.panels.api.module.Module;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;

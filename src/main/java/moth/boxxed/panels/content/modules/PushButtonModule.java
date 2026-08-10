@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfig;

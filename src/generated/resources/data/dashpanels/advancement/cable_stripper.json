@@ -1,0 +1,36 @@
+{
+  "parent": "dashpanels:root",
+  "criteria": {
+    "has_cable_stripper": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dashpanels:cable_stripper"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "dashpanels:textures/gui/advancement.png",
+    "description": {
+      "translate": "advancements.dashpanels.cable_stripper.desc"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "dashpanels:cable_stripper"
+    },
+    "title": {
+      "translate": "advancements.dashpanels.cable_stripper.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_cable_stripper"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

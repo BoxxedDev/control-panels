@@ -6,7 +6,6 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.io.IInput;
-import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.index.PanelModules;
@@ -24,8 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.function.BiConsumer;
 
 //I'll finish this once I patch allowing a module to have inputs and outputs
 public class EmergencyButtonModule extends Module implements IOutput, IInput {

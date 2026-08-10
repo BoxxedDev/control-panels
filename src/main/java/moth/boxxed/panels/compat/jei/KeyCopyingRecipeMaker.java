@@ -1,10 +1,7 @@
 package moth.boxxed.panels.compat.jei;
 
-import mezz.jei.common.platform.IPlatformIngredientHelper;
-import mezz.jei.common.platform.Services;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.modules.key_switch.BoundModule;
-import moth.boxxed.panels.content.modules.key_switch.KeyCopyingRecipe;
 import moth.boxxed.panels.index.PanelDataComponents;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.util.ShortUUID;

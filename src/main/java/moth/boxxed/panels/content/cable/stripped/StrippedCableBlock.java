@@ -1,6 +1,5 @@
 package moth.boxxed.panels.content.cable.stripped;
 
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.module.io.*;

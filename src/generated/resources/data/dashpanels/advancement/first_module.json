@@ -1,0 +1,71 @@
+{
+  "parent": "dashpanels:root",
+  "criteria": {
+    "has_module": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dashpanels:switch"
+          },
+          {
+            "items": "dashpanels:label"
+          },
+          {
+            "items": "dashpanels:control_lever"
+          },
+          {
+            "items": "dashpanels:key_switch"
+          },
+          {
+            "items": "dashpanels:buzzer"
+          },
+          {
+            "items": "dashpanels:push_button"
+          },
+          {
+            "items": "dashpanels:seven_segment"
+          },
+          {
+            "items": "dashpanels:emergency_button"
+          },
+          {
+            "items": "dashpanels:momentary_switch"
+          },
+          {
+            "items": "dashpanels:indicator_bulb"
+          },
+          {
+            "items": "dashpanels:knob"
+          },
+          {
+            "items": "dashpanels:joystick"
+          },
+          {
+            "items": "dashpanels:navball"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "dashpanels:textures/gui/advancement.png",
+    "description": {
+      "translate": "advancements.dashpanels.first_module.desc"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "dashpanels:control_lever"
+    },
+    "title": {
+      "translate": "advancements.dashpanels.first_module.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_module"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -74,9 +74,18 @@ public class WikiPage implements IWikiPage {
 
         IWikiPage.Paragraph paragraph = this.paragraphs.get(index);
         return Component.translatableWithFallback(
-                "%s.wiki.%s".formatted(this.itemLikeSupplier.get().asItem().getDescriptionId(), paragraph.fallback()),
+                "%s.wiki.%s".formatted(this.itemLikeSupplier.get().asItem().getDescriptionId(), paragraph.translation()),
                 paragraph.paragraph()
         );
+    }
+
+    @Override
+    public ParagraphTranslation getParagraphTranslation(int index) {
+        if (index >= this.getParagraphs())
+            return null;
+
+        IWikiPage.Paragraph paragraph = this.paragraphs.get(index);
+        return new ParagraphTranslation("%s.wiki.%s".formatted(this.itemLikeSupplier.get().asItem().getDescriptionId(), paragraph.translation()), paragraph.paragraph());
     }
 
     @Override

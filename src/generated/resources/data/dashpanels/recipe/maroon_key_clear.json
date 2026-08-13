@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "dashpanels:maroon_key"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "dashpanels:maroon_key"
+  }
+}

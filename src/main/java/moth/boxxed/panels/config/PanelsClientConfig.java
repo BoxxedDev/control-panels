@@ -3,7 +3,7 @@ package moth.boxxed.panels.config;
 import moth.boxxed.panels.DashpanelsClient;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-public class ClientConfig {
+public class PanelsClientConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     public static final ModConfigSpec.BooleanValue SHOW_MODULE_TOOLTIPS = BUILDER
@@ -21,6 +21,9 @@ public class ClientConfig {
     public static final ModConfigSpec.ConfigValue<String> DEFAULT_PALETTE = BUILDER
             .comment("Default palette that loads when you open the paint wheel screen")
             .define("default_skin_palette", "default", (str) -> DashpanelsClient.PALETTE_STORAGE.validateName((String) str));
+
+    public static final ModConfigSpec.IntValue BUZZ_SFX_RANGE = BUILDER
+            .defineInRange("buzz_sfx_range", 16, 4, 128);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

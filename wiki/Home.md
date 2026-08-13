@@ -1,18 +1,4 @@
-## Depending on Dashpanels
 
-### build.gradle
-
-```groovy
-    repositories {
-        maven {
-            url = "https://api.modrinth.com/maven"
-        }
-    }
-
-    dependencies {
-        implementation("maven.modrinth:dashpanels:1.0+neoforge1.21.1")
-    }
-```
 ---
 ### Creating a module
 To create a base module just extend the abstract module class

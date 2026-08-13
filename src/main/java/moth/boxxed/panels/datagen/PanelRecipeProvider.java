@@ -172,5 +172,10 @@ public class PanelRecipeProvider extends RecipeProvider {
                 .requires(PanelItems.KEY_ITEM)
                 .unlockedBy("has_key", has(PanelItems.KEY_ITEM))
                 .save(output, "dashpanels:key_clear");
+
+        PanelItems.COLORED_KEYS.forEach((color, item) -> ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, item.get())
+                .requires(item)
+                .unlockedBy("has_key", has(PanelItems.KEY_ITEM))
+                .save(output, "dashpanels:%s_key_clear".formatted(color.getSerializedName())));
     }
 }

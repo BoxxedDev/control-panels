@@ -4,7 +4,8 @@ import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
-import moth.boxxed.panels.config.ClientConfig;
+import moth.boxxed.panels.config.PanelsClientConfig;
+import moth.boxxed.panels.config.PanelsConfig;
 import moth.boxxed.panels.index.PanelBlocks;
 import moth.boxxed.panels.index.PanelCreativeTabs;
 import moth.boxxed.panels.index.PanelItems;
@@ -50,6 +51,21 @@ public class PanelLangProvider extends LanguageProvider {
         addItem(PanelItems.PAINT_BRUSH, "Paint Brush");
         addItem(PanelItems.WRENCH, "Panel Wrench");
         addItem(PanelItems.KEY_ITEM, "Key");
+        PanelItems.COLORED_KEYS.forEach((color, item) -> {
+            StringBuilder nameBuilder = new StringBuilder();
+            String[] splitName = color.getSerializedName().split("_");
+            for (int i = 0; i < splitName.length; i++) {
+                String str = splitName[i];
+                nameBuilder.append(str.substring(0, 1).toUpperCase())
+                        .append(str.substring(1));
+                if (i+1 != splitName.length) {
+                    nameBuilder.append(" ");
+                }
+            }
+
+            addItem(item, "%s Key".formatted(nameBuilder.toString()));
+        });
+        addItem(PanelItems.KEY_CHAIN, "Key Chain");
 
         if (ModList.get().isLoaded("create"))
             addBlock(PanelCreateRegistries.PANEL_LINK, "Panel Link");
@@ -73,8 +89,8 @@ public class PanelLangProvider extends LanguageProvider {
         add("dashpanels.paint_wheel.apply_all", "Apply To All");
         add("dashpanels.paint_wheel.author", "Author: %s");
 
-        addTooltip("key.bound_id", "ID: §r%s");
-        addTooltip("key.bound_pos", "Block: §r%s");
+        addTooltip("key.bound_id", "§6Id: §r%s");
+        addTooltip("key.bound_pos", "§6Block: §r%s");
 
         //Modules
         addTooltip("module.push_button", "Button: %d");
@@ -91,10 +107,12 @@ public class PanelLangProvider extends LanguageProvider {
         add("creativetab.dashpanels.modules", "§lModules");
         add("creativetab.dashpanels.tools", "§lTools");
 
-        addConfig(ClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
-        addConfig(ClientConfig.DISABLE_MODULE_TOOLTIPS_HUD, "Disable Module Tooltips When Hud is Hidden");
-        addConfig(ClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
-        addConfig(ClientConfig.DEFAULT_PALETTE, "Default Skin Palette");
+        addConfig(PanelsClientConfig.SHOW_MODULE_TOOLTIPS, "Show Module Tooltips");
+        addConfig(PanelsClientConfig.DISABLE_MODULE_TOOLTIPS_HUD, "Disable Module Tooltips When Hud is Hidden");
+        addConfig(PanelsClientConfig.CLICK_FOR_MODULE_HOLD, "Click for Module Hold");
+        addConfig(PanelsClientConfig.DEFAULT_PALETTE, "Default Skin Palette");
+        addConfig(PanelsClientConfig.BUZZ_SFX_RANGE, "Buzzer Sound Effect Range");
+        addConfig(PanelsConfig.MAX_KEYS, "Max Key Amount on Key Chain");
 
         addCustom("key", "hold_move_camera", "Move Camera While Holding");
         addCustom("key", "hold_to_open_wiki", "Hold to Open Wiki");
@@ -144,7 +162,10 @@ public class PanelLangProvider extends LanguageProvider {
         add("advancements.dashpanels.first_module.title", "First Module");
         add("advancements.dashpanels.first_module.desc", "The key point of the mod");
 
-        WikiableEntries.collectLang(this::add);
+        addSound("buzzer.buzz", "Buzzzzz");
+        addSound("key.jingle", "Key Jingles");
+
+        WikiableEntries.collectLang(Dashpanels.MOD_ID, this::add);
     }
 
     private <T extends ModConfigSpec.ConfigValue<?>> void addConfig(T configValue, String string) {
@@ -173,5 +194,9 @@ public class PanelLangProvider extends LanguageProvider {
 
     private void addModuleConfig(String valueName, String string) {
         add("module_config.value.%s".formatted(valueName), string);
+    }
+
+    private void addSound(String soundId, String string) {
+        addCustom("sounds", soundId, string);
     }
 }

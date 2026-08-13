@@ -36,7 +36,6 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput {
 
     public EmergencyButtonModule(int x, int y) {
         super(PanelModules.EMERGENCY_BUTTON.get(), x, y);
-        Dashpanels.LOGGER.debug("Created");
     }
 
     @Override

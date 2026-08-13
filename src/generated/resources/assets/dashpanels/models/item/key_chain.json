@@ -1,0 +1,6 @@
+{
+  "parent": "dashpanels:item/tool",
+  "textures": {
+    "layer0": "dashpanels:item/key_chain"
+  }
+}

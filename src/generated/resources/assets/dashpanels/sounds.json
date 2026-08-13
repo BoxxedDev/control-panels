@@ -4,5 +4,12 @@
       "dashpanels:buzz"
     ],
     "subtitle": "sounds.dashpanels.buzzer.buzz"
+  },
+  "key_jingle": {
+    "sounds": [
+      "dashpanels:key_jingle/jingle_0",
+      "dashpanels:key_jingle/jingle_1"
+    ],
+    "subtitle": "sounds.dashpanels.key.jingle"
   }
 }

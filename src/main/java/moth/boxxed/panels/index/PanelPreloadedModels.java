@@ -41,17 +41,25 @@ public class PanelPreloadedModels {
             KEY_SWITCH_BASE = regular("key_switch/base"),
             KEY_SWITCH_HOLE = regular("key_switch/hole"),
             KEY_SWITCH_KEY = regular("key_switch/key"),
+            KEY_SWITCH_COLOR = regular("key_switch/color_key"),
+            KEY_SWITCH_END = regular("key_switch/key_end"),
 
             EMERGENCY_BUTTON_BASE = regular("emergency_button/base"),
             EMERGENCY_BUTTON_COVER = regular("emergency_button/cover"),
             EMERGENCY_BUTTON_BUTTON = regular("emergency_button/button"),
 
             BUZZER = regular("buzzer/buzzer"),
-            BUZZ_INDICATOR = regular("buzzer/buzz_indicator")
+            SOUND_INDICATOR = regular("sound_indicator"),
+
+            KEY_OUTLINE = item("key_outline")
                     ;
 
     private static PreLoadedModel regular(String name) {
         return PreLoadedModel.create(Dashpanels.path("block/" + name));
+    }
+
+    private static PreLoadedModel item(String name) {
+        return PreLoadedModel.create(Dashpanels.path("item/" + name));
     }
 
     public static void init() {}

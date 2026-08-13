@@ -1,5 +1,7 @@
 package moth.boxxed.panels.api.wiki;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -75,8 +77,13 @@ public class WikiableEntries {
         return MAP.get(location);
     }
 
-    public static void collectLang(BiConsumer<String, String> keyValueConsumer) {
-        for (IWikiPage wikiPage : getAllPages()) {
+    public static void collectLang(String modid, BiConsumer<String, String> keyValueConsumer) {
+        List<IWikiPage> pages = MAP.entrySet().stream()
+                .filter(entry -> Objects.equals(modid, entry.getKey().getNamespace()))
+                .map(Map.Entry::getValue)
+                .toList();
+
+        for (IWikiPage wikiPage : pages) {
             for (int i = 0; i < wikiPage.getParagraphs(); i++) {
                 IWikiPage.ParagraphTranslation paragraphTranslation = wikiPage.getParagraphTranslation(i);
                 keyValueConsumer.accept(

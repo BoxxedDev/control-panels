@@ -5,43 +5,43 @@
       "conditions": {
         "items": [
           {
+            "items": "dashpanels:momentary_switch"
+          },
+          {
+            "items": "dashpanels:indicator_bulb"
+          },
+          {
+            "items": "dashpanels:key_switch"
+          },
+          {
+            "items": "dashpanels:seven_segment"
+          },
+          {
+            "items": "dashpanels:emergency_button"
+          },
+          {
+            "items": "dashpanels:push_button"
+          },
+          {
+            "items": "dashpanels:navball"
+          },
+          {
             "items": "dashpanels:knob"
+          },
+          {
+            "items": "dashpanels:buzzer"
+          },
+          {
+            "items": "dashpanels:label"
+          },
+          {
+            "items": "dashpanels:joystick"
           },
           {
             "items": "dashpanels:switch"
           },
           {
             "items": "dashpanels:control_lever"
-          },
-          {
-            "items": "dashpanels:indicator_bulb"
-          },
-          {
-            "items": "dashpanels:emergency_button"
-          },
-          {
-            "items": "dashpanels:seven_segment"
-          },
-          {
-            "items": "dashpanels:joystick"
-          },
-          {
-            "items": "dashpanels:key_switch"
-          },
-          {
-            "items": "dashpanels:label"
-          },
-          {
-            "items": "dashpanels:push_button"
-          },
-          {
-            "items": "dashpanels:momentary_switch"
-          },
-          {
-            "items": "dashpanels:navball"
-          },
-          {
-            "items": "dashpanels:buzzer"
           }
         ]
       },

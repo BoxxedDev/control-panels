@@ -2,8 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "dashpanels:block/buzz_sound",
-		"particle": "dashpanels:block/buzz_sound"
+		"0": "dashpanels:block/sound_indicator"
 	},
 	"elements": [
 		{

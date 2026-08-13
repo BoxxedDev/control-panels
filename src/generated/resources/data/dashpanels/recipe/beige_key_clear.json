@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "dashpanels:beige_key"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "dashpanels:beige_key"
+  }
+}

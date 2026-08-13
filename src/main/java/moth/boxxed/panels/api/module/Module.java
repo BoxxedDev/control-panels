@@ -280,6 +280,8 @@ public abstract class Module {
 
     public boolean canRemove(Player player) {return true;}
 
+    public boolean canMove(Player player) {return false;}
+
     public void onUnloaded() {}
 
     public abstract VoxelShape getVoxelShape();

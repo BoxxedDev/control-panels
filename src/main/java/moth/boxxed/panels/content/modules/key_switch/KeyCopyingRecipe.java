@@ -1,15 +1,17 @@
 package moth.boxxed.panels.content.modules.key_switch;
 
 import moth.boxxed.panels.index.PanelDataComponents;
-import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelRecipeSerializers;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+
+import java.util.Optional;
 
 public class KeyCopyingRecipe extends CustomRecipe {
     public KeyCopyingRecipe(CraftingBookCategory category) {
@@ -20,23 +22,33 @@ public class KeyCopyingRecipe extends CustomRecipe {
     public boolean matches(CraftingInput input, Level level) {
         int keysWithNbt = 0;
         int writableKeys = 0;
+        Optional<DyeColor> keyWithNbtColor = null;
+        Optional<DyeColor> writableColor = null;
 
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
-            if (!stack.isEmpty() && stack.is(PanelItems.KEY_ITEM)) {
+            if (!stack.isEmpty() && stack.getItem() instanceof KeyItem keyItem) {
                 if (stack.has(PanelDataComponents.BOUND_MODULE)) {
                     keysWithNbt += stack.getCount();
+                    if (keyWithNbtColor == null)
+                        keyWithNbtColor = keyItem.getColor();
+                    else
+                        return false;
                 } else {
                     writableKeys += stack.getCount();
+                    if (writableColor == null)
+                        writableColor = keyItem.getColor();
+                    else
+                        return false;
                 }
 
-                if (keysWithNbt > 1 || writableKeys > 15) {
+                if (keysWithNbt > 1 || writableKeys > 1) {
                     return false;
                 }
             }
         }
 
-        return keysWithNbt == 1 && writableKeys >= 1;
+        return keysWithNbt == 1 && writableKeys == 1 && keyWithNbtColor.equals(writableColor);
     }
 
     @Override
@@ -45,7 +57,7 @@ public class KeyCopyingRecipe extends CustomRecipe {
 
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
-            if (!stack.isEmpty() && stack.is(PanelItems.KEY_ITEM)) {
+            if (!stack.isEmpty() && stack.getItem() instanceof KeyItem) {
                 if (stack.has(PanelDataComponents.BOUND_MODULE)) {
                     ret = stack.copyWithCount(2);
                 }

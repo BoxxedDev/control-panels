@@ -1,0 +1,6 @@
+{
+  "parent": "dashpanels:item/tool",
+  "textures": {
+    "layer0": "dashpanels:item/color_keys/rose_key"
+  }
+}

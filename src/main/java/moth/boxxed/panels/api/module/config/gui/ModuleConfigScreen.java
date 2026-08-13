@@ -38,7 +38,7 @@ public class ModuleConfigScreen extends Screen {
     private final int maxScroll;
 
     private final List<ConfigButton<?, ?>> configButtons = new ArrayList<>();
-    private final MoveModuleButton moveModuleButton;
+    private MoveModuleButton moveModuleButton;
 
     private ModuleConfigValue<?, ?> selectedValue;
     private ConfigFrameBuilder frameBuilder;
@@ -51,8 +51,9 @@ public class ModuleConfigScreen extends Screen {
         this.pos = pos;
         this.moduleToConfigure = module;
 
-        this.moveModuleButton = new MoveModuleButton(Component.translatable("dashpanels.module_config.move_module"));
-        this.addWidget(this.moveModuleButton);
+        if (module.canMove(getMinecraft().player)) {
+            this.addWidget(this.moveModuleButton = new MoveModuleButton(Component.translatable("dashpanels.module_config.move_module")));
+        }
 
         int maxScroll = 0;
         ModuleConfig config = module.getConfig();
@@ -90,9 +91,11 @@ public class ModuleConfigScreen extends Screen {
             }
         }
 
-        this.moveModuleButton.setX(left+2);
-        this.moveModuleButton.setY(top+146);
-        this.moveModuleButton.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        if (this.moveModuleButton != null) {
+            this.moveModuleButton.setX(left+2);
+            this.moveModuleButton.setY(top+146);
+            this.moveModuleButton.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        }
 
         renderTitle(guiGraphics, left, top);
 //        GuiUtil.blitNineSlice(guiGraphics, TOP_BOTTOM_BAR,
@@ -225,7 +228,7 @@ public class ModuleConfigScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.moveModuleButton.mouseClicked(mouseX, mouseY, button)) {
+        if (this.moveModuleButton != null && this.moveModuleButton.mouseClicked(mouseX, mouseY, button)) {
             this.setFocused(this.moveModuleButton);
             return true;
         }

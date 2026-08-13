@@ -15,5 +15,10 @@ public class PanelSoundsProvider extends SoundDefinitionsProvider {
     public void registerSounds() {
         add(PanelSounds.BUZZ.get(), definition().subtitle("sounds.dashpanels.buzzer.buzz")
                 .with(sound(Dashpanels.path("buzz"))));
+
+        add(PanelSounds.KEY_JINGLE.get(), definition().subtitle("sounds.dashpanels.key.jingle")
+                .with(sound(Dashpanels.path("key_jingle/jingle_0")))
+                .with(sound(Dashpanels.path("key_jingle/jingle_1")))
+        );
     }
 }

@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.modules.buzzer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dev.ryanhcode.sable.companion.SableCompanion;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -48,18 +46,14 @@ public class BuzzerModule extends Module implements IOutput {
         PanelPreloadedModels.BUZZER.render(poseStack, packedLight);
 
         if (this.power > 0) {
-            Vec3 blockPos = this.getParentPos().getCenter();
-            Vec3 playerPos = SableCompanion.INSTANCE.getEyePositionInterpolated(Minecraft.getInstance().player, partialTick);
-            float angle = (float) (Math.atan2(blockPos.x-playerPos.x, blockPos.z-playerPos.z) + Math.PI/2f);
-
             poseStack.pushPose();
             float scale = Mth.map(this.power, 0, 15, 0.1f, 0.5f);
             poseStack.scale(scale, scale, scale);
             float xz = (1/scale)*0.125f;
-            float y = (1/scale)*0.0625f;
+            float y = (1/scale)*0.125f;
             poseStack.translate(xz, y, xz);
-            poseStack.mulPose(Axis.YP.rotation(angle));
-            PanelPreloadedModels.BUZZ_INDICATOR.render(poseStack, packedLight);
+            poseStack.mulPose(Axis.XP.rotation(45));
+            PanelPreloadedModels.SOUND_INDICATOR.render(poseStack, packedLight);
             poseStack.popPose();
         }
     }

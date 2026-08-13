@@ -1,5 +1,6 @@
 package moth.boxxed.panels.mixin_interface;
 
+import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;

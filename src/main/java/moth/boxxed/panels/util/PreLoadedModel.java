@@ -95,6 +95,26 @@ public class PreLoadedModel {
         );
     }
 
+    public static void renderModel(
+            BakedModel bakedModel,
+            PoseStack poseStack,
+            RenderType renderType,
+            int packedLight,
+            int packedOverlay
+            ) {
+        RandomSource randomsource = RandomSource.create();
+        randomsource.setSeed(42L);
+        MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer consumer = bufferSource.getBuffer(renderType);
+        renderQuadList(
+                poseStack.last(),
+                consumer,
+                1f, 1f, 1f,
+                bakedModel.getQuads(null, null, randomsource),
+                packedLight, packedOverlay
+        );
+    }
+
     private static void renderQuadList(
             PoseStack.Pose pose,
             VertexConsumer consumer,

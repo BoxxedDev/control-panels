@@ -1,7 +1,7 @@
 package moth.boxxed.panels.content.paintbrush;
 
 import moth.boxxed.panels.Dashpanels;
-import moth.boxxed.panels.config.ClientConfig;
+import moth.boxxed.panels.config.PanelsClientConfig;
 import moth.boxxed.panels.index.PanelPaths;
 
 import java.io.File;
@@ -53,7 +53,7 @@ public class ColorPaletteStorage {
     }
 
     public ColorPalette getDefaultPalette() {
-        return this.allPalettesInFiles().getOrDefault(ClientConfig.DEFAULT_PALETTE.get(), DEFAULT_PALETTE);
+        return this.allPalettesInFiles().getOrDefault(PanelsClientConfig.DEFAULT_PALETTE.get(), DEFAULT_PALETTE);
     }
 
     public Map<String, ColorPalette> allPalettesInFiles() {

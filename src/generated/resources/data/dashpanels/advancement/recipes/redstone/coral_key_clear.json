@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_key": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dashpanels:key"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "dashpanels:coral_key_clear"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_key"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "dashpanels:coral_key_clear"
+    ]
+  }
+}

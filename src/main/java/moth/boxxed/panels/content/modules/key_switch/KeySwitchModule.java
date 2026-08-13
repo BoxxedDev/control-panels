@@ -2,6 +2,7 @@ package moth.boxxed.panels.content.modules.key_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
@@ -16,6 +17,7 @@ import moth.boxxed.panels.index.*;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.ShortUUID;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -32,6 +34,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -40,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -69,7 +73,7 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
 
     @Override
     public InteractionResult onUse(ModuleHitResult hitResult, Level level, Player player) {
-        if (!level.isClientSide() && player.isShiftKeyDown() && !this.currentKeyStack.isEmpty() && !this.turned) {
+        if (player.isShiftKeyDown() && !this.currentKeyStack.isEmpty() && !this.turned) {
             player.getInventory().add(this.currentKeyStack.copyAndClear());
             return InteractionResult.SUCCESS;
         }
@@ -84,11 +88,11 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
 
     @Override
     public ItemInteractionResult onItemUse(ModuleHitResult hitResult, ItemStack stack, Level level, Player player) {
-        if (currentKeyStack.isEmpty() && stack.is(PanelItems.KEY_ITEM)) {
+        if (currentKeyStack.isEmpty() && stack.getItem() instanceof KeyItem) {
             if (keyId == null && !stack.has(PanelDataComponents.BOUND_MODULE.get())) {
-                stack.shrink(1);
+                ItemStack newStack = stack.copyWithCount(1);
 
-                ItemStack newStack = new ItemStack(PanelItems.KEY_ITEM.get());
+                stack.shrink(1);
                 ShortUUID generatedId = ShortUUID.random();
                 newStack.set(PanelDataComponents.BOUND_MODULE.get(), new BoundModule(this.getParentPos(), generatedId));
                 newStack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
@@ -105,6 +109,19 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
                     return ItemInteractionResult.SUCCESS;
                 }
             }
+        } else if (stack.getCount() == 1 && stack.get(PanelDataComponents.KEY_CHAIN_CONTENTS) != null) {
+            KeyChainContents.Mutable mutable = new KeyChainContents.Mutable(stack.get(PanelDataComponents.KEY_CHAIN_CONTENTS));
+            if (this.currentKeyStack.isEmpty() && mutable.has(this.keyId, this.getParentPos())) {
+                this.currentKeyStack = mutable.remove(this.keyId, this.getParentPos());
+                KeyChainItem.playJingle(player);
+            } else if (player.isShiftKeyDown() && !this.currentKeyStack.isEmpty() && !this.turned) {
+                if (mutable.tryAdd(this.currentKeyStack)) {
+                    this.currentKeyStack = ItemStack.EMPTY;
+                    KeyChainItem.playJingle(player);
+                }
+            }
+            stack.set(PanelDataComponents.KEY_CHAIN_CONTENTS, mutable.immutable());
+            return ItemInteractionResult.SUCCESS;
         }
 
         if (stack.is(Items.HONEYCOMB) && this.playerWhoFroze == null && this.keyId != null) {
@@ -142,6 +159,11 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
         }
 
         return super.canRemove(player);
+    }
+
+    @Override
+    public boolean canMove(Player player) {
+        return this.keyId == null;
     }
 
     @Override
@@ -199,10 +221,17 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
 
         poseStack.pushPose();
 
-        poseStack.rotateAround(Axis.YP.rotationDegrees(Math.lerp(this.oldRenderTurn, this.renderTurn, partialTick)), 0.0625f, 0, 0.0625f);
+        poseStack.rotateAround(Axis.YP.rotationDegrees(Math.lerp(this.oldRenderTurn, this.renderTurn, partialTick)), 1.5f/16f, 0, 1.5f/16f);
         PanelPreloadedModels.KEY_SWITCH_HOLE.render(poseStack, packedLight);
         if (!this.currentKeyStack.isEmpty()) {
-            PanelPreloadedModels.KEY_SWITCH_KEY.render(poseStack, packedLight);
+            if (this.currentKeyStack.getItem() instanceof KeyItem keyItem) {
+                if (keyItem.getColor().isEmpty()) {
+                    PanelPreloadedModels.KEY_SWITCH_KEY.render(poseStack, packedLight);
+                } else {
+                    PanelPreloadedModels.KEY_SWITCH_COLOR.render(poseStack, RenderType.cutout(), packedLight, keyItem.getColor().orElse(DyeColor.WHITE).getTextureDiffuseColor());
+                    PanelPreloadedModels.KEY_SWITCH_END.render(poseStack, packedLight);
+                }
+            }
         }
         poseStack.popPose();
     }

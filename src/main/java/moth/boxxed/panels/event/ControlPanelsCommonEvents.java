@@ -7,6 +7,7 @@ import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
 import moth.boxxed.panels.content.cable.stripped.screen.StrippedCableScreen;
 import moth.boxxed.panels.datagen.*;
+import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelMenuTypes;
 import moth.boxxed.panels.network.handler.ClientPayloadHandler;
@@ -14,8 +15,11 @@ import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -156,6 +160,10 @@ public class ControlPanelsCommonEvents {
 
     @SubscribeEvent
     public static void tabContents(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTab() == BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(CreativeModeTabs.COLORED_BLOCKS)) {
+            PanelItems.COLORED_KEYS.values().forEach(item -> event.accept(item, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY));
+        }
+
 //        if (event.getTab() == PanelCreativeTabs.PANEL_TAB.get()) {
 //            event.accept(PanelBlocks.CONTROL_PANEL);
 //            event.accept(PanelBlocks.CABLE);

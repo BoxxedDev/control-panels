@@ -1,11 +1,16 @@
 package moth.boxxed.panels.index;
 
+import com.google.common.collect.Maps;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.wiki.WikiPage;
 import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.content.cable.stripper.CableStripperItem;
+import moth.boxxed.panels.content.modules.key_switch.KeyChainContents;
+import moth.boxxed.panels.content.modules.key_switch.KeyChainItem;
+import moth.boxxed.panels.content.modules.key_switch.KeyItem;
 import moth.boxxed.panels.content.paintbrush.PaintbrushItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
@@ -13,6 +18,14 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PanelItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Dashpanels.MOD_ID);
@@ -38,7 +51,11 @@ public class PanelItems {
     public static final DeferredItem<Item> BUZZER_MODULE = item("buzzer");
 
     public static final DeferredItem<Item> KEY_ITEM = ITEMS.register("key",
-            () -> new Item(new Item.Properties().stacksTo(16)));
+            () -> new KeyItem(null, new Item.Properties().stacksTo(16)));
+    public static final Map<DyeColor, DeferredItem<KeyItem>> COLORED_KEYS = itemWithColors("key", color ->
+            () -> new KeyItem(color, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<KeyChainItem> KEY_CHAIN = ITEMS.register("key_chain",
+            () -> new KeyChainItem(new Item.Properties().stacksTo(1).component(PanelDataComponents.KEY_CHAIN_CONTENTS, KeyChainContents.EMPTY)));
 
     static {
         if (FMLLoader.getDist().isClient()) {;
@@ -63,6 +80,14 @@ public class PanelItems {
                             .addParagraph("Use on the dashpanels:key_switch to pair the key. Then after it's paired you can insert the key for it to be turned to send out a signal.")
                             .addParagraph("This key can be copied in the crafting table by putting a single paired key with non paired keys to copy the key.")
                             .addParagraph("A paired key can be cleared by putting it by itself in the crafting table"));
+            COLORED_KEYS.values().forEach(item -> WikiableEntries.registerRedirect(
+                    item.getId(),
+                    KEY_ITEM.getId()
+            ));
+            WikiableEntries.register(KEY_CHAIN.getId(),
+                    WikiPage.of(KEY_CHAIN).category(PanelWikiCategories.SPECIAL_ITEMS)
+                            .addParagraph("You can stack multiple of a dashpanels:key on this and use it as a sort of skeleton key.")
+                            .addParagraph("You can stack this on top of a bound dashpanels:key or stack a bound dashpanels:key on this, similar to a bundle."));
 
             //Modules
             WikiableEntries.register(SWITCH_MODULE.getId(),
@@ -122,6 +147,12 @@ public class PanelItems {
 
     public static DeferredItem<Item> item(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));
+    }
+
+    public static <T extends Item> Map<DyeColor, DeferredItem<T>> itemWithColors(String id, Function<DyeColor, Supplier<T>> factory) {
+        Map<DyeColor, DeferredItem<T>> ret = Maps.newEnumMap(DyeColor.class);
+        Arrays.stream(DyeColor.values()).forEach(color -> ret.put(color, ITEMS.register("%s_%s".formatted(color.getSerializedName(), id), factory.apply(color))));
+        return ret;
     }
 
     public static <T extends Block> DeferredItem<BlockItem> blockItem(String name, DeferredBlock<T> block) {

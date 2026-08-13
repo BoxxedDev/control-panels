@@ -31,13 +31,24 @@ public class PanelModelProviders {
             toolItem(PanelItems.PAINT_BRUSH.get());
             toolItem(PanelItems.WRENCH.get());
             toolItem(PanelItems.KEY_ITEM.get());
+            PanelItems.COLORED_KEYS.forEach((color ,item) -> {
+                ResourceLocation location = Dashpanels.path("color_keys/" + color.getSerializedName() + "_key");
+                toolItem(item.get().toString(),location);
+            });
+            basicItem(Dashpanels.path("key_outline"));
+
+            toolItem(PanelItems.KEY_CHAIN.get());
         }
 
         public ItemModelBuilder toolItem(net.minecraft.world.item.Item item) {
             ResourceLocation itemKey = Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item));
-            return getBuilder(item.toString())
+            return toolItem(item.toString(), itemKey);
+        }
+
+        public ItemModelBuilder toolItem(String key, ResourceLocation location) {
+            return getBuilder(key)
                     .parent(new ModelFile.UncheckedModelFile(Dashpanels.path("item/tool")))
-                    .texture("layer0", ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "item/" + itemKey.getPath()));
+                    .texture("layer0", ResourceLocation.fromNamespaceAndPath(location.getNamespace(), "item/" + location.getPath()));
         }
     }
 

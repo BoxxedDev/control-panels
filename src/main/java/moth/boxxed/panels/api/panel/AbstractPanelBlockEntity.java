@@ -243,9 +243,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (hitModule != null && hitPosition != null) {
             hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
             InteractionResult result = hitModule.onUse(new ModuleHitResult(hitPosition), level, player);
-            if (!level.isClientSide) {
-                this.blockChanged();
-            }
+            this.setChanged();
+            this.blockChanged();
             return result;
         }
 
@@ -261,9 +260,8 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         if (hitModule != null && hitPosition != null) {
             hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
             ItemInteractionResult result = hitModule.onItemUse(new ModuleHitResult(hitPosition), stack, level, player);
-            if (!level.isClientSide) {
-                this.blockChanged();
-            }
+            this.setChanged();
+            this.blockChanged();
             return result;
         }
 

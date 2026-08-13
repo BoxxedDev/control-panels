@@ -17,18 +17,22 @@ import moth.boxxed.panels.api.panel.model.PanelSkinBlockColor;
 import moth.boxxed.panels.api.panel.model.PanelSkinModelSwapper;
 import moth.boxxed.panels.api.panel.skin.PanelSkinsClientManager;
 import moth.boxxed.panels.api.wiki.WikiTooltipManager;
-import moth.boxxed.panels.config.ClientConfig;
-import moth.boxxed.panels.content.modules.key_switch.BoundModuleTooltipManager;
+import moth.boxxed.panels.config.PanelsClientConfig;
+import moth.boxxed.panels.content.modules.key_switch.KeyChainContents;
+import moth.boxxed.panels.content.modules.key_switch.KeyChainItem;
 import moth.boxxed.panels.content.panel.ceiling.CeilingPanelRenderer;
 import moth.boxxed.panels.content.panel.normal.PanelRenderer;
 import moth.boxxed.panels.content.panel.wall.WallPanelRenderer;
 import moth.boxxed.panels.index.PanelBlockEntities;
+import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelShaders;
+import moth.boxxed.panels.util.CustomRendererItemModelWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceProvider;
@@ -42,9 +46,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 @EventBusSubscriber(modid = Dashpanels.MOD_ID, value = Dist.CLIENT)
 public class ControlPanelsClientEvents {
@@ -59,12 +65,12 @@ public class ControlPanelsClientEvents {
 
         boolean active = false;
 
-        if (ClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
+        if (PanelsClientConfig.SHOW_MODULE_TOOLTIPS.get() &&
                 !ModuleHoldInteractionManager.isActive() &&
                 Minecraft.getInstance().hitResult != null &&
                 Minecraft.getInstance().hitResult.getType().equals(HitResult.Type.BLOCK)) {
 
-            if (!(Minecraft.getInstance().options.hideGui && ClientConfig.DISABLE_MODULE_TOOLTIPS_HUD.get())) {
+            if (!(Minecraft.getInstance().options.hideGui && PanelsClientConfig.DISABLE_MODULE_TOOLTIPS_HUD.get())) {
                 BlockHitResult blockHitResult = (BlockHitResult) Minecraft.getInstance().hitResult;
                 Level level = Minecraft.getInstance().level;
                 Player player = Minecraft.getInstance().player;
@@ -132,6 +138,11 @@ public class ControlPanelsClientEvents {
     @SubscribeEvent
     public static void modifyBakingResult(ModelEvent.ModifyBakingResult event) {
         PanelSkinModelSwapper.INSTANCE.modifyResult(event);
+
+        event.getModels().computeIfPresent(
+                ModelResourceLocation.inventory(BuiltInRegistries.ITEM.getKey(PanelItems.KEY_CHAIN.get())),
+                (location, model) -> new CustomRendererItemModelWrapper(model)
+        );
     }
 
     @SubscribeEvent
@@ -168,7 +179,19 @@ public class ControlPanelsClientEvents {
 
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
-        BoundModuleTooltipManager.addTooltip(event.getToolTip(), event.getItemStack());
         WikiTooltipManager.addTooltip(event.getToolTip(), event.getItemStack());
+    }
+
+    @SubscribeEvent
+    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(
+                new KeyChainItem.ClientExtensions(),
+                PanelItems.KEY_CHAIN.get()
+        );
+    }
+
+    @SubscribeEvent
+    public static void registerClientTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(KeyChainContents.class, Function.identity());
     }
 }

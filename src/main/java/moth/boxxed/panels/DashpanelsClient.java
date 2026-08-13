@@ -1,7 +1,6 @@
 package moth.boxxed.panels;
 
 import moth.boxxed.panels.content.paintbrush.ColorPaletteStorage;
-import moth.boxxed.panels.event.ControlPanelsClientEvents;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.index.PanelWikiPages;

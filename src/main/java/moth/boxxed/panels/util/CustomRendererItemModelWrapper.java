@@ -1,7 +1,6 @@
 package moth.boxxed.panels.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import moth.boxxed.panels.Dashpanels;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;

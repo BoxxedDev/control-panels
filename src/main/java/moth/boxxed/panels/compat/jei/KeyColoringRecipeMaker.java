@@ -1,8 +1,5 @@
 package moth.boxxed.panels.compat.jei;
 
-import mezz.jei.api.constants.ModIds;
-import mezz.jei.common.platform.IPlatformIngredientHelper;
-import mezz.jei.common.platform.Services;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.content.modules.key_switch.KeyItem;
 import moth.boxxed.panels.index.PanelItems;
@@ -12,8 +9,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 
 import java.util.Arrays;
 import java.util.List;

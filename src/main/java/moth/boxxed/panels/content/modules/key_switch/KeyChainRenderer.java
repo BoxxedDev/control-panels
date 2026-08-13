@@ -2,27 +2,18 @@ package moth.boxxed.panels.content.modules.key_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.index.PanelDataComponents;
-import moth.boxxed.panels.index.PanelItems;
-import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.CustomRendererItemModelWrapper;
-import moth.boxxed.panels.util.Path2d;
 import moth.boxxed.panels.util.PreLoadedModel;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.DeferredItem;
-import org.joml.Math;
 import org.joml.Vector2d;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;

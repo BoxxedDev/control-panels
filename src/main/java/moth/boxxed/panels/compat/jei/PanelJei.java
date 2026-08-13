@@ -8,7 +8,6 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkScreen;
-import moth.boxxed.panels.content.modules.key_switch.KeyColoringRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
 

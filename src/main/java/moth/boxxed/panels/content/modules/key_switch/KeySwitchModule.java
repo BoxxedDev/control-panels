@@ -2,7 +2,6 @@ package moth.boxxed.panels.content.modules.key_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
@@ -13,7 +12,10 @@ import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
-import moth.boxxed.panels.index.*;
+import moth.boxxed.panels.index.PanelDataComponents;
+import moth.boxxed.panels.index.PanelHoldInteractions;
+import moth.boxxed.panels.index.PanelModules;
+import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.ShortUUID;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -43,7 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Math;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;

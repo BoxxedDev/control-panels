@@ -1,7 +1,5 @@
 package moth.boxxed.panels.api.wiki;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

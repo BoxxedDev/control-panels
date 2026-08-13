@@ -3,7 +3,6 @@ package moth.boxxed.panels.index;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
-import moth.boxxed.panels.content.modules.key_switch.KeyChainContents;
 import moth.boxxed.panels.util.CustomSectionTextured;
 import net.mcexpanded.fancytabsections.FancyTabSections;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,11 +13,8 @@ import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.joml.Math;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 

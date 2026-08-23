@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+@Deprecated(since = "2.2")
 public interface IModuleLuaObject {
     default void getDefaultMethods(List<String> methodNames, BiConsumer<String, ReturnMethod<?>> consumer) {
         if (this instanceof Module module) {

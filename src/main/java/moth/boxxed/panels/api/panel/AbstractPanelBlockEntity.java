@@ -140,14 +140,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public void saveExternal(CompoundTag tag, HolderLookup.Provider registries) {
-        ListTag modulesTag = new ListTag(this.modules.size());
-        for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
-            CompoundTag subTag = new CompoundTag();
-            if (entry.getValue().saveData(subTag, registries)) {
-                modulesTag.add(subTag);
-            }
-        }
-        tag.put("modules", modulesTag);
+        tag.put("modules", this.modules.asTag(registries));
         tag.putBoolean("new_loading", true);
         tag.put("container", this.container.createTag(registries));
         if (this.skin != null) {
@@ -167,7 +160,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        int size = tag.getInt("modules_size");
         //TODO: remove this in a future patch so it's always new loading without this extra boolean tag
         if (tag.contains("new_loading")) {
             Set<String> modulesLoaded = new HashSet<>();
@@ -197,6 +189,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             }
         } else {
             this.clearModules();
+            int size = tag.getInt("modules_size");
             for (int i=0; i<size; i++) {
                 CompoundTag subTag = (CompoundTag) tag.get("module_%d".formatted(i));
                 if (subTag == null) continue;

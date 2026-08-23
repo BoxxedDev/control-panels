@@ -1,35 +1,26 @@
 package moth.boxxed.panels.compat.computercraft;
 
-import moth.boxxed.panels.api.module.Module;
-
-public class ModuleLuaException {
-    private final String message;
+public class ModuleLuaException extends Exception {
     private final int level;
     private final boolean hasLevel;
 
     public ModuleLuaException(String message) {
-        this(message, 1, false);
+        super(message);
+        this.hasLevel = false;
+        this.level = 1;
     }
 
     public ModuleLuaException(String message, int level) {
-        this(message, level, true);
-    }
-
-    private ModuleLuaException(String message, int level, boolean hasLevel) {
-        this.message = message;
+        super(message);
+        this.hasLevel = true;
         this.level = level;
-        this.hasLevel = hasLevel;
     }
 
-    public String getMessage() {
-        return this.message;
+    public boolean hasLevel() {
+        return this.hasLevel;
     }
 
     public int getLevel() {
         return this.level;
-    }
-
-    public boolean hasLevel() {
-       return this.hasLevel;
     }
 }

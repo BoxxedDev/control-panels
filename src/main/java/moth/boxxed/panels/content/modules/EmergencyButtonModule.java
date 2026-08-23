@@ -11,6 +11,7 @@ import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -30,7 +31,7 @@ import net.neoforged.fml.common.Mod;
 
 import java.util.function.BiConsumer;
 
-public class EmergencyButtonModule extends Module implements IOutput, IInput, IModuleLuaObject {
+public class EmergencyButtonModule extends Module implements IOutput, IInput {
     public boolean open = false;
     public boolean pressed = false;
 
@@ -141,25 +142,19 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput, IM
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("coverOpened", args -> this.open);
-        consumer.accept("pressed", args -> this.pressed);
-        consumer.accept("open", args -> {
-            this.setState(true);
-            return null;
-        });
-        consumer.accept("close", args -> {
-            this.setState(false);
-            return null;
-        });
-        consumer.accept("setCoverState", args -> {
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("coverOpened", args -> this.open);
+        builder.addReturn("pressed", args ->this.pressed);
+        builder.addVoid("open", args -> this.setState(true));
+        builder.addVoid("close", args -> this.setState(false));
+        builder.addVoid("setCoverState", args -> {
             if (args.count() != 1)
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+                throw  new ModuleLuaException("Arg amount cannot be less than or greater than 1");
             if (args.get(0) instanceof Boolean bool) {
                 this.setState(bool);
-                return null;
+            } else {
+                throw  new ModuleLuaException("Args count greater than 1 or first argument is not a boolean");
             }
-            return new ModuleLuaException("Args count greater than 1 or first argument is not a boolean");
         });
     }
 }

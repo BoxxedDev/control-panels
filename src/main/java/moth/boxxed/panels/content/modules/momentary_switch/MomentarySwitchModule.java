@@ -1,6 +1,7 @@
 package moth.boxxed.panels.content.modules.momentary_switch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.IExternalUpdatable;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
@@ -8,6 +9,7 @@ import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -31,7 +33,7 @@ import org.joml.Math;
 
 import java.util.function.BiConsumer;
 
-public class MomentarySwitchModule extends Module implements IModuleLuaObject, IInput, IExternalUpdatable {
+public class MomentarySwitchModule extends Module implements IInput, IExternalUpdatable {
     public boolean pressed;
     private float pressValue;
     private float lastPressValue;
@@ -103,11 +105,6 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getState", args -> this.pressed);
-    }
-
-    @Override
     public InteractionResult onUse(Level level, Player player) {
         if (level.isClientSide && player.isLocalPlayer())
             if (!PanelHoldInteractions.MOMENTARY_SWITCH.isActive()) {
@@ -130,10 +127,18 @@ public class MomentarySwitchModule extends Module implements IModuleLuaObject, I
             this.parentBlockEntity.getLevel().playSound(
                     null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, 1f
             );
+            if (this.getComputerHandler() != null) {
+                this.getComputerHandler().queueModuleEvent("button_pressed");
+            }
         } else {
             this.parentBlockEntity.getLevel().playSound(
                     null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.BLOCKS, 0.1f, 1f
             );
         }
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("pressed", args -> this.pressed);
     }
 }

@@ -8,6 +8,8 @@ import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -31,7 +33,7 @@ import org.joml.Math;
 
 import java.util.function.BiConsumer;
 
-public class ControlLeverModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
+public class ControlLeverModule extends Module implements IExternalUpdatable, IInput {
     private float lastRenderSignal = 0;
     private float lastIndicatorRender = 0;
     private float renderSignal = 0;
@@ -124,21 +126,6 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getValue", args -> this.getSignal());
-        consumer.accept("setValue", args -> {
-            if (args.count() != 1)
-                return false;
-            if (args.get(0) instanceof Number number) {
-                this.signal = Math.clamp(this.outputRange.get().getMinimum(), this.outputRange.get().getMaximum(), number.intValue());
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return true;
-            }
-            return false;
-        });
-    }
-
-    @Override
     public void createConfig(ModuleConfig.Builder builder) {
         builder.add(outputRange);
     }
@@ -148,5 +135,19 @@ public class ControlLeverModule extends Module implements IExternalUpdatable, II
         this.signal = tag.getInt("signal");
         float f = (this.signal+15)/15f;
         this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, f);
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getValue", args -> this.getSignal());
+        builder.addVoid("setValue", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Number number) {
+                this.signal = Math.clamp(this.outputRange.get().getMinimum(), this.outputRange.get().getMaximum(), number.intValue());
+            } else {
+                throw new ModuleLuaException("First arg has to be an integer");
+            }
+        });
     }
 }

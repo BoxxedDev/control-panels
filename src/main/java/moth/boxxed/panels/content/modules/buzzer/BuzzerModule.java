@@ -9,6 +9,7 @@ import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -28,7 +29,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.function.BiConsumer;
 
-public class BuzzerModule extends Module implements IOutput, IModuleLuaObject {
+public class BuzzerModule extends Module implements IOutput {
     private int power = 0;
 
     private final ModuleConfigValue.FloatRangeValue pitchRange = new ModuleConfigValue.FloatRangeValue(
@@ -144,16 +145,16 @@ public class BuzzerModule extends Module implements IOutput, IModuleLuaObject {
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("buzzing", args -> this.power > this.threshold.get());
-        consumer.accept("setPower", args -> {
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("buzzing", args -> this.power > this.threshold.get());
+        builder.addVoid("setPower", args -> {
             if (args.count() != 1)
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
             if (args.get(0) instanceof Number number) {
                 this.power = Math.clamp(number.intValue(), 0, 15);
-                return null;
+            } else {
+                throw new ModuleLuaException("First arg has to be an integer");
             }
-            return new ModuleLuaException("First arg has to be an integer");
         });
     }
 }

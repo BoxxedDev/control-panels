@@ -8,6 +8,7 @@ import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.MathUtil;
@@ -33,7 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObject {
+public class SevenSegmentModule extends Module implements IOutput {
     private static final int MAX_CHAR = 3;
 
     public String display = "---";
@@ -112,65 +113,6 @@ public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObj
         this.display = String.valueOf(signal);
     }
 
-    @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getDisplay", args -> this.display);
-        consumer.accept("getColor", args -> this.color.getSerializedName());
-        consumer.accept("setDisplay", args -> {
-            if (!(args.count() == 1 || args.count() == 2))
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
-
-            List<SevenSegmentModule> connectedModules = this.getConnectedModules();
-            if (args.get(1) instanceof Boolean bool && bool) {
-                connectedModules = List.of(this);
-            }
-
-            if (args.get(0) instanceof String str && str.length() <= connectedModules.size()*MAX_CHAR) {
-                for (int i = 0; i < connectedModules.size(); i++) {
-                    if (i * MAX_CHAR >= str.length()) {
-                        continue;
-                    }
-
-                    SevenSegmentModule module = connectedModules.get(i);
-                    StringBuilder subStr = new StringBuilder(str.substring(i * MAX_CHAR, Math.min((i * MAX_CHAR) + MAX_CHAR, str.length())));
-                    while (subStr.length() < MAX_CHAR) {
-                        subStr.append(" ");
-                    }
-                    module.display = subStr.toString();
-                }
-                return null;
-            }
-            return new ModuleLuaException("First arg has to be a string and has to be less than or equal to %d in length".formatted(connectedModules.size()*MAX_CHAR));
-        });
-        consumer.accept("setColor", args -> {
-            if (args.count() != 1)
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
-            if (args.get(0) instanceof String string) {
-                this.color = DyeColor.byName(string, DyeColor.WHITE);
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return null;
-            }
-            return new ModuleLuaException("First arg has to be a string");
-        });
-        consumer.accept("getCharLimit", args -> this.getConnectedModules().size()*MAX_CHAR);
-        consumer.accept("clear", args -> {
-            boolean clearConnected = true;
-            if (args.get(0) instanceof Boolean bool) {
-                clearConnected = bool;
-            }
-
-            if (clearConnected) {
-                List<SevenSegmentModule> connectedModules = this.getConnectedModules();
-                for (SevenSegmentModule module : connectedModules) {
-                    module.display = "";
-                }
-            } else {
-                this.display = "";
-            }
-            return null;
-        });
-    }
-
     private List<SevenSegmentModule> getConnectedModules() {
         Set<SevenSegmentModule> checked = new HashSet<>();
         Deque<SevenSegmentModule> toCheck = new ArrayDeque<>();
@@ -203,5 +145,63 @@ public class SevenSegmentModule extends Module implements IOutput, IModuleLuaObj
         return checked.stream()
                 .sorted(Comparator.comparingInt(module -> module.getPos().y*module.parentBlockEntity.getContentArea().x+module.getPos().x))
                 .toList();
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getDisplay", args -> this.display);
+        builder.addReturn("getColor", args -> this.color.getSerializedName());
+        builder.addVoid("setDisplay", args -> {
+            if (!(args.count() == 1 || args.count() == 2))
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+
+            List<SevenSegmentModule> connectedModules = this.getConnectedModules();
+            if (args.get(1) instanceof Boolean bool && bool) {
+                connectedModules = List.of(this);
+            }
+
+            if (args.get(0) instanceof String str && str.length() <= connectedModules.size()*MAX_CHAR) {
+                for (int i = 0; i < connectedModules.size(); i++) {
+                    if (i * MAX_CHAR >= str.length()) {
+                        continue;
+                    }
+
+                    SevenSegmentModule module = connectedModules.get(i);
+                    StringBuilder subStr = new StringBuilder(str.substring(i * MAX_CHAR, Math.min((i * MAX_CHAR) + MAX_CHAR, str.length())));
+                    while (subStr.length() < MAX_CHAR) {
+                        subStr.append(" ");
+                    }
+                    module.display = subStr.toString();
+                }
+                return;
+            }
+            throw new ModuleLuaException("First arg has to be a string and has to be less than or equal to %d in length".formatted(connectedModules.size()*MAX_CHAR));
+        });
+        builder.addVoid("setColor", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof String string) {
+                this.color = DyeColor.byName(string, DyeColor.WHITE);
+                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
+                return;
+            }
+            throw new ModuleLuaException("First arg has to be a string");
+        });
+        builder.addReturn("getCharLimit", args -> this.getConnectedModules().size()*MAX_CHAR);
+        builder.addVoid("clear", args -> {
+            boolean clearConnected = true;
+            if (args.get(0) instanceof Boolean bool) {
+                clearConnected = bool;
+            }
+
+            if (clearConnected) {
+                List<SevenSegmentModule> connectedModules = this.getConnectedModules();
+                for (SevenSegmentModule module : connectedModules) {
+                    module.display = "";
+                }
+            } else {
+                this.display = "";
+            }
+        });
     }
 }

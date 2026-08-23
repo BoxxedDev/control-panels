@@ -7,6 +7,8 @@ import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -28,7 +30,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.function.BiConsumer;
 
-public class SwitchModule extends Module implements IInput, IModuleLuaObject {
+public class SwitchModule extends Module implements IInput {
     private final ModuleConfigValue.IntValue redstoneOutput = new ModuleConfigValue.IntValue("output", 15, 0, 15);
     private final ModuleConfigValue.BooleanValue inverted = new ModuleConfigValue.BooleanValue("inverted", false);
 
@@ -88,23 +90,23 @@ public class SwitchModule extends Module implements IInput, IModuleLuaObject {
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getState", args -> this.switchState);
-        consumer.accept("setState", args -> {
-            if (args.count() != 1)
-                return false;
-            if (args.get(0) instanceof Boolean bool) {
-                this.switchState = bool;
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return true;
-            }
-            return false;
-        });
-    }
-
-    @Override
     public void createConfig(ModuleConfig.Builder builder) {
         builder.add(redstoneOutput);
         builder.add(inverted);
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getState", args -> this.switchState);
+        builder.addVoid("setState", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Boolean bool) {
+                this.switchState = bool;
+            } else {
+                throw new ModuleLuaException("First arg has to be a boolean");
+            }
+        });
+        builder.addVoid("flip", args -> this.switchState = !this.switchState);
     }
 }

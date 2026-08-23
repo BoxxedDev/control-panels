@@ -12,6 +12,7 @@ import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -35,7 +36,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class PushButtonModule extends Module implements IMultiInput, IModuleLuaObject, IHoverTooltip {
+public class PushButtonModule extends Module implements IMultiInput, IHoverTooltip {
     private Integer selectedButton;
 
     protected ModuleConfigValue.IntValue buttonsAmount = new ModuleConfigValue.IntValue("buttons", 1, 1, 8)
@@ -194,22 +195,6 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("buttonAmount", args -> this.buttonsAmount.get());
-        consumer.accept("selectedButton", args -> this.selectedButton != null ? this.selectedButton : -1);
-        consumer.accept("setSelectedButton", args -> {
-            if (args.count() != 1)
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
-            if (args.get(0) instanceof Number number) {
-                this.selectedButton = Math.clamp(number.intValue(), 0, this.buttonsAmount.get()-1);
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return null;
-            }
-            return new ModuleLuaException("First arg has to be an integer");
-        });
-    }
-
-    @Override
     public void createConfig(ModuleConfig.Builder builder) {
         builder.add(buttonsAmount);
         builder.add(buttonGap);
@@ -219,5 +204,20 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
     public void addLines(TooltipContext context, List<Component> list) {
         int i = (int) Math.clamp(Math.floor(Mth.clampedMap(context.hitResult().location().x, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
         list.add(Component.translatable("tooltip.dashpanels.module.push_button", i));
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("buttonAmount", args -> this.buttonsAmount.get());
+        builder.addReturn("selectedButton", args -> this.selectedButton != null ? this.selectedButton : -1);
+        builder.addVoid("setSelectedButton", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Number number) {
+                this.selectedButton = Math.clamp(number.intValue(), 0, this.buttonsAmount.get()-1);
+            } else {
+                throw new ModuleLuaException("First arg has to be an integer");
+            }
+        });
     }
 }

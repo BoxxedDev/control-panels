@@ -10,6 +10,7 @@ import moth.boxxed.panels.api.module.config.gui.ConfigFrameBuilder;
 import moth.boxxed.panels.api.module.io.IMultiInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -31,7 +32,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.function.BiConsumer;
 
-public class JoystickModule extends Module implements IExternalUpdatable, IMultiInput, IModuleLuaObject {
+public class JoystickModule extends Module implements IExternalUpdatable, IMultiInput {
     public float stickX = 0;
     public float stickY = 0;
     public boolean triggered = false;
@@ -189,21 +190,21 @@ public class JoystickModule extends Module implements IExternalUpdatable, IMulti
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("stickX", args -> this.stickX);
-        consumer.accept("stickY", args -> this.stickY);
-        consumer.accept("triggered", args -> this.triggered);
-        consumer.accept("deadzone", args -> new Float[]{
-                deadzoneValue.get().left, deadzoneValue.get().right,
-                    deadzoneValue.get().top, deadzoneValue.get().bottom
-        });
-    }
-
-    @Override
     public void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries) {
         this.stickX = tag.getFloat("stick_x");
         this.stickY = tag.getFloat("stick_y");
         this.triggered = tag.getBoolean("triggered");
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getStickX", args -> this.stickX);
+        builder.addReturn("getStickY", args -> this.stickY);
+        builder.addReturn("triggered", args -> this.triggered);
+        builder.addReturn("deadzone", args -> new Float[]{
+                deadzoneValue.get().left, deadzoneValue.get().right,
+                deadzoneValue.get().top, deadzoneValue.get().bottom
+        });
     }
 
     public static class DeadzoneValue extends ModuleConfigValue<Deadzone, DeadzoneValue> {

@@ -12,6 +12,7 @@ import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelDataComponents;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
@@ -49,7 +50,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-public class KeySwitchModule extends Module implements IExternalUpdatable, IMultiInput, IHoverTooltip, Container, IModuleLuaObject {
+public class KeySwitchModule extends Module implements IExternalUpdatable, IMultiInput, IHoverTooltip, Container {
     protected ItemStack currentKeyStack = ItemStack.EMPTY;
     protected ShortUUID keyId;
 
@@ -314,9 +315,9 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("keyInserted", args -> !this.currentKeyStack.isEmpty());
-        consumer.accept("keyTurned", args -> this.turned);
-        consumer.accept("keyId", args -> this.keyId.toString());
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("keyInserted", args -> !this.currentKeyStack.isEmpty());
+        builder.addReturn("keyTurned", args -> this.turned);
+        builder.addReturn("keyId", args -> this.keyId.toString());
     }
 }

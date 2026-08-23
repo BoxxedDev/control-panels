@@ -8,6 +8,7 @@ import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -28,7 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.function.BiConsumer;
 
-public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaObject {
+public class IndicatorBulbModule extends Module implements IOutput {
     public DyeColor color;
     public boolean lit;
 
@@ -100,33 +101,31 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getState", args -> this.lit);
-        consumer.accept("getColor", args -> this.color.getSerializedName());
-        consumer.accept("setState", args -> {
-            if (args.count() != 1)
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
-            if (args.get(0) instanceof Boolean bool) {
-                this.lit = bool;
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return null;
-            }
-            return new ModuleLuaException("First arg has to be a boolean");
-        });
-        consumer.accept("setColor", args -> {
-            if (args.count() != 1)
-                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
-            if (args.get(0) instanceof String string) {
-                this.color = DyeColor.byName(string, DyeColor.WHITE);
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return true;
-            }
-            return new ModuleLuaException("First arg has to be a string");
-        });
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(togglable);
     }
 
     @Override
-    public void createConfig(ModuleConfig.Builder builder) {
-        builder.add(togglable);
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getState", args -> this.lit);
+        builder.addReturn("getColor", args -> this.color.getSerializedName());
+        builder.addVoid("setState", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Boolean bool) {
+                this.lit = bool;
+            } else {
+                throw new ModuleLuaException("First arg has to be a boolean");
+            }
+        });
+        builder.addVoid("setColor", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof String string) {
+                this.color = DyeColor.byName(string, DyeColor.WHITE);
+            } else {
+                throw new ModuleLuaException("First arg has to be a string");
+            }
+        });
     }
 }

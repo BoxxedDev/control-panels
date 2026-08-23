@@ -13,6 +13,8 @@ import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
+import moth.boxxed.panels.compat.computercraft.ModuleComputerHandler;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.Rect2d;
 import net.minecraft.client.Minecraft;
@@ -40,6 +42,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.ModList;
 import org.joml.*;
 import oshi.util.tuples.Pair;
 
@@ -49,6 +52,8 @@ import javax.annotation.Nonnull;
 Base class for creating a custom module
  */
 public abstract class Module {
+    public static final boolean CC_LOADED = ModList.get().isLoaded("computercraft");
+
     @Deprecated(forRemoval = true, since = "2.0") private final Vector2i size;
     @Deprecated(forRemoval = true, since = "2.0") public Rect2d rect;
 
@@ -60,10 +65,16 @@ public abstract class Module {
     private ModuleConfig config;
     protected ModuleConfigValue.StringValue nameConfig;
 
+    private ModuleComputerHandler computerHandler;
+
     public Module(@Nonnull ModuleType<?> type, int x, int y) {
         this.type = type;
         this.pos = new Vector2i(x, y);
         this.size = null;
+
+        if (CC_LOADED) {
+            this.computerHandler = new ModuleComputerHandler(this);
+        }
     }
 
     @Deprecated(since = "2.0")
@@ -136,7 +147,7 @@ public abstract class Module {
                 s -> {
                     if (this.parentBlockEntity == null)
                         return false;
-                    if (this.parentBlockEntity.getModules().normalContainsKey(s))
+                    if (this.parentBlockEntity.getModules().containsKey(s))
                         return false;
                     if (this.parentBlockEntity.getLevel() == null)
                         return true;
@@ -312,6 +323,12 @@ public abstract class Module {
     public void setParentBE(AbstractPanelBlockEntity abstractPanelBlockEntity) {
         this.parentBlockEntity = abstractPanelBlockEntity;
     }
+
+    public ModuleComputerHandler getComputerHandler() {
+        return this.computerHandler;
+    }
+
+    public void buildComputerMethods(ModuleMethodBuilder builder) {}
 
     public record ModuleInfo(ResourceLocation type, int x, int y, CompoundTag moduleData) {
         public static final Codec<ModuleInfo> CODEC = RecordCodecBuilder.create((instance) ->

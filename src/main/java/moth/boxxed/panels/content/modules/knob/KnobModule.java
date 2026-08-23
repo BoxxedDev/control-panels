@@ -10,6 +10,8 @@ import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.index.PanelHoldInteractions;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
@@ -34,7 +36,7 @@ import org.joml.Math;
 import java.util.function.BiConsumer;
 
 //TODO: Maybe make it so you can use this while hovering it with a scroll wheel
-public class KnobModule extends Module implements IExternalUpdatable, IInput, IModuleLuaObject {
+public class KnobModule extends Module implements IExternalUpdatable, IInput {
     private float lastRenderAngle = 0;
     private float renderAngle = 0;
     private int angle = 0;
@@ -128,25 +130,24 @@ public class KnobModule extends Module implements IExternalUpdatable, IInput, IM
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getAngle", args -> this.getAngle());
-        consumer.accept("getValue", args -> this.getAnalog());
-        consumer.accept("setAngle", args -> {
-            if (args.count() != 1)
-                return false;
-            if (args.get(0) instanceof Number number) {
-                this.angle = Math.clamp(number.intValue(), this.angleRange.get().getMinimum(), this.angleRange.get().getMaximum());
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return true;
-            }
-            return false;
-        });
-    }
-
-    @Override
     public void update(ServerPlayer player, CompoundTag tag, HolderLookup.Provider registries) {
         this.angle = tag.getInt("angle");
         float f = (angle+360)/360f;
         this.parentBlockEntity.getLevel().playSound(null, this.getParentPos(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.1f, f);
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getAngle", args -> this.getAngle());
+        builder.addReturn("getSignal", args -> this.getAnalog());
+        builder.addVoid("setAngle", args -> {
+            if (args.count() != 1)
+                throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Number number) {
+                this.angle = Math.clamp(number.intValue(), this.angleRange.get().getMinimum(), this.angleRange.get().getMaximum());
+            } else {
+                throw new ModuleLuaException("First arg has to be an integer");
+            }
+        });
     }
 }

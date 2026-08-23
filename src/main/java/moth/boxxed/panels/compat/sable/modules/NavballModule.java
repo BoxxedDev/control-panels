@@ -10,6 +10,7 @@ import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.compat.sable.PanelSableRegistries;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -30,7 +31,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class NavballModule extends Module implements IMultiInput, IModuleLuaObject, IHoverTooltip {
+public class NavballModule extends Module implements IMultiInput, IHoverTooltip {
     public NavballModule(int x, int y) {
         super(PanelSableRegistries.NAVBALL.get(), x, y, 6, 6);
     }
@@ -141,16 +142,16 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
     }
 
     @Override
-    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
-        consumer.accept("getYaw", args -> this.getAngleYaw());
-        consumer.accept("getPitch", args -> this.getAnglePitch());
-        consumer.accept("getRoll", args -> this.getAngleRoll());
-    }
-
-    @Override
     public void addLines(TooltipContext context, List<Component> list) {
         list.add(Component.translatable("tooltip.dashpanels.module.navball.pitch", String.format("%.2f", this.getAnglePitch())).withStyle(ChatFormatting.BLUE));
         list.add(Component.translatable("tooltip.dashpanels.module.navball.yaw", String.format("%.2f", this.getAngleYaw())).withStyle(ChatFormatting.GREEN));
         list.add(Component.translatable("tooltip.dashpanels.module.navball.roll", String.format("%.2f", this.getAngleYaw())).withStyle(ChatFormatting.RED));
+    }
+
+    @Override
+    public void buildComputerMethods(ModuleMethodBuilder builder) {
+        builder.addReturn("getYaw", args -> this.getAngleYaw());
+        builder.addReturn("getPitch", args -> this.getAnglePitch());
+        builder.addReturn("getRoll", args -> this.getAngleRoll());
     }
 }

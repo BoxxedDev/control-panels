@@ -3,8 +3,12 @@ package moth.boxxed.panels.content.modules.buzzer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.config.ModuleConfig;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -22,11 +26,29 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-public class BuzzerModule extends Module implements IOutput {
+import java.util.function.BiConsumer;
+
+public class BuzzerModule extends Module implements IOutput, IModuleLuaObject {
     private int power = 0;
+
+    private final ModuleConfigValue.FloatRangeValue pitchRange = new ModuleConfigValue.FloatRangeValue(
+            "pitch_range",
+            1f, 2f,
+            0.5f, 3f
+    );
+    private final ModuleConfigValue.IntValue threshold = new ModuleConfigValue.IntValue(
+            "threshold",
+            0, 0, 14
+    );
 
     public BuzzerModule(int x, int y) {
         super(PanelModules.BUZZER.get(), x, y);
+    }
+
+    @Override
+    public void createConfig(ModuleConfig.Builder builder) {
+        builder.add(threshold);
+        builder.add(pitchRange);
     }
 
     @Override
@@ -45,7 +67,7 @@ public class BuzzerModule extends Module implements IOutput {
     public void render(AbstractPanelBlockEntity pbe, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PanelPreloadedModels.BUZZER.render(poseStack, packedLight);
 
-        if (this.power > 0) {
+        if (this.power > this.threshold.get()) {
             poseStack.pushPose();
             float scale = Mth.map(this.power, 0, 15, 0.1f, 0.5f);
             poseStack.scale(scale, scale, scale);
@@ -103,7 +125,7 @@ public class BuzzerModule extends Module implements IOutput {
 
     @OnlyIn(Dist.CLIENT)
     private void tickClient() {
-        if (this.power == 0) {
+        if (this.power <= this.threshold.get()) {
             if (this.soundInstance != null) {
                 this.soundInstance.deactivate();
                 this.soundInstance = null;
@@ -117,7 +139,21 @@ public class BuzzerModule extends Module implements IOutput {
         }
         this.soundInstance.resetLife();
 
-        float p = Mth.map(this.power, 0, 15, 1, 2);
+        float p = Mth.map(this.power, this.threshold.get(), 15, this.pitchRange.get().getMinimum(), this.pitchRange.get().getMaximum());
         this.soundInstance.setPitch(p);
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("buzzing", args -> this.power > this.threshold.get());
+        consumer.accept("setPower", args -> {
+            if (args.count() != 1)
+                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Number number) {
+                this.power = Math.clamp(number.intValue(), 0, 15);
+                return null;
+            }
+            return new ModuleLuaException("First arg has to be an integer");
+        });
     }
 }

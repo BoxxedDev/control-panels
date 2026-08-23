@@ -5,9 +5,12 @@ import com.mojang.math.Axis;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
+import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -23,16 +26,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.fml.common.Mod;
 
-//I'll finish this once I patch allowing a module to have inputs and outputs
-public class EmergencyButtonModule extends Module implements IOutput, IInput {
+import java.util.function.BiConsumer;
+
+public class EmergencyButtonModule extends Module implements IOutput, IInput, IModuleLuaObject {
     public boolean open = false;
     public boolean pressed = false;
 
     private float openTime = 0;
     private float previousOpenTime = 0;
 
-    private int previousInputSignal;
+    private final ModuleConfigValue.IntValue threshold = new ModuleConfigValue.IntValue(
+            "threshold",
+            0, 0, 14
+    );
 
     public EmergencyButtonModule(int x, int y) {
         super(PanelModules.EMERGENCY_BUTTON.get(), x, y);
@@ -93,14 +101,16 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput {
 
     @Override
     public void setAnalog(int signal) {
-        if (signal > 0) {
-            Dashpanels.LOGGER.debug("Yeagh");
-            this.open = !this.open;
-            if (!this.open) {
-                this.pressed = false;
-            }
+        if (signal > threshold.get()) {
+            this.setState(!this.open);
         }
-        this.previousInputSignal = signal;
+    }
+
+    private void setState(boolean open) {
+        this.open = open;
+        if (!this.open) {
+            this.pressed = false;
+        }
     }
 
     @Override
@@ -128,5 +138,28 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput {
         final float c3 = c1 + 1;
 
         return (float) (1 + c3 * Math.pow(x-1, 3) + c1 * Math.pow(x-1, 2));
+    }
+
+    @Override
+    public void getMethods(BiConsumer<String, ReturnMethod<?>> consumer) {
+        consumer.accept("coverOpened", args -> this.open);
+        consumer.accept("pressed", args -> this.pressed);
+        consumer.accept("open", args -> {
+            this.setState(true);
+            return null;
+        });
+        consumer.accept("close", args -> {
+            this.setState(false);
+            return null;
+        });
+        consumer.accept("setCoverState", args -> {
+            if (args.count() != 1)
+                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Boolean bool) {
+                this.setState(bool);
+                return null;
+            }
+            return new ModuleLuaException("Args count greater than 1 or first argument is not a boolean");
+        });
     }
 }

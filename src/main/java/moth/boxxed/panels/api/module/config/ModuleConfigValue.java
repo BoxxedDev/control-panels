@@ -10,6 +10,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.IntegerRange;
+import org.apache.commons.lang3.NumberRange;
 import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
@@ -210,6 +211,63 @@ public abstract class ModuleConfigValue<T, R extends ModuleConfigValue<T, R>> {
             );
             builder.nextRow();
             builder.addLabel(Component.literal("%.2f - %.2f".formatted(this.min, this.max)));
+        }
+    }
+
+    public static class FloatRangeValue extends ModuleConfigValue<NumberRange<Float>, FloatRangeValue> {
+        protected final float rangeMin;
+        protected final float rangeMax;
+
+        public FloatRangeValue(String name, float defaultMin, float defaultMax, float rangeMin, float rangeMax) {
+            super(name, new NumberRange<>(defaultMin, defaultMax, null));
+            this.rangeMin = rangeMin;
+            this.rangeMax = rangeMax;
+        }
+
+        @Override
+        public void save(CompoundTag tag, HolderLookup.Provider registries) {
+            tag.putFloat("range_min", this.value.getMinimum());
+            tag.putFloat("range_max", this.value.getMaximum());
+        }
+
+        @Override
+        public void load(CompoundTag tag, HolderLookup.Provider registries) {
+            float min = tag.getFloat("range_min");
+            float max = tag.getFloat("range_max");
+            this.value = new NumberRange<>(min, max, null);
+        }
+
+        public void set(float min, float max) {
+            this.set(new NumberRange<>(min, max, null));
+        }
+
+        @Override
+        public void buildGuiFrame(ConfigFrameBuilder builder) {
+            builder.addFloatBox(
+                    this,
+                    value -> String.valueOf(value.getMinimum()),
+                    (floatRangeValue, string) -> {
+                        try {
+                            float num = Float.parseFloat(string);
+                            floatRangeValue.set(
+                                    Math.clamp(Math.min(num, floatRangeValue.get().getMaximum()), this.rangeMin, this.rangeMax),
+                                    floatRangeValue.get().getMaximum()
+                            );
+                        } catch (NumberFormatException ignored) {}
+                    }, 32);
+            builder.addLabel(Component.literal("-"));
+            builder.addFloatBox(
+                    this,
+                    value -> String.valueOf(value.getMaximum()),
+                    (floatRangeValue, string) -> {
+                        try {
+                            float num = Float.parseFloat(string);
+                            floatRangeValue.set(
+                                    floatRangeValue.get().getMinimum(),
+                                    Math.clamp(Math.max(num, floatRangeValue.get().getMinimum()), this.rangeMin, this.rangeMax)
+                            );
+                        } catch (NumberFormatException ignored) {}
+                    }, 32);
         }
     }
 

@@ -75,7 +75,11 @@ public abstract class Module {
 
     @Override
     public String toString() {
-        return "Module:{name:[ " + this.name + " ], type:[ " + ModulesRegistry.MODULE_REGISTRY.getKey(this.type) + " ]}";
+        return "Module:{" +
+                "name:[ " + this.name + " ], " +
+                "type:[ " + ModulesRegistry.MODULE_REGISTRY.getKey(this.type) + " ], " +
+                "pos:[ " + this.getPos().x + ", " + this.getPos().y + " ]" +
+                "}";
     }
 
     public void setPos(int x, int y) {
@@ -280,7 +284,7 @@ public abstract class Module {
 
     public boolean canRemove(Player player) {return true;}
 
-    public boolean canMove(Player player) {return false;}
+    public boolean canMove(Player player) {return true;}
 
     public void onUnloaded() {}
 

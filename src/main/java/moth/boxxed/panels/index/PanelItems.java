@@ -123,7 +123,7 @@ public class PanelItems {
             );
             WikiableEntries.register(SEVEN_SEGMENT_MODULE.getId(),
                     WikiPage.of(SEVEN_SEGMENT_MODULE).category(PanelWikiCategories.MODULES)
-                            .addParagraph("You can this module a redstone output. It will display the signal power.")
+                            .addParagraph("You can give this module a redstone input. It will display the signal power. As well with CC: Tweaked installed you can place multiple next to each other in a row to display strings")
             );
             WikiableEntries.register(PUSH_BUTTON_MODULE.getId(),
                     WikiPage.of(PUSH_BUTTON_MODULE).category(PanelWikiCategories.MODULES)

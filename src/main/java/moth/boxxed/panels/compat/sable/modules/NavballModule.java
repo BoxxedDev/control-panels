@@ -26,6 +26,7 @@ import org.joml.Quaterniondc;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -148,8 +149,8 @@ public class NavballModule extends Module implements IMultiInput, IModuleLuaObje
 
     @Override
     public void addLines(TooltipContext context, List<Component> list) {
-        list.add(Component.translatable("tooltip.dashpanels.module.navball.pitch", this.getAnglePitch()).withStyle(ChatFormatting.BLUE));
-        list.add(Component.translatable("tooltip.dashpanels.module.navball.yaw", this.getAngleYaw()).withStyle(ChatFormatting.GREEN));
-        list.add(Component.translatable("tooltip.dashpanels.module.navball.roll", this.getAngleRoll()).withStyle(ChatFormatting.RED));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.pitch", String.format("%.2f", this.getAnglePitch())).withStyle(ChatFormatting.BLUE));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.yaw", String.format("%.2f", this.getAngleYaw())).withStyle(ChatFormatting.GREEN));
+        list.add(Component.translatable("tooltip.dashpanels.module.navball.roll", String.format("%.2f", this.getAngleYaw())).withStyle(ChatFormatting.RED));
     }
 }

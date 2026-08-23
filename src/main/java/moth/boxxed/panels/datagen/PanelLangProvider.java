@@ -95,9 +95,9 @@ public class PanelLangProvider extends LanguageProvider {
         //Modules
         addTooltip("module.push_button", "Button: %d");
 
-        addTooltip("module.navball.pitch", "Pitch: %d");
-        addTooltip("module.navball.yaw", "Yaw: %d");
-        addTooltip("module.navball.roll", "Roll: %d");
+        addTooltip("module.navball.pitch", "Pitch: %s");
+        addTooltip("module.navball.yaw", "Yaw: %s");
+        addTooltip("module.navball.roll", "Roll: %s");
 
         addTooltip("module.key_switch.key_id", "Bound Key: %s");
         // -- //
@@ -127,6 +127,8 @@ public class PanelLangProvider extends LanguageProvider {
         addModuleConfig("gap", "Gap");
         addModuleConfig("togglable", "Togglable");
         addModuleConfig("angle", "Angle");
+        addModuleConfig("threshold", "Threshold");
+        addModuleConfig("pitch_range", "Pitch Range");
 
         //Skins
         add("dashpanels.paint_wheel.skin.default", "Default");

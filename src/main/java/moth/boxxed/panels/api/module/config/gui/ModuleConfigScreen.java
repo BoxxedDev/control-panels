@@ -51,7 +51,7 @@ public class ModuleConfigScreen extends Screen {
         this.pos = pos;
         this.moduleToConfigure = module;
 
-        if (module.canMove(getMinecraft().player)) {
+        if (module.canMove(Minecraft.getInstance().player)) {
             this.addWidget(this.moveModuleButton = new MoveModuleButton(Component.translatable("dashpanels.module_config.move_module")));
         }
 

@@ -46,7 +46,7 @@ public interface IModuleLuaObject {
     }
 
     /**
-     * Gets all custom methods of a moduleName
+     * Gets all custom methods of a module
      * <br>
      * <br>
      * If you want a method to be void just have it return a boolean

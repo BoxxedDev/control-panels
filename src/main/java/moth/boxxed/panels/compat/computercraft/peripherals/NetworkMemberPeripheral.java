@@ -3,10 +3,12 @@ package moth.boxxed.panels.compat.computercraft.peripherals;
 import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleMap;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.IModuleArguments;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Vector2i;
@@ -35,18 +37,18 @@ public class NetworkMemberPeripheral implements IPeripheral {
     @LuaFunction
     public IDynamicLuaObject getModule(final String moduleName) throws LuaException {
         this.blockEntity.getOrCreate().compileModules();
-        Map<String, IModuleLuaObject> filteredMap = this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaMap();
+        var filteredMap = this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaPairMap();
         if (!filteredMap.containsKey(moduleName))
-            throw new LuaException("Attached network does not contain moduleName %s".formatted(moduleName));
-        return fromModuleLuaObject(filteredMap.get(moduleName));
+            throw new LuaException("Attached network does not contain module %s".formatted(moduleName));
+        return fromModuleLuaObject(filteredMap.get(moduleName).getA(), filteredMap.get(moduleName).getB());
     }
 
     @LuaFunction
     public Map<String, IDynamicLuaObject> getModules() {
         this.blockEntity.getOrCreate().compileModules();
         Map<String, IDynamicLuaObject> ret = new HashMap<>();
-        for (Map.Entry<String, IModuleLuaObject> entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaMap().entrySet())
-            ret.put(entry.getKey(), fromModuleLuaObject(entry.getValue()));
+        for (var entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaPairMap().entrySet())
+            ret.put(entry.getKey(), fromModuleLuaObject(entry.getValue().getA(), entry.getValue().getB()));
         return ret;
     }
 
@@ -54,12 +56,10 @@ public class NetworkMemberPeripheral implements IPeripheral {
     public Map<String, IDynamicLuaObject> getModulesOfType(final String typeName) {
         this.blockEntity.getOrCreate().compileModules();
         Map<String, IDynamicLuaObject> ret = new HashMap<>();
-        for (Map.Entry<String, IModuleLuaObject> entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaMap().entrySet()) {
-            if (entry.getValue() instanceof Module module) {
-                ResourceLocation location = ModulesRegistry.MODULE_REGISTRY.getKey(module.type);
-                if (location != null && location.getPath().equals(typeName))
-                    ret.put(entry.getKey(), fromModuleLuaObject(entry.getValue()));
-            }
+        for (var entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaPairMap().entrySet()) {
+                ResourceLocation location = ModulesRegistry.MODULE_REGISTRY.getKey(entry.getValue().getA().type);
+                if (location != null && location.equals(ResourceLocation.tryParse(typeName)))
+                    ret.put(entry.getKey(), fromModuleLuaObject(entry.getValue().getA(), entry.getValue().getB()));
         }
         return ret;
     }
@@ -77,13 +77,13 @@ public class NetworkMemberPeripheral implements IPeripheral {
         this.blockEntity.getOrCreate().compileModules();
         for (Map.Entry<String, Pair<Module, IModuleLuaObject>> entry : this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaPairMap().entrySet()) {
             if (Objects.equals(entry.getValue().getA().getPos(), new Vector2i(x, y))) {
-                return fromModuleLuaObject(entry.getValue().getB());
+                return fromModuleLuaObject(entry.getValue().getA(), entry.getValue().getB());
             }
         }
         return null;
     }
 
-    private static IDynamicLuaObject fromModuleLuaObject(IModuleLuaObject luaObject) {
+    private static IDynamicLuaObject fromModuleLuaObject(Module module, IModuleLuaObject luaObject) {
         return new IDynamicLuaObject() {
             @Override
             public String[] getMethodNames() {
@@ -108,7 +108,7 @@ public class NetworkMemberPeripheral implements IPeripheral {
                 luaObject.getMethods(input);
                 luaObject.getDefaultMethods(names, input);
 
-                return MethodResult.of(methods.get(method).get(new IModuleArguments() {
+                Object ret = methods.get(method).get(new IModuleArguments() {
                     @Override
                     public int count() {
                         return arguments.count();
@@ -133,7 +133,20 @@ public class NetworkMemberPeripheral implements IPeripheral {
                     public IModuleArguments drop(int count) {
                         return null;
                     }
-                }));
+                });
+
+                if (ret instanceof ModuleLuaException luaException) {
+                    if (luaException.hasLevel()) {
+                        throw new LuaException(luaException.getMessage(), luaException.getLevel());
+                    } else {
+                        throw new LuaException(luaException.getMessage());
+                    }
+                }
+
+                module.parentBlockEntity.setChanged();
+                module.parentBlockEntity.blockChanged();
+
+                return MethodResult.of(ret);
             }
         };
     }

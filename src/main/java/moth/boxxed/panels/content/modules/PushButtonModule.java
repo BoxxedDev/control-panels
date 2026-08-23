@@ -11,6 +11,7 @@ import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -198,13 +199,13 @@ public class PushButtonModule extends Module implements IMultiInput, IModuleLuaO
         consumer.accept("selectedButton", args -> this.selectedButton != null ? this.selectedButton : -1);
         consumer.accept("setSelectedButton", args -> {
             if (args.count() != 1)
-                return false;
+                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
             if (args.get(0) instanceof Number number) {
                 this.selectedButton = Math.clamp(number.intValue(), 0, this.buttonsAmount.get()-1);
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return true;
+                return null;
             }
-            return false;
+            return new ModuleLuaException("First arg has to be an integer");
         });
     }
 

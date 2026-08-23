@@ -7,6 +7,7 @@ import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IOutput;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
+import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
 import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
@@ -103,22 +104,24 @@ public class IndicatorBulbModule extends Module implements IOutput, IModuleLuaOb
         consumer.accept("getState", args -> this.lit);
         consumer.accept("getColor", args -> this.color.getSerializedName());
         consumer.accept("setState", args -> {
-            if (args.getType(0).equals("boolean")) {
-                this.lit = (boolean) args.get(0);
+            if (args.count() != 1)
+                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
+            if (args.get(0) instanceof Boolean bool) {
+                this.lit = bool;
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
-                return true;
+                return null;
             }
-            return false;
+            return new ModuleLuaException("First arg has to be a boolean");
         });
         consumer.accept("setColor", args -> {
             if (args.count() != 1)
-                return false;
+                return new ModuleLuaException("Arg amount cannot be less than or greater than 1");
             if (args.get(0) instanceof String string) {
                 this.color = DyeColor.byName(string, DyeColor.WHITE);
                 this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
                 return true;
             }
-            return false;
+            return new ModuleLuaException("First arg has to be a string");
         });
     }
 

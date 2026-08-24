@@ -39,6 +39,7 @@ public class ModuleMethodBuilder {
                 "getSizeY",
                 args -> module.getSize().y
         );
+
         //uhhh i think this should return every method including ones added later since it should be pointing to the two maps
         returnMethods.put(
                 "getMethods",

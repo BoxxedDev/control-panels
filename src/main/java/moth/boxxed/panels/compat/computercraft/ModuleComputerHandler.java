@@ -2,6 +2,7 @@ package moth.boxxed.panels.compat.computercraft;
 
 import dan200.computercraft.api.peripheral.AttachedComputerSet;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import org.jspecify.annotations.Nullable;
 
@@ -32,13 +33,7 @@ public class ModuleComputerHandler {
      * @param args
      */
     public void queueModuleEvent(String event, @Nullable Object... args) {
-        this.queueEvent(this.module.getName() + "." + event, args);
-
-        //There might be a better way but idk
-        Object[] argsWithModuleName = new Object[args.length + 1];
-        argsWithModuleName[0] = this.module.getName();
-        System.arraycopy(args, 0, argsWithModuleName, 1, args.length);
-        this.queueEvent(event, argsWithModuleName);
+        this.queueEvent(this.module.getName() + ":" + event, args);
     }
 
     /**

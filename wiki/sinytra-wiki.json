@@ -1,0 +1,21 @@
+{
+  "schema": "1",
+  "id": "dashpanels",
+  "platforms": {
+    "curseforge": "dashpanels",
+    "modrinth": "dashpanels"
+  },
+  "modid": "dashpanels",
+  "owners": [
+    "boxxeddev"
+  ],
+  "version": {
+    "1.21.1": "master"
+  },
+  "licenses": {
+    "project": {
+      "id": "MIT",
+      "url": "https://github.com/BoxxedDev/control-panels/blob/master/LICENSE.md"
+    }
+  }
+}

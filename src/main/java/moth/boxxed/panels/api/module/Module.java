@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -47,6 +48,7 @@ import org.joml.*;
 import oshi.util.tuples.Pair;
 
 import javax.annotation.Nonnull;
+import java.lang.Math;
 
 /**
 Base class for creating a custom module
@@ -59,7 +61,10 @@ public abstract class Module {
 
     public AbstractPanelBlockEntity parentBlockEntity;
     public ModuleType<?> type;
+
     private Vector2i pos;
+    private Rotation rotation;
+
     protected String name = "";
 
     private ModuleConfig config;
@@ -167,6 +172,7 @@ public abstract class Module {
 
     public boolean loadData(CompoundTag tag, HolderLookup.Provider registries) {
         this.setPos(tag.getInt("pos_x"), tag.getInt("pos_y"));
+        this.setRotation(Rotation.fromAngle(tag.getInt("rotation"), Rotation.ZERO));
         this.name = tag.getString("name");
 
         this.compileConfig();
@@ -197,6 +203,7 @@ public abstract class Module {
         tag.put("config", configTag);
         tag.putInt("pos_x", this.pos.x);
         tag.putInt("pos_y", this.pos.y);
+        tag.putInt("rotation", this.rotation.getAngle());
         tag.putString("type", type.toString());
         tag.putString("name", this.name);
 
@@ -301,8 +308,6 @@ public abstract class Module {
 
     public abstract VoxelShape getVoxelShape();
 
-    //TODO: Make abstract and reformat all the modules
-    //Currently not abstract as to not totally kill the creators of the addons adding a large amount of modules
     public abstract PolyVoxel getShape();
 
     public String getName() {
@@ -329,6 +334,14 @@ public abstract class Module {
     }
 
     public void buildComputerMethods(ModuleMethodBuilder builder) {}
+
+    public Rotation getRotation() {
+        return this.rotation;
+    }
+
+    public void setRotation(Rotation rotation) {
+        this.rotation = rotation;
+    }
 
     public record ModuleInfo(ResourceLocation type, int x, int y, CompoundTag moduleData) {
         public static final Codec<ModuleInfo> CODEC = RecordCodecBuilder.create((instance) ->
@@ -359,6 +372,42 @@ public abstract class Module {
             Module module = moduleType.create(this.x, this.y);
             module.loadData(this.moduleData, registries);
             return module;
+        }
+    }
+
+    public enum Rotation {
+        ZERO(0),
+        NINETY(90),
+        ONE_EIGHTY(180),
+        TWO_SEVENTY(270);
+
+        private final int deg;
+
+        Rotation(int deg) {
+            this.deg = deg;
+        }
+
+        public int getAngle() {
+            return this.getAngle();
+        }
+
+        public static Rotation fromAngle(int angle, Rotation fallback) {
+            return switch (Math.floorMod(angle, 360)) {
+                case 0 -> ZERO;
+                case 90 -> NINETY;
+                case 180 -> ONE_EIGHTY;
+                case 270 -> TWO_SEVENTY;
+                default -> fallback;
+            };
+        }
+
+        public Rotation next() {
+            return switch (this) {
+                case ZERO -> NINETY;
+                case NINETY -> ONE_EIGHTY;
+                case ONE_EIGHTY -> TWO_SEVENTY;
+                case TWO_SEVENTY -> ZERO;
+            };
         }
     }
 

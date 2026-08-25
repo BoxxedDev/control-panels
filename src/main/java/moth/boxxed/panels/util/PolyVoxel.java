@@ -5,13 +5,13 @@ import java.util.List;
 
 public class PolyVoxel {
     private List<FlatAABB> boxes = new ArrayList<>();
-    private FlatAABB bounds;
+    private FlatAABB bounds = null;
 
     public PolyVoxel() {
         this(null);
     }
 
-    public PolyVoxel(int x1, int y1, int x2, int y2) {
+    public PolyVoxel(double x1, double y1, double x2, double y2) {
         this(new FlatAABB(x1, y1, x2, y2));
     }
 
@@ -22,7 +22,7 @@ public class PolyVoxel {
         }
     }
 
-    public PolyVoxel add(int x1, int y1, int x2, int y2) {
+    public PolyVoxel add(double x1, double y1, double x2, double y2) {
         return this.add(new FlatAABB(x1, y1, x2, y2));
     }
 
@@ -30,12 +30,7 @@ public class PolyVoxel {
         this.boxes.add(aabb);
 
         if (this.bounds != null) {
-            this.bounds = new FlatAABB(
-                    Math.min(aabb.minX, this.bounds.minX),
-                    Math.min(aabb.minY, this.bounds.minY),
-                    Math.max(aabb.maxX, this.bounds.maxX),
-                    Math.max(aabb.maxY, this.bounds.maxY)
-            );
+            this.bounds = this.bounds.minmax(aabb);
         } else {
             this.bounds = new FlatAABB(
                     aabb.minX,
@@ -75,6 +70,27 @@ public class PolyVoxel {
 
         for (FlatAABB box : this.boxes) {
             ret.add(box.move(x, y));
+        }
+
+        return ret;
+    }
+
+    public PolyVoxel rotate(int degree) {
+        if (Math.floorMod(degree, 90) != 0) {
+            throw new IllegalArgumentException("Degree has to be an increment of 90");
+        }
+
+        double centerX = this.bounds.maxX-this.bounds.minX;
+        double centerY = this.bounds.maxY-this.bounds.minY;
+
+        PolyVoxel ret = new PolyVoxel();
+
+        for (FlatAABB box : this.getBoxes()) {
+            ret.add(
+                    box.move(-centerX, -centerY)
+                            .rotate(degree)
+                            .move(centerX, centerY)
+            );
         }
 
         return ret;

@@ -320,12 +320,12 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean collidesWithOther(Module module) {
-        PolyVoxel moduleVoxel = module.getShape().move(module.getPos().x, module.getPos().y);
+        PolyVoxel moduleVoxel = module.getShape().move(module.getPos().x, module.getPos().y).rotate(module.getRotation().getAngle());
         for (Map.Entry<String, Module> entry : this.modules) {
             Module other = entry.getValue();
             if (other == module)
                 continue;
-            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y);
+            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y).rotate(other.getRotation().getAngle());
             if (otherVoxel.collides(moduleVoxel)) {
                 return true;
             }
@@ -339,7 +339,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             if (exceptionSet.contains(entry.getKey()))
                 continue;
             Module other = entry.getValue();
-            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y);
+            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y).rotate(other.getRotation().getAngle());
             if (otherVoxel.collides(polyVoxel)) {
                 return true;
             }

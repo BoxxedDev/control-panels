@@ -10,6 +10,7 @@ import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreen;
 import moth.boxxed.panels.api.panel.AbstractPanelBlock;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.network.packet.PlaceModulePacket;
 import moth.boxxed.panels.util.FlatAABB;
 import moth.boxxed.panels.util.RectUtil;
@@ -20,6 +21,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,8 +35,16 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.Objects;
 
 public class PlacementManager {
+    //Normal placing
+    private static Module.Rotation rotation = Module.Rotation.ZERO;
+    private static ModuleType<?> selectedType;
+    private static int selectedTypeIndex = 0;
+    private static ResourceLocation selectedItem;
+
+    //Moving stuff
     private static Module movingModule = null;
     private static Vector2i movingOldPos = null;
     private static ModuleConfigScreen oldScreen = null;
@@ -204,25 +215,45 @@ public class PlacementManager {
         return false;
     }
 
+    public static boolean attemptRotation(int keyCode, int action) {
+        if (!PanelKeybinds.ROTATE_MODULE.matches(keyCode, action)) {
+            return false;
+        }
+
+        if (isMovingModule() || (selectedType != null && selectedItem != null)) {
+            rotation = rotation.next();
+            return true;
+        }
+
+        return false;
+    }
+
     public static void render(Vec3 cameraPos, PoseStack poseStack) {
         HitResult hitResult = Minecraft.getInstance().hitResult;
         Level level = Minecraft.getInstance().level;
         Player player = Minecraft.getInstance().player;
-        if (level == null)
+        if (level == null || player == null) {
+            selectedType = null;
+            selectedTypeIndex = -1;
+            selectedItem = null;
             return;
-        if (player == null)
-            return;
+        }
 
         ItemStack inHandItem = player.getMainHandItem();
-        if (!ModuleType.isRegisteredModule(inHandItem.getItem()))
+        if (!ModuleType.isRegisteredModule(inHandItem.getItem()) || !(hitResult instanceof BlockHitResult blockHitResult)) {
+            selectedType = null;
+            selectedTypeIndex = -1;
+            selectedItem = null;
             return;
-        if (!(hitResult instanceof BlockHitResult blockHitResult))
-            return;
+        }
 
         BlockPos pos = blockHitResult.getBlockPos();
         BlockState blockState = level.getBlockState(pos);
         if (!(blockState.getBlock() instanceof AbstractPanelBlock &&
                 level.getBlockEntity(pos) instanceof AbstractPanelBlockEntity pbe)) {
+            selectedType = null;
+            selectedTypeIndex = -1;
+            selectedItem = null;
             return;
         }
 
@@ -234,7 +265,21 @@ public class PlacementManager {
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
             //TODO: Make a selection thing similar to clutter no more
-            Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).getFirst().create(0, 0);
+
+            ResourceLocation itemLoc = BuiltInRegistries.ITEM.getKey(inHandItem.getItem());
+            if (!Objects.equals(selectedItem, itemLoc)) {
+                selectedItem = itemLoc;
+                selectedTypeIndex = 0;
+            }
+            selectedType = ModuleType.getTypeFromItem(inHandItem.getItem()).get(selectedTypeIndex);
+
+            if (selectedType == null) {
+                return;
+            }
+
+            Module module = selectedType.create(0, 0);
+            module.setRotation(rotation);
+
             position.sub(
                     (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
                     (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
@@ -244,7 +289,7 @@ public class PlacementManager {
 
             Vector2d doublePos = RectUtil.clampAABBPosToAABB(
                     new FlatAABB(0, 0, contentAreaSize.x(), contentAreaSize.y()),
-                    module.getShape().move(position.x, position.y).getBounds()
+                    module.getShape().move(position.x, position.y).rotate(module.getRotation().getAngle()).getBounds()
             );
 
             position = new Vector2i(
@@ -280,6 +325,7 @@ public class PlacementManager {
                     ((int) module.getSize().x)/32f,
                     ((int) module.getSize().y)/32f
             );
+            poseStack.mulPose(Axis.YP.rotationDegrees(module.getRotation().getAngle()));
 //            poseStack.rotateAround(Axis.YP.rotationDegrees(180), center.x, 0, center.y);
             LevelRenderer.renderShape(poseStack, consumer, module.getVoxelShape(), 0, 0, 0, 1, otherColors, otherColors, pulse);
 
@@ -291,6 +337,10 @@ public class PlacementManager {
     }
 
     public static boolean tryPlaceModule() {
+        if (selectedType == null) {
+            return false;
+        }
+
         HitResult hitResult = Minecraft.getInstance().hitResult;
         Level level = Minecraft.getInstance().level;
         Player player = Minecraft.getInstance().player;
@@ -320,7 +370,8 @@ public class PlacementManager {
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
             //TODO: Make a selection thing similar to clutter no more
-            Module module = ModuleType.getTypeFromItem(inHandItem.getItem()).getFirst().create(0, 0);
+            Module module = selectedType.create(0, 0);
+            module.setRotation(rotation);
             position.sub(
                     (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
                     (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
@@ -330,7 +381,7 @@ public class PlacementManager {
 
             Vector2d doublePos = RectUtil.clampAABBPosToAABB(
                     new FlatAABB(0, 0, contentAreaSize.x(), contentAreaSize.y()),
-                    module.getShape().move(position.x, position.y).getBounds()
+                    module.getShape().move(position.x, position.y).rotate(module.getRotation().getAngle()).getBounds()
             );
 
             position = new Vector2i(

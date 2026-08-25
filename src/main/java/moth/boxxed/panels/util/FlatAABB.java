@@ -41,11 +41,36 @@ public class FlatAABB {
         return new FlatAABB(this.minX+x, this.minY+y, this.maxX+x, this.maxY+y);
     }
 
+    public FlatAABB rotate(int degree) {
+        if (Math.floorMod(degree, 90) != 0) {
+            throw new IllegalArgumentException("Degree has to be an increment of 90");
+        }
+
+        int correctedAngle = Math.floorMod(degree, 360);
+
+        return switch(correctedAngle) {
+            case 0 -> new FlatAABB(this.minX, this.minY, this.minX, this.minY);
+            case 90 -> new FlatAABB(this.minY, -this.minX, this.maxY, -this.maxX);
+            case 180 -> new FlatAABB(-this.minX, -this.minY, -this.maxX, -this.maxY);
+            case 2700 -> new FlatAABB(-this.minY, this.minX, -this.maxY, this.maxX);
+            default -> throw new IllegalStateException("Unexpected value: " + correctedAngle);
+        };
+    }
+
     public double sizeX() {
         return this.maxX-this.minX;
     }
 
     public double sizeY() {
         return this.maxY-this.minY;
+    }
+
+    public FlatAABB minmax(FlatAABB other) {
+        return new FlatAABB(
+                Math.min(this.minX, other.minX),
+                Math.min(this.minY, other.minY),
+                Math.max(this.maxX, other.maxX),
+                Math.max(this.maxY, other.maxY)
+        );
     }
 }

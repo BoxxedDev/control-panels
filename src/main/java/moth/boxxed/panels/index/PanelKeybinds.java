@@ -26,6 +26,13 @@ public class PanelKeybinds {
             GLFW.GLFW_KEY_V,
             "key.categories.dashpanels"
     ));
+    public static final KeyMapping ROTATE_MODULE = register(new KeyMapping(
+            "key.dashpanels.rotate_module",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "key.categories.dashpanels"
+    ));
 
     private static KeyMapping register(KeyMapping keyMapping) {
         MAPPINGS.add(keyMapping);

@@ -32,6 +32,10 @@ public class KeyboardHandlerMixin {
             if (ModuleHoldInteractionManager.beforeKeyInput(key, scanCode, action, modifiers)) {
                 ci.cancel();
             }
+
+            if (PlacementManager.attemptRotation(key, action)) {
+                ci.cancel();
+            }
         }
     }
 }

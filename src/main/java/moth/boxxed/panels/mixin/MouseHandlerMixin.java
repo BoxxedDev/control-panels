@@ -2,8 +2,10 @@ package moth.boxxed.panels.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
+import moth.boxxed.panels.api.module.placement.PlacementManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,7 +33,17 @@ public class MouseHandlerMixin {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
             if (ModuleHoldInteractionManager.beforeMouseInput(button, action) || ModuleHoldInteractionManager.isActive()) {
                 ci.cancel();
-                return;
+            }
+        }
+    }
+
+    @Inject(method = "onScroll",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getOverlay()Lnet/minecraft/client/gui/screens/Overlay;", ordinal = 0),
+            cancellable = true)
+    private void panels$onScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci) {
+        if (Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isSpectator()) {
+            if (PlacementManager.attemptTypeChange((int) yOffset)) {
+                ci.cancel();
             }
         }
     }

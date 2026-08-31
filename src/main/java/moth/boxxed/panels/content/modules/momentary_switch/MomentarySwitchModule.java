@@ -48,6 +48,11 @@ public class MomentarySwitchModule extends Module implements IInput, IExternalUp
     }
 
     @Override
+    public boolean canRotate() {
+        return false;
+    }
+
+    @Override
     public boolean saveData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putBoolean("pressed", this.pressed);
         tag.putFloat("pressValue", this.pressValue);

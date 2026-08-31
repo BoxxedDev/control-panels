@@ -36,6 +36,11 @@ public class NavballModule extends Module implements IMultiInput, IHoverTooltip 
         super(PanelSableRegistries.NAVBALL.get(), x, y, 6, 6);
     }
 
+    @Override
+    public boolean canRotate() {
+        return false;
+    }
+
     private double getAngleYaw() {
         if (this.parentBlockEntity == null) return 0;
         Level level = this.parentBlockEntity.getLevel();

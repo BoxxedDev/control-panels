@@ -164,6 +164,11 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     }
 
     @Override
+    public boolean canRotate() {
+        return false;
+    }
+
+    @Override
     public boolean canMove(Player player) {
         return this.keyId == null;
     }

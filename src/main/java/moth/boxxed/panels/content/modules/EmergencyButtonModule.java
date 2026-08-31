@@ -91,6 +91,11 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput {
     }
 
     @Override
+    public boolean canRotate() {
+        return false;
+    }
+
+    @Override
     public PolyVoxel getShape() {
         return new PolyVoxel(0, 0, 4, 4);
     }

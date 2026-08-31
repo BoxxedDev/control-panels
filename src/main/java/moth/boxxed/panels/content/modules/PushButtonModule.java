@@ -2,6 +2,8 @@ package moth.boxxed.panels.content.modules;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
@@ -17,9 +19,11 @@ import moth.boxxed.panels.index.PanelModules;
 import moth.boxxed.panels.index.PanelPreloadedModels;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.PreLoadedModel;
+import moth.boxxed.panels.util.ShapeUtil;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -43,25 +47,28 @@ public class PushButtonModule extends Module implements IMultiInput, IHoverToolt
             .withValidator(i -> {
                 if (this.parentBlockEntity == null)
                     return false;
-                if (this.getPos().x+generateShapeWidth(i, this.buttonGap.get()) > 16)
+                final PolyVoxel moduleTestShape = this.generateShape(i, this.buttonGap.get())
+                        .rotate(this.getRotation().getAngle())
+                        .move(this.getPos().x, this.getPos().y);
+                if (!this.parentBlockEntity.containsShape(moduleTestShape))
                     return false;
 
-                return !this.parentBlockEntity.polyVoxelCollidesModules(
-                        this.generateShape(i, this.buttonGap.get())
-                                .move(this.getPos().x, this.getPos().y),
-                        this.name
-                );
+                return !this.parentBlockEntity.polyVoxelCollidesModules(moduleTestShape, this.name);
             });
 
     protected ModuleConfigValue.IntValue buttonGap = new ModuleConfigValue.IntValue("gap", 0, 0, 2)
             .withValidator(i -> {
                 if (this.parentBlockEntity == null)
                     return false;
-                if (this.getPos().x+generateShapeWidth(this.buttonsAmount.get(), i) > 16)
+                final PolyVoxel moduleTestShape = this.generateShape(i, this.buttonGap.get())
+                        .rotate(this.getRotation().getAngle())
+                        .move(this.getPos().x, this.getPos().y);
+                if (!this.parentBlockEntity.containsShape(moduleTestShape))
                     return false;
 
                 return !this.parentBlockEntity.polyVoxelCollidesModules(
                         this.generateShape(this.buttonsAmount.get(), i)
+                                .rotate(this.getRotation().getAngle())
                                 .move(this.getPos().x, this.getPos().y),
                         this.name
                 );
@@ -82,7 +89,6 @@ public class PushButtonModule extends Module implements IMultiInput, IHoverToolt
         this.selectedButton = selectedSwitch;
         level.playSound(null, this.getParentPos(), SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.1f, 1f);
         return InteractionResult.SUCCESS;
-
     }
 
     @Override
@@ -131,11 +137,10 @@ public class PushButtonModule extends Module implements IMultiInput, IHoverToolt
 
             poseStack.pushPose();
             int i = (int) Math.clamp(Math.floor(Mth.clampedMap(hitResult.location().x, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
-            poseStack.translate(i*2/16f + i*this.buttonGap.get()/16f, 0, 0);
             LevelRenderer.renderShape(
                     poseStack,
                     consumer,
-                    Block.box(0, 0, 0, 2, 1, 3),
+                    Block.box(i*2, 0, 0, (i+1)*2, 1, 3),
                     0, 0, 0, 1, 1, 1, 0.4f
             );
             poseStack.popPose();
@@ -161,7 +166,7 @@ public class PushButtonModule extends Module implements IMultiInput, IHoverToolt
 
     @Override
     public PolyVoxel getShape() {
-        if (this.buttonsAmount.get()==0)
+        if (this.buttonGap.get()==0)
             return new PolyVoxel(0, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get()), 3);
 
         return generateShape(this.buttonsAmount.get(), this.buttonGap.get());
@@ -184,12 +189,12 @@ public class PushButtonModule extends Module implements IMultiInput, IHoverToolt
     @Override
     public void getValues(BiConsumer<String, AnalogResult> consumer) {
         consumer.accept("Selected Button", () -> this.selectedButton != null ? this.selectedButton+1 : 0);
-        for (int i = 1; i < this.buttonsAmount.get()+1; i++) {
-            int finalI = i;
-            consumer.accept("Button %d".formatted(i), () -> {
+        for (int i = 0; i < this.buttonsAmount.get(); i++) {
+            final int finalI = i;
+            consumer.accept("Button %d".formatted(i+1), () -> {
                 if (this.selectedButton == null)
                     return 0;
-                return finalI == this.selectedButton+1 ? 15 : 0;
+                return finalI == this.selectedButton ? 15 : 0;
             });
         }
     }
@@ -202,8 +207,14 @@ public class PushButtonModule extends Module implements IMultiInput, IHoverToolt
 
     @Override
     public void addLines(TooltipContext context, List<Component> list) {
-        int i = (int) Math.clamp(Math.floor(Mth.clampedMap(context.hitResult().location().x, 0, generateShapeWidth(this.buttonsAmount.get(), this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get())), 0, this.buttonsAmount.get()-1);
-        list.add(Component.translatable("tooltip.dashpanels.module.push_button", i));
+        int i = (int) Math.clamp(Math.floor(Mth.clampedMap(
+                context.hitResult().location().x,
+                0, generateShapeWidth(this.buttonsAmount.get(),
+                        this.buttonGap.get())*0.0625f, 0, this.buttonsAmount.get()
+        )), 0, this.buttonsAmount.get()-1);
+        list.add(Component.translatable("tooltip.dashpanels.module.push_button", i+1));
+        if (this.selectedButton != null)
+            list.add(Component.translatable("tooltip.dashpanels.module.push_button.selected", this.selectedButton+1));
     }
 
     @Override

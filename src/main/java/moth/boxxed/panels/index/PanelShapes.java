@@ -17,6 +17,8 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static moth.boxxed.panels.util.ShapeUtil.rotateAABBAround;
+
 public class PanelShapes {
     public static final Map<Direction, VoxelShape> PANEL_SHAPE = forHorizontal(
         aabb(16,12,16),
@@ -64,22 +66,6 @@ public class PanelShapes {
         );
     }
 
-    private static AABB rotateAABB(AABB aabb, Quaternionf orientation) {
-        Vector3d min = new Vector3d(aabb.minX, aabb.minY, aabb.minZ);
-        Vector3d max = new Vector3d(aabb.maxX, aabb.maxY, aabb.maxZ);
-
-        min.sub(0.5, 0.5, 0.5);
-        max.sub(0.5, 0.5, 0.5);
-
-        orientation.transform(min);
-        orientation.transform(max);
-
-        min.add(0.5, 0.5, 0.5);
-        max.add(0.5, 0.5, 0.5);
-
-        return new AABB(min.x, min.y, min.z, max.x, max.y, max.z);
-    }
-
     public static Map<Direction, VoxelShape> forHorizontal(AABB... boxesArray) {
         return forHorizontal(direction -> direction.toYRot() + (direction.getAxis()==Direction.Axis.Z ? 0 : 180), boxesArray);
     }
@@ -92,7 +78,7 @@ public class PanelShapes {
             Quaternionf orientation = Axis.YP.rotationDegrees(rotation);
             VoxelShape shape = Shapes.empty();
             for (AABB box : boxesArray) {
-                AABB rotatedBox = rotateAABB(box, orientation);
+                AABB rotatedBox = rotateAABBAround(box, new Vector3d(0.5, 0.5, 0.5), orientation);
                 shape = Shapes.joinUnoptimized(shape, Shapes.box(
                         Math.min(rotatedBox.minX, rotatedBox.maxX),
                         Math.min(rotatedBox.minY, rotatedBox.maxY),
@@ -123,7 +109,7 @@ public class PanelShapes {
             VoxelShape shape = Shapes.empty();
             List<Pair<Vec3, Vec3>> rotatedEdges = new ArrayList<>();
             for (AABB box : boxesArray) {
-                AABB rotatedBox = rotateAABB(box, orientation);
+                AABB rotatedBox = rotateAABBAround(box, new Vector3d(0.5, 0.5, 0.5), orientation);
                 shape = Shapes.joinUnoptimized(shape, Shapes.box(
                                 Math.min(rotatedBox.minX, rotatedBox.maxX),
                                 Math.min(rotatedBox.minY, rotatedBox.maxY),

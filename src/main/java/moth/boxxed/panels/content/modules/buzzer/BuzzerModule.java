@@ -106,6 +106,11 @@ public class BuzzerModule extends Module implements IOutput {
     }
 
     @Override
+    public boolean canRotate() {
+        return false;
+    }
+
+    @Override
     public void onUnloaded() {
 //        if (this.getLevel().isClientSide)
 //            if (soundInstance != null) {

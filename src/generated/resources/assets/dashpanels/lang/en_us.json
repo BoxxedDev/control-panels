@@ -173,6 +173,7 @@
   "tooltip.dashpanels.module.navball.roll": "Roll: %s",
   "tooltip.dashpanels.module.navball.yaw": "Yaw: %s",
   "tooltip.dashpanels.module.push_button": "Button: %d",
+  "tooltip.dashpanels.module.push_button.selected": "Selected: %d",
   "widget.dashpanels.panel.edit_box.module_name": "Module Name",
   "widget.dashpanels.panel.exit": "Exit",
   "widget.dashpanels.panel.save": "Save",

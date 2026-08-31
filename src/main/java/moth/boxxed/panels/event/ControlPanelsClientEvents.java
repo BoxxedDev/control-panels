@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
-import moth.boxxed.panels.api.module.PlacementManager;
+import moth.boxxed.panels.api.module.placement.PlacementManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import moth.boxxed.panels.api.module.tooltip.ModuleTooltipManager;
@@ -80,7 +80,7 @@ public class ControlPanelsClientEvents {
                     if (!pbe.getSelectedModule(player).isEmpty() && module != null && hitPosition != null) {
                         ModuleTooltipManager.renderSelected(
                                 new TooltipContext(
-                                        new ModuleHitResult(hitPosition.subtract(module.getPos().x/16f, 0, module.getPos().y/16f))
+                                        new ModuleHitResult(hitPosition)
                                 ),
                                 event.getGuiGraphics(),
                                 module

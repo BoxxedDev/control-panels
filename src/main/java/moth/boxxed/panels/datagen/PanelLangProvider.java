@@ -94,6 +94,7 @@ public class PanelLangProvider extends LanguageProvider {
 
         //Modules
         addTooltip("module.push_button", "Button: %d");
+        addTooltip("module.push_button.selected", "Selected: %d");
 
         addTooltip("module.navball.pitch", "Pitch: %s");
         addTooltip("module.navball.yaw", "Yaw: %s");

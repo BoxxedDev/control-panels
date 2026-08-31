@@ -1,5 +1,7 @@
 package moth.boxxed.panels.util;
 
+import org.joml.Vector2d;
+
 public class FlatAABB {
     public final double minX;
     public final double minY;
@@ -27,10 +29,10 @@ public class FlatAABB {
     }
 
     public boolean contains(FlatAABB other) {
-        return this.minX >= other.minX &&
-                this.minY >= other.minY &&
-                this.maxX <= other.maxX &&
-                this.maxY <= other.maxY;
+        return this.minX <= other.minX &&
+                this.minY <= other.minY &&
+                this.maxX >= other.maxX &&
+                this.maxY >= other.maxY;
     }
 
     public boolean containsExclusive(double x, double y) {
@@ -48,13 +50,15 @@ public class FlatAABB {
 
         int correctedAngle = Math.floorMod(degree, 360);
 
-        return switch(correctedAngle) {
-            case 0 -> new FlatAABB(this.minX, this.minY, this.minX, this.minY);
+        FlatAABB ret = switch(correctedAngle) {
+            case 0 -> new FlatAABB(this.minX, this.minY, this.maxX, this.maxY);
             case 90 -> new FlatAABB(this.minY, -this.minX, this.maxY, -this.maxX);
             case 180 -> new FlatAABB(-this.minX, -this.minY, -this.maxX, -this.maxY);
-            case 2700 -> new FlatAABB(-this.minY, this.minX, -this.maxY, this.maxX);
+            case 270 -> new FlatAABB(-this.minY, this.minX, -this.maxY, this.maxX);
             default -> throw new IllegalStateException("Unexpected value: " + correctedAngle);
         };
+
+        return ret.move(-(ret.minX - this.minX), -(ret.minY - this.minY));
     }
 
     public double sizeX() {
@@ -65,6 +69,13 @@ public class FlatAABB {
         return this.maxY-this.minY;
     }
 
+    public Vector2d center() {
+        return new Vector2d(
+                (this.minX + this.maxX)/2,
+                (this.minY + this.maxY)/2
+        );
+    }
+
     public FlatAABB minmax(FlatAABB other) {
         return new FlatAABB(
                 Math.min(this.minX, other.minX),
@@ -72,5 +83,15 @@ public class FlatAABB {
                 Math.max(this.maxX, other.maxX),
                 Math.max(this.maxY, other.maxY)
         );
+    }
+
+    @Override
+    public String toString() {
+        return "FlatAABB: { " +
+                "minX : " + this.minX +
+                ", minY : " + this.minY +
+                ", maxX : " + this.maxX +
+                ", maxY : " + this.maxY +
+                " }";
     }
 }

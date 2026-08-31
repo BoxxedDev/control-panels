@@ -22,7 +22,7 @@ public class PolyVoxel {
         }
     }
 
-    public PolyVoxel add(double x1, double y1, double x2, double y2) {
+    public PolyVoxel add(int x1, int y1, int x2, int y2) {
         return this.add(new FlatAABB(x1, y1, x2, y2));
     }
 
@@ -57,6 +57,16 @@ public class PolyVoxel {
         return false;
     }
 
+    public boolean contains(PolyVoxel other) {
+        if (!this.getBounds().contains(other.getBounds())) {
+            return false;
+        }
+
+        //TODO: actually figure out how to check if a shape contains another shape
+
+        return true;
+    }
+
     public FlatAABB getBounds() {
         return this.bounds;
     }
@@ -65,7 +75,7 @@ public class PolyVoxel {
         return this.boxes;
     }
 
-    public PolyVoxel move(int x, int y) {
+    public PolyVoxel move(double x, double y) {
         PolyVoxel ret = new PolyVoxel();
 
         for (FlatAABB box : this.boxes) {
@@ -80,20 +90,27 @@ public class PolyVoxel {
             throw new IllegalArgumentException("Degree has to be an increment of 90");
         }
 
-        double centerX = this.bounds.maxX-this.bounds.minX;
-        double centerY = this.bounds.maxY-this.bounds.minY;
+        double originalMinX = this.bounds.minX;
+        double originalMinY = this.bounds.minY;
 
         PolyVoxel ret = new PolyVoxel();
 
-        for (FlatAABB box : this.getBoxes()) {
-            ret.add(
-                    box.move(-centerX, -centerY)
-                            .rotate(degree)
-                            .move(centerX, centerY)
-            );
+        int correctedAngle = Math.floorMod(degree, 360);
+
+        for (final FlatAABB box : this.getBoxes()) {
+            ret.add(switch(correctedAngle) {
+                case 0 -> new FlatAABB(box.minX, box.minY, box.maxX, box.maxY);
+                case 90 -> new FlatAABB(box.minY, -box.minX, box.maxY, -box.maxX);
+                case 180 -> new FlatAABB(-box.minX, -box.minY, -box.maxX, -box.maxY);
+                case 270 -> new FlatAABB(-box.minY, box.minX, -box.maxY, box.maxX);
+                default -> throw new IllegalStateException("Unexpected value: " + correctedAngle);
+            });
         }
 
-        return ret;
+        return ret.move(
+                -(ret.bounds.minX-originalMinX),
+                -(ret.bounds.minY-originalMinY)
+        );
     }
 
     @Override

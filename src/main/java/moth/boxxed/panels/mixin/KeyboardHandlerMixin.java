@@ -1,6 +1,6 @@
 package moth.boxxed.panels.mixin;
 
-import moth.boxxed.panels.api.module.PlacementManager;
+import moth.boxxed.panels.api.module.placement.PlacementManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
@@ -29,11 +29,15 @@ public class KeyboardHandlerMixin {
                 ci.cancel();
             }
 
-            if (ModuleHoldInteractionManager.beforeKeyInput(key, scanCode, action, modifiers)) {
+            if (PlacementManager.attemptRotation(key, action)) {
                 ci.cancel();
             }
 
-            if (PlacementManager.attemptRotation(key, action)) {
+            if (PlacementManager.shouldSinkChangeKey(key, action)) {
+                ci.cancel();
+            }
+
+            if (ModuleHoldInteractionManager.beforeKeyInput(key, scanCode, action, modifiers)) {
                 ci.cancel();
             }
         }

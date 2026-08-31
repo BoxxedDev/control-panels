@@ -20,6 +20,8 @@ public class PanelModules {
 
     public static final Supplier<ModuleType<SwitchModule>> SWITCH =
             MODULES.register("switch", () -> new ModuleType<>(SwitchModule::new, PanelItems.SWITCH_MODULE.get()));
+    public static final Supplier<ModuleType<MomentarySwitchModule>> SWITCH_TWO =
+            MODULES.register("switch_2", () -> new ModuleType<>(MomentarySwitchModule::new, PanelItems.SWITCH_MODULE.get()));
     public static final Supplier<ModuleType<KnobModule>> KNOB =
             MODULES.register("knob", () -> new ModuleType<>(KnobModule::new, PanelItems.KNOB_MODULE.get()));
     public static final Supplier<ModuleType<ControlLeverModule>> CONTROL_LEVER =

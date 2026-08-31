@@ -4,10 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.api.module.*;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.config.gui.ModuleConfigScreenOpener;
+import moth.boxxed.panels.api.module.placement.PlacementManager;
 import moth.boxxed.panels.api.network.ModulesNetworkMember;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelTags;
+import moth.boxxed.panels.util.FlatAABB;
 import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,20 +64,14 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean tryAddModule(String string, Module module) {
-//        Vector2i contentArea = this.getContentArea();
-//        FlatAABB contentAABB = new FlatAABB(0, 0, contentArea.x, contentArea.y);
-//        Rect2d tempRect = new Rect2d(0,0,16,16);
-
         PolyVoxel moduleShape = module.getShape().move(module.getPos().x, module.getPos().y);
-//        if (!contentAABB.contains(moduleShape.getBounds()))
+//        if (!this.getContentShape().contains(moduleShape))
 //            return false;
 
-        for (Map.Entry<String, Module> entry : this.modules.entrySet()) {
-            Module existingModule = entry.getValue();
-            if (existingModule.getShape().move(existingModule.getPos().x, existingModule.getPos().y).collides(moduleShape) || entry.getKey().equals(string)) {
-                return false;
-            }
+        if (this.collidesWithOther(module)) {
+            return false;
         }
+
         this.addModule(string, module);
         return true;
     }
@@ -234,7 +230,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
         Vec3 hitPosition = this.hitPositions.get(player.getUUID());
         if (hitModule != null && hitPosition != null) {
-            hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
             InteractionResult result = hitModule.onUse(new ModuleHitResult(hitPosition), level, player);
             this.setChanged();
             this.blockChanged();
@@ -251,7 +246,6 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         Module hitModule = this.getModule(this.selectedModules.computeIfAbsent(player.getUUID(), p -> ""));
         Vec3 hitPosition = this.hitPositions.get(player.getUUID());
         if (hitModule != null && hitPosition != null) {
-            hitPosition = hitPosition.subtract(hitModule.getPos().x/16f, 0, hitModule.getPos().y/16f);
             ItemInteractionResult result = hitModule.onItemUse(new ModuleHitResult(hitPosition), stack, level, player);
             this.setChanged();
             this.blockChanged();
@@ -320,12 +314,12 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean collidesWithOther(Module module) {
-        PolyVoxel moduleVoxel = module.getShape().move(module.getPos().x, module.getPos().y).rotate(module.getRotation().getAngle());
+        PolyVoxel moduleVoxel = module.getShape().rotate(module.getRotation().getAngle()).move(module.getPos().x, module.getPos().y);
         for (Map.Entry<String, Module> entry : this.modules) {
             Module other = entry.getValue();
             if (other == module)
                 continue;
-            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y).rotate(other.getRotation().getAngle());
+            PolyVoxel otherVoxel = entry.getValue().getShape().rotate(other.getRotation().getAngle()).move(other.getPos().x, other.getPos().y);
             if (otherVoxel.collides(moduleVoxel)) {
                 return true;
             }
@@ -339,12 +333,18 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
             if (exceptionSet.contains(entry.getKey()))
                 continue;
             Module other = entry.getValue();
-            PolyVoxel otherVoxel = entry.getValue().getShape().move(other.getPos().x, other.getPos().y).rotate(other.getRotation().getAngle());
+            PolyVoxel otherVoxel = entry.getValue().getShape().rotate(other.getRotation().getAngle()).move(other.getPos().x, other.getPos().y);
             if (otherVoxel.collides(polyVoxel)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean containsShape(PolyVoxel shape) {
+        Vector2i contentArea = this.getContentArea();
+        FlatAABB contentAABB = new FlatAABB(0, 0, contentArea.x, contentArea.y);
+        return contentAABB.contains(shape.getBounds());
     }
 
     public boolean removeSelectedModule(Player player) {

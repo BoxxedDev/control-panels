@@ -17,6 +17,7 @@ import moth.boxxed.panels.compat.computercraft.ModuleComputerHandler;
 import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.Rect2d;
+import moth.boxxed.panels.util.ShapeUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -24,6 +25,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -48,6 +50,7 @@ import org.joml.*;
 import oshi.util.tuples.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.Math;
 
 /**
@@ -112,7 +115,7 @@ public abstract class Module {
         return pos;
     }
     public Vector2d getSize() {
-        PolyVoxel shape = this.getShape();
+        PolyVoxel shape = this.getShape().rotate(this.getRotation().getAngle());
         return new Vector2d(
                 shape.getBounds().sizeX(),
                 shape.getBounds().sizeY()
@@ -230,7 +233,7 @@ public abstract class Module {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void renderOutline(ModuleHitResult hitResult, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
+    public void renderOutline(@Nullable ModuleHitResult hitResult, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int color) {
         this.renderOutline(poseStack, bufferSource, partialTick, color);
     }
 
@@ -280,7 +283,7 @@ public abstract class Module {
         Vector3f localViewPos = pose.transformPosition(new Vector3f());
         Vector3f localViewDir = pose.transformDirection(new Vector3f((float) viewVector.x, (float) viewVector.y, (float) viewVector.z));
 
-        VoxelShape shape = module.getVoxelShape().move(shapeOffset.x, shapeOffset.y, shapeOffset.z);
+        VoxelShape shape = ShapeUtil.rotateVoxelShape(Direction.Axis.Y, module.getVoxelShape(), module.getRotation().getAngle()).move(shapeOffset.x, shapeOffset.y, shapeOffset.z);
 
         eyePos.set(localViewPos);
         viewVector.set(localViewDir).mul(player.blockInteractionRange()).add(eyePos);
@@ -303,6 +306,10 @@ public abstract class Module {
     public boolean canRemove(Player player) {return true;}
 
     public boolean canMove(Player player) {return true;}
+
+    public boolean canRotate() {
+        return true;
+    }
 
     public void onUnloaded() {}
 
@@ -388,7 +395,7 @@ public abstract class Module {
         }
 
         public int getAngle() {
-            return this.getAngle();
+            return this.deg;
         }
 
         public static Rotation fromAngle(int angle, Rotation fallback) {

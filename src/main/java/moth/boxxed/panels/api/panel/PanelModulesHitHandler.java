@@ -6,10 +6,12 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.PlacementManager;
+import moth.boxxed.panels.api.module.placement.PlacementManager;
+import moth.boxxed.panels.util.ShapeUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -93,7 +95,7 @@ public class PanelModulesHitHandler {
             if (PlacementManager.isMovingModule(module))
                 continue;
 
-            VoxelShape moduleShape = module.getVoxelShape();
+            VoxelShape moduleShape = ShapeUtil.rotateVoxelShape(Direction.Axis.Y, module.getVoxelShape(), module.getRotation().getAngle());
             shape = Shapes.or(shape, moduleShape.move(
                     moduleEntry.getValue().getPos().x/16f,
                     0,

@@ -1,8 +1,9 @@
-package moth.boxxed.panels.api.module;
+package moth.boxxed.panels.api.module.placement;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;

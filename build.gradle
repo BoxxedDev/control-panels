@@ -4,6 +4,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
     id "me.modmuss50.mod-publish-plugin" version "2.1.1"
+    id 'org.moddedmc.wiki.toolkit' version '0.4.3'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -221,4 +222,12 @@ idea {
 
 tasks.named('jar') {
     archiveFileName = "dashpanels-${mod_version}+neoforge${minecraft_version}.jar"
+}
+
+wiki {
+    docs {
+        dashpanels {
+            root = file('wiki')
+        }
+    }
 }

@@ -3,7 +3,7 @@ package moth.boxxed.panels.api.module.config.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
-import moth.boxxed.panels.api.module.PlacementManager;
+import moth.boxxed.panels.api.module.placement.PlacementManager;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.config.gui.widgets.ConfigFrameWidget;

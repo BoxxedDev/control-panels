@@ -44,7 +44,7 @@ public class ModuleType<T extends Module> {
         return this.factory.create(x,y);
     }
 
-    public static <T extends Item> List<ModuleType<?>> getTypeFromItem(T item) {
+    public static <T extends Item> List<ModuleType<?>> getTypesFromItem(T item) {
         return typeItemMap.get(item);
     }
 

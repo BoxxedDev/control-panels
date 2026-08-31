@@ -3,6 +3,7 @@ package moth.boxxed.panels.index;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import org.jline.keymap.KeyMap;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
@@ -31,6 +32,13 @@ public class PanelKeybinds {
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
+            "key.categories.dashpanels"
+    ));
+    public static final KeyMapping HOLD_TO_CHANGE_TYPE = register(new KeyMapping(
+            "key.dashpanels.hold_to_change_placement_type",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_LEFT_ALT,
             "key.categories.dashpanels"
     ));
 

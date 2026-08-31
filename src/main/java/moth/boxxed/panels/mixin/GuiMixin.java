@@ -2,7 +2,7 @@ package moth.boxxed.panels.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
-import moth.boxxed.panels.api.module.HotbarOverlayManager;
+import moth.boxxed.panels.api.module.placement.HotbarOverlayManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import net.minecraft.client.DeltaTracker;

@@ -6,6 +6,7 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
 import moth.boxxed.panels.index.PanelBlockEntities;
+import moth.boxxed.panels.util.PolyVoxel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;

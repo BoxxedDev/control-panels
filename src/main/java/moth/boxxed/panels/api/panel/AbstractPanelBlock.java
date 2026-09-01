@@ -105,14 +105,14 @@ public abstract class AbstractPanelBlock extends ModulesNetworkMemberBlock {
         builder.add(FACING);
     }
 
-    @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-        ItemStack inHandStack = player.getMainHandItem();
-        if (inHandStack.is(PanelTags.Items.WRENCH) || ModuleType.isRegisteredModule(inHandStack.getItem())) {
-            return !this.getBlockEntity(level, pos).removeSelectedModule(player);
-        }
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
-    }
+//    @Override
+//    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+//        ItemStack inHandStack = player.getMainHandItem();
+//        if (inHandStack.is(PanelTags.Items.WRENCH) || ModuleType.isRegisteredModule(inHandStack.getItem())) {
+//            return !this.getBlockEntity(level, pos).removeSelectedModule(player);
+//        }
+//        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+//    }
 
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {

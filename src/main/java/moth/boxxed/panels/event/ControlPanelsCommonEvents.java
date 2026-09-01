@@ -1,6 +1,9 @@
 package moth.boxxed.panels.event;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.ModuleType;
+import moth.boxxed.panels.api.panel.AbstractPanelBlock;
+import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.skin.PanelSkinsServerManager;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
@@ -10,16 +13,20 @@ import moth.boxxed.panels.datagen.*;
 import moth.boxxed.panels.index.PanelItems;
 import moth.boxxed.panels.index.PanelKeybinds;
 import moth.boxxed.panels.index.PanelMenuTypes;
+import moth.boxxed.panels.index.PanelTags;
 import moth.boxxed.panels.network.handler.ClientPayloadHandler;
 import moth.boxxed.panels.network.handler.ServerPayloadHandler;
 import moth.boxxed.panels.network.packet.*;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -29,6 +36,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -195,6 +203,24 @@ public class ControlPanelsCommonEvents {
     @SubscribeEvent
     public static void addReloadListeners(AddReloadListenerEvent event) {
         event.addListener(PanelSkinsServerManager.ReloadListener.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public static void onBlockLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getAction() == PlayerInteractEvent.LeftClickBlock.Action.START) {
+            final Level level = event.getLevel();
+            final BlockPos blockPos = event.getPos();
+            final ItemStack inHandStack = event.getItemStack();
+
+            if (level.getBlockState(blockPos).getBlock() instanceof AbstractPanelBlock && level.getBlockEntity(blockPos) instanceof AbstractPanelBlockEntity pbe) {
+                if (inHandStack.is(PanelTags.Items.WRENCH) || ModuleType.isRegisteredModule(inHandStack.getItem())) {
+                    if (pbe.removeSelectedModule(event.getEntity())) {
+                        event.setCanceled(true);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
 //    @SubscribeEvent

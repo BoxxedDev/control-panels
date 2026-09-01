@@ -3,9 +3,14 @@ package moth.boxxed.panels.compat.create;
 import com.simibubi.create.api.behaviour.display.DisplaySource;
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.api.schematic.nbt.SafeNbtWriterRegistry;
+import com.simibubi.create.api.schematic.requirement.SchematicRequirementRegistries;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.panel.PanelType;
+import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.api.wiki.WikiPage;
 import moth.boxxed.panels.api.wiki.WikiableEntries;
 import moth.boxxed.panels.compat.PanelCompat;
@@ -14,7 +19,9 @@ import moth.boxxed.panels.compat.create.panel_link.PanelLinkBlockEntity;
 import moth.boxxed.panels.compat.create.panel_link.screen.PanelLinkMenu;
 import moth.boxxed.panels.content.cable.stripped.StrippedCableBlockEntity;
 import moth.boxxed.panels.index.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -25,6 +32,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Supplier;
 
@@ -82,6 +90,21 @@ public class PanelCreateRegistries implements PanelCompat {
                     if (be instanceof AbstractPanelBlockEntity pbe) {
                         pbe.saveExternal(tag, registries);
                     }
+                });
+
+                SchematicRequirementRegistries.BLOCK_ENTITIES.register(panelType.blockEntity, (be, state) -> {
+                    ItemRequirement ret = ItemRequirement.NONE;
+                    if (be instanceof AbstractPanelBlockEntity pbe) {
+                        for (Module module : pbe.getModules().values()) {
+                            if (ModuleType.getItemFromType(module.type) != null) {
+                                ret = ret.union(new ItemRequirement(
+                                        ItemRequirement.ItemUseType.CONSUME,
+                                        new ItemStack(ModuleType.getItemFromType(module.type))
+                                ));
+                            }
+                        }
+                    }
+                    return ret;
                 });
             }
 

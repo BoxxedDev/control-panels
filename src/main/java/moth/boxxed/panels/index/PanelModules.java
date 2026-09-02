@@ -10,6 +10,7 @@ import moth.boxxed.panels.content.modules.joystick.JoystickModule;
 import moth.boxxed.panels.content.modules.key_switch.KeySwitchModule;
 import moth.boxxed.panels.content.modules.knob.KnobModule;
 import moth.boxxed.panels.content.modules.momentary_switch.MomentarySwitchModule;
+import moth.boxxed.panels.content.modules.throttle_lever.ThrottleLeverModule;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -20,8 +21,6 @@ public class PanelModules {
 
     public static final Supplier<ModuleType<SwitchModule>> SWITCH =
             MODULES.register("switch", () -> new ModuleType<>(SwitchModule::new, PanelItems.SWITCH_MODULE.get()));
-    public static final Supplier<ModuleType<MomentarySwitchModule>> SWITCH_TWO =
-            MODULES.register("switch_2", () -> new ModuleType<>(MomentarySwitchModule::new, PanelItems.SWITCH_MODULE.get()));
     public static final Supplier<ModuleType<KnobModule>> KNOB =
             MODULES.register("knob", () -> new ModuleType<>(KnobModule::new, PanelItems.KNOB_MODULE.get()));
     public static final Supplier<ModuleType<ControlLeverModule>> CONTROL_LEVER =
@@ -44,6 +43,8 @@ public class PanelModules {
             MODULES.register("emergency_button", () -> new ModuleType<>(EmergencyButtonModule::new, PanelItems.EMERGENCY_BUTTON_MODULE.get()));
     public static final Supplier<ModuleType<BuzzerModule>> BUZZER =
             MODULES.register("buzzer", () -> new ModuleType<>(BuzzerModule::new, PanelItems.BUZZER_MODULE.get()));
+    public static final Supplier<ModuleType<ThrottleLeverModule>> THROTTLE_LEVER =
+            MODULES.register("throttle_lever", () -> new ModuleType<>(ThrottleLeverModule::new, PanelItems.THROTTLE_LEVER_MODULE.get()));
 
     public static void register(IEventBus bus) {
         MODULES.register(bus);

@@ -2,7 +2,7 @@ package moth.boxxed.panels.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
-import moth.boxxed.panels.api.module.placement.HotbarOverlayManager;
+import moth.boxxed.panels.api.module.placement.PlacementGUIOverlayManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
 import net.minecraft.client.DeltaTracker;
@@ -41,8 +41,8 @@ public class GuiMixin {
     private void panels$renderItemHotbar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci,
                                          @Local(ordinal = 0) int i, @Local(ordinal = 0) Player player,
                                          @Local(ordinal = 0) HumanoidArm offhandArm, @Local(ordinal = 0) ItemStack offhandItem) {
-        if (HotbarOverlayManager.shouldRender()) {
-            HotbarOverlayManager.renderOverlay(player.getInventory().items.subList(0, 9), offhandItem, offhandArm, guiGraphics, i-90, guiGraphics.guiHeight()-22);
+        if (PlacementGUIOverlayManager.shouldRender()) {
+            PlacementGUIOverlayManager.renderOverlay(player.getInventory().items.subList(0, 9), offhandItem, offhandArm, guiGraphics, i-90, guiGraphics.guiHeight()-22);
         }
     }
 }

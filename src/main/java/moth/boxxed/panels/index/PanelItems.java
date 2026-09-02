@@ -46,6 +46,7 @@ public class PanelItems {
     public static final DeferredItem<Item> KEY_SWITCH_MODULE = item("key_switch");
     public static final DeferredItem<Item> EMERGENCY_BUTTON_MODULE = item("emergency_button");
     public static final DeferredItem<Item> BUZZER_MODULE = item("buzzer");
+    public static final DeferredItem<Item> THROTTLE_LEVER_MODULE = item("throttle_lever");
 
     public static final DeferredItem<Item> KEY_ITEM = ITEMS.register("key",
             () -> new KeyItem(null, new Item.Properties().stacksTo(16)));

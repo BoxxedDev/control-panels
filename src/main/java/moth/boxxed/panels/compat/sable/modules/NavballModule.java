@@ -6,6 +6,7 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.io.IMultiInput;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
@@ -19,6 +20,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -37,7 +40,7 @@ public class NavballModule extends Module implements IMultiInput, IHoverTooltip 
     }
 
     @Override
-    public boolean canRotate() {
+    public boolean canRotate(PlacementContext context) {
         return false;
     }
 

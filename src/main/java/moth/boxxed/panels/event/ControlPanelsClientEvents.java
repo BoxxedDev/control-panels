@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleHitResult;
+import moth.boxxed.panels.api.module.placement.PlacementGUIOverlayManager;
 import moth.boxxed.panels.api.module.placement.PlacementManager;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteraction;
 import moth.boxxed.panels.api.module.interaction.ModuleHoldInteractionManager;
@@ -91,6 +92,7 @@ public class ControlPanelsClientEvents {
             }
         }
         ModuleTooltipManager.guiFrame(active);
+        PlacementGUIOverlayManager.renderModuleMessage(event.getGuiGraphics());
     }
 
     @SubscribeEvent

@@ -7,6 +7,7 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
@@ -48,7 +49,7 @@ public class MomentarySwitchModule extends Module implements IInput, IExternalUp
     }
 
     @Override
-    public boolean canRotate() {
+    public boolean canRotate(PlacementContext context) {
         return false;
     }
 

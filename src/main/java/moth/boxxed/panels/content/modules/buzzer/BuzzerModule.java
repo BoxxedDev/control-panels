@@ -6,6 +6,7 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IOutput;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
@@ -106,7 +107,7 @@ public class BuzzerModule extends Module implements IOutput {
     }
 
     @Override
-    public boolean canRotate() {
+    public boolean canRotate(PlacementContext context) {
         return false;
     }
 

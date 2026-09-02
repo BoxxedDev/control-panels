@@ -1,0 +1,31 @@
+{
+  "loader": "neoforge:obj",
+  "model": "dashpanels:models/block/throttle_lever/item.obj",
+  "textures": {
+    "0": "dashpanels:block/throttle_lever"
+  },
+  "automatic_culling": false,
+  "shade_quads": false,
+  "flip_v": true,
+  "emissive_ambient": false,
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [65, 0, 0]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [65, 0, 0]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 45, 0],
+      "translation": [0, 2, 0]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 45, 0],
+      "translation": [0, 2, 0]
+    },
+    "gui": {
+      "rotation": [30, -135, 0],
+      "scale": [2, 2, 2]
+    }
+  }
+}

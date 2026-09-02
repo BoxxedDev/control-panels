@@ -1,6 +1,7 @@
 package moth.boxxed.panels.api.module.config.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.placement.PlacementManager;
@@ -282,8 +283,8 @@ public class ModuleConfigScreen extends Screen {
                         this.pos,
                         newParentPos,
                         this.moduleToConfigure.getName(),
-                        this.moduleToConfigure.getPos().x,
-                        this.moduleToConfigure.getPos().y,
+                        new Pair<>(this.moduleToConfigure.getPos().x, this.moduleToConfigure.getPos().y),
+                        this.moduleToConfigure.getRotation(),
                         mapToSend
                 )
         );

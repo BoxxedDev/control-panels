@@ -64,9 +64,9 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
     }
 
     public boolean tryAddModule(String string, Module module) {
-        PolyVoxel moduleShape = module.getShape().move(module.getPos().x, module.getPos().y);
-//        if (!this.getContentShape().contains(moduleShape))
-//            return false;
+        PolyVoxel moduleShape = module.getShape().rotate(module.getRotation().getAngle()).move(module.getPos().x, module.getPos().y);
+        if (!this.containsShape(moduleShape))
+            return false;
 
         if (this.collidesWithOther(module)) {
             return false;

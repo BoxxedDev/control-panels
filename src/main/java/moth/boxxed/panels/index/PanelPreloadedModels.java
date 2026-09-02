@@ -51,7 +51,7 @@ public class PanelPreloadedModels {
             BUZZER = regular("buzzer/buzzer"),
             SOUND_INDICATOR = regular("sound_indicator"),
 
-            KEY_OUTLINE = item("key_outline")
+            THROTTLE_LEVER_BASE = regular("throttle_lever/base")
                     ;
 
     private static PreLoadedModel regular(String name) {

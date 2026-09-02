@@ -1,6 +1,7 @@
 package moth.boxxed.panels.index;
 
 import moth.boxxed.panels.Dashpanels;
+import moth.boxxed.panels.api.module.ModuleType;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.util.CustomSectionTextured;
@@ -15,8 +16,11 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class PanelCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, Dashpanels.MOD_ID);
@@ -68,14 +72,15 @@ public class PanelCreativeTabs {
 //                }
 //        );
 
-        MODULES_SECTION.add(registryAccess -> {
-            List<ItemStack> ret = new ArrayList<>();
-            ModulesRegistry.MODULE_REGISTRY.entrySet().forEach(
-                    entry -> ret.add(new ItemStack(entry.getValue().associatedItem))
-            );
-            ret.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getDisplayName().getString(), b.getDisplayName().getString()));
-            return ret;
-        });
+        MODULES_SECTION.add(registryAccess -> ModulesRegistry.MODULE_REGISTRY
+                    .stream()
+                    .map(type -> type.associatedItem)
+                    .collect(Collectors.toSet())
+                    .stream()
+                    .map(ItemStack::new)
+                    .sorted((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(a.getDisplayName().getString(), b.getDisplayName().getString()))
+                    .toList()
+        );
     }
 
     public static void register(IEventBus eventBus) {

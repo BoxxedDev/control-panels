@@ -8,6 +8,7 @@ import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IMultiInput;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.module.tooltip.IHoverTooltip;
 import moth.boxxed.panels.api.module.tooltip.TooltipContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
@@ -164,7 +165,7 @@ public class KeySwitchModule extends Module implements IExternalUpdatable, IMult
     }
 
     @Override
-    public boolean canRotate() {
+    public boolean canRotate(PlacementContext context) {
         return false;
     }
 

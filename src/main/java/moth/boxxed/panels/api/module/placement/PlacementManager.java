@@ -33,6 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,6 +55,7 @@ public class PlacementManager {
     private static int selectedTypeIndex = 0;
     private static ResourceLocation selectedItem;
     private static boolean typeChangeKeyDown = false;
+    private static Module selectedModule = null;
 
     //Moving stuff
     private static moth.boxxed.panels.api.module.Module movingModule = null;
@@ -66,7 +68,7 @@ public class PlacementManager {
         movingOldPos = module.getPos();
         oldScreen = screen;
         oldParent = module.parentBlockEntity;
-        rotation = Module.Rotation.ZERO;
+        rotation = module.getRotation();
         Minecraft.getInstance().setScreen(null);
     }
 
@@ -76,6 +78,10 @@ public class PlacementManager {
 
     public static boolean isMovingModule() {
         return movingModule != null;
+    }
+
+    public static Module getMovingModule() {
+        return movingModule;
     }
 
     public static void stopMoving() {
@@ -127,7 +133,8 @@ public class PlacementManager {
 
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
-            movingModule.setRotation(movingModule.canRotate() ? rotation : Module.Rotation.ZERO);
+            PlacementContext placementContext = new PlacementContext(player, new ItemStack(ModuleType.getItemFromType(movingModule.type)), true);
+            movingModule.setRotation(movingModule.canRotate(placementContext) ? rotation : Module.Rotation.ZERO);
 
             //TODO: make this a proper GUI implementation
             player.displayClientMessage(Component.literal(movingModule.getName() + " | " + String.valueOf(movingModule.getRotation().getAngle())), true);
@@ -172,7 +179,7 @@ public class PlacementManager {
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
 
             boolean hitsOtherModule = pbe.collidesWithOther(movingModule);
-            float otherColors = hitsOtherModule ? 0 : 1;
+            float otherColors = hitsOtherModule || !movingModule.canPlace(placementContext) ? 0 : 1;
 
             LevelRenderer.renderShape(poseStack, consumer, ShapeUtil.rotateVoxelShape(Direction.Axis.Y, movingModule.getVoxelShape(), movingModule.getRotation().getAngle()), 0, 0, 0, 1, otherColors, otherColors, pulse);
 
@@ -209,12 +216,15 @@ public class PlacementManager {
 
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
-            movingModule.setRotation(movingModule.canRotate() ? movingModule.getRotation() : Module.Rotation.ZERO);
+            PlacementContext placementContext = new PlacementContext(
+                    player,
+                    new ItemStack(ModuleType.getItemFromType(movingModule.type)),
+                    true
+            );
+            movingModule.setRotation(movingModule.canRotate(placementContext) ? movingModule.getRotation() : Module.Rotation.ZERO);
 
             Vector2d center = movingModule.getShape().rotate(movingModule.getRotation().getAngle()).getBounds().center();
             position.sub(
-//                    (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
-//                    (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
                     (int) center.x,
                     (int) center.y
             );
@@ -233,7 +243,7 @@ public class PlacementManager {
             movingModule.setPos(position);
             movingModule.setParentBE(pbe);
 
-            return !pbe.collidesWithOther(movingModule);
+            return !pbe.collidesWithOther(movingModule) && movingModule.canPlace(placementContext);
         }
 
         return false;
@@ -287,6 +297,8 @@ public class PlacementManager {
     }
 
     public static void render(Vec3 cameraPos, PoseStack poseStack) {
+        selectedModule = null;
+
         HitResult hitResult = Minecraft.getInstance().hitResult;
         Level level = Minecraft.getInstance().level;
         Player player = Minecraft.getInstance().player;
@@ -322,6 +334,7 @@ public class PlacementManager {
 
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
             Vector2i position = pbe.getPosForModule(localSpace);
+            PlacementContext placementContext = new PlacementContext(player, inHandItem, false);
             //TODO: Make a selection thing similar to clutter no more
 
             ResourceLocation itemLoc = BuiltInRegistries.ITEM.getKey(inHandItem.getItem());
@@ -338,24 +351,22 @@ public class PlacementManager {
             }
 
             moth.boxxed.panels.api.module.Module module = selectedType.create(0, 0);
-            module.setRotation(module.canRotate() ? rotation : moth.boxxed.panels.api.module.Module.Rotation.ZERO);
+            module.setRotation(module.canRotate(placementContext) ? rotation : moth.boxxed.panels.api.module.Module.Rotation.ZERO);
 
-            //TODO: make this a proper GUI implementation
-            MutableComponent component = Component.empty();
-
-            String typeString = moduleTypes.size() > 1 ?
-                    String.valueOf(ModulesRegistry.MODULE_REGISTRY.getKey(selectedType)) + " +" + String.valueOf(moduleTypes.size()-1) :
-                    String.valueOf(ModulesRegistry.MODULE_REGISTRY.getKey(selectedType));
-
-            component.append(Component.literal(typeString).withStyle(typeChangeKeyDown ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY, ChatFormatting.BOLD));
-            component.append(" | ");
-            component.append(Component.literal(String.valueOf(module.getRotation().getAngle())).withStyle(ChatFormatting.BOLD));
-            player.displayClientMessage(component, true);
+//            //TODO: make this a proper GUI implementation
+//            MutableComponent component = Component.empty();
+//
+//            String typeString = moduleTypes.size() > 1 ?
+//                    String.valueOf(ModulesRegistry.MODULE_REGISTRY.getKey(selectedType)) + " +" + String.valueOf(moduleTypes.size()-1) :
+//                    String.valueOf(ModulesRegistry.MODULE_REGISTRY.getKey(selectedType));
+//
+//            component.append(Component.literal(typeString).withStyle(typeChangeKeyDown ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY, ChatFormatting.BOLD));
+//            component.append(" | ");
+//            component.append(Component.literal(String.valueOf(module.getRotation().getAngle())).withStyle(ChatFormatting.BOLD));
+//            player.displayClientMessage(component, true);
 
             Vector2d center = module.getShape().rotate(module.getRotation().getAngle()).getBounds().center();
             position.sub(
-//                    (int) (module.getSize().x<=1 ? module.getSize().x : module.getSize().x/2),
-//                    (int) (module.getSize().y<=1 ? module.getSize().y : module.getSize().y/2)
                     (int) center.x,
                     (int) center.y
             );
@@ -373,6 +384,8 @@ public class PlacementManager {
             );
             module.setPos(position);
 
+            selectedModule = module;
+
             poseStack.pushPose();
 
             ClientSubLevelAccess subLevel = SableCompanion.INSTANCE.getContainingClient(pos);
@@ -380,11 +393,8 @@ public class PlacementManager {
             Vec3 translation = sublevelTranslation(Vec3.atLowerCornerOf(pos));
             poseStack.translate(pos.getX()-cameraPos.x()-translation.x, pos.getY()-cameraPos.y()-translation.y, pos.getZ()-cameraPos.z()-translation.z);
 
-            poseStack.pushPose();
             poseStack.rotateAround(Axis.YP.rotationDegrees(blockDirection.toYRot() + (blockDirection.getAxis()== Direction.Axis.Z ? 0 : 180)), 0.5f, 0, 0.5f);
-            poseStack.pushPose();
             pbe.renderTransform(poseStack);
-            poseStack.pushPose();
             pbe.getIndividualModuleTransform().accept(module, poseStack);
 
             double d0 = Util.getMillis()/300f;
@@ -394,13 +404,28 @@ public class PlacementManager {
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
 
             boolean hitsOtherModule = pbe.collidesWithOther(module);
-            float otherColors = hitsOtherModule ? 0 : 1;
+            float otherColors = hitsOtherModule || !module.canPlace(placementContext) ? 0 : 1;
 
-            LevelRenderer.renderShape(poseStack, consumer, ShapeUtil.rotateVoxelShape(Direction.Axis.Y, module.getVoxelShape(), module.getRotation().getAngle()), 0, 0, 0, 1, otherColors, otherColors, pulse);
+            poseStack.pushPose();
 
+            double sizeX = module.getShape().rotate(module.getRotation().getAngle()).getBounds().sizeX();
+            double sizeY = module.getShape().rotate(module.getRotation().getAngle()).getBounds().sizeY();
+
+            float lineBoxXTranslation = (float) switch (module.getRotation()) {
+                case ZERO, NINETY -> 0;
+                case ONE_EIGHTY, TWO_SEVENTY -> sizeX;
+            };
+            float lineBoxYTranslation = (float) switch (module.getRotation()) {
+                case ZERO, TWO_SEVENTY -> 0;
+                case NINETY, ONE_EIGHTY -> sizeY;
+            };
+
+            poseStack.translate(lineBoxXTranslation/16f, 0, lineBoxYTranslation/16f);
+            poseStack.mulPose(Axis.YP.rotationDegrees(module.getRotation().getAngle()));
+
+            LevelRenderer.renderShape(poseStack, consumer, module.getVoxelShape(), 0, 0, 0, 1, otherColors, otherColors, pulse);
             poseStack.popPose();
-            poseStack.popPose();
-            poseStack.popPose();
+
             poseStack.popPose();
         }
     }
@@ -437,10 +462,11 @@ public class PlacementManager {
         localSpace = new Vec3(blockRotation.transform(localSpace.toVector3f()));
 
         if (pbe.canPlaceModuleOnSurface(localSpace, blockHitResult.getDirection())) {
+            PlacementContext placementContext = new PlacementContext(player, inHandItem, false);
             Vector2i position = pbe.getPosForModule(localSpace);
             //TODO: Make a selection thing similar to clutter no more
             moth.boxxed.panels.api.module.Module module = selectedType.create(0, 0);
-            module.setRotation(module.canRotate() ? rotation : moth.boxxed.panels.api.module.Module.Rotation.ZERO);
+            module.setRotation(module.canRotate(placementContext) ? rotation : moth.boxxed.panels.api.module.Module.Rotation.ZERO);
 
             Vector2d center = module.getShape().rotate(module.getRotation().getAngle()).getBounds().center();
             position.sub(
@@ -465,13 +491,37 @@ public class PlacementManager {
 
             boolean hitsOtherModule = pbe.collidesWithOther(module);
 
-            if (!hitsOtherModule) {
+            if (!hitsOtherModule && module.canPlace(placementContext)) {
                 PacketDistributor.sendToServer(new PlaceModulePacket(pos, Module.ModuleInfo.fromModule(module, level.registryAccess())));
                 return true;
             }
         }
 
         return false;
+    }
+
+    public static Module.Rotation getRotation() {
+        return rotation;
+    }
+
+    public static Item getSelectedItem() {
+        return BuiltInRegistries.ITEM.get(selectedItem);
+    }
+
+    public static Module getSelectedModule() {
+        return isMovingModule() ? movingModule : selectedModule;
+    }
+
+    public static ModuleType<?> getSelectedType() {
+        return selectedType;
+    }
+
+    public static boolean shouldRenderOverlay() {
+        return getSelectedModule() != null;
+    }
+
+    public static boolean isChangeKeyDown() {
+        return typeChangeKeyDown;
     }
 
     private static void transformPoseToPlot(ClientSubLevelAccess subLevel, PoseStack stack, Vec3 cameraPos) {

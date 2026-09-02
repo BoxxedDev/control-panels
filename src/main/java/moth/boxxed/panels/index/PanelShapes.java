@@ -59,7 +59,7 @@ public class PanelShapes {
         return new AABB(minX/16, minY/16, minZ/16, maxX/16, maxY/16, maxZ/16);
     }
 
-    private static Pair<Vec3, Vec3> line(double x1, double y1, double z1, double x2, double y2, double z2) {
+    public static Pair<Vec3, Vec3> line(double x1, double y1, double z1, double x2, double y2, double z2) {
         return new Pair<>(
                 new Vec3(x1/16, y1/16, z1/16),
                 new Vec3(x2/16, y2/16, z2/16)

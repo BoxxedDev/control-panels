@@ -9,11 +9,16 @@ import net.minecraft.world.phys.shapes.SliceShape;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import oshi.util.tuples.Pair;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class OutlinedVoxelShape extends SliceShape {
     private final VoxelShape collisionShape;
     private final List<Pair<Vec3, Vec3>> outlineEdges;
+
+    public OutlinedVoxelShape(VoxelShape shape, Pair<Vec3, Vec3>... edges) {
+        this(shape, Arrays.stream(edges).toList());
+    }
 
     public OutlinedVoxelShape(VoxelShape shape, List<Pair<Vec3, Vec3>> outlineEdges) {
         super(shape, Direction.Axis.X, 0);

@@ -9,12 +9,15 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
+import io.netty.buffer.ByteBuf;
 import moth.boxxed.panels.api.module.config.ModuleConfig;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.api.registry.ModulesRegistry;
 import moth.boxxed.panels.compat.computercraft.ModuleComputerHandler;
 import moth.boxxed.panels.compat.computercraft.ModuleMethodBuilder;
+import moth.boxxed.panels.util.EnumStreamCodec;
 import moth.boxxed.panels.util.PolyVoxel;
 import moth.boxxed.panels.util.Rect2d;
 import moth.boxxed.panels.util.ShapeUtil;
@@ -38,6 +41,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -46,6 +50,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.event.level.NoteBlockEvent;
 import org.joml.*;
 import oshi.util.tuples.Pair;
 
@@ -301,13 +306,17 @@ public abstract class Module {
 
     }
 
+    public void onPlace(PlacementContext context) {}
+
+    public boolean canPlace(PlacementContext context) {return true;}
+
     public void onRemove(Player player) {}
 
     public boolean canRemove(Player player) {return true;}
 
     public boolean canMove(Player player) {return true;}
 
-    public boolean canRotate() {
+    public boolean canRotate(PlacementContext context) {
         return true;
     }
 
@@ -387,6 +396,8 @@ public abstract class Module {
         NINETY(90),
         ONE_EIGHTY(180),
         TWO_SEVENTY(270);
+
+        public static final EnumStreamCodec<Rotation> STREAM_CODEC = new EnumStreamCodec<>(Rotation.class);
 
         private final int deg;
 

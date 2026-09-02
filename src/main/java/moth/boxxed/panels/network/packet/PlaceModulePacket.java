@@ -2,6 +2,7 @@ package moth.boxxed.panels.network.packet;
 
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.network.ModulesNetwork;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -39,6 +40,7 @@ public record PlaceModulePacket(BlockPos pos, Module.ModuleInfo moduleInfo) impl
             String generatedName = network.validateName(null, this.moduleInfo);
             if (pbe.tryAddModule(generatedName, module) && !context.player().isCreative()) {
                 inHandStack.shrink(1);
+                module.onPlace(new PlacementContext(context.player(), inHandStack, false));
             }
 
             pbe.networkUpdate(network);

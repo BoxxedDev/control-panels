@@ -38,4 +38,14 @@ public class GuiUtil {
         graphics.blit(sprite, x, y+top, width, height-top-bottom, uOffset, vOffset+top, uWidth, vHeight-top-bottom, textureWidth, textureHeight);
         graphics.blit(sprite, x, y+height-bottom, uOffset, vOffset+vHeight-bottom, width, bottom, textureWidth, textureHeight);
     }
+
+    public static void blitVerticalTriSlice(GuiGraphics graphics, ResourceLocation sprite,
+                                              int x, int y, int width, int height,
+                                              int uWidth, int vHeight, int uOffset, int vOffset,
+                                              int textureWidth, int textureHeight,
+                                              int left, int right) {
+        graphics.blit(sprite, x, y, uOffset, vOffset, left, height, textureWidth, textureHeight);
+        graphics.blit(sprite, x+left, y, width-left-right, height, uOffset+left, vOffset, uWidth-left-right, vHeight, textureWidth, textureHeight);
+        graphics.blit(sprite, x+width-right, y, uOffset+uWidth-right, vOffset, right, height, textureWidth, textureHeight);
+    }
 }

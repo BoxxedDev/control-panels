@@ -1,9 +1,12 @@
 package moth.boxxed.panels.network.packet;
 
+import com.mojang.datafixers.util.Pair;
 import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
+import moth.boxxed.panels.util.EnumStreamCodec;
+import moth.boxxed.panels.util.StreamCodecUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -14,18 +17,19 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 
+import java.io.ObjectInputFilter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public record ConfigureModulePacket(BlockPos pos, Optional<BlockPos> newParentPos, String moduleName, int moduleX, int moduleY, Map<String, CompoundTag> configValues) implements CustomPacketPayload {
+public record ConfigureModulePacket(BlockPos pos, Optional<BlockPos> newParentPos, String moduleName, Pair<Integer, Integer> modulePos, Module.Rotation moduleRotation, Map<String, CompoundTag> configValues) implements CustomPacketPayload {
     public static final Type<ConfigureModulePacket> TYPE = new Type<>(Dashpanels.path("configure_module_packet"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ConfigureModulePacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, ConfigureModulePacket::pos,
             ByteBufCodecs.optional(BlockPos.STREAM_CODEC), ConfigureModulePacket::newParentPos,
             ByteBufCodecs.STRING_UTF8, ConfigureModulePacket::moduleName,
-            ByteBufCodecs.INT, ConfigureModulePacket::moduleX,
-            ByteBufCodecs.INT, ConfigureModulePacket::moduleY,
+            StreamCodecUtil.pair(ByteBufCodecs.INT, ByteBufCodecs.INT), ConfigureModulePacket::modulePos,
+            Module.Rotation.STREAM_CODEC, ConfigureModulePacket::moduleRotation,
             ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.fromCodec(CompoundTag.CODEC)), ConfigureModulePacket::configValues,
             ConfigureModulePacket::new
     );
@@ -52,7 +56,8 @@ public record ConfigureModulePacket(BlockPos pos, Optional<BlockPos> newParentPo
                 module.setParentBE(pbe);
             }
 
-            module.setPos(this.moduleX, this.moduleY);
+            module.setPos(this.modulePos.getFirst(), this.modulePos.getSecond());
+            module.setRotation(this.moduleRotation);
             RegistryAccess registryAccess = level.registryAccess();
             for (ModuleConfigValue<?, ?> value : module.getConfig().getValues()) {
                 CompoundTag valueTag = this.configValues.get(value.getId());

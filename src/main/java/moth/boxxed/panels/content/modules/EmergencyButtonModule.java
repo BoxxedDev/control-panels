@@ -8,6 +8,7 @@ import moth.boxxed.panels.api.module.ModuleHitResult;
 import moth.boxxed.panels.api.module.config.ModuleConfigValue;
 import moth.boxxed.panels.api.module.io.IInput;
 import moth.boxxed.panels.api.module.io.IOutput;
+import moth.boxxed.panels.api.module.placement.PlacementContext;
 import moth.boxxed.panels.api.panel.AbstractPanelBlockEntity;
 import moth.boxxed.panels.compat.computercraft.IModuleLuaObject;
 import moth.boxxed.panels.compat.computercraft.ModuleLuaException;
@@ -91,7 +92,7 @@ public class EmergencyButtonModule extends Module implements IOutput, IInput {
     }
 
     @Override
-    public boolean canRotate() {
+    public boolean canRotate(PlacementContext context) {
         return false;
     }
 

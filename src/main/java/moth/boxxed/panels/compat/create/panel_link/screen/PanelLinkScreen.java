@@ -74,6 +74,10 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
         addAllWidgets();
 
         rebuildEntryWidgets();
+
+        if (this.menu.openingEntry != null) {
+            this.modifyEntry(new ModuleEntryWidget(this.menu.openingEntry));
+        }
     }
 
     @Override

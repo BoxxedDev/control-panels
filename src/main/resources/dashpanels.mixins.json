@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ItemStackMixin",
-    "VoxelShapeAccessor"
+    "VoxelShapeAccessor",
+    "compat.create.ClipboardValueSettingsHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

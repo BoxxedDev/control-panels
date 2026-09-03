@@ -113,17 +113,17 @@ public class PanelLinkBlock extends ModulesNetworkMemberBlock implements IWrench
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack heldItem = player.getItemInHand(hand);
 
-        if (heldItem.isEmpty() && hand == InteractionHand.MAIN_HAND && openMenu(level, pos, player)) {
+        if (heldItem.isEmpty() && hand == InteractionHand.MAIN_HAND && openMenu(level, pos, player, null)) {
             return ItemInteractionResult.SUCCESS;
         }
 
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
-    private boolean openMenu(Level level, BlockPos pos, Player player) {
+    public boolean openMenu(Level level, BlockPos pos, Player player, ModuleLinkEntries.ModuleEntry entryToOpen) {
         if (level.getBlockEntity(pos) instanceof PanelLinkBlockEntity be && player instanceof ServerPlayer serverPlayer) {
             be.getModuleEntries().validate(be.getOrCreate());
-            return serverPlayer.openMenu(be, be::sendToMenu).isPresent();
+            return serverPlayer.openMenu(be, (buf) -> be.sendToMenu(buf, entryToOpen)).isPresent();
         }
         return false;
     }

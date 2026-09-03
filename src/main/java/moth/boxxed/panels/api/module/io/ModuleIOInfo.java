@@ -54,6 +54,11 @@ public record ModuleIOInfo(String name, Either<ModuleIOType, Pair<ModuleIOType, 
     }
 
     public static ModuleIOInfo create(String name, Module module) {
+        if (!(module instanceof IInput || module instanceof IMultiInput ||
+                module instanceof IOutput || module instanceof IMultiOutput)) {
+            return null;
+        }
+
         boolean isBothTypes = (module instanceof IInput ^ module instanceof IMultiInput) && (module instanceof IOutput ^ module instanceof IMultiOutput);
         if (isBothTypes) {
             ModuleIOType left = module instanceof IInput ? ModuleIOType.INPUT : ModuleIOType.MULTI_INPUT;

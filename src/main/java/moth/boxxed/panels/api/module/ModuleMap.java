@@ -42,8 +42,8 @@ public class ModuleMap extends LinkedHashMap<String, Module> implements Iterable
     public List<ModuleIOInfo> filterIOModules() {
         List<ModuleIOInfo> ret = new ArrayList<>();
         for (Map.Entry<String, Module> entry : this) {
-            if ((entry.getValue() instanceof IInput ^ entry.getValue() instanceof IMultiInput) ||
-                    (entry.getValue() instanceof IOutput ^ entry.getValue() instanceof IMultiOutput)) {
+            if (entry.getValue() instanceof IInput || entry.getValue() instanceof IMultiInput ||
+                    entry.getValue() instanceof IOutput || entry.getValue() instanceof IMultiOutput) {
                 ret.add(ModuleIOInfo.create(entry.getKey(), entry.getValue()));
             }
         }

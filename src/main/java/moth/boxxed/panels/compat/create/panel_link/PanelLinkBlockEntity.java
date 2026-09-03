@@ -78,13 +78,18 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         return new PanelLinkMenu(containerId, playerInventory, this);
     }
 
-    public void sendToMenu(RegistryFriendlyByteBuf buf) {
+    public void sendToMenu(RegistryFriendlyByteBuf buf, ModuleLinkEntries.@Nullable ModuleEntry optionalEntry) {
         buf.writeBlockPos(this.getBlockPos());
         CompoundTag tag = new CompoundTag();
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
         this.getOrCreate().compileModules();
         buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules(), (buffer, val) -> ModuleIOInfo.STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, val));
+
+        buf.writeBoolean(optionalEntry != null);
+        if (optionalEntry != null) {
+            ModuleLinkEntries.ModuleEntry.STREAM_CODEC.encode(buf, optionalEntry);
+        }
     }
 
     public ModuleLinkEntries getModuleEntries() {

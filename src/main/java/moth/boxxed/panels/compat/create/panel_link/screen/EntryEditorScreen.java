@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.io.IOEntry;
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.api.module.io.ModuleIOType;
@@ -140,6 +141,8 @@ public class EntryEditorScreen {
         this.active = true;
         menu.ghostInventory.setStackInSlot(0, pseudoEntry.first.getStack());
         menu.ghostInventory.setStackInSlot(1, pseudoEntry.second.getStack());
+
+        Dashpanels.LOGGER.debug("Ghost Inv: {} , {}", menu.ghostInventory.getStackInSlot(0), menu.ghostInventory.getStackInSlot(1));
 
         return pseudoEntry;
     }

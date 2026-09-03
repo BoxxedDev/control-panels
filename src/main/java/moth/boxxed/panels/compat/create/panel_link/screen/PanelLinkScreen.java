@@ -74,10 +74,6 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
         addAllWidgets();
 
         rebuildEntryWidgets();
-
-        if (this.menu.openingEntry != null) {
-            this.modifyEntry(new ModuleEntryWidget(this.menu.openingEntry));
-        }
     }
 
     @Override
@@ -115,11 +111,20 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        if (this.menu.openingEntry != null) {
+            this.modifyEntry(new ModuleEntryWidget(this.menu.openingEntry));
+            this.menu.openingEntry = null;
+        }
+
         PoseStack stack = graphics.pose();
         stack.pushPose();
         stack.translate(0,0,-1);
 
         super.render(graphics, mouseX, mouseY, partialTick);
+
+        if (this.hoveredSlot != null && this.hoveredSlot.isActive() && this.hoveredSlot.hasItem()) {
+            graphics.renderTooltip(this.font, this.hoveredSlot.getItem(), mouseX, mouseY);
+        }
 
         graphics.enableScissor(0, this.topPos + 16, this.width, this.topPos + 127);
         for (ModuleEntryWidget widget : this.entryWidgets) {

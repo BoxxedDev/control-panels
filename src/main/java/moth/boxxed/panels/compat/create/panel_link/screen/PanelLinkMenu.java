@@ -1,6 +1,7 @@
 package moth.boxxed.panels.compat.create.panel_link.screen;
 
 import com.simibubi.create.foundation.gui.menu.GhostItemMenu;
+import moth.boxxed.panels.Dashpanels;
 import moth.boxxed.panels.api.module.io.ModuleIOInfo;
 import moth.boxxed.panels.compat.create.PanelCreateRegistries;
 import moth.boxxed.panels.compat.create.panel_link.ModuleLinkEntries;
@@ -20,13 +21,14 @@ import java.util.List;
 public class PanelLinkMenu extends GhostItemMenu<PanelLinkBlockEntity> {
     public boolean showSlots = false;
     public List<ModuleIOInfo> modulesInfo;
-    public final ModuleLinkEntries.ModuleEntry openingEntry;
+    public ModuleLinkEntries.ModuleEntry openingEntry;
 
     public PanelLinkMenu(int id, Inventory inv, RegistryFriendlyByteBuf extraData) {
         super(PanelCreateRegistries.PANEL_LINK_MENU.get(), id, inv, extraData);
         this.modulesInfo = extraData.readList(buffer -> ModuleIOInfo.STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
         if (extraData.readBoolean()) {
             this.openingEntry = ModuleLinkEntries.ModuleEntry.STREAM_CODEC.decode(extraData);
+            Dashpanels.LOGGER.debug("Frequencies on menu: {} , {}", this.openingEntry.getNetworkKey().getFirst().getStack(), this.openingEntry.getNetworkKey().getSecond().getStack());
         } else {
             this.openingEntry = null;
         }

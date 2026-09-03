@@ -75,33 +75,29 @@ public class IOEntryWidget extends AbstractSimiWidget {
 
     @Override
     public List<Component> getToolTip() {
-        if (this.isHovered()) {
-            List<Component> list = new ArrayList<>();
-            list.add(Component.translatable("widget.dashpanels.panel_link.module_select"));
+        List<Component> list = new ArrayList<>();
+        list.add(Component.translatable("widget.dashpanels.panel_link.module_select"));
 
-            if (this.currentIndex-2 > 0) {
-                list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
-            }
-
-            for (int i = Math.max(0, this.currentIndex-2); i < Math.min(this.available.size(), this.currentIndex+3); i++) {
-                IOEntry entry = this.available.get(i);
-
-                String prefix = i == this.currentIndex ? "-> " : "   ";
-                ChatFormatting formatting = i == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
-
-                Component suffix = entry.type() == ModuleIOType.INPUT ^ entry.type() == ModuleIOType.MULTI_INPUT ?
-                        Component.literal("I").withStyle(ChatFormatting.GREEN) :
-                        Component.literal("O").withStyle(ChatFormatting.RED);
-
-                list.add(Component.literal(prefix + entry + " | ").withStyle(formatting).append(suffix));
-            }
-            if (this.currentIndex+3 < this.available.size()) {
-                list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
-            }
-
-            return list;
+        if (this.currentIndex-2 > 0) {
+            list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
         }
 
-        return super.getToolTip();
+        for (int i = Math.max(0, this.currentIndex-2); i < Math.min(this.available.size(), this.currentIndex+3); i++) {
+            IOEntry entry = this.available.get(i);
+
+            String prefix = i == this.currentIndex ? "-> " : "   ";
+            ChatFormatting formatting = i == this.currentIndex ? ChatFormatting.WHITE : ChatFormatting.GRAY;
+
+            Component suffix = entry.type() == ModuleIOType.INPUT ^ entry.type() == ModuleIOType.MULTI_INPUT ?
+                    Component.literal("I").withStyle(ChatFormatting.GREEN) :
+                    Component.literal("O").withStyle(ChatFormatting.RED);
+
+            list.add(Component.literal(prefix + entry + " | ").withStyle(formatting).append(suffix));
+        }
+        if (this.currentIndex+3 < this.available.size()) {
+            list.add(Component.literal("   ...").withStyle(ChatFormatting.GRAY));
+        }
+
+        return list;
     }
 }

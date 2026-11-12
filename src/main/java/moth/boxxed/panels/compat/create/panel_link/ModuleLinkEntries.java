@@ -25,7 +25,9 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ModuleLinkEntries {
@@ -46,6 +48,10 @@ public class ModuleLinkEntries {
                 Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
             }
             this.modulesToAdd.clear();
+        }
+        for (ModuleEntry entry : new ArrayList<>(this.entryMap.values())) {
+            if(entry.sending != entry.update())
+                Create.REDSTONE_LINK_NETWORK_HANDLER.updateNetworkOf(level, entry);
         }
     }
 
@@ -125,14 +131,11 @@ public class ModuleLinkEntries {
     }
 
     public void validate(ModulesNetwork modulesNetwork) {
-        modulesNetwork.compileModules();
-        this.entryMap.entrySet().removeIf(entry -> {
-            if (!modulesNetwork.hasModule(entry.getKey().name())) {
-                this.set(entry.getKey(), null);
-                return true;
+        for(IOEntry entry : new HashSet<>(this.entryMap.keySet())) {
+            if (!modulesNetwork.hasModule(entry.name())) {
+                this.set(entry, null);
             }
-            return false;
-        });
+        }
     }
 
     public void clearAll() {
@@ -143,9 +146,7 @@ public class ModuleLinkEntries {
     public void addAllToNetworks(Level level) {
         if (!level.isClientSide) {
             for (ModuleEntry entry : new ArrayList<>(this.entryMap.values())) {
-//                if (!Create.REDSTONE_LINK_NETWORK_HANDLER.getNetworkOf(level, entry).contains(entry)) {
-                    Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
-//                }
+                Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
             }
         }
     }
@@ -187,7 +188,7 @@ public class ModuleLinkEntries {
                 second = RedstoneLinkNetworkHandler.Frequency.EMPTY;
 
             this.first = first;
-            this.second= second;
+            this.second = second;
 
             this.pos = pos;
             this.entry = entry;
@@ -207,63 +208,64 @@ public class ModuleLinkEntries {
             return new ModuleEntry(firstFreq, secondFreq, new IOEntry(assumedModuleName, null, extension), null);
         }
 
-        private void setEntryIfNull(Module actualModule) {
-            IOEntry newEntry = IOEntry.newEntryIfTypeNull(this.entry, actualModule);
+        private void setEntryIfNull(Module mod) {
+            IOEntry newEntry = IOEntry.newEntryIfTypeNull(this.entry, mod);
             if (newEntry == null) {
                 this.parentalBE.getModuleEntries().set(this.entry, null);
+                this.parentalBE.getModuleEntries().set(this.entry = newEntry, this);
+                this.parentalBE.setChanged();
             }
         }
 
+        private int sending = -1;
         @Override
         public int getTransmittedStrength() {
-            if (this.parentalBE == null)
-                return 0;
-            Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.entry.name());
-            this.setEntryIfNull(actualModule);
+            return sending == -1 ? update() : sending;
+        }
+        private int update() {
+            if (this.parentalBE == null) return 0;
+            Module mod = this.parentalBE.getOrCreate().getCompiledModules().get(this.entry.name());
+            if(mod == null) return 0;
+            this.setEntryIfNull(mod);
 
-            if (this.entry.type() == ModuleIOType.INPUT && actualModule instanceof IInput input) {
-                return Math.clamp(input.getAnalog(), 0, 15);
-            } else if (this.entry.type() == ModuleIOType.MULTI_INPUT && actualModule instanceof IMultiInput multiInput) {
-                Map<String, IMultiInput.AnalogResult> resultMap = new HashMap<>();
-                multiInput.getValues(resultMap::put);
-                String extension = this.entry.extension().orElse("");
-                if (resultMap.get(extension) != null)
-                    return Math.clamp(resultMap.get(extension).getAnalog(), 0, 15);
+            if (this.entry.type() == ModuleIOType.INPUT && mod instanceof IInput input) {
+                return sending = Math.clamp(input.getAnalog(), 0, 15);
+            } else if (this.entry.type() == ModuleIOType.MULTI_INPUT && mod instanceof IMultiInput input) {
+                IMultiInput.AnalogResult[] result = new IMultiInput.AnalogResult[1];
+                String ext = this.entry.extension().orElse("");
+                input.getValues((k, v) -> {
+                    if (Objects.equals(k, ext)) result[0] = v;
+                });
+                if (result != null) return sending = Math.clamp(result[0].getAnalog(), 0, 15);
             }
             return 0;
         }
 
-        private int prevPower = -1;
-
+        private int prevRecv = -1;
         @Override
         public void setReceivedStrength(int power) {
-            if (power == prevPower)
-                return;
-            if (this.parentalBE == null)
-                return;
-            Module actualModule = this.parentalBE.getOrCreate().getCompiledModules().get(this.entry.name());
-            this.setEntryIfNull(actualModule);
+            if (power == prevRecv || this.parentalBE == null) return;
+            Module mod = this.parentalBE.getOrCreate().getCompiledModules().get(this.entry.name());
+            if(mod == null) return;
+            this.setEntryIfNull(mod);
 
-            if (this.entry.type() == ModuleIOType.OUTPUT && actualModule instanceof IOutput output) {
+            if (this.entry.type() == ModuleIOType.OUTPUT && mod instanceof IOutput output) {
                 output.setAnalog(power);
-                actualModule.parentBlockEntity.networkUpdate(actualModule.parentBlockEntity.getOrCreate());
-            } else if (this.entry.type() == ModuleIOType.MULTI_OUTPUT && actualModule instanceof IMultiOutput multiOutput) {
-                Map<String, IMultiOutput.AnalogRunnable> runnableMap = new HashMap<>();
-                multiOutput.setValues(runnableMap::put);
-                String extension = this.entry.extension().orElse("");
-                if (runnableMap.get(extension) != null)
-                    runnableMap.get(extension).setAnalog(power);
-                actualModule.parentBlockEntity.networkUpdate(actualModule.parentBlockEntity.getOrCreate());
+            } else if (this.entry.type() == ModuleIOType.MULTI_OUTPUT && mod instanceof IMultiOutput output) {
+                IMultiOutput.AnalogRunnable[] runnable = new IMultiOutput.AnalogRunnable[1];
+                String ext = this.entry.extension().orElse("");
+                output.setValues((k, v) -> {
+                    if (Objects.equals(k, ext)) v.setAnalog(power);
+                });
             }
-            this.prevPower = power;
+            mod.parentBlockEntity.blockChanged();
+            this.prevRecv = power;
         }
 
         @Override
         public boolean isListening() {
-            if (this.parentalBE == null)
-                return false;
-            return this.entry.type() == ModuleIOType.OUTPUT ||
-                    this.entry.type() == ModuleIOType.MULTI_OUTPUT;
+            if (this.parentalBE == null) return false;
+            return this.entry.type() == ModuleIOType.OUTPUT || this.entry.type() == ModuleIOType.MULTI_OUTPUT;
         }
 
         @Override

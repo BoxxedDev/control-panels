@@ -152,7 +152,6 @@ public class ClipboardValueSettingsHandlerMixin {
 
             final ModuleLinkEntries.ModuleEntry entry = entryResult.getOrThrow().getFirst();
 
-            panelLink.getOrCreate().compileModules();
             if (panelLink.getOrCreate().getCompiledModules().containsKey(entry.getEntry().name())) {
                 if (event instanceof ICancellableEvent cancellableEvent)
                     cancellableEvent.setCanceled(true);

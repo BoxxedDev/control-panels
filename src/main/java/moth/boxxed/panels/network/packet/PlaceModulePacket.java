@@ -43,8 +43,6 @@ public record PlaceModulePacket(BlockPos pos, Module.ModuleInfo moduleInfo) impl
                 module.onPlace(new PlacementContext(context.player(), inHandStack, false));
             }
 
-            pbe.networkUpdate(network);
-
             pbe.reconstructItems();
 
             pbe.setChanged();

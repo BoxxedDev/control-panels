@@ -25,66 +25,37 @@ public class ModulesNetworkManager {
     }
 
     public static ModulesNetwork getNetwork(ModulesNetworkMember member) {
-        UUID id = member.network;
+        if (member.network == null) return null;
         Map<UUID, ModulesNetwork> map = ALL.computeIfAbsent(member.getLevel(), $ -> new HashMap<>());
-        if (id != null) {
-            if (!map.containsKey(id)) {
-                ModulesNetwork network = new ModulesNetwork();
-                network.id = id;
-                map.put(id, network);
-                network.addMember(member);
-                return network;
-            }
-            return map.get(id);
-        }
-        return null;
+        return map.computeIfAbsent(member.network, uuid -> new ModulesNetwork(member.getLevel(), uuid));
     }
 
-    public static void removeNetwork(Level level, ModulesNetwork network) {
-//        ControlPanels.LOGGER.debug("Removed network {}", network.id);
-        ModulesNetworkManager.ALL.get(level).remove(network.id);
+    public static void removeNetwork(ModulesNetwork network) {
+        ModulesNetworkManager.ALL.get(network.level).remove(network.id);
     }
 
     public static void handleAddingMember(ModulesNetworkMember member) {
-        BlockPos pos = member.getBlockPos();
-        Level level = member.getLevel();
-        if (!level.isLoaded(pos))
-            return;
-
         if (member.hasNetwork()) {
+            getNetwork(member).addMember(member);
             member.setNetwork(member.network);
             return;
         }
 
-        List<ModulesNetwork> surroundingNetworks = new ArrayList<>();
+        Set<ModulesNetwork> neighbors = new HashSet<>();
         for (ModulesNetworkMember neighbor : getNeighbors(member)) {
-            if (!neighbor.init)
-                continue;
             ModulesNetwork network = getNetwork(neighbor);
-            if (network == null)
-                continue;
-            surroundingNetworks.add(network);
+            if (network == null) continue;
+            neighbors.add(network);
         }
 
-        ModulesNetwork network;
-        if (surroundingNetworks.isEmpty()) {
-            network = new ModulesNetwork();
-            network.id = UUID.randomUUID();
-            if (member.hasNetwork())
-                network.id = member.network;
-            member.setNetwork(network.id);
+        if (neighbors.isEmpty()) {
+            member.setNetwork(UUID.randomUUID());
         } else {
-            network = surroundingNetworks.getFirst();
-            if (surroundingNetworks.size() > 1) {
-                surroundingNetworks.removeFirst();
-                network.merge(new HashSet<>(surroundingNetworks));
-                for (ModulesNetwork neighborNetwork : surroundingNetworks)
-                    removeNetwork(level, neighborNetwork);
-            }
-            member.setNetwork(network.id);
+            ModulesNetwork first = neighbors.iterator().next();
+            neighbors.remove(first);
+            first.merge(neighbors);
+            member.setNetwork(first.id);
         }
-        member.getOrCreate().compileModules();
-        member.networkUpdate(member.getOrCreate());
     }
 
     public static Set<ModulesNetworkMember> getNeighbors(ModulesNetworkMember member) {
@@ -112,11 +83,7 @@ public class ModulesNetworkManager {
         return fromBlock.isConnecting(from.getLevel(), from.getBlockPos(), fromState, direction) && toBlock.isConnecting(to.getLevel(), to.getBlockPos(), toState, direction.getOpposite());
     }
 
-    public static boolean hasNetwork(Level level, ModulesNetwork network) {
-        for (ModulesNetwork other : ALL.get(level).values()) {
-            if (network.equals(other))
-                return true;
-        }
-        return false;
+    public static boolean hasNetwork(ModulesNetwork network) {
+        return ALL.get(network.level).values().contains(network);
     }
 }

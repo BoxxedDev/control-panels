@@ -38,7 +38,6 @@ public class NetworkMemberPeripheral implements IPeripheral {
     //TODO: refactor alllll this to remove most references of IModuleLuaObject
     @LuaFunction
     public IDynamicLuaObject getModule(final String moduleName) throws LuaException {
-        this.blockEntity.getOrCreate().compileModules();
         var networkModules = this.blockEntity.getOrCreate().getCompiledModules();
 
 //        var filteredMap = this.blockEntity.getOrCreate().getCompiledModules().asGenericLuaPairMap();
@@ -49,7 +48,6 @@ public class NetworkMemberPeripheral implements IPeripheral {
 
     @LuaFunction
     public Map<String, IDynamicLuaObject> getModules() {
-        this.blockEntity.getOrCreate().compileModules();
         Map<String, IDynamicLuaObject> ret = new HashMap<>();
         for (var entry : this.blockEntity.getOrCreate().getCompiledModules().entrySet())
             ret.put(entry.getKey(), dynamicLuaObject(entry.getValue()));
@@ -58,7 +56,6 @@ public class NetworkMemberPeripheral implements IPeripheral {
 
     @LuaFunction
     public Map<String, IDynamicLuaObject> getModulesOfType(final String typeName) {
-        this.blockEntity.getOrCreate().compileModules();
         Map<String, IDynamicLuaObject> ret = new HashMap<>();
         for (var entry : this.blockEntity.getOrCreate().getCompiledModules().entrySet()) {
                 ResourceLocation location = ModulesRegistry.MODULE_REGISTRY.getKey(entry.getValue().type);
@@ -78,7 +75,6 @@ public class NetworkMemberPeripheral implements IPeripheral {
 
     @LuaFunction
     public IDynamicLuaObject getModuleAt(int x, int y) {
-        this.blockEntity.getOrCreate().compileModules();
         for (var entry : this.blockEntity.getOrCreate().getCompiledModules().entrySet()) {
             if (Objects.equals(entry.getValue().getPos(), new Vector2i(x, y))) {
                 return dynamicLuaObject(entry.getValue());
@@ -89,16 +85,14 @@ public class NetworkMemberPeripheral implements IPeripheral {
 
     @Override
     public void attach(IComputerAccess computer) {
-        this.blockEntity.getOrCreate().compileModules();
-        for (Module module : this.blockEntity.getOrCreate().compiledModules.values()) {
+        for (Module module : this.blockEntity.getOrCreate().getCompiledModules().values()) {
             module.getComputerHandler().attach(computer);
         }
     }
 
     @Override
     public void detach(IComputerAccess computer) {
-        this.blockEntity.getOrCreate().compileModules();
-        for (Module module : this.blockEntity.getOrCreate().compiledModules.values()) {
+        for (Module module : this.blockEntity.getOrCreate().getCompiledModules().values()) {
             module.getComputerHandler().detach(computer);
         }
     }

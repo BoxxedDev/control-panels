@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBlockEntity extends BlockEntity {
-    public boolean chunkUnloaded = false;
-    public boolean init;
+    private boolean chunkUnloaded = false;
+    private boolean init = false;
 
     public BaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -39,7 +39,7 @@ public abstract class BaseBlockEntity extends BlockEntity {
 
     public void init() {}
 
-    public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+    public void tick(Level level, BlockPos pos, BlockState state) {
         if (!init) {
             this.init();
             this.init = true;
@@ -67,10 +67,5 @@ public abstract class BaseBlockEntity extends BlockEntity {
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    public void blockChanged() {
-        if (this.level instanceof ServerLevel serverLevel)
-            serverLevel.getChunkSource().blockChanged(this.getBlockPos());
     }
 }

@@ -4,126 +4,104 @@ import moth.boxxed.panels.api.module.Module;
 import moth.boxxed.panels.api.module.ModuleMap;
 import net.minecraft.world.level.Level;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
 
 public class ModulesNetwork {
-    public UUID id;
-    public Set<ModulesNetworkMember> members;
-    public ModuleMap compiledModules;
+    public final UUID id;
+    public final Level level;
+    private final Set<ModulesNetworkMember> members = Collections.newSetFromMap(new WeakHashMap<>());
+    private ModuleMap compiledModules = null;
 
-    public ModulesNetwork() {
-        this.members = new HashSet<>();
+    public ModulesNetwork(Level level, UUID id){
+        this.id = id;
+        this.level = level;
     }
 
+
+
     public void addMembers(Set<ModulesNetworkMember> members) {
-        if (members == null)
-            return;
         this.members.forEach(this::addMember);
     }
     public void addMember(ModulesNetworkMember member) {
-        if (member.getLevel() == null)
-            return;
-        if (!member.getLevel().isLoaded(member.getBlockPos()))
-            return;
-        if (this.members.contains(member))
-            return;
-        if (member.network == null) {
-            member.setNetwork(this.id);
-        }
-//        ControlPanels.LOGGER.debug("Added member {} to network {}", member, this.id);
-        this.members.add(member);
-        member.networkUpdate(this);
+        if (this.members.add(member)) this.dirty();
     }
 
-    public void removeMembers(Set<ModulesNetworkMember> members) {
-        if (members == null)
-            return;
-        members.forEach(this::removeMember);
+    public void removeMembers(Set<ModulesNetworkMember> members, boolean split) {
+        members.forEach(x -> this.removeMember(x, split));
     }
-    public void removeMember(ModulesNetworkMember member) {
-        this.members.remove(member);
-//        ControlPanels.LOGGER.debug("Removed member {} from network {}", member, this.id);
+    public void removeMember(ModulesNetworkMember member, boolean split) {
+        if(!this.members.remove(member)) return;
+        this.dirty();
+
+        // if this is called, we can assume neighboring blocks are loaded anyway
         if (this.members.isEmpty()) {
-            ModulesNetworkManager.removeNetwork(member.getLevel(), this);
-            return;
+            ModulesNetworkManager.removeNetwork(this);
+        } else if(split) {
+            Set<ModulesNetworkMember> neighbors = ModulesNetworkManager.getNeighbors(member);
+            if (neighbors.size() > 1) this.splitNetwork(member, neighbors);
         }
-        Set<ModulesNetworkMember> neighbors = ModulesNetworkManager.getNeighbors(member);
-        if (neighbors.size() > 1)
-            this.splitNetwork(member, neighbors);
     }
 
     public boolean hasMember(ModulesNetworkMember member) {
         return this.members.contains(member);
     }
 
-    private void splitNetwork(ModulesNetworkMember sourceMember, Set<ModulesNetworkMember> members) {
-        Level level = sourceMember.getLevel();
-        Set<ModulesNetwork> filteredNetworks = new HashSet<>();
-        for (ModulesNetworkMember member : members) {
-            Queue<ModulesNetworkMember> queue = new ArrayDeque<>();
-            ModulesNetwork network = new ModulesNetwork();
-            network.id = UUID.randomUUID();
+    private void splitNetwork(ModulesNetworkMember source, Set<ModulesNetworkMember> members) {
+        Set<ModulesNetworkMember> traversed = new HashSet<>();
+        Map<ModulesNetworkMember,Set<ModulesNetworkMember>> partitions = new HashMap<>();
+        Queue<ModulesNetworkMember> queue = new ArrayDeque<>();
 
+        traversed.add(source);
+        for (ModulesNetworkMember member : members) {
+            Set<ModulesNetworkMember> component = new HashSet<>();
+            partitions.put(member, component);
             queue.add(member);
+
             while (!queue.isEmpty()) {
                 ModulesNetworkMember next = queue.poll();
-                network.addMember(next);
-                for (ModulesNetworkMember nextMember : ModulesNetworkManager.getNeighbors(next)) {
-                    if (network.hasMember(nextMember))
-                        continue;
-                    if (nextMember == sourceMember)
-                        continue;
-                    queue.add(nextMember);
-                }
+                if (next == null || !traversed.add(next)) continue;
+                component.add(next);
+                ModulesNetworkManager.getNeighbors(next).forEach(queue::add);
             }
-
-            if (ModulesNetworkManager.hasNetwork(level, network))
-                continue;
-            filteredNetworks.add(network);
         }
 
-        Map<UUID, ModulesNetwork> map = ModulesNetworkManager.ALL.computeIfAbsent(level, $ -> new HashMap<>());
-        map.remove(this.id);
-        for (ModulesNetwork network : filteredNetworks) {
-            network.syncMemberIds();
-            map.put(network.id, network);
-        }
-//        ControlPanels.LOGGER.debug("Split network {}", this.id);
-    }
-
-    public void syncMemberIds() {
-        for (ModulesNetworkMember member : this.members) {
-            member.network = this.id;
-            member.networkUpdate(this);
+        boolean first = true;
+        for (Set<ModulesNetworkMember> component : partitions.values()) {
+            if(component.isEmpty()) continue;
+            if (first) first = false;
+            else {
+                UUID uuid = UUID.randomUUID();
+                component.forEach(x -> x.setNetwork(uuid));
+            }
         }
     }
 
     public void merge(Set<ModulesNetwork> networks) {
-        if (networks == null)
-            return;
-//        ControlPanels.LOGGER.debug("Merging networks {} onto {}", networks, this.id);
-        networks.forEach(network -> {
-            if (network == null)
-                return;
-            new HashSet<>(network.members).forEach(member -> member.setNetwork(this.id));
-        });
-    }
-
-    private ModuleMap getCollectiveModules() {
-        ModuleMap collective = new ModuleMap();
-        for (ModulesNetworkMember member : this.members) {
-            if (member.getModules() == null)
-                continue;
-            collective.putAll(new HashMap<>(member.getModules()));
+        for (ModulesNetwork network : networks) {
+            new HashSet<>(network.members).forEach(x -> x.setNetwork(this.id));
         }
-        return collective;
     }
 
-    public void compileModules() {
-        this.compiledModules = this.getCollectiveModules();
+    public void dirty() {
+        this.compiledModules = null;
     }
-
     public ModuleMap getCompiledModules() {
+        if(this.compiledModules == null) {
+            ModuleMap collective = new ModuleMap();
+            for (ModulesNetworkMember member : this.members) {
+                if (member.getModules() == null) continue;
+                collective.putAll(new HashMap<>(member.getModules()));
+            }
+            this.compiledModules = collective;
+        }
         return this.compiledModules;
     }
 
@@ -132,8 +110,8 @@ public class ModulesNetwork {
     }
 
     public String validateName(String name, Module.ModuleInfo module) {
-        ModuleMap collective = getCollectiveModules();
-        if (collective.containsKey(name) || name==null) {
+        ModuleMap collective = getCompiledModules();
+        if (collective.containsKey(name) || name == null) {
             String location = module.type().getPath();
             String ret = location+"_0";
             int i=0;
@@ -144,12 +122,5 @@ public class ModulesNetwork {
             return ret;
         }
         return name;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ModulesNetwork otherNetwork)
-            return this.members.containsAll(otherNetwork.members);
-        return false;
     }
 }

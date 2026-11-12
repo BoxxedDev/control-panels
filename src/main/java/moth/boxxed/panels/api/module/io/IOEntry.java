@@ -67,7 +67,7 @@ public record IOEntry(String name, ModuleIOType type, Optional<String> extension
         } else {
             return old;
         }
-        return null;
+        return old;
     }
 
     @Override

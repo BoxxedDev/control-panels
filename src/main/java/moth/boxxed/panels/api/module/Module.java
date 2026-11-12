@@ -168,7 +168,6 @@ public abstract class Module {
                         return true;
                     if (this.parentBlockEntity.getOrCreate() == null)
                         return true;
-                    this.parentBlockEntity.getOrCreate().compileModules();
                     return !this.parentBlockEntity.getOrCreate().hasModule(s);
                 }
         );

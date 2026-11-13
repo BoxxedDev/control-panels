@@ -19,8 +19,7 @@ import java.util.List;
 public class IOEntryWidget extends AbstractSimiWidget {
     private List<IOEntry> available;
     private int currentIndex = 0;
-    private int priorIndex = 0;
-
+    private double fractionalIndex = 0;
     public IOEntryWidget(int x, int y, int width, int height, Collection<IOEntry> available, Component message) {
         super(x, y, width, height, message);
         this.setAvailable(available);
@@ -32,17 +31,11 @@ public class IOEntryWidget extends AbstractSimiWidget {
     }
 
     public void setCurrentEntry(IOEntry entry) {
-        if (this.available.contains(entry)) {
-            this.currentIndex = this.available.indexOf(entry);
-            return;
-        }
-        this.currentIndex = -1;
+        this.currentIndex = this.available.contains(entry) ? this.available.indexOf(entry) : 0;
+        this.fractionalIndex = (double)this.currentIndex;
     }
 
     public IOEntry getCurrent() {
-        if (this.currentIndex == -1) {
-            return null;
-        }
         if (this.available.isEmpty())
             return null;
         return this.available.get(this.currentIndex);
@@ -50,8 +43,9 @@ public class IOEntryWidget extends AbstractSimiWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        priorIndex = currentIndex;
-        this.currentIndex = Math.max(0, Math.min((int) (this.currentIndex-scrollY), this.available.size()-1));
+        int priorIndex = currentIndex;
+        this.fractionalIndex = Math.clamp(this.fractionalIndex - scrollY, 0, (double)this.available.size() - 1);
+        this.currentIndex = (int)this.fractionalIndex;
 
         if (priorIndex != currentIndex)
             Minecraft.getInstance()

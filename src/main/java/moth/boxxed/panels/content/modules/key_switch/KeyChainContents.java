@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public record KeyChainContents(List<ItemStack> items) implements TooltipComponent, ClientTooltipComponent {
+public record KeyChainContents(List<ItemStack> items) implements TooltipComponent {
     public static final KeyChainContents EMPTY = new KeyChainContents(List.of());
     public static final Codec<KeyChainContents> CODEC = ItemStack.CODEC.listOf().xmap(KeyChainContents::new, KeyChainContents::items);
     public static final StreamCodec<RegistryFriendlyByteBuf, KeyChainContents> STREAM_CODEC = ItemStack.STREAM_CODEC
@@ -31,44 +31,6 @@ public record KeyChainContents(List<ItemStack> items) implements TooltipComponen
 
     public KeyChainContents(List<ItemStack> items) {
         this.items = List.copyOf(items.stream().limit(50).toList());
-    }
-
-    @Override
-    public int getHeight() {
-        return this.items.size() * 14;
-    }
-
-    @Override
-    public int getWidth(Font font) {
-        int width = 0;
-        for (ItemStack key : this.items) {
-            if (key.get(PanelDataComponents.BOUND_MODULE) == null)
-                continue;
-
-            MutableComponent component = this.compileComponentFor(key);
-            if (font.width(component) + 14 > width) {
-                width = font.width(component) + 14;
-            }
-        }
-
-        return width;
-    }
-
-    @Override
-    public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
-
-        for (int i = 0; i < this.items.size(); i++) {
-            ItemStack key = this.items.get(i);
-            if (key.get(PanelDataComponents.BOUND_MODULE) == null)
-                continue;
-
-            guiGraphics.pose().pushPose();
-            MathUtil.scaleAround(guiGraphics.pose(), 0.75f, 0.75f, 0.75f, x, y + i * 14, 0);
-            guiGraphics.renderItem(key, x, y + i * 14);
-            guiGraphics.pose().popPose();
-
-            guiGraphics.drawString(font, this.compileComponentFor(key), x + 14, y + 2 + i * 14, 0xFFFFFF);
-        }
     }
 
     private MutableComponent compileComponentFor(ItemStack key) {
@@ -139,6 +101,46 @@ public record KeyChainContents(List<ItemStack> items) implements TooltipComponen
 
         public KeyChainContents immutable() {
             return new KeyChainContents(List.copyOf(this.items));
+        }
+    }
+
+    public class Client implements ClientTooltipComponent{
+        @Override
+        public int getHeight() {
+            return KeyChainContents.this.items.size() * 14;
+        }
+
+        @Override
+        public int getWidth(Font font) {
+            int width = 0;
+            for (ItemStack key : KeyChainContents.this.items) {
+                if (key.get(PanelDataComponents.BOUND_MODULE) == null)
+                    continue;
+
+                MutableComponent component = KeyChainContents.this.compileComponentFor(key);
+                if (font.width(component) + 14 > width) {
+                    width = font.width(component) + 14;
+                }
+            }
+
+            return width;
+        }
+
+        @Override
+        public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
+
+            for (int i = 0; i < KeyChainContents.this.items.size(); i++) {
+                ItemStack key = KeyChainContents.this.items.get(i);
+                if (key.get(PanelDataComponents.BOUND_MODULE) == null)
+                    continue;
+
+                guiGraphics.pose().pushPose();
+                MathUtil.scaleAround(guiGraphics.pose(), 0.75f, 0.75f, 0.75f, x, y + i * 14, 0);
+                guiGraphics.renderItem(key, x, y + i * 14);
+                guiGraphics.pose().popPose();
+
+                guiGraphics.drawString(font, KeyChainContents.this.compileComponentFor(key), x + 14, y + 2 + i * 14, 0xFFFFFF);
+            }
         }
     }
 }

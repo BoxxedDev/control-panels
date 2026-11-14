@@ -14,6 +14,10 @@ public class PolyVoxel {
     public PolyVoxel(double x1, double y1, double x2, double y2) {
         this(new FlatAABB(x1, y1, x2, y2));
     }
+    // retained for addon compat
+    public PolyVoxel(int x1, int y1, int x2, int y2) {
+        this(new FlatAABB(x1, y1, x2, y2));
+    }
 
     public PolyVoxel(FlatAABB initialBox) {
         if (initialBox != null) {

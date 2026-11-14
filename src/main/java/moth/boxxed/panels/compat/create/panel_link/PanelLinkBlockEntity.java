@@ -62,19 +62,23 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         super.tick(level, blockPos, blockState);
-        this.entries.updateNetworks(level);
+        if(!level.isClientSide) this.entries.updateNetworks(level);
+    }
+
+    @Override
+    public void init() {
+        super.init();
         this.entries.addAllToNetworks(level);
     }
 
     @Override
-    public void remove() {
-        super.remove();
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
         this.entries.clearFromNetworks(getLevel());
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        this.networkUpdate(this.getOrCreate());
         return new PanelLinkMenu(containerId, playerInventory, this);
     }
 
@@ -83,7 +87,6 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         CompoundTag tag = new CompoundTag();
         this.saveAdditional(tag, buf.registryAccess());
         buf.writeNbt(tag);
-        this.getOrCreate().compileModules();
         buf.writeCollection(this.getOrCreate().getCompiledModules().filterIOModules(), (buffer, val) -> ModuleIOInfo.STREAM_CODEC.encode((RegistryFriendlyByteBuf) buffer, val));
 
         buf.writeBoolean(optionalEntry != null);

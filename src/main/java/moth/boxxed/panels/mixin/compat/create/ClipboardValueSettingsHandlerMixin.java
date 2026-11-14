@@ -40,6 +40,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -56,6 +58,7 @@ import java.util.List;
 @Mixin(ClipboardValueSettingsHandler.class)
 //Green moose purple goose (in reference to the mixin name)
 public class ClipboardValueSettingsHandlerMixin {
+    @OnlyIn(Dist.CLIENT)
     @Inject(method = "drawCustomBlockSelection",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"),
             cancellable = true)
@@ -88,6 +91,7 @@ public class ClipboardValueSettingsHandlerMixin {
         ci.cancel();
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Inject(method = "clientTick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"),
             cancellable = true)
@@ -152,7 +156,6 @@ public class ClipboardValueSettingsHandlerMixin {
 
             final ModuleLinkEntries.ModuleEntry entry = entryResult.getOrThrow().getFirst();
 
-            panelLink.getOrCreate().compileModules();
             if (panelLink.getOrCreate().getCompiledModules().containsKey(entry.getEntry().name())) {
                 if (event instanceof ICancellableEvent cancellableEvent)
                     cancellableEvent.setCanceled(true);

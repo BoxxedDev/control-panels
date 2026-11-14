@@ -194,6 +194,6 @@ public class ControlPanelsClientEvents {
 
     @SubscribeEvent
     public static void registerClientTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
-        event.register(KeyChainContents.class, Function.identity());
+        event.register(KeyChainContents.class, (KeyChainContents x) -> x.new Client());
     }
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.UUID;
 
 public abstract class ModulesNetworkMember extends BaseBlockEntity {
-    public UUID network;
+    public UUID network = null;
 
     public ModulesNetworkMember(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -40,42 +40,28 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
         return this.network != null;
     }
 
-    public void networkUpdate(ModulesNetwork modulesNetwork) {
-        //I might be an idiot
-        setChanged();
-        blockChanged();
-        modulesNetwork.compileModules();
-    }
-
     public ModuleMap getModules() {
         return ModuleMap.empty();
     }
 
     @Override
     public void init() {
-        ModulesNetworkManager.handleAddingMember(this);
-    }
-
-    @Override
-    public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        super.tick(level, blockPos, blockState);
-        if (getOrCreate()==null) return;
-        if (!getOrCreate().hasMember(this))
-            getOrCreate().addMember(this);
+        if(!this.getLevel().isClientSide)
+            ModulesNetworkManager.handleAddingMember(this);
     }
 
     @Override
     public void remove() {
-        if ((!getLevel().isClientSide) && hasNetwork())
-            this.getOrCreate().removeMember(this);
+        if (!this.getLevel().isClientSide && hasNetwork())
+            this.getOrCreate().removeMember(this, true);
     }
 
     public void setNetwork(UUID uuid) {
         if (uuid.equals(this.network)) return;
-        if (this.network != null) getOrCreate().removeMember(this);
+        if (this.network != null) getOrCreate().removeMember(this, false);
 
         this.network = uuid;
         getOrCreate().addMember(this);
-        networkUpdate(getOrCreate());
+        setChanged();
     }
 }

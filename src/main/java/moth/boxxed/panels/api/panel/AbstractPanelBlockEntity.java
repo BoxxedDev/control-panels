@@ -81,11 +81,16 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         module.setName(string);
         module.setParentBE(this);
         this.modules.put(string, module);
+
+        this.getOrCreate().dirty();
+        blockChanged();
     }
 
     public Module removeModule(String module) {
         Module removedModule = this.modules.remove(module);
         this.reconstructItems();
+        this.getOrCreate().dirty();
+        blockChanged();
         return removedModule;
     }
 
@@ -106,6 +111,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public void clearModules() {
         this.modules.clear();
+        this.getOrCreate().dirty();
     }
 
     public Module getModule(String moduleName) {
@@ -224,6 +230,11 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         }
         if (level.isClientSide)
             PanelModulesHitHandler.tick(this);
+    }
+
+    public void blockChanged(){
+        if(this.level == null) return;
+        this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 19);
     }
 
     public InteractionResult onUse(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {

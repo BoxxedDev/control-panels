@@ -29,7 +29,7 @@ public record IOEntry(String name, ModuleIOType type, Optional<String> extension
 
     public static final Codec<IOEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(IOEntry::name),
-            ModuleIOType.CODEC.fieldOf("type").forGetter(IOEntry::type),
+            ModuleIOType.CODEC.optionalFieldOf("type", null).forGetter(IOEntry::type),
             Codec.STRING.optionalFieldOf("extension").forGetter(IOEntry::extension)
     ).apply(instance, IOEntry::new));
 
@@ -67,7 +67,7 @@ public record IOEntry(String name, ModuleIOType type, Optional<String> extension
         } else {
             return old;
         }
-        return null;
+        return old;
     }
 
     @Override

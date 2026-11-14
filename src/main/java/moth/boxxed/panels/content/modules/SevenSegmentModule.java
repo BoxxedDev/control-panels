@@ -182,7 +182,7 @@ public class SevenSegmentModule extends Module implements IOutput {
                 throw new ModuleLuaException("Arg amount cannot be less than or greater than 1");
             if (args.get(0) instanceof String string) {
                 this.color = DyeColor.byName(string, DyeColor.WHITE);
-                this.parentBlockEntity.networkUpdate(this.parentBlockEntity.getOrCreate());
+                this.parentBlockEntity.blockChanged();
                 return;
             }
             throw new ModuleLuaException("First arg has to be a string");

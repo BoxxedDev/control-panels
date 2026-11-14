@@ -44,7 +44,7 @@ public record PanelLinkSaveEntriesPacket(Map<IOEntry, ModuleLinkEntries.ModuleEn
                 entry.setBe(panelLinkBlockEntity);
             }
             panelLinkBlockEntity.getModuleEntries().addAll(this.entries);
-            panelLinkBlockEntity.networkUpdate(panelLinkBlockEntity.getOrCreate());
+            panelLinkBlockEntity.setChanged();
         }
     }
 }

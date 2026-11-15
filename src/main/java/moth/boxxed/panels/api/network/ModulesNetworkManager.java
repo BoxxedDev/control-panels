@@ -24,10 +24,10 @@ public class ModulesNetworkManager {
         ALL.remove(event.getLevel());
     }
 
-    public static ModulesNetwork getNetwork(ModulesNetworkMember member) {
-        if (member.network == null) return null;
-        Map<UUID, ModulesNetwork> map = ALL.computeIfAbsent(member.getLevel(), $ -> new HashMap<>());
-        return map.computeIfAbsent(member.network, uuid -> new ModulesNetwork(member.getLevel(), uuid));
+    public static ModulesNetwork getNetwork(Level level, UUID network) {
+        if (network == null) return null;
+        Map<UUID, ModulesNetwork> map = ALL.computeIfAbsent(level, $ -> new HashMap<>());
+        return map.computeIfAbsent(network, uuid -> new ModulesNetwork(level, uuid));
     }
 
     public static void removeNetwork(ModulesNetwork network) {
@@ -36,16 +36,15 @@ public class ModulesNetworkManager {
 
     public static void handleAddingMember(ModulesNetworkMember member) {
         if (member.hasNetwork()) {
-            getNetwork(member).addMember(member);
+            member.getOrCreate().addMember(member);
             member.setNetwork(member.network);
             return;
         }
 
         Set<ModulesNetwork> neighbors = new HashSet<>();
         for (ModulesNetworkMember neighbor : getNeighbors(member)) {
-            ModulesNetwork network = getNetwork(neighbor);
-            if (network == null) continue;
-            neighbors.add(network);
+            ModulesNetwork network = neighbor.getOrCreate();
+            if (network != null) neighbors.add(network);
         }
 
         if (neighbors.isEmpty()) {

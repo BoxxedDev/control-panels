@@ -34,10 +34,6 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
         } else if (tag.contains("module_entries")) {
             this.entries = ModuleLinkEntries.fromOldTag(tag.getList("module_entries", 10), registries, this);
         }
-        for (ModuleLinkEntries.ModuleEntry entry : this.entries.getMap().values()) {
-            entry.setPos(this.getBlockPos());
-            entry.setBe(this);
-        }
     }
 
     @Override
@@ -66,14 +62,14 @@ public class PanelLinkBlockEntity extends ModulesNetworkMember implements MenuPr
     }
 
     @Override
-    public void init() {
-        super.init();
+    public void onLoad() {
+        super.onLoad();
         this.entries.addAllToNetworks(level);
     }
 
     @Override
-    public void onChunkUnloaded() {
-        super.onChunkUnloaded();
+    public void setRemoved() {
+        super.setRemoved();
         this.entries.clearFromNetworks(getLevel());
     }
 

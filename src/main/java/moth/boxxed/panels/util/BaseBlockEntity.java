@@ -15,8 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBlockEntity extends BlockEntity {
-    private boolean chunkUnloaded = false;
-    private boolean init = false;
+    protected boolean chunkUnloaded = false;
 
     public BaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -36,15 +35,7 @@ public abstract class BaseBlockEntity extends BlockEntity {
     }
 
     public void remove() {}
-
-    public void init() {}
-
-    public void tick(Level level, BlockPos pos, BlockState state) {
-        if (!init) {
-            this.init();
-            this.init = true;
-        }
-    }
+    public void tick(Level level, BlockPos pos, BlockState state) {}
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {

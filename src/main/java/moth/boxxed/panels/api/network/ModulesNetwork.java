@@ -34,8 +34,8 @@ public class ModulesNetwork {
         if (this.members.add(member)) this.dirty();
     }
 
-    public void removeMembers(Set<ModulesNetworkMember> members, boolean split) {
-        members.forEach(x -> this.removeMember(x, split));
+    public void removeMembers(Set<ModulesNetworkMember> members) {
+        members.forEach(x -> this.removeMember(x, true));
     }
     public void removeMember(ModulesNetworkMember member, boolean split) {
         if(!this.members.remove(member)) return;
@@ -98,7 +98,7 @@ public class ModulesNetwork {
             ModuleMap collective = new ModuleMap();
             for (ModulesNetworkMember member : this.members) {
                 if (member.getModules() == null) continue;
-                collective.putAll(new HashMap<>(member.getModules()));
+                collective.putAll(member.getModules());
             }
             this.compiledModules = collective;
         }
@@ -106,7 +106,7 @@ public class ModulesNetwork {
     }
 
     public boolean hasModule(String module) {
-        return this.compiledModules.containsKey(module);
+        return this.getCompiledModules().containsKey(module);
     }
 
     public String validateName(String name, Module.ModuleInfo module) {

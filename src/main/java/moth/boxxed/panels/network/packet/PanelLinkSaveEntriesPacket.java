@@ -38,7 +38,7 @@ public record PanelLinkSaveEntriesPacket(Map<IOEntry, ModuleLinkEntries.ModuleEn
 
         BlockEntity be = level.getBlockEntity(this.pos);
         if (be instanceof PanelLinkBlockEntity panelLinkBlockEntity) {
-            panelLinkBlockEntity.getModuleEntries().clearAll();
+            panelLinkBlockEntity.getModuleEntries().clear();
             for (ModuleLinkEntries.ModuleEntry entry : this.entries.values()) {
                 entry.setPos(this.pos);
                 entry.setBe(panelLinkBlockEntity);

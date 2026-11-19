@@ -20,18 +20,25 @@ import java.util.Objects;
 import java.util.Optional;
 
 public record IOEntry(String name, ModuleIOType type, Optional<String> extension) {
+    public static final Codec<IOEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("name").forGetter(IOEntry::name),
+            ModuleIOType.CODEC.optionalFieldOf("type").forGetter(IOEntry::typeOptional),
+            Codec.STRING.optionalFieldOf("extension").forGetter(IOEntry::extension)
+    ).apply(instance, IOEntry::new));
+
     public static final StreamCodec<RegistryFriendlyByteBuf, IOEntry> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, IOEntry::name,
-            ModuleIOType.STREAM_CODEC, IOEntry::type,
+            ByteBufCodecs.optional(ModuleIOType.STREAM_CODEC), IOEntry::typeOptional,
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), IOEntry::extension,
             IOEntry::new
     );
 
-    public static final Codec<IOEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").forGetter(IOEntry::name),
-            ModuleIOType.CODEC.optionalFieldOf("type", null).forGetter(IOEntry::type),
-            Codec.STRING.optionalFieldOf("extension").forGetter(IOEntry::extension)
-    ).apply(instance, IOEntry::new));
+    private IOEntry(String name, Optional<ModuleIOType> type, Optional<String> extension) {
+        this(name, type.orElse(null), extension);
+    }
+    private Optional<ModuleIOType> typeOptional() {
+        return Optional.ofNullable(type);
+    }
 
     public static IOEntry newEntryIfTypeNull(IOEntry old, Module module) {
         if (old == null)
@@ -64,8 +71,6 @@ public record IOEntry(String name, ModuleIOType type, Optional<String> extension
             if (ioType != null) {
                 return new IOEntry(old.name(), ioType, old.extension());
             }
-        } else {
-            return old;
         }
         return old;
     }

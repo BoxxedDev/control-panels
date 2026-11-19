@@ -33,7 +33,7 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
     }
 
     public ModulesNetwork getOrCreate() {
-        return ModulesNetworkManager.getNetwork(this);
+        return ModulesNetworkManager.getNetwork(this.level, this.network);
     }
 
     public boolean hasNetwork() {
@@ -45,15 +45,17 @@ public abstract class ModulesNetworkMember extends BaseBlockEntity {
     }
 
     @Override
-    public void init() {
+    public void onLoad() {
+        super.onLoad();
         if(!this.getLevel().isClientSide)
             ModulesNetworkManager.handleAddingMember(this);
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
+        super.setRemoved();
         if (!this.getLevel().isClientSide && hasNetwork())
-            this.getOrCreate().removeMember(this, true);
+            this.getOrCreate().removeMember(this, !this.chunkUnloaded);
     }
 
     public void setNetwork(UUID uuid) {

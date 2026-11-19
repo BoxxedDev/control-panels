@@ -50,8 +50,19 @@ public class ModuleLinkEntries {
             this.modulesToAdd.clear();
         }
         for (ModuleEntry entry : new ArrayList<>(this.entryMap.values())) {
-            if(entry.sending != entry.update())
+            int send = entry.getDesiredStrength();
+            if (entry.prevSend != send) {
+                entry.prevSend = send;
                 Create.REDSTONE_LINK_NETWORK_HANDLER.updateNetworkOf(level, entry);
+            }
+        }
+    }
+
+    public void addAllToNetworks(Level level) {
+        if (!level.isClientSide) {
+            for (ModuleEntry entry : this.entryMap.values()) {
+                Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
+            }
         }
     }
 
@@ -63,20 +74,6 @@ public class ModuleLinkEntries {
         }
     }
 
-    public void add(ModuleEntry entry) {
-        this.entryMap.put(entry.getEntry(), entry);
-        this.modulesToAdd.put(entry.getEntry(), entry);
-    }
-
-    public void addAll(Map<IOEntry, ModuleEntry> entries) {
-        this.entryMap.putAll(entries);
-        this.modulesToAdd.putAll(entries);
-    }
-
-    public Map<IOEntry, ModuleEntry> getMap() {
-        return this.entryMap;
-    }
-
     public static ModuleLinkEntries fromOldTag(ListTag listTag, HolderLookup.Provider registryAccess, PanelLinkBlockEntity be) {
         ModuleLinkEntries entries = new ModuleLinkEntries();
         for (Tag tag : listTag) {
@@ -86,7 +83,7 @@ public class ModuleLinkEntries {
                 ModuleEntry entry = result.getOrThrow().getFirst();
                 entry.setPos(be.getBlockPos());
                 entry.setBe(be);
-                entries.set(entry.getEntry(), entry);
+                entries.add(entry);
             }
         }
         return entries;
@@ -101,7 +98,7 @@ public class ModuleLinkEntries {
                 ModuleEntry entry = result.getOrThrow().getFirst();
                 entry.setPos(be.getBlockPos());
                 entry.setBe(be);
-                entries.set(entry.getEntry(), entry);
+                entries.add(entry);
             }
         }
         return entries;
@@ -119,34 +116,34 @@ public class ModuleLinkEntries {
         return tag;
     }
 
-    public void set(IOEntry ioEntry, ModuleEntry entry) {
-        if (entry == null) {
-            ModuleEntry nonNullEntry = this.entryMap.remove(ioEntry);
-            this.modulesToRemove.put(ioEntry, nonNullEntry);
-            return;
-        }
+    public void add(ModuleEntry entry) {
+        this.remove(entry.getEntry());
+        this.entryMap.put(entry.getEntry(), entry);
+        this.modulesToAdd.put(entry.getEntry(), entry);
+    }
 
-        this.entryMap.put(ioEntry, entry);
-        this.modulesToAdd.put(ioEntry, entry);
+    public void addAll(Map<IOEntry, ModuleEntry> entries) {
+        for(ModuleEntry entry : entries.values()) this.add(entry);
+    }
+
+    public void remove(IOEntry entry){
+        ModuleEntry mod = this.entryMap.remove(entry);
+        if(mod != null) this.modulesToRemove.put(entry, mod);
+    }
+
+    public void clear() {
+        this.modulesToRemove.putAll(this.entryMap);
+        this.entryMap.clear();
+    }
+
+    public Map<IOEntry, ModuleEntry> getMap() {
+        return this.entryMap;
     }
 
     public void validate(ModulesNetwork modulesNetwork) {
         for(IOEntry entry : new HashSet<>(this.entryMap.keySet())) {
             if (!modulesNetwork.hasModule(entry.name())) {
-                this.set(entry, null);
-            }
-        }
-    }
-
-    public void clearAll() {
-        this.modulesToRemove.putAll(this.entryMap);
-        this.entryMap.clear();
-    }
-
-    public void addAllToNetworks(Level level) {
-        if (!level.isClientSide) {
-            for (ModuleEntry entry : new ArrayList<>(this.entryMap.values())) {
-                Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(level, entry);
+                this.remove(entry);
             }
         }
     }
@@ -210,33 +207,34 @@ public class ModuleLinkEntries {
 
         private void setEntryIfNull(Module mod) {
             IOEntry newEntry = IOEntry.newEntryIfTypeNull(this.entry, mod);
-            if (newEntry == null) {
-                this.parentalBE.getModuleEntries().set(this.entry, null);
-                this.parentalBE.getModuleEntries().set(this.entry = newEntry, this);
+            if (newEntry != null) {
+                this.parentalBE.getModuleEntries().remove(this.entry);
+                this.entry = newEntry;
+                this.parentalBE.getModuleEntries().add(this);
                 this.parentalBE.setChanged();
             }
         }
 
-        private int sending = -1;
+        private int prevSend = 0;
         @Override
         public int getTransmittedStrength() {
-            return sending == -1 ? update() : sending;
+            return prevSend;
         }
-        private int update() {
+        private int getDesiredStrength() {
             if (this.parentalBE == null) return 0;
             Module mod = this.parentalBE.getOrCreate().getCompiledModules().get(this.entry.name());
             if(mod == null) return 0;
             this.setEntryIfNull(mod);
 
             if (this.entry.type() == ModuleIOType.INPUT && mod instanceof IInput input) {
-                return sending = Math.clamp(input.getAnalog(), 0, 15);
+                return Math.clamp(input.getAnalog(), 0, 15);
             } else if (this.entry.type() == ModuleIOType.MULTI_INPUT && mod instanceof IMultiInput input) {
                 IMultiInput.AnalogResult[] result = new IMultiInput.AnalogResult[1];
                 String ext = this.entry.extension().orElse("");
                 input.getValues((k, v) -> {
                     if (Objects.equals(k, ext)) result[0] = v;
                 });
-                if (result != null) return sending = Math.clamp(result[0].getAnalog(), 0, 15);
+                if (result != null) return Math.clamp(result[0].getAnalog(), 0, 15);
             }
             return 0;
         }

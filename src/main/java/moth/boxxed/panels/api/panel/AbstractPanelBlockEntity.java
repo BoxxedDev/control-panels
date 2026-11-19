@@ -82,14 +82,14 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
         module.setParentBE(this);
         this.modules.put(string, module);
 
-        this.getOrCreate().dirty();
+        if(this.hasNetwork()) this.getOrCreate().dirty();
         blockChanged();
     }
 
     public Module removeModule(String module) {
         Module removedModule = this.modules.remove(module);
         this.reconstructItems();
-        this.getOrCreate().dirty();
+        if(this.hasNetwork()) this.getOrCreate().dirty();
         blockChanged();
         return removedModule;
     }
@@ -111,7 +111,7 @@ public abstract class AbstractPanelBlockEntity extends ModulesNetworkMember impl
 
     public void clearModules() {
         this.modules.clear();
-        this.getOrCreate().dirty();
+        if(this.hasNetwork()) this.getOrCreate().dirty();
     }
 
     public Module getModule(String moduleName) {

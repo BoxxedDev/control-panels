@@ -61,17 +61,6 @@ public class CableStripperItem extends Item {
             BlockState strippedState = PanelBlocks.STRIPPED_CABLE.get().defaultBlockState()
                     .setValue(StrippedCableBlock.FACING, replaceDir);
             level.setBlockAndUpdate(clickedPos, strippedState);
-            BlockEntity be = level.getBlockEntity(clickedPos.relative(replaceDir.getOpposite()));
-            if (be instanceof CableBlockEntity cableBE) {
-                UUID network = cableBE.network;
-                be = level.getBlockEntity(clickedPos);
-                if (be instanceof StrippedCableBlockEntity strippedBE) strippedBE.setNetwork(network);
-            }
-            if (be instanceof PanelBlockEntity panelBE) {
-                UUID network = panelBE.network;
-                be = level.getBlockEntity(clickedPos);
-                if (be instanceof StrippedCableBlockEntity strippedBE) strippedBE.setNetwork(network);
-            }
             return InteractionResult.SUCCESS;
         }
 

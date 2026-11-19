@@ -184,7 +184,7 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
                 }
 
                 if (current != null) {
-                    this.entriesToAdd.set(newEntry.getEntry(), newEntry);
+                    this.entriesToAdd.add(newEntry);
                     current.entry = newEntry;
                 } else {
                     this.addEntry(newEntry);
@@ -195,12 +195,12 @@ public class PanelLinkScreen extends AbstractSimiContainerScreen<PanelLinkMenu> 
     }
 
     private void addEntry(ModuleLinkEntries.ModuleEntry newEntry) {
-        this.entriesToAdd.set(newEntry.getEntry(), newEntry);
+        this.entriesToAdd.add(newEntry);
         rebuildEntryWidgets();
     }
 
     private void removeEntry(ModuleEntryWidget moduleEntryWidget) {
-        this.entriesToAdd.set(moduleEntryWidget.entry.getEntry(), null);
+        this.entriesToAdd.remove(moduleEntryWidget.entry.getEntry());
         rebuildEntryWidgets();
     }
 
